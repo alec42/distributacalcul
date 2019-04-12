@@ -51,8 +51,8 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
            ),
            box(
              title = "Autres Moments", width = NULL, solidHeader = TRUE, status = "warning", 
-               numericInput('d', withMathJax('$$d$$'), value = 0),
-               textOutput("EspTronqNORM")), align = "center"
+               numericInput('dNORM', withMathJax('$$d$$'), value = 0),
+               uiOutput("EspTronqNORM")), align = "center"
            
     ),
     
@@ -62,10 +62,8 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
              title = "Fonctions", width = NULL, solidHeader = TRUE, 
              status = "danger", # pour couleur de la boite, diff couleur pour statut
              numericInput('xNORM', '$$x$$', value = 0), 
-             br(), 
-             "Fonction de densité :", uiOutput("densityNORM"), 
-             br(), 
-             "Fonction de répartition :", uiOutput("repartNORM"), 
+             br(), uiOutput("densityNORM"), 
+             br(), uiOutput("repartNORM") , 
              align = "center"
            )
            
@@ -75,10 +73,10 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
            box(
              title = "Mesure de risques", width = NULL, solidHeader = TRUE, status = "success",
              
-             numericInput('kNORM', '$$\\kappa$$', value = 0.99, width ='50%'), 
-             "Value at Risk :", uiOutput("VaRNORM"), 
+             numericInput('kNORM', '$$\\kappa$$', value = 0.99), 
+             uiOutput("VaRNORM"), 
              br(), 
-             "Tail Value at Risk :", uiOutput("TVaRNORM") , 
+             uiOutput("TVaRNORM"), 
              align = "center"
            )
     ),
@@ -181,7 +179,7 @@ server <- function(input, output)
   
   TVaRNORM <- reactive({format(muNORM() + (1/(1 - input$kNORM)) * sqrt(sigma2NORM()/(2*pi)) * exp(-qnorm(input$kNORM, muNORM(), sqrt(sigma2NORM()))/2), nsmall = 6)})
   
-  EspTronqNORM <- reactive({muNORM() * pnorm((input$d - muNORM())/sqrt(sigma2NORM()), 0, 1) - sqrt(sigma2NORM()/ 2 * pi) * exp(-(input$d - muNORM())^2/2 * sigma2NORM())})
+  EspTronqNORM <- reactive({muNORM() * pnorm((input$dNORM - muNORM())/sqrt(sigma2NORM()), 0, 1) - sqrt(sigma2NORM()/ 2 * pi) * exp(-(input$dNORM - muNORM())^2/2 * sigma2NORM())})
   
   output$meanNORM <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
                                                    muNORM()
@@ -206,8 +204,11 @@ server <- function(input, output)
   output$TVaRNORM <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$", 
                                        input$kNORM,
                                        TVaRNORM()
-                                                   ))})
-  output$EspTronqNORM <- renderText({paste("ESPTRONQ(X) =", EspTronqNORM())})
+  ))})
+  output$EspTronqNORM <- renderUI({withMathJax(sprintf("$$E[X \\times 1_{\\{X \\leqslant %s\\}}] = %.4f$$", 
+  input$dNORM,
+  EspTronqNORM()
+  ))})
   }
 }
 
