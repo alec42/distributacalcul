@@ -29,7 +29,8 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
         fluidPage(
           titlePanel("Loi Normale"), withMathJax(), helpText("\\(X \\sim\\mathcal{N}(\\mu, \\sigma^2)\\)"), align = "center"),
 
-          fluidRow(column(width = 2, box(
+          fluidRow(column(width = 2, 
+            box(
             title = "Paramètres", status = "primary", solidHeader = T, width = NULL,
             tags$head(
                 tags$style(type = "text/css", "label{ display: table-cell; text-align: center; vertical-align: center; width: 50px; font-size: 13pt} 
@@ -47,7 +48,12 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
            box(
              title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
              textOutput("meanNORM"), br(), textOutput("varNORM"), align = "center"
-           )
+           ),
+           box(
+             title = "Autres Moments", width = NULL, solidHeader = TRUE, status = "warning", 
+               numericInput('d', withMathJax('$$d$$'), value = 0),
+               textOutput("EspTronqNORM")), align = "center"
+           
     ),
     
     column(width = 2,
@@ -163,17 +169,16 @@ server <- function(input, output)
   repartNORM <- reactive({format(pnorm(input$xNORM, muNORM(), sqrt(sigma2NORM())), nsmall = 6)})
   VaRNORM <- reactive({format(qnorm(input$kNORM, muNORM(), sqrt(sigma2NORM())), nsmall = 6)})
   TVaRNORM <- reactive({format(muNORM() + (1/(1 - input$kNORM)) * sqrt(sigma2NORM()/(2*pi)) * exp(-qnorm(input$kNORM, muNORM(), sqrt(sigma2NORM()))/2), nsmall = 6)})
+  EspTronqNORM <- reactive({muNORM() * pnorm((input$d - muNORM())/sqrt(sigma2NORM()), 0, 1) - sqrt(sigma2NORM()/ 2 * pi) * exp(-(input$d - muNORM())^2/2 * sigma2NORM())})
   
   output$meanNORM <- renderText({paste("E[X] =", input$muNORM)})
   output$varNORM <- renderText({paste("Var(X) =", input$sigmaNORM)})
   output$densityNORM <- renderText({paste("f(x) =", densityNORM())})
   output$repartNORM <- renderText({paste("F(x) =", repartNORM())})
   output$VaRNORM <- renderText({paste("VaR(X) =", VaRNORM())})
-  output$TVaRNORM <- renderUI({withMathJax(sprintf("$$TVaR_\\kappa(X) = \\frac{%d - %d}{\\sqrt{\\frac{%d}{N_1}+\\frac{%d}{N_2}}}$$", 
-                                                   input$muNORM, 
-                                                   input$muNORM,
-                                                   input$muNORM,
-                                                   input$muNORM))})
+  output$TVaRNORM <- renderText({paste("TVaR(X) =", TVaRNORM())})
+  output$EspTronqNORM <- renderText({paste("ESPTRONQ(X) =", EspTronqNORM())})
+  
   }
 }
 
