@@ -1,0 +1,176 @@
+# Library
+{
+library(shiny)
+library(actuar)
+library(shinydashboard)
+library(shinydashboardPlus)
+library(ggplot2)
+library(rsconnect)
+}
+
+
+# Corps
+{
+ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité", titleWidth = 200),
+  
+  # Paneau Latéral                  
+  {
+  dashboardSidebar(collapsed = T, sidebarMenu(
+  
+  menuItem("Loi normale", tabName = "Normale", icon = icon("neos")),
+  menuItem("Loi gamma", icon = icon("gofore"), tabName = "gamma"),
+  menuItem("À propos", icon = icon("user-tie"), tabName = "about")))
+  },
+  
+      dashboardBody(tabItems(
+        
+        # LOI NORMALE
+        {tabItem(tabName = "Normale",
+        fluidPage(
+          titlePanel("Loi Normale"), withMathJax(), helpText("\\(X \\sim\\mathcal{N}(\\mu, \\sigma^2)\\)"), align = "center"),
+
+          fluidRow(column(width = 2, box(
+             
+            title = "Paramètres", status = "primary", solidHeader = T, width = NULL,
+             splitLayout(
+               
+               numericInput('muNORM', '$$\\mu$$', value = 0, width ='75%'),
+               numericInput('sigmaNORM', '$$\\sigma^2$$', value = 1, width ='75%')), align = "center"
+           )
+           
+    ),
+    
+    column(width = 2,
+           
+           box(
+             title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
+             textOutput("meanNORM"), br(), textOutput("varNORM"), align = "center"
+           )
+    ),
+    
+    column(width = 2,
+           
+           box(
+             title = "Fonctions", width = NULL, solidHeader = TRUE, status = "danger",
+             numericInput('xNORM', '$$x$$', value = 0, width ='50%'), br(), "Fonction de densité :", textOutput("densityNORM"), 
+             br(), "Fonction de répartition :", textOutput("repartNORM") , align = "center"
+           )
+           
+    ),
+    
+    column(width = 2,
+           box(
+             title = "Mesure de risques", width = NULL, solidHeader = TRUE, status = "success",
+             numericInput('kNORM', '$$\\kappa$$', value = 0.99, width ='50%'), br(), "Value at Risk :", textOutput("VaRNORM"), 
+             br(), "Tail Value at Risk :", textOutput("TVaRNORM") , align = "center"
+           )
+    ),
+    
+    column(width = 2,
+           box(
+             title = "Notes supplémentaires", width = NULL, solidHeader = TRUE, status = "info", collapsible = T, collapsed = T,
+             "À compléter"
+           )
+    )
+  )
+)},
+
+        # LOI GAMMA
+        {tabItem(tabName = "gamma",
+         fluidPage(
+           titlePanel("Loi Gamma"), withMathJax(), helpText("\\(X \\sim\\mathcal{G}(\\alpha, \\beta)\\)"), align = "center"),
+         
+         fluidRow(column(width = 2, box(
+           
+           title = "Paramètres", status = "primary", solidHeader = T, width = NULL,
+           splitLayout(
+             
+             numericInput('muGAMMA', '$$\\mu$$', value = 0, width ='75%'),
+             numericInput('sigmaGAMMA', '$$\\sigma^2$$', value = 1, width ='75%')), align = "center"
+         )
+         
+         ),
+         
+         column(width = 2,
+                
+                box(
+                  title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
+                  textOutput("meanGAMMA"), br(), textOutput("varGAMMA"), align = "center"
+                )
+         ),
+         
+         column(width = 2,
+                
+                box(
+                  title = "Fonctions", width = NULL, solidHeader = TRUE, status = "danger",
+                  numericInput('xGAMMA', '$$x$$', value = 0, width ='50%'), br(), "Fonction de densité :", textOutput("densityGAMMA"), 
+                  br(), "Fonction de répartition :", textOutput("repartGAMMA") , align = "center"
+                )
+                
+         ),
+         
+         column(width = 2,
+                box(
+                  title = "Mesure de risques", width = NULL, solidHeader = TRUE, status = "success",
+                  numericInput('kNORM', '$$\\kappa$$', value = 0.99, width ='50%'), br(), "Value at Risk :", textOutput("VaRGAMMA"), 
+                  br(), "Tail Value at Risk :", textOutput("TVaRGAMMA") , align = "center"
+                )
+         ),
+         
+         column(width = 2,
+                box(
+                  title = "Notes supplémentaires", width = NULL, solidHeader = TRUE, status = "info", collapsible = T, collapsed = T,
+                  "À compléter"
+                )
+         )
+         )
+)},
+        
+
+        # À PROPOS
+        {
+  tabItem(tabName = "about", h2("Nous contacter "), br(), widgetUserBox(
+  title = "Marc-André Devost",
+  subtitle = "marc-andre.devost.1@ulaval.ca",
+  type = NULL,
+  src = "marc.jpg",
+  color = "blue", collapsible = F, ""), 
+  
+  widgetUserBox(
+    title = "Alec James van Rassel",
+    subtitle = "alecjames.vanrassel.1@ulaval.ca",
+    type = NULL,
+    src = "alec.jpg",
+    color = "blue", collapsible = F, "")
+  )
+      }
+
+)))
+}
+
+
+## Serveur
+server <- function(input, output) 
+{
+  # SERVEUR LOI NORMALE
+  {
+  muNORM <- reactive({input$muNORM})
+  sigma2NORM <- reactive({input$sigmaNORM})
+
+  densityNORM <- reactive({format(dnorm(input$xNORM, muNORM(), sqrt(sigma2NORM())), nsmall = 6)})
+  repartNORM <- reactive({format(pnorm(input$xNORM, muNORM(), sqrt(sigma2NORM())), nsmall = 6)})
+  VaRNORM <- reactive({format(qnorm(input$kNORM, muNORM(), sqrt(sigma2NORM())), nsmall = 6)})
+  TVaRNORM <- reactive({format(muNORM() + (1/(1 - input$kNORM)) * sqrt(sigma2NORM()/(2*pi)) * exp(-qnorm(input$kNORM, muNORM(), sqrt(sigma2NORM()))/2), nsmall = 6)})
+  
+  output$meanNORM <- renderText({paste("E[X] =", input$muNORM)})
+  output$varNORM <- renderText({paste("Var(X) =", input$sigmaNORM)})
+  output$densityNORM <- renderText({paste("f(x) =", densityNORM())})
+  output$repartNORM <- renderText({paste("F(x) =", repartNORM())})
+  output$VaRNORM <- renderText({paste("VaR(X) =", VaRNORM())})
+  output$TVaRNORM <- renderText({paste("TVaR(X) =", TVaRNORM())})
+  }
+}
+
+
+
+shinyApp(ui = ui, server = server)
