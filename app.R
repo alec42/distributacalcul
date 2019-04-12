@@ -7,6 +7,7 @@ library(shinydashboardPlus)
 library(ggplot2)
 library(rsconnect)
 }
+source(file = "functions.R")
 
 
 # Corps
@@ -32,7 +33,8 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
         # LOI NORMALE
         {tabItem(tabName = "Normale",
         fluidPage(
-          titlePanel("Loi Normale"), withMathJax(), helpText("\\(X \\sim\\mathcal{N}(\\mu, \\sigma^2)\\)"), align = "center"),
+          titlePanel("Loi Normale"), withMathJax(), helpText("\\(X \\sim\\mathcal{N}(\\mu, \\sigma^2)\\)"), 
+          align = "center"),
 
           fluidRow(column(width = 2, 
             box(title = "Paramètres", status = "primary", solidHeader = T, width = NULL,
@@ -41,8 +43,8 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
             align = "center"
     ),
     
+    ## Moments
     column(width = 2,
-           
            box(
              title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
              uiOutput("meanNORM"), 
@@ -51,19 +53,21 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
            ),
            box(
              title = "Autres Moments", width = NULL, solidHeader = TRUE, status = "warning", 
-               numericInput('dNORM', withMathJax('$$d$$'), value = 0),
-               uiOutput("EspTronqNORM"), uiOutput("EspLimNORM"), uiOutput("StopLossNORM"), uiOutput("ExcesMoyNORM")), align = "center"
-           
+             numericInput('dNORM', withMathJax('$$d$$'), value = 0, width = "20px"),
+             # radioButtons('equalityNORM', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
+             uiOutput("EspTronqNORM"),
+             align = "left"), 
+             align = "center"
     ),
     
+    ## Fonctions
     column(width = 2,
-           
            box(
              title = "Fonctions", width = NULL, solidHeader = TRUE, 
              status = "danger", # pour couleur de la boite, diff couleur pour statut
              numericInput('xNORM', '$$x$$', value = 0), 
              br(), uiOutput("densityNORM"), 
-             br(), uiOutput("repartNORM") , 
+             br(), uiOutput("repartNORM"), 
              align = "center"
            )
            
