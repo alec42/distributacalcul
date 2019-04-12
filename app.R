@@ -52,7 +52,7 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
            box(
              title = "Autres Moments", width = NULL, solidHeader = TRUE, status = "warning", 
                numericInput('dNORM', withMathJax('$$d$$'), value = 0),
-               uiOutput("EspTronqNORM")), align = "center"
+               uiOutput("EspTronqNORM"), uiOutput("EspLimNORM"), uiOutput("StopLossNORM"), uiOutput("ExcesMoyNORM")), align = "center"
            
     ),
     
@@ -176,10 +176,11 @@ server <- function(input, output)
   densityNORM <- reactive({format(dnorm(input$xNORM, muNORM(), sqrt(sigma2NORM())), nsmall = 6)})
   repartNORM <- reactive({format(pnorm(input$xNORM, muNORM(), sqrt(sigma2NORM())), nsmall = 6)})
   VaRNORM <- reactive({format(qnorm(input$kNORM, muNORM(), sqrt(sigma2NORM())), nsmall = 6)})
-  
   TVaRNORM <- reactive({format(muNORM() + (1/(1 - input$kNORM)) * sqrt(sigma2NORM()/(2*pi)) * exp(-qnorm(input$kNORM, muNORM(), sqrt(sigma2NORM()))/2), nsmall = 6)})
-  
   EspTronqNORM <- reactive({muNORM() * pnorm((input$dNORM - muNORM())/sqrt(sigma2NORM()), 0, 1) - sqrt(sigma2NORM()/ 2 * pi) * exp(-(input$dNORM - muNORM())^2/2 * sigma2NORM())})
+  StopLossNORM <- reactive({(muNORM() + input$dNORM) * (1 - pnorm((input$dNORM - muNORM())/sqrt(sigma2NORM()), 0, 1)) - sqrt(sigma2NORM()/ 2 * pi) * exp(-(input$dNORM - muNORM())^2/2 * sigma2NORM())})
+  EspLimNORM <- reactive({muNORM() * pnorm((input$dNORM - muNORM())/sqrt(sigma2NORM()), 0, 1) - sqrt(sigma2NORM()/ 2 * pi)* exp(-(input$dNORM - muNORM())^2/2 * sigma2NORM()) + input$dNORM * (1 - pnorm((input$dNORM - muNORM())/sqrt(sigma2NORM()), 0, 1))})
+  ExcesMoyNORM <- reactive({muNORM() + input$dNORM - 1/(1 - pnorm((input$dNORM - muNORM())/sqrt(sigma2NORM()), 0, 1)) * sqrt(sigma2NORM()/ 2 * pi)* exp(-(input$dNORM - muNORM())^2/(2 * sigma2NORM()))})
   
   output$meanNORM <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
                                                    muNORM()
@@ -209,6 +210,22 @@ server <- function(input, output)
   input$dNORM,
   EspTronqNORM()
   ))})
+  
+  output$StopLossNORM <- renderUI({withMathJax(sprintf("$$ \\pi_{%s}(X) = %.4f$$", 
+                                                       input$dNORM,
+                                                       StopLossNORM()
+  ))})
+  
+  output$EspLimNORM <- renderUI({withMathJax(sprintf("$$E[\\text{min}(X;{%s})] = %.4f$$", 
+                                                       input$dNORM,
+                                                       EspLimNORM()
+  ))})
+  
+  output$ExcesMoyNORM <- renderUI({withMathJax(sprintf("$$e_{%s}(X) = %.4f$$", 
+                                                     input$dNORM,
+                                                     ExcesMoyNORM()
+  ))})
+  
   }
 }
 
