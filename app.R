@@ -170,7 +170,7 @@ server <- function(input, output)
   output$densityNORM <- renderText({paste("f(x) =", densityNORM())})
   output$repartNORM <- renderText({paste("F(x) =", repartNORM())})
   output$VaRNORM <- renderText({paste("VaR(X) =", VaRNORM())})
-  output$TVaRNORM <- renderUI({withMathJax(sprintf("$$t = \\frac{%d - %d}{\\sqrt{\\frac{%d}{N_1}+\\frac{%d}{N_2}}}$$", 
+  output$TVaRNORM <- renderUI({withMathJax(sprintf("$$TVaR_\\kappa(X) = \\frac{%d - %d}{\\sqrt{\\frac{%d}{N_1}+\\frac{%d}{N_2}}}$$", 
                                                    input$muNORM, 
                                                    input$muNORM,
                                                    input$muNORM,
