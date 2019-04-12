@@ -55,9 +55,9 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
              title = "Autres Moments", width = NULL, solidHeader = TRUE, status = "warning", 
              numericInput('dNORM', withMathJax('$$d$$'), value = 0, width = "20px"),
              # radioButtons('equalityNORM', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
-             uiOutput("EspTronqNORM"),
-             align = "left"), 
-             align = "center"
+             uiOutput("EspTronqNORM"), uiOutput("EspLimNORM"), uiOutput("StopLossNORM"), uiOutput("ExcesMoyNORM"),
+             align = "left", 
+             align = "center")
     ),
     
     ## Fonctions
@@ -92,7 +92,8 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
            )
     )
   )
-)},
+)
+},
 
         # LOI GAMMA
         {tabItem(tabName = "gamma",
