@@ -5,8 +5,8 @@ account: alec42
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 861118
-bundleId: 2006801
+bundleId: 2006865
 url: https://alec42.shinyapps.io/distributacalcul/
-when: 1555098244.97431
+when: 1555099699.84899
 asMultiple: FALSE
 asStatic: FALSE

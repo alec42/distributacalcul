@@ -30,14 +30,13 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
           titlePanel("Loi Normale"), withMathJax(), helpText("\\(X \\sim\\mathcal{N}(\\mu, \\sigma^2)\\)"), align = "center"),
 
           fluidRow(column(width = 2, box(
-             
             title = "Paramètres", status = "primary", solidHeader = T, width = NULL,
             tags$head(
                 tags$style(type = "text/css", "label{ display: table-cell; text-align: center; vertical-align: center; width: 50px; font-size: 13pt} 
                            .form-group { display: table-row;}")
                 ),
-            
-               numericInput('muNORM', '$$\\mu$$', value = 0),
+
+               numericInput('muNORM', withMathJax('$$\\mu$$'), value = 0),
                numericInput('sigmaNORM', '$$\\sigma^2$$', value = 1)), align = "center"
            
            
