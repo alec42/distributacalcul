@@ -32,11 +32,14 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
           fluidRow(column(width = 2, box(
              
             title = "Paramètres", status = "primary", solidHeader = T, width = NULL,
-             splitLayout(
-               
-               numericInput('muNORM', '$$\\mu$$', value = 0, width ='75%'),
-               numericInput('sigmaNORM', '$$\\sigma^2$$', value = 1, width ='75%')), align = "center"
-           )
+            tags$head(
+                tags$style(type = "text/css", "label{ display: table-cell; text-align: center; vertical-align: center; width: 50px; font-size: 13pt} 
+                           .form-group { display: table-row;}")
+                ),
+            
+               numericInput('muNORM', '$$\\mu$$', value = 0),
+               numericInput('sigmaNORM', '$$\\sigma^2$$', value = 1)), align = "center"
+           
            
     ),
     
