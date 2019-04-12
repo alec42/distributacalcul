@@ -55,7 +55,10 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
              title = "Autres Moments", width = NULL, solidHeader = TRUE, status = "warning", 
              numericInput('dNORM', withMathJax('$$d$$'), value = 0, width = "20px"),
              # radioButtons('equalityNORM', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
-             uiOutput("EspTronqNORM"), uiOutput("EspLimNORM"), uiOutput("StopLossNORM"), uiOutput("ExcesMoyNORM"),
+             uiOutput("EspTronqNORM"), 
+             uiOutput("EspLimNORM"), 
+             uiOutput("StopLossNORM"), 
+             uiOutput("ExcesMoyNORM"),
              align = "left", 
              align = "center")
     ),
@@ -66,8 +69,8 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
              title = "Fonctions", width = NULL, solidHeader = TRUE, 
              status = "danger", # pour couleur de la boite, diff couleur pour statut
              numericInput('xNORM', '$$x$$', value = 0), 
-             br(), uiOutput("densityNORM"), 
-             br(), uiOutput("repartNORM"), 
+             uiOutput("densityNORM"), 
+             uiOutput("repartNORM"), 
              align = "center"
            )
            
@@ -79,7 +82,6 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
              
              numericInput('kNORM', '$$\\kappa$$', value = 0.99), 
              uiOutput("VaRNORM"), 
-             br(), 
              uiOutput("TVaRNORM"), 
              align = "center"
            )
