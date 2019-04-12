@@ -22,7 +22,12 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
   menuItem("À propos", icon = icon("user-tie"), tabName = "about")))
   },
   
-      dashboardBody(tabItems(
+      dashboardBody(
+          tags$head(
+              tags$style(type = "text/css", "label{ display: table-cell; text-align: center; vertical-align: center; width: 50px; font-size: 13pt} 
+                         .form-group { display: table-row;}")
+              ),
+          tabItems(
         
         # LOI NORMALE
         {tabItem(tabName = "Normale",
@@ -30,24 +35,19 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
           titlePanel("Loi Normale"), withMathJax(), helpText("\\(X \\sim\\mathcal{N}(\\mu, \\sigma^2)\\)"), align = "center"),
 
           fluidRow(column(width = 2, 
-            box(
-            title = "Paramètres", status = "primary", solidHeader = T, width = NULL,
-            tags$head(
-                tags$style(type = "text/css", "label{ display: table-cell; text-align: center; vertical-align: center; width: 50px; font-size: 13pt} 
-                           .form-group { display: table-row;}")
-                ),
-
+            box(title = "Paramètres", status = "primary", solidHeader = T, width = NULL,
                numericInput('muNORM', withMathJax('$$\\mu$$'), value = 0),
-               numericInput('sigmaNORM', '$$\\sigma^2$$', value = 1)), align = "center"
-           
-           
+               numericInput('sigmaNORM', '$$\\sigma^2$$', value = 1)), 
+            align = "center"
     ),
     
     column(width = 2,
            
            box(
              title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
-             textOutput("meanNORM"), br(), textOutput("varNORM"), align = "center"
+             uiOutput("meanNORM"), 
+             uiOutput("varNORM"), 
+             align = "center"
            ),
            box(
              title = "Autres Moments", width = NULL, solidHeader = TRUE, status = "warning", 
@@ -59,9 +59,14 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
     column(width = 2,
            
            box(
-             title = "Fonctions", width = NULL, solidHeader = TRUE, status = "danger",
-             numericInput('xNORM', '$$x$$', value = 0, width ='50%'), br(), "Fonction de densité :", textOutput("densityNORM"), 
-             br(), "Fonction de répartition :", textOutput("repartNORM") , align = "center"
+             title = "Fonctions", width = NULL, solidHeader = TRUE, 
+             status = "danger", # pour couleur de la boite, diff couleur pour statut
+             numericInput('xNORM', '$$x$$', value = 0), 
+             br(), 
+             "Fonction de densité :", uiOutput("densityNORM"), 
+             br(), 
+             "Fonction de répartition :", uiOutput("repartNORM"), 
+             align = "center"
            )
            
     ),
@@ -70,8 +75,11 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
            box(
              title = "Mesure de risques", width = NULL, solidHeader = TRUE, status = "success",
              
-             numericInput('kNORM', '$$\\kappa$$', value = 0.99, width ='50%'), "Value at Risk :", textOutput("VaRNORM"), 
-             br(), "Tail Value at Risk :", uiOutput("TVaRNORM") , align = "center"
+             numericInput('kNORM', '$$\\kappa$$', value = 0.99, width ='50%'), 
+             "Value at Risk :", uiOutput("VaRNORM"), 
+             br(), 
+             "Tail Value at Risk :", uiOutput("TVaRNORM") , 
+             align = "center"
            )
     ),
     
@@ -164,19 +172,37 @@ server <- function(input, output)
   # SERVEUR LOI NORMALE
   {
   muNORM <- reactive({input$muNORM})
+  
   sigma2NORM <- reactive({input$sigmaNORM})
 
   densityNORM <- reactive({format(dnorm(input$xNORM, muNORM(), sqrt(sigma2NORM())), nsmall = 6)})
   repartNORM <- reactive({format(pnorm(input$xNORM, muNORM(), sqrt(sigma2NORM())), nsmall = 6)})
   VaRNORM <- reactive({format(qnorm(input$kNORM, muNORM(), sqrt(sigma2NORM())), nsmall = 6)})
+  
   TVaRNORM <- reactive({format(muNORM() + (1/(1 - input$kNORM)) * sqrt(sigma2NORM()/(2*pi)) * exp(-qnorm(input$kNORM, muNORM(), sqrt(sigma2NORM()))/2), nsmall = 6)})
+  
   EspTronqNORM <- reactive({muNORM() * pnorm((input$d - muNORM())/sqrt(sigma2NORM()), 0, 1) - sqrt(sigma2NORM()/ 2 * pi) * exp(-(input$d - muNORM())^2/2 * sigma2NORM())})
   
-  output$meanNORM <- renderText({paste("E[X] =", input$muNORM)})
-  output$varNORM <- renderText({paste("Var(X) =", input$sigmaNORM)})
-  output$densityNORM <- renderText({paste("f(x) =", densityNORM())})
-  output$repartNORM <- renderText({paste("F(x) =", repartNORM())})
-  output$VaRNORM <- renderText({paste("VaR(X) =", VaRNORM())})
+  output$meanNORM <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
+                                                   muNORM()
+  ))})
+  
+  output$varNORM <- renderUI({withMathJax(sprintf("$$Var(X) = %s$$", 
+                                                  sigma2NORM()
+  ))})
+  
+  output$densityNORM <- renderUI({withMathJax(sprintf("$$f_{X}(%s) = %s$$", 
+                                                      input$xNORM,
+                                                      densityNORM()
+  ))})
+  output$repartNORM <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$", 
+                                                     input$xNORM,
+                                                     repartNORM()
+  ))})
+  output$VaRNORM <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$", 
+                                                   input$kNORM,
+                                                   VaRNORM()
+  ))})
   output$TVaRNORM <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$", 
                                        input$kNORM,
                                        TVaRNORM()
