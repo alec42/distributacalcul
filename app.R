@@ -51,8 +51,8 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
            ),
            box(
              title = "Autres Moments", width = NULL, solidHeader = TRUE, status = "warning", 
-               numericInput('d', withMathJax('$$d$$'), value = 0),
-               textOutput("EspTronqNORM")), align = "center"
+               numericInput('dNORM', withMathJax('$$d$$'), value = 0),
+               uiOutput("EspTronqNORM")), align = "center"
            
     ),
     
@@ -170,18 +170,15 @@ server <- function(input, output)
   repartNORM <- reactive({format(pnorm(input$xNORM, muNORM(), sqrt(sigma2NORM())), nsmall = 6)})
   VaRNORM <- reactive({format(qnorm(input$kNORM, muNORM(), sqrt(sigma2NORM())), nsmall = 6)})
   TVaRNORM <- reactive({format(muNORM() + (1/(1 - input$kNORM)) * sqrt(sigma2NORM()/(2*pi)) * exp(-qnorm(input$kNORM, muNORM(), sqrt(sigma2NORM()))/2), nsmall = 6)})
-  EspTronqNORM <- reactive({muNORM() * pnorm((input$d - muNORM())/sqrt(sigma2NORM()), 0, 1) - sqrt(sigma2NORM()/ 2 * pi) * exp(-(input$d - muNORM())^2/2 * sigma2NORM())})
+  EspTronqNORM <- reactive({muNORM() * pnorm((input$dNORM - muNORM())/sqrt(sigma2NORM()), 0, 1) - sqrt(sigma2NORM()/ 2 * pi) * exp(-(input$dNORM - muNORM())^2/2 * sigma2NORM())})
   
   output$meanNORM <- renderText({paste("E[X] =", input$muNORM)})
   output$varNORM <- renderText({paste("Var(X) =", input$sigmaNORM)})
   output$densityNORM <- renderText({paste("f(x) =", densityNORM())})
   output$repartNORM <- renderText({paste("F(x) =", repartNORM())})
   output$VaRNORM <- renderText({paste("VaR(X) =", VaRNORM())})
-  output$TVaRNORM <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$", 
-                                       input$kNORM,
-                                       TVaRNORM()
-                                                   ))})
-  output$EspTronqNORM <- renderText({paste("ESPTRONQ(X) =", EspTronqNORM())})
+  output$TVaRNORM <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$", input$kNORM,TVaRNORM()))})
+  output$EspTronqNORM <- renderUI({withMathJax(sprintf("$$E[X \\times 1_{\\{X \\leqslant %s\\}}] = %.4f$$", input$dNORM,EspTronqNORM()))})
   }
 }
 
