@@ -65,7 +65,7 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
            box(
              title = "Mesure de risques", width = NULL, solidHeader = TRUE, status = "success",
              numericInput('kNORM', '$$\\kappa$$', value = 0.99, width ='50%'), br(), "Value at Risk :", textOutput("VaRNORM"), 
-             br(), "Tail Value at Risk :", textOutput("TVaRNORM") , align = "center"
+             br(), "Tail Value at Risk :", uiOutput("TVaRNORM") , align = "center"
            )
     ),
     
@@ -170,7 +170,11 @@ server <- function(input, output)
   output$densityNORM <- renderText({paste("f(x) =", densityNORM())})
   output$repartNORM <- renderText({paste("F(x) =", repartNORM())})
   output$VaRNORM <- renderText({paste("VaR(X) =", VaRNORM())})
-  output$TVaRNORM <- renderText({paste("TVaR(X) =", TVaRNORM())})
+  output$TVaRNORM <- renderUI({withMathJax(sprintf("$$t = \\frac{%d - %d}{\\sqrt{\\frac{%d}{N_1}+\\frac{%d}{N_2}}}$$", 
+                                                   input$muNORM, 
+                                                   input$muNORM,
+                                                   input$muNORM,
+                                                   input$muNORM))})
   }
 }
 
