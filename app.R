@@ -60,8 +60,8 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
            
            box(
              title = "Fonctions", width = NULL, solidHeader = TRUE, status = "danger",
-             numericInput('xNORM', '$$x$$', value = 0, width ='50%'), br(), "Fonction de densité :", textOutput("densityNORM"), 
-             br(), "Fonction de répartition :", textOutput("repartNORM") , align = "center"
+             numericInput('xNORM', '$$x$$', value = 0, width ='50%'), br(), textOutput("densityNORM"), 
+             br(), textOutput("repartNORM") , align = "center"
            )
            
     ),
@@ -70,8 +70,8 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
            box(
              title = "Mesure de risques", width = NULL, solidHeader = TRUE, status = "success",
              
-             numericInput('kNORM', '$$\\kappa$$', value = 0.99, width ='50%'), "Value at Risk :", textOutput("VaRNORM"), 
-             br(), "Tail Value at Risk :", uiOutput("TVaRNORM") , align = "center"
+             numericInput('kNORM', '$$\\kappa$$', value = 0.99, width ='50%'), textOutput("VaRNORM"), 
+             br(), uiOutput("TVaRNORM") , align = "center"
            )
     ),
     
