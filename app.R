@@ -38,10 +38,8 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
     column(width = 2, 
            box(title = "Paramètres", status = "primary", solidHeader = T, width = NULL,
                numericInput('muNORM', withMathJax('$$\\mu$$'), value = 0),
-               numericInput('sigmaNORM', '$$\\sigma^2$$', value = 1)),
-           box(title = "Notes supplémentaires", status = "info", solidHeader = T, width = NULL, collapsible = T, collapsed = T,
-               p("à venir")),
-           align = "center"
+               numericInput('sigmaNORM', '$$\\sigma^2$$', value = 1))
+
     ),
     
     ## Moments
