@@ -49,6 +49,6 @@ qtcreator-*
 
 # Catkin custom files
 CATKIN_IGNORE
-rsconnect/shinyapps.io/alec42/distributacalcul.dcf
+rsconnect/
 .Rhistory
 .Rhistory
