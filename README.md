@@ -1,6 +1,7 @@
 # Calculatrice de distributions
 
 - Calculatrice des: 
+
 i) Moments
 ii) Variance 
 iii) Fonction de densité
@@ -14,9 +15,11 @@ ix) Espérance limitée
 x)...
 
 Distributions
+
 i) Normale
 
 À venir:
+
 ii) Gamma
 iii) Beta
 iv) Pareto
