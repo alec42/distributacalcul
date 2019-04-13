@@ -39,13 +39,14 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
           fluidRow(column(width = 2, 
             box(title = "Paramètres", status = "primary", solidHeader = T, width = NULL,
                numericInput('muNORM', withMathJax('$$\\mu$$'), value = 0),
-               numericInput('sigmaNORM', '$$\\sigma^2$$', value = 1)), 
+               numericInput('sigmaNORM', '$$\\sigma^2$$', value = 1)),
+            
             align = "center"
     ),
     
     ## Moments
     column(width = 2,
-           tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
+           tags$style(" * {font-size:20px;}"), # grosseur du tezte
            box(
              title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
              uiOutput("meanNORM"), 
@@ -104,40 +105,56 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
          fluidPage(
            titlePanel("Loi Gamma"), withMathJax(), helpText("\\(X \\sim\\mathcal{G}(\\alpha, \\beta)\\)"), align = "center"),
          
-         fluidRow(column(width = 2, box(
-           
-           title = "Paramètres", status = "primary", solidHeader = T, width = NULL,
-           splitLayout(
-             
-             numericInput('muGAMMA', '$$\\mu$$', value = 0, width ='75%'),
-             numericInput('sigmaGAMMA', '$$\\sigma^2$$', value = 1, width ='75%')), align = "center"
-         )
-         
+         fluidRow(column(width = 2, 
+                         box(title = "Paramètres", status = "primary", solidHeader = T, width = NULL,
+                             numericInput('alphaGAMMA', withMathJax('$$\\alpha$$'), value = 0),
+                             numericInput('betaGAMMA', '$$\\beta$$', value = 1)),
+                         
+                         align = "center"
          ),
          
+         ## Moments
          column(width = 2,
-                
+                tags$style(" * {font-size:20px;}"), # grosseur du tezte
                 box(
-                  title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
-                  textOutput("meanGAMMA"), br(), textOutput("varGAMMA"), align = "center"
+                    title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
+                    uiOutput("meanGAMMA"), 
+                    uiOutput("varGAMMA"), 
+                    align = "center"
+                ),box(
+                    title = "Autres Moments", width = NULL, solidHeader = TRUE, status = "warning", 
+                    numericInput('dGAMMA', withMathJax('$$d$$'), value = 0, width = "20px"),
+                    # radioButtons('equalityGAMMA', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
+                    uiOutput("EspTronqGAMMA"), 
+                    uiOutput("EspLimGAMMA"), 
+                    uiOutput("StopLossGAMMA"), 
+                    uiOutput("ExcesMoyGAMMA"),
+                    align = "left", 
+                    align = "center")
+         ),
+         
+         ## Fonctions
+         column(width = 2,
+                box(
+                    title = "Fonctions", width = NULL, solidHeader = TRUE, 
+                    tags$style(" * {font-size:20px;}"), # grosseur du tezte
+                    status = "danger", # pour couleur de la boite, diff couleur selon le statut
+                    numericInput('xGAMMA', '$$x$$', value = 0), 
+                    uiOutput("densityGAMMA"), 
+                    uiOutput("repartGAMMA"), 
+                    align = "center"
                 )
-         ),
-         
-         column(width = 2,
-                
-                box(
-                  title = "Fonctions", width = NULL, solidHeader = TRUE, status = "danger",
-                  numericInput('xGAMMA', '$$x$$', value = 0, width ='50%'), br(), "Fonction de densité :", textOutput("densityGAMMA"), 
-                  br(), "Fonction de répartition :", textOutput("repartGAMMA") , align = "center"
-                )
                 
          ),
          
-         column(width = 2,
-                box(
-                  title = "Mesure de risques", width = NULL, solidHeader = TRUE, status = "success",
-                  numericInput('kNORM', '$$\\kappa$$', value = 0.99, width ='50%'), br(), "Value at Risk :", textOutput("VaRGAMMA"), 
-                  br(), "Tail Value at Risk :", textOutput("TVaRGAMMA") , align = "center"
+         column(width =2,
+                boxPlus(
+                    title = "Mesure de risques", width = NULL, solidHeader = TRUE, status = "success",
+                    tags$style(" * {font-size:20px;}"), # grosseur du tezte
+                    numericInput('kGAMMA', '$$\\kappa$$', value = 0.99, step = 0.005), 
+                    uiOutput("VaRGAMMA"), 
+                    uiOutput("TVaRGAMMA"), 
+                    align = "center"
                 )
          ),
          
@@ -176,19 +193,26 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
 ## Serveur
 server <- function(input, output) 
 {
-  # SERVEUR LOI NORMALE
-  {
+    # SERVEUR LOI NORMALE
+    {
   muNORM <- reactive({input$muNORM})
   
   sigma2NORM <- reactive({input$sigmaNORM})
 
   densityNORM <- reactive({format(dnorm(input$xNORM, muNORM(), sqrt(sigma2NORM())), nsmall = 6)})
+  
   repartNORM <- reactive({format(pnorm(input$xNORM, muNORM(), sqrt(sigma2NORM())), nsmall = 6)})
+  
   VaRNORM <- reactive({format(qnorm(input$kNORM, muNORM(), sqrt(sigma2NORM())), nsmall = 6)})
+  
   TVaRNORM <- reactive({format(muNORM() + (1/(1 - input$kNORM)) * sqrt(sigma2NORM()/(2*pi)) * exp(-qnorm(input$kNORM, muNORM(), sqrt(sigma2NORM()))/2), nsmall = 6)})
+  
   EspTronqNORM <- reactive({muNORM() * pnorm((input$dNORM - muNORM())/sqrt(sigma2NORM()), 0, 1) - sqrt(sigma2NORM()/ 2 * pi) * exp(-(input$dNORM - muNORM())^2/2 * sigma2NORM())})
+  
   StopLossNORM <- reactive({(muNORM() + input$dNORM) * (1 - pnorm((input$dNORM - muNORM())/sqrt(sigma2NORM()), 0, 1)) - sqrt(sigma2NORM()/ 2 * pi) * exp(-(input$dNORM - muNORM())^2/2 * sigma2NORM())})
+  
   EspLimNORM <- reactive({muNORM() * pnorm((input$dNORM - muNORM())/sqrt(sigma2NORM()), 0, 1) - sqrt(sigma2NORM()/ 2 * pi)* exp(-(input$dNORM - muNORM())^2/2 * sigma2NORM()) + input$dNORM * (1 - pnorm((input$dNORM - muNORM())/sqrt(sigma2NORM()), 0, 1))})
+  
   ExcesMoyNORM <- reactive({muNORM() + input$dNORM - 1/(1 - pnorm((input$dNORM - muNORM())/sqrt(sigma2NORM()), 0, 1)) * sqrt(sigma2NORM()/ 2 * pi)* exp(-(input$dNORM - muNORM())^2/(2 * sigma2NORM()))})
   
   output$meanNORM <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
@@ -236,6 +260,78 @@ server <- function(input, output)
   ))})
   
   }
+    
+    # SERVEUR LOI NORMALE
+    {
+        betaGAMMA <- reactive({input$betaGAMMA})
+        
+        alphaGAMMA <- reactive({input$alphaGAMMA})
+        
+        densityGAMMA <- reactive({format(dgamma(input$xGAMMA, alphaGAMMA(), betaGAMMA()), nsmall = 6)})
+        
+        repartGAMMA <- reactive({format(pgamma(input$xGAMMA, alphaGAMMA(), betaGAMMA()), nsmall = 6)})
+        
+        VaRGAMMA <- reactive({format(qgamma(input$kGAMMA, alphaGAMMA(), betaGAMMA()), nsmall = 6)})
+        
+        TVaRGAMMA <- reactive({format((alphaGAMMA()/betaGAMMA()) * (1/(1 - input$kGAMMA)) * pgamma(VaRGAMMA(), alphaGAMMA() + 1, betaGAMMA(), lower.tail = F), nsmall = 6)})
+        
+        EspTronqGAMMA <- reactive({(alphaGAMMA()/betaGAMMA()) * pgamma(input$dGAMMA, alphaGAMMA() + 1, betaGAMMA())})
+        
+        StopLossGAMMA <- reactive({(alphaGAMMA()/betaGAMMA()) * pgamma(input$dGAMMA, alphaGAMMA() + 1, betaGAMMA(), lower.tail = F) - input$dGAMMA * pgamma(input$dGAMMA, alphaGAMMA(), betaGAMMA(), lower.tail = F)})
+        
+        EspLimGAMMA <- reactive({(alphaGAMMA()/betaGAMMA()) * pgamma(input$dGAMMA, alphaGAMMA() + 1, betaGAMMA()) + input$dGAMMA * pgamma(input$dGAMMA, alphaGAMMA(), betaGAMMA(), lower.tail = F)})
+        
+        ExcesMoyGAMMA <- reactive({(alphaGAMMA()/betaGAMMA()) * (pgamma(input$dGAMMA, alphaGAMMA() + 1, betaGAMMA(), lower.tail = F))/(pgamma(input$dGAMMA, alphaGAMMA(), betaGAMMA(), lower.tail = F)) - input$dGAMMA})
+        
+        meanGAMMA <- reactive({(alphaGAMMA()/betaGAMMA())})
+        
+        varGAMMA <- reactive({(alphaGAMMA()/(betaGAMMA()^2))})
+        
+        output$meanGAMMA <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
+                                                          meanGAMMA()
+        ))})
+        
+        output$varGAMMA <- renderUI({withMathJax(sprintf("$$Var(X) = %s$$", 
+                                                         varGAMMA()
+        ))})
+        
+        output$densityGAMMA <- renderUI({withMathJax(sprintf("$$f_{X}(%s) = %s$$", 
+                                                            input$xGAMMA,
+                                                            densityGAMMA()
+        ))})
+        output$repartGAMMA <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$", 
+                                                           input$xGAMMA,
+                                                           repartGAMMA()
+        ))})
+        output$VaRGAMMA <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$", 
+                                                        input$kGAMMA,
+                                                        VaRGAMMA()
+        ))})
+        output$TVaRGAMMA <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$", 
+                                                         input$kGAMMA,
+                                                         TVaRGAMMA()
+        ))})
+        output$EspTronqGAMMA <- renderUI({withMathJax(sprintf("$$E[X \\times 1_{\\{X \\leqslant %s\\}}] = %.4f$$", 
+                                                             input$dGAMMA,
+                                                             EspTronqGAMMA()
+        ))})
+        
+        output$StopLossGAMMA <- renderUI({withMathJax(sprintf("$$ \\pi_{%s}(X) = %.4f$$", 
+                                                             input$dGAMMA,
+                                                             StopLossGAMMA()
+        ))})
+        
+        output$EspLimGAMMA <- renderUI({withMathJax(sprintf("$$E[\\text{min}(X;{%s})] = %.4f$$", 
+                                                           input$dGAMMA,
+                                                           EspLimGAMMA()
+        ))})
+        
+        output$ExcesMoyGAMMA <- renderUI({withMathJax(sprintf("$$e_{%s}(X) = %.4f$$", 
+                                                             input$dGAMMA,
+                                                             ExcesMoyGAMMA()
+        ))})
+        
+    }
 }
 
 
