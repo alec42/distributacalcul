@@ -1,7 +1,7 @@
 # Setup
 title:        Calculatrice de distributions
 tagline:      Une calculatrice dynamique pour vos problèmes de statistique et de probabilités
-baseurl:      "https://github.com/alec42/distributacalcul"
+baseurl:      "https://alec42.github.io/distributacalcul/"
 paginate:     1
 locale:       "fr"
 
