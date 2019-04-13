@@ -250,7 +250,8 @@ server <- function(input, output)
   
   output$FxNORM <- renderPlotly({ggplot(data = data.frame(x = c(muNORM() - 4 * sqrt(sigma2NORM()),muNORM() + 4 * sqrt(sigma2NORM()))), 
                    aes(x)) + stat_function(fun = dnorm, args = list(mean = muNORM(), sd = sqrt(sigma2NORM()))) + ylab("f(x)") + theme_classic() + 
-                  stat_function(fun = dnorm, xlim = c(muNORM() - 4 * sqrt(sigma2NORM()), input$xNORM), geom = "area", fill = "red", alpha = 0.7)
+                  stat_function(fun = dnorm, args = list(mean = muNORM(), sd = sqrt(sigma2NORM())), 
+                  xlim = c(muNORM() - 4 * sqrt(sigma2NORM()), input$xNORM), geom = "area", fill = "red", alpha = 0.7)
                   
                   })
                   
@@ -263,9 +264,9 @@ server <- function(input, output)
         
         alphaGAMMA <- reactive({input$alphaGAMMA})
         
-        densityGAMMA <- reactive({format(dgamma(input$xGAMMA, alphaGAMMA(), betaGAMMA()), nsmall = 6)})
+        densityGAMMA <- reactive({format(dgamma(input$xGAMMA, alphaGAMMA(), betaGAMMA()),scientific = F,  nsmall = 6)})
         
-        repartGAMMA <- reactive({format(pgamma(input$xGAMMA, alphaGAMMA(), betaGAMMA()), nsmall = 6)})
+        repartGAMMA <- reactive({format(pgamma(input$xGAMMA, alphaGAMMA(), betaGAMMA()), nsmall = 6, scientific = F)})
         
         VaRGAMMA <- reactive({format(qgamma(input$kGAMMA, alphaGAMMA(), betaGAMMA()), nsmall = 6)})
         VaRTVARGAMMA <- reactive({qgamma(input$kGAMMA, alphaGAMMA(), betaGAMMA())})
@@ -329,7 +330,9 @@ server <- function(input, output)
         ))})
         
         output$FxGAMMA <- renderPlotly({ggplot(data = data.frame(x = c(0,meanGAMMA() + 3 * sqrt(varianceGAMMA()))), 
-                                              aes(x)) + stat_function(fun = dgamma, args = list(shape = alphaGAMMA(), rate = betaGAMMA())) + ylab("f(x)") + theme_classic()
+                                              aes(x)) + stat_function(fun = dgamma, args = list(shape = alphaGAMMA(), rate = betaGAMMA())) + ylab("f(x)") + theme_classic() +
+          stat_function(fun = dgamma, args = list(shape = alphaGAMMA(), rate = betaGAMMA()), 
+                        xlim = c(0, input$xGAMMA), geom = "area", fill = "red", alpha = 0.7)
           
         })
     }
