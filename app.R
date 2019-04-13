@@ -22,14 +22,16 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
     sidebarMenu(id = "tabs",
                 menuItem("Lois continues",
                          menuSubItem("Loi normale", tabName = "Normale", icon = icon("neos")),
-                         menuItem("Loi gamma", icon = icon("gofore"), tabName = "gamma")
+                         menuSubItem("Loi gamma", icon = icon("gofore"), tabName = "gamma")
                 ),
                 menuItem("Lois discrètes"#,
                          # menuSubItem("Loi binomiale", tabName = "Binomiale", icon = icon("neos")), # exemple d'utilisation, pas défini
                 ),
    br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), # Espace avec la section À propos
-  menuItem("Code source", href = "https://github.com/alec42/distributacalcul.git"),
-  menuItem("À propos", icon = icon("user-tie"), tabName = "about")
+   menuItem("À propos",
+            menuSubItem("Développeurs", icon = icon("user-tie"), tabName = "about"),
+            menuSubItem("GitHub", href = "https://github.com/alec42/distributacalcul.git")
+   )
   ))
   },
   
@@ -94,6 +96,7 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
              numericInput('kNORM', '$$\\kappa$$', value = 0.99, step = 0.005), 
              uiOutput("VaRNORM"), 
              uiOutput("TVaRNORM"), 
+             
              align = "center"
            )
     )
@@ -236,8 +239,8 @@ server <- function(input, output)
                                        TVaRNORM()
   ))})
   output$EspTronqNORM <- renderUI({withMathJax(sprintf("$$E[X \\times 1_{\\{X \\leqslant %s\\}}] = %.4f$$", 
-  input$dNORM,
-  EspTronqNORM()
+                                                       input$dNORM,
+                                                       EspTronqNORM()
   ))})
   
   output$StopLossNORM <- renderUI({withMathJax(sprintf("$$ \\pi_{%s}(X) = %.4f$$", 
@@ -257,11 +260,10 @@ server <- function(input, output)
   
   output$FxNORM <- renderPlotly({ggplot(data = data.frame(x = c(muNORM() - 4 * sqrt(sigma2NORM()),muNORM() + 4 * sqrt(sigma2NORM()))), 
                    aes(x)) + stat_function(fun = dnorm, args = list(mean = muNORM(), sd = sqrt(sigma2NORM()))) + ylab("f(x)") + theme_classic() + 
-                  stat_function(fun = dnorm, args = list(mean = muNORM(), sd = sqrt(sigma2NORM())), 
+stat_function(fun = dnorm, args = list(mean = muNORM(), sd = sqrt(sigma2NORM())), 
                   xlim = c(muNORM() - 4 * sqrt(sigma2NORM()), input$xNORM), geom = "area", fill = "red", alpha = 0.7)
                   
                   })
-                  
   
   }
     
