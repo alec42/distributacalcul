@@ -1,9 +1,9 @@
 # Setup
-title:        Project or Site name
-tagline:      A responsive theme for your project on GitHub Pages
+title:        Calculatrice de distributions
+tagline:      Une calculatrice dynamique pour vos problèmes de statistique et de probabilités
 baseurl:      "https://alec42.github.io/distributacalcul/"
 paginate:     1
-locale:       "en"
+locale:       "fr"
 
 # About/contact
 author:
