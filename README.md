@@ -1,5 +1,7 @@
 # Calculatrice de distributions
 
+voir: https://alec42.shinyapps.io/distributacalcul/ ou https://madev34.shinyapps.io/projet/
+
 ## Calculatrice des: 
 
 i) Moments
