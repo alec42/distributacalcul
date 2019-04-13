@@ -16,7 +16,7 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
   
   # Paneau Latéral                  
   {
-  dashboardSidebar(collapsed = T, sidebarMenu(
+  dashboardSidebar(collapsed = F, sidebarMenu(
   
   menuItem("Loi normale", tabName = "Normale", icon = icon("neos")),
   menuItem("Loi gamma", icon = icon("gofore"), tabName = "gamma"),
@@ -119,7 +119,7 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
                 box(
                     title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
                     uiOutput("meanGAMMA"), 
-                    uiOutput("varGAMMA"), 
+                    uiOutput("varianceGAMMA"), 
                     align = "center"
                 ),box(
                     title = "Autres Moments", width = NULL, solidHeader = TRUE, status = "warning", 
@@ -272,8 +272,9 @@ server <- function(input, output)
         repartGAMMA <- reactive({format(pgamma(input$xGAMMA, alphaGAMMA(), betaGAMMA()), nsmall = 6)})
         
         VaRGAMMA <- reactive({format(qgamma(input$kGAMMA, alphaGAMMA(), betaGAMMA()), nsmall = 6)})
+        VaRTVARGAMMA <- reactive({qgamma(input$kGAMMA, alphaGAMMA(), betaGAMMA())})
         
-        TVaRGAMMA <- reactive({format((alphaGAMMA()/betaGAMMA()) * (1/(1 - input$kGAMMA)) * pgamma(VaRGAMMA(), alphaGAMMA() + 1, betaGAMMA(), lower.tail = F), nsmall = 6)})
+        TVaRGAMMA <- reactive({format((alphaGAMMA()/betaGAMMA()) * (1/(1 - input$kGAMMA)) * pgamma(VaRTVARGAMMA(), alphaGAMMA() + 1, betaGAMMA(), lower.tail = F), nsmall = 6)})
         
         EspTronqGAMMA <- reactive({(alphaGAMMA()/betaGAMMA()) * pgamma(input$dGAMMA, alphaGAMMA() + 1, betaGAMMA())})
         
@@ -285,14 +286,14 @@ server <- function(input, output)
         
         meanGAMMA <- reactive({(alphaGAMMA()/betaGAMMA())})
         
-        varGAMMA <- reactive({(alphaGAMMA()/(betaGAMMA()^2))})
+        varianceGAMMA <- reactive({(alphaGAMMA()/(betaGAMMA()^2))})
         
         output$meanGAMMA <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
                                                           meanGAMMA()
         ))})
         
-        output$varGAMMA <- renderUI({withMathJax(sprintf("$$Var(X) = %s$$", 
-                                                         varGAMMA()
+        output$varianceGAMMA <- renderUI({withMathJax(sprintf("$$Var(X) = %s$$", 
+                                                              varianceGAMMA()
         ))})
         
         output$densityGAMMA <- renderUI({withMathJax(sprintf("$$f_{X}(%s) = %s$$", 
