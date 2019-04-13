@@ -45,6 +45,7 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
     
     ## Moments
     column(width = 2,
+           tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
            box(
              title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
              uiOutput("meanNORM"), 
@@ -67,6 +68,7 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
     column(width = 2,
            box(
              title = "Fonctions", width = NULL, solidHeader = TRUE, 
+             tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
              status = "danger", # pour couleur de la boite, diff couleur pour statut
              numericInput('xNORM', '$$x$$', value = 0), 
              uiOutput("densityNORM"), 
@@ -76,11 +78,11 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
            
     ),
     
-    column(width = 2,
-           box(
+    column(width =2,
+           boxPlus(
              title = "Mesure de risques", width = NULL, solidHeader = TRUE, status = "success",
-             
-             numericInput('kNORM', '$$\\kappa$$', value = 0.99), 
+             tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
+             numericInput('kNORM', '$$\\kappa$$', value = 0.99, step = 0.005), 
              uiOutput("VaRNORM"), 
              uiOutput("TVaRNORM"), 
              align = "center"
