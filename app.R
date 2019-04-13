@@ -18,7 +18,6 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
   # Paneau Latéral                  
   {
   dashboardSidebar(collapsed = F, sidebarMenu(
-  
   menuItem("Loi normale", tabName = "Normale", icon = icon("neos")),
   menuItem("Loi gamma", icon = icon("gofore"), tabName = "gamma"),
   menuItem("À propos", icon = icon("user-tie"), tabName = "about")))
@@ -34,25 +33,25 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
         # LOI NORMALE
         {tabItem(tabName = "Normale",
         fluidPage(
-          titlePanel("Loi Normale"), withMathJax(), helpText("\\(X \\sim\\mathcal{N}(\\mu, \\sigma^2)\\)"), 
-          align = "center"),
-
-          fluidRow(column(width = 2, 
-            box(title = "Paramètres", status = "primary", solidHeader = T, width = NULL,
+          titlePanel("Loi Normale"), withMathJax(), helpText("\\(X \\sim\\mathcal{N}(\\mu, \\sigma^2)\\)"), align = "center"),
+          fluidRow(
+    column(width = 2, 
+           box(title = "Paramètres", status = "primary", solidHeader = T, width = NULL,
                numericInput('muNORM', withMathJax('$$\\mu$$'), value = 0),
                numericInput('sigmaNORM', '$$\\sigma^2$$', value = 1)),
-            
-            align = "center"
+           box(title = "Notes supplémentaires", status = "info", solidHeader = T, width = NULL, collapsible = T, collapsed = T,
+               p("à venir")),
+           align = "center"
     ),
     
     ## Moments
     column(width = 3,
-           tags$style(" * {font-size:20px;}"), # grosseur du tezte
+           tags$style(" * {font-size:20px}"), # grosseur du tezte
            box(
              title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
              uiOutput("meanNORM"), 
-             uiOutput("varNORM")), 
-             align = "center",
+             uiOutput("varNORM"), 
+             align = "center"),
            
            box(
              title = "Autres Moments", width = NULL, solidHeader = TRUE, status = "warning", 
@@ -62,7 +61,7 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
              uiOutput("EspLimNORM"), 
              uiOutput("StopLossNORM"), 
              uiOutput("ExcesMoyNORM")),
-             align = "center"
+           align = "center"
     ),
     
     ## Fonctions
