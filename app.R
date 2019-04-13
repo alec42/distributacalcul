@@ -18,11 +18,19 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
   # Paneau Latéral                  
   {
   dashboardSidebar(collapsed = F, 
-  sidebarMenu(sidebarSearchForm(textId = "searchbar", buttonId = "search", label = "Recherche"), #Ajout d'une search bar (À retravailler)
-  menuItem("Loi normale", tabName = "Normale", icon = icon("neos")),
-  menuItem("Loi gamma", icon = icon("gofore"), tabName = "gamma"), 
-  br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), # Espace avec la section À propos
-  menuItem("À propos", icon = icon("user-tie"), tabName = "about")))
+                   sidebarSearchForm(textId = "searchbar", buttonId = "search", label = "Recherche"), #Ajout d'une search bar (À retravailler)
+    sidebarMenu(id = "tabs",
+                menuItem("Lois continues",
+                         menuSubItem("Loi normale", tabName = "Normale", icon = icon("neos")),
+                         menuItem("Loi gamma", icon = icon("gofore"), tabName = "gamma")
+                ),
+                menuItem("Lois discrètes"#,
+                         # menuSubItem("Loi binomiale", tabName = "Binomiale", icon = icon("neos")), # exemple d'utilisation, pas défini
+                ),
+   br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), # Espace avec la section À propos
+  menuItem("Code source", href = "https://github.com/alec42/distributacalcul.git"),
+  menuItem("À propos", icon = icon("user-tie"), tabName = "about")
+  ))
   },
   
       dashboardBody(
@@ -172,7 +180,7 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
     src = "alec.jpg",
     color = "blue", collapsible = F, "")
   )
-      }
+        }
 
 )))
 }
