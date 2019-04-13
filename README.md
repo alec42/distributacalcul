@@ -1,6 +1,6 @@
 # Calculatrice de distributions
 
-- Calculatrice des: 
+## Calculatrice des: 
 
 i) Moments
 
@@ -23,11 +23,11 @@ ix) Espérance limitée
 
 x)...
 
-Distributions
+## Distributions
 
 i) Normale
 
-À venir continue:
+### À venir continue:
 
 ii) Gamma
 
@@ -59,7 +59,7 @@ xv) Burr
 
 xvi) Student
 
-À venir discret:
+### À venir discret:
 
 xvii) Poisson
 
