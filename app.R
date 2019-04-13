@@ -33,25 +33,25 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
         # LOI NORMALE
         {tabItem(tabName = "Normale",
         fluidPage(
-          titlePanel("Loi Normale"), withMathJax(), helpText("\\(X \\sim\\mathcal{N}(\\mu, \\sigma^2)\\)"), 
-          align = "center"),
-
-          fluidRow(column(width = 2, 
-            box(title = "Paramètres", status = "primary", solidHeader = T, width = NULL,
+          titlePanel("Loi Normale"), withMathJax(), helpText("\\(X \\sim\\mathcal{N}(\\mu, \\sigma^2)\\)"), align = "center"),
+          fluidRow(
+    column(width = 2, 
+           box(title = "Paramètres", status = "primary", solidHeader = T, width = NULL,
                numericInput('muNORM', withMathJax('$$\\mu$$'), value = 0),
                numericInput('sigmaNORM', '$$\\sigma^2$$', value = 1)),
-            
-            align = "center"
+           box(title = "Notes supplémentaires", status = "info", solidHeader = T, width = NULL, collapsible = T, collapsed = T,
+               p("à venir")),
+           align = "center"
     ),
     
     ## Moments
     column(width = 3,
-           tags$style(" * {font-size:20px;}"), # grosseur du tezte
+           tags$style(" * {font-size:20px}"), # grosseur du tezte
            box(
              title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
              uiOutput("meanNORM"), 
-             uiOutput("varNORM")), 
-             align = "center",
+             uiOutput("varNORM"), 
+             align = "center"),
            
            box(
              title = "Autres Moments", width = NULL, solidHeader = TRUE, status = "warning", 
@@ -61,7 +61,7 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
              uiOutput("EspLimNORM"), 
              uiOutput("StopLossNORM"), 
              uiOutput("ExcesMoyNORM")),
-             align = "center"
+           align = "center"
     ),
     
     ## Fonctions
@@ -247,11 +247,10 @@ server <- function(input, output)
                                                      ExcesMoyNORM()
   ))})
   
-  output$FxNORM <- renderPlotly({ggplot(data = data.frame(x = c(muNORM() - 4 * sqrt(sigma2NORM()),muNORM() + 4 * sqrt(sigma2NORM()))), 
-                   aes(x)) + stat_function(fun = dnorm, args = list(mean = muNORM(), sd = sqrt(sigma2NORM()))) + ylab("f(x)") + theme_classic() + 
-                  stat_function(fun = dnorm, xlim = c(muNORM() - 4 * sqrt(sigma2NORM()), input$xNORM), geom = "area", fill = "red", alpha = 0.7)
-                  
-                  })
+  output$FxNORM <- renderPlotly({ggplot(data = data.frame(x = c(muNORM() - 4 * sqrt(sigma2NORM()),
+                                                                muNORM() + 4 * sqrt(sigma2NORM()))), 
+                                        aes(x)) + stat_function(fun = dnorm, args = list(mean = muNORM(), sd = sqrt(sigma2NORM()))) + ylab("f(x)") + theme_classic() + stat_function(fun = dnorm, xlim = c(muNORM() - 4 * sqrt(sigma2NORM()), input$xNORM), geom = "area", fill = "red", alpha = 0.7)
+      })
                   
   
   }
