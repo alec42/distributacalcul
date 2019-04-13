@@ -2,4 +2,4 @@
 
 Pour site voir: https://alec42.github.io/distributacalcul/
 
-Pour calculatrice voir: https://alec42.shinyapps.io/distributacalcul/
+Pour calculatrice voir: https://alec42.shinyapps.io/distributacalcul/ ou https://madev34.shinyapps.io/projet/
