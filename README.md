@@ -74,3 +74,9 @@ xxi) Géometrique
 xxii) Logarithmique
 
 xxiii) Hypergéometrique
+
+### potentiellement:
+
+BNComp
+BComp
+PComp
