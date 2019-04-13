@@ -8,7 +8,7 @@ locale:       "fr"
 # About/contact
 author:
   name:       Alec James van Rassel et Marc-André Devost
-  url:        https://alec42.github.io/distributacalcul/
+  url:        https://alec42.shinyapps.io/distributacalcul/
 
 # Gems
 gems:
