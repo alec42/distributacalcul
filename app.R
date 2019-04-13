@@ -17,7 +17,6 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
   # Paneau Latéral                  
   {
   dashboardSidebar(collapsed = F, sidebarMenu(
-  
   menuItem("Loi normale", tabName = "Normale", icon = icon("neos")),
   menuItem("Loi gamma", icon = icon("gofore"), tabName = "gamma"),
   menuItem("À propos", icon = icon("user-tie"), tabName = "about")))
