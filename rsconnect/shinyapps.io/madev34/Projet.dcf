@@ -1,0 +1,13 @@
+name: Projet
+title: Projet
+username:
+account: madev34
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 859496
+bundleId: 2007724
+url: https://madev34.shinyapps.io/projet/
+when: 1555134778.59413
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: README.md
