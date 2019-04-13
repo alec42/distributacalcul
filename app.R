@@ -17,9 +17,11 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
   
   # Paneau Latéral                  
   {
-  dashboardSidebar(collapsed = F, sidebarMenu(
+  dashboardSidebar(collapsed = F, 
+  sidebarMenu(sidebarSearchForm(textId = "searchbar", buttonId = "search", label = "Recherche"), #Ajout d'une search bar (À retravailler)
   menuItem("Loi normale", tabName = "Normale", icon = icon("neos")),
-  menuItem("Loi gamma", icon = icon("gofore"), tabName = "gamma"),
+  menuItem("Loi gamma", icon = icon("gofore"), tabName = "gamma"), 
+  br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), # Espace avec la section À propos
   menuItem("À propos", icon = icon("user-tie"), tabName = "about")))
   },
   
