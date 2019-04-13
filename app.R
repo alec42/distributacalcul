@@ -6,6 +6,7 @@ library(shinydashboard)
 library(shinydashboardPlus)
 library(ggplot2)
 library(rsconnect)
+library(plotly)
 }
 source(file = "functions.R")
 
@@ -44,14 +45,14 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
     ),
     
     ## Moments
-    column(width = 2,
+    column(width = 3,
            tags$style(" * {font-size:20px;}"), # grosseur du tezte
            box(
              title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
              uiOutput("meanNORM"), 
-             uiOutput("varNORM"), 
-             align = "center"
-           ),
+             uiOutput("varNORM")), 
+             align = "center",
+           
            box(
              title = "Autres Moments", width = NULL, solidHeader = TRUE, status = "warning", 
              numericInput('dNORM', withMathJax('$$d$$'), value = 0, width = "20px"),
@@ -59,40 +60,33 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
              uiOutput("EspTronqNORM"), 
              uiOutput("EspLimNORM"), 
              uiOutput("StopLossNORM"), 
-             uiOutput("ExcesMoyNORM"),
-             align = "left", 
-             align = "center")
+             uiOutput("ExcesMoyNORM")),
+             align = "center"
     ),
     
     ## Fonctions
-    column(width = 2,
+    column(width = 3,
            box(
              title = "Fonctions", width = NULL, solidHeader = TRUE, 
              tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
              status = "danger", # pour couleur de la boite, diff couleur pour statut
              numericInput('xNORM', '$$x$$', value = 0), 
              uiOutput("densityNORM"), 
-             uiOutput("repartNORM"), 
+             uiOutput("repartNORM"),
+             plotlyOutput("FxNORM"),
              align = "center"
            )
            
     ),
     
-    column(width =2,
+    column(width =3,
            boxPlus(
              title = "Mesure de risques", width = NULL, solidHeader = TRUE, status = "success",
-             tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
+             tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
              numericInput('kNORM', '$$\\kappa$$', value = 0.99, step = 0.005), 
              uiOutput("VaRNORM"), 
              uiOutput("TVaRNORM"), 
              align = "center"
-           )
-    ),
-    
-    column(width = 2,
-           box(
-             title = "Notes supplémentaires", width = NULL, solidHeader = TRUE, status = "info", collapsible = T, collapsed = T,
-             "À compléter"
            )
     )
   )
@@ -106,21 +100,22 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
          
          fluidRow(column(width = 2, 
                          box(title = "Paramètres", status = "primary", solidHeader = T, width = NULL,
-                             numericInput('alphaGAMMA', withMathJax('$$\\alpha$$'), value = 0),
-                             numericInput('betaGAMMA', '$$\\beta$$', value = 1)),
+                             numericInput('alphaGAMMA', withMathJax('$$\\alpha$$'), value = 1),
+                             numericInput('betaGAMMA', '$$\\beta$$', value = 0.1)),
                          
                          align = "center"
          ),
          
          ## Moments
-         column(width = 2,
+         column(width = 3,
                 tags$style(" * {font-size:20px;}"), # grosseur du tezte
                 box(
                     title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
                     uiOutput("meanGAMMA"), 
                     uiOutput("varianceGAMMA"), 
                     align = "center"
-                ),box(
+                ),
+                box(
                     title = "Autres Moments", width = NULL, solidHeader = TRUE, status = "warning", 
                     numericInput('dGAMMA', withMathJax('$$d$$'), value = 0, width = "20px"),
                     # radioButtons('equalityGAMMA', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
@@ -133,20 +128,21 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
          ),
          
          ## Fonctions
-         column(width = 2,
+         column(width = 3,
                 box(
                     title = "Fonctions", width = NULL, solidHeader = TRUE, 
                     tags$style(" * {font-size:20px;}"), # grosseur du tezte
                     status = "danger", # pour couleur de la boite, diff couleur selon le statut
                     numericInput('xGAMMA', '$$x$$', value = 0), 
                     uiOutput("densityGAMMA"), 
-                    uiOutput("repartGAMMA"), 
+                    uiOutput("repartGAMMA"),
+                    plotlyOutput("FxGAMMA"),
                     align = "center"
                 )
                 
          ),
          
-         column(width =2,
+         column(width = 3,
                 boxPlus(
                     title = "Mesure de risques", width = NULL, solidHeader = TRUE, status = "success",
                     tags$style(" * {font-size:20px;}"), # grosseur du tezte
@@ -155,15 +151,8 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
                     uiOutput("TVaRGAMMA"), 
                     align = "center"
                 )
-         ),
-         
-         column(width = 2,
-                box(
-                  title = "Notes supplémentaires", width = NULL, solidHeader = TRUE, status = "info", collapsible = T, collapsed = T,
-                  "À compléter"
-                )
          )
-         )
+  )
 )},
         
 
@@ -258,9 +247,16 @@ server <- function(input, output)
                                                      ExcesMoyNORM()
   ))})
   
+  output$FxNORM <- renderPlotly({ggplot(data = data.frame(x = c(muNORM() - 4 * sqrt(sigma2NORM()),muNORM() + 4 * sqrt(sigma2NORM()))), 
+                   aes(x)) + stat_function(fun = dnorm, args = list(mean = muNORM(), sd = sqrt(sigma2NORM()))) + ylab("f(x)") + theme_classic() + 
+                  stat_function(fun = dnorm, xlim = c(muNORM() - 4 * sqrt(sigma2NORM()), input$xNORM), geom = "area", fill = "red", alpha = 0.7)
+                  
+                  })
+                  
+  
   }
     
-    # SERVEUR LOI NORMALE
+    # SERVEUR LOI GAMMA
     {
         betaGAMMA <- reactive({input$betaGAMMA})
         
@@ -331,6 +327,10 @@ server <- function(input, output)
                                                              ExcesMoyGAMMA()
         ))})
         
+        output$FxGAMMA <- renderPlotly({ggplot(data = data.frame(x = c(0,meanGAMMA() + 3 * sqrt(varianceGAMMA()))), 
+                                              aes(x)) + stat_function(fun = dgamma, args = list(shape = alphaGAMMA(), rate = betaGAMMA())) + ylab("f(x)") + theme_classic()
+          
+        })
     }
 }
 
