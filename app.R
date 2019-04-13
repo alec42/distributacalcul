@@ -30,6 +30,7 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
    br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), # Espace avec la section À propos
    menuItem("À propos",
             menuSubItem("Développeurs", icon = icon("user-tie"), tabName = "about"),
+            menuSubItem("Site", href = "https://alec42.github.io/distributacalcul/"),
             menuSubItem("GitHub", href = "https://github.com/alec42/distributacalcul.git")
    )
   ))
