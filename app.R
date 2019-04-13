@@ -133,7 +133,7 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
                     title = "Fonctions", width = NULL, solidHeader = TRUE, 
                     tags$style(" * {font-size:20px;}"), # grosseur du tezte
                     status = "danger", # pour couleur de la boite, diff couleur selon le statut
-                    numericInput('xGAMMA', '$$x$$', value = 0), 
+                    numericInput('xGAMMA', '$$x$$', value = 10), 
                     uiOutput("densityGAMMA"), 
                     uiOutput("repartGAMMA"),
                     plotlyOutput("FxGAMMA"),
