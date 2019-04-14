@@ -50,7 +50,7 @@ source(file = "functions.R")
       tabItems(
           
     {
-    ## LOI NORMALE ----
+    ## Loi Normale UI ----
         tabItem(tabName = "Normale",
                 fluidPage(
                     titlePanel("Loi Normale"),
@@ -144,7 +144,7 @@ source(file = "functions.R")
     },
     
     {
-    #### Loi Gamma ####
+    #### Loi Gamma UI ####
         tabItem(
             tabName = "gamma",
             fluidPage(
@@ -248,7 +248,7 @@ source(file = "functions.R")
     },
     
     {
-    ## À PROPOS ----
+    ## À propos ----
         tabItem(
             tabName = "about",
             h2("Nous contacter "),
@@ -282,11 +282,10 @@ source(file = "functions.R")
 }
 
 
-# Serveur ----
-server <- function(input, output) 
+server <- function(input, output)
 {
-    # SERVEUR LOI NORMALE 
     {
+    ## Loi Normale Serveur ----
         muNORM <- reactive({input$muNORM})
         
         sigma2NORM <- reactive({input$sigmaNORM})
@@ -398,10 +397,10 @@ server <- function(input, output)
                                        )
         })
   
-  }
+    }
     
-    # SERVEUR LOI GAMMA
     {
+    ## Loi Gamma Serveur ----
         betaGAMMA <- reactive({input$betaGAMMA})
         
         alphaGAMMA <- reactive({input$alphaGAMMA})
