@@ -8,7 +8,7 @@
     library(rsconnect)
     library(plotly)
 }
-source(file = "myUI.R", local = T)
+source(file = "myUI.R", local = T, encoding = "UTF-8")
 source(file = "myserver.R")
 source(file = "functions.R")
 
