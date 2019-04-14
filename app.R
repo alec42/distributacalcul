@@ -20,18 +20,18 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
   dashboardSidebar(collapsed = F, 
                    sidebarSearchForm(textId = "searchbar", buttonId = "search", label = "Recherche"), #Ajout d'une search bar (À retravailler)
     sidebarMenu(id = "tabs",
-                menuItem("Lois continues",
+                menuItem("Lois continues", icon = icon("chart-area"),
                          menuSubItem("Loi normale", tabName = "Normale", icon = icon("neos")),
-                         menuSubItem("Loi gamma", icon = icon("gofore"), tabName = "gamma")
+                         menuSubItem(" Loi gamma", icon = icon("google"), tabName = "gamma")
                 ),
-                menuItem("Lois discrètes"#,
+                menuItem("Lois discrètes", icon = icon("chart-bar")#,
                          # menuSubItem("Loi binomiale", tabName = "Binomiale", icon = icon("neos")), # exemple d'utilisation, pas défini
                 ),
    br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), # Espace avec la section À propos
-   menuItem("À propos",
-            menuSubItem("Développeurs", icon = icon("user-tie"), tabName = "about"),
-            menuSubItem("Site", href = "https://alec42.github.io/distributacalcul/"),
-            menuSubItem("GitHub", href = "https://github.com/alec42/distributacalcul.git")
+   menuItem("À propos", icon = icon("info-circle"),
+            menuSubItem(" Développeurs", icon = icon("user-tie"), tabName = "about"),
+            menuSubItem(" Site du projet", icon = icon("compass"), href = "https://alec42.github.io/distributacalcul/"),
+            menuSubItem(" GitHub", icon = icon("github"), href = "https://github.com/alec42/distributacalcul.git")
    )
   ))
   },
@@ -51,7 +51,7 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
     column(width = 2, 
            box(title = "Paramètres", status = "primary", solidHeader = T, width = NULL,
                numericInput('muNORM', withMathJax('$$\\mu$$'), value = 0),
-               numericInput('sigmaNORM', '$$\\sigma^2$$', value = 1))
+               numericInput('sigmaNORM', '$$\\sigma^2$$', value = 1)), align = "center"
 
     ),
     
@@ -61,8 +61,8 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
            box(
              title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
              uiOutput("meanNORM"), 
-             uiOutput("varNORM"), 
-             align = "center"),
+             uiOutput("varNORM")), 
+             align = "center",
            
            box(
              title = "Autres Moments", width = NULL, solidHeader = TRUE, status = "warning", 
@@ -71,8 +71,8 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
              uiOutput("EspTronqNORM"), 
              uiOutput("EspLimNORM"), 
              uiOutput("StopLossNORM"), 
-             uiOutput("ExcesMoyNORM")),
-           align = "center"
+             uiOutput("ExcesMoyNORM"),
+           align = "center")
     ),
     
     ## Fonctions
@@ -84,9 +84,9 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
              numericInput('xNORM', '$$x$$', value = 0), 
              uiOutput("densityNORM"), 
              uiOutput("repartNORM"),
-             plotlyOutput("FxNORM"),
+             plotlyOutput("FxNORM")),
              align = "center"
-           )
+
            
     ),
     
@@ -96,10 +96,9 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
              tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
              numericInput('kNORM', '$$\\kappa$$', value = 0.99, step = 0.005), 
              uiOutput("VaRNORM"), 
-             uiOutput("TVaRNORM"), 
+             uiOutput("TVaRNORM")), 
              
              align = "center"
-           )
     )
   )
 )
@@ -124,9 +123,9 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
                 box(
                     title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
                     uiOutput("meanGAMMA"), 
-                    uiOutput("varianceGAMMA"), 
+                    uiOutput("varianceGAMMA")), 
                     align = "center"
-                ),
+                ,
                 box(
                     title = "Autres Moments", width = NULL, solidHeader = TRUE, status = "warning", 
                     numericInput('dGAMMA', withMathJax('$$d$$'), value = 0, width = "20px"),
@@ -148,9 +147,9 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
                     numericInput('xGAMMA', '$$x$$', value = 10), 
                     uiOutput("densityGAMMA"), 
                     uiOutput("repartGAMMA"),
-                    plotlyOutput("FxGAMMA"),
+                    plotlyOutput("FxGAMMA")),
                     align = "center"
-                )
+      
                 
          ),
          
@@ -160,9 +159,8 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
                     tags$style(" * {font-size:20px;}"), # grosseur du tezte
                     numericInput('kGAMMA', '$$\\kappa$$', value = 0.99, step = 0.005), 
                     uiOutput("VaRGAMMA"), 
-                    uiOutput("TVaRGAMMA"), 
+                    uiOutput("TVaRGAMMA")), 
                     align = "center"
-                )
          )
   )
 )},
