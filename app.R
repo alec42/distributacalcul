@@ -60,8 +60,9 @@ source(file = "functions.R")
                 ), 
                 
                 fluidRow(
-                    ### Paramètres Normale 
-                    {column(
+                    {
+                    ### Paramètres Normale ----
+                    column(
                         width = 2,
                         box(
                             title = "Paramètres",
@@ -75,8 +76,9 @@ source(file = "functions.R")
                     )
                     },
                     
-                    ### Moments Normale 
-                    {column(
+                    {
+                    ### Moments Normale  ----
+                    column(
                         width = 3,
                         # tags$style(" * {font-size:40000px}"), # grosseur du tezte
                         box(
@@ -105,8 +107,9 @@ source(file = "functions.R")
                     )
                     },
                     
-                    ### Fonctions Normale 
-                    {column(
+                    {
+                    ### Fonctions Normale ----
+                    column(
                         width = 3,
                         box(
                             title = "Fonctions",
@@ -123,8 +126,9 @@ source(file = "functions.R")
                     )
                     }, 
                     
-                    ### Mesures de risque Normale 
-                    {column(
+                    {
+                    ### Mesures de risque Normale  ----
+                    column(
                         width = 3,
                         boxPlus(
                             title = "Mesure de risques",
@@ -155,8 +159,9 @@ source(file = "functions.R")
             ),
             
             fluidRow(
-                ### Paramètres Gamma 
-                {column(
+                {
+                ### Paramètres Gamma ----
+                column(
                     width = 2,
                     box(
                         title = "Paramètres",
@@ -180,8 +185,9 @@ source(file = "functions.R")
                 )
                 },
                 
-                ### Moments Gamma 
-                {column(
+                {
+                ### Moments Gamma ----
+                column(
                     width = 3,
                     tags$style(" * {font-size:20px;}"), # grosseur du tezte
                     box(
@@ -211,8 +217,9 @@ source(file = "functions.R")
                 )
                 }, 
                 
-                ### Fonctions Gamma 
-                {column(
+                {
+                ### Fonctions Gamma ----
+                column(
                     width = 3,
                     box(
                         title = "Fonctions",
@@ -228,8 +235,9 @@ source(file = "functions.R")
                 )
                 },
                 
-                ### Mesures de risque Gamma 
-                {column(
+                {
+                ### Mesures de risque Gamma ----
+                column(
                     width = 3,
                     boxPlus(
                         title = "Mesure de risques",
@@ -513,7 +521,6 @@ server <- function(input, output)
         })
     }
 }
-
 
 
 shinyApp(ui = ui, server = server)
