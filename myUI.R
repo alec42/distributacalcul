@@ -1,4 +1,4 @@
-source('tabs_UI.R')
+source('tabs_UI.R', encoding = "UTF-8")
 myUI <- shinyUI({
     dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité", titleWidth = 200),
                   

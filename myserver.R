@@ -115,9 +115,10 @@ myserver <- function(input, output, session)
         
     }
     
+  
     {
         ## Loi Gamma Serveur ----
-        betaGAMMA <- reactive({input$betaGAMMA})
+        betaGAMMA <- reactive({if(input$distrchoiceGAMMA == "rate") {input$betaGAMMA} else {1/input$betaGAMMA}})
         
         alphaGAMMA <- reactive({input$alphaGAMMA})
         
@@ -227,10 +228,12 @@ myserver <- function(input, output, session)
                     alpha = 0.7
                 )
         })
-    }
     
-    # SERVEUR LOI BINOMIALE
-    {
+    }
+  
+  
+    {    
+        ## Loi Binomiale Serveur ----
         nBIN <- reactive({input$nBIN})
         
         pBIN <- reactive({input$pBIN})
@@ -306,5 +309,7 @@ myserver <- function(input, output, session)
         # Reactive slider
         observeEvent(input$nBIN,{updateSliderInput(session = session, inputId = "xBIN", max = input$nBIN)
         })
-    }  
+    } 
+    
+
 }

@@ -1,4 +1,4 @@
-## Loi Normale UI ----
+#### Loi Normale UI ----
 tab_NORM_UI <- tabItem(tabName = "Normale",
         fluidPage(
             titlePanel("Loi Normale"),
@@ -94,6 +94,7 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
         )
 )
 
+
 #### Loi Gamma UI ####
 tab_GAMMA_UI <- tabItem(
         tabName = "gamma",
@@ -117,14 +118,13 @@ tab_GAMMA_UI <- tabItem(
                         numericInput('alphaGAMMA', withMathJax('$$\\alpha$$'), value = 1),
                         numericInput('betaGAMMA', '$$\\beta$$', value = 0.1),
                         selectInput(
-                            inputId = "distrchoiceGamma",
+                            inputId = "distrchoiceGAMMA",
                             label = "",
                             choices = c(
-                                "Gamma" = "gamm",
-                                "Khi-carrée" = "khi",
-                                "Exponentielle" = "exp"
-                            ),
-                            selected = "gamm"
+                                "Intensité (Rate)" = "rate",
+                                "Échelle (Scale)" = "scale")
+                            ,
+                            selected = "rate"
                         )
                     ), 
                     align = "center"
@@ -199,7 +199,9 @@ tab_GAMMA_UI <- tabItem(
             }
         )
     )
-#### LOI BINOMIALE #### 
+
+
+#### Loi binomiale UI #### 
 tab_BIN_UI <- tabItem(tabName = "Binomiale",
          fluidPage(
              titlePanel("Loi Binomiale"), withMathJax(), helpText("\\(X \\sim\\mathcal{B}(n, p)\\)"), align = "center"),
