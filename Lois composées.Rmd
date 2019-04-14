@@ -1,0 +1,191 @@
+---
+title: Lois composées
+output: pdf_document    
+---
+    
+# Lois de fréquence {#fréquences}
+
+## BinComp
+
+**\underline{Loi binomiale}**
+
+(1) $M \sim Binom(n,q)$
+
+(2) $E[M] = nq$
+
+(3) $Var(M) = nq(1 - q) \le E[M]$
+
+(4) Plus ou moins intéressante, si on observait $Var(M) > E[M]$.
+
+## Bernouilli
+$M \sim Bern(q)$.
+
+La définition de X devient
+
+$$
+X =
+\begin{cases}
+B, & M = 1 \\
+0, & M = 0
+\end{cases}
+$$
+
+Parfois, on note aussi
+
+$$ X = M \times B $$
+
+où $M \sim Bern(q)$, c'est-à-dire $P(M = 0) = 1 - q$ et $P(M = 1) = q$.
+
+\underline{Espérance de X}:
+
+$$ E[X] = qE[B] $$
+
+\underline{Variance de X}:
+
+\begin{align*}
+\ Var(x) & = Var(M)E[B]^2 + E[M]Var(B) \\
+& = q(1 - q)E[B]^2 + qVar(B)
+\end{align*}
+
+\underline{Fonction de répartition de X}:
+
+\begin{align*}
+\ F_X(x) & = P(M = 0) + P(M = 1)F_B(x) \\
+& = 1 - q + qF_B(x)
+\end{align*}
+
+\underline{TLS de X}:
+
+\begin{align*}
+\ \mathcal{L}_X(t) & = P_M(\mathcal{L}_B(t)) \\
+& = 1 - q + q\mathcal{L}_B(t)
+\end{align*}
+où $P_M(s) = 1 - q +qs$.
+
+\underline{VaR de X}: EXAMEN !
+
+(1) $VaR_k(x) = F_X^{-1}(k)$
+
+(2) Soit B tel que $F_B(0) = 0$. Alors, on a
+
+\begin{align*}
+\ F_X(0) & = 1 - q + qF_B(0) \\
+& = 1 - q \\
+& = P(M = 0) \\
+& = P(X = 0)
+\end{align*}
+
+\pagebreak
+
+(3) On fixe $k \in [0, F_X(0)] = [0,1 - q]$. Alors, on a
+
+$$ VaR_k(X) = F_X^{-1}(k) = 0 $$
+
+(4) On suppose aussi que B est continue. On fixe $k \in [F_X(0),1]$. Alors, l'expression $F_X^{-1}(u)$ est la solution de
+
+$$ F_X(x) = 1 - q + qF_B(x) = u $$
+
+\ \ \ \ \ \ \ On obtient
+
+$$ F_B(x) = \frac{u - (1 - q)}{q} $$
+
+\ \ \ \ \ \ \ On obtient
+
+$$ F_X^{-1}(u) = F_B^{-1}\left(\frac{u - (1 - q)}{q}\right) $$
+
+\ \ \ \ \ \ \ Puisque $u \in [1 - q, 1]$, alors $\frac{u - (1 - q)}{q} \in [0,1]$ et $F_B^{-1}\left(\frac{u - (1-q)}{q}\right)$ existent. Ainsi,
+
+$$ VaR_k(X) = VaR_{\frac{u - (1 - q)}{q}}(B) $$
+
+(5) Illustration de $F_X(x)$:
+
+\ \
+\ \
+\ \
+\ \
+\ \
+\ \
+\ \
+\ \
+\ \
+\ \
+\ \
+\ \
+
+\underline{Espérance tronquée de X}:
+
+On déduit
+
+$$ E[X \times 1_{\{X > b\}}] = P(M = 1)E[B \times 1_{\{B > b\}}] $$
+
+\underline{TVaR de X}:
+
+(1) On sait que
+
+\begin{align*}
+\ TVaR_k(x) & = \frac{1}{1 - k} \int_{k}^1 VaR_u(X)du \\
+& = \frac{1}{1 - k} E[X \times 1_{\{X > VaR_k(X)\}}] + \frac{1}{1 - k} VaR_k(X)\biggl(F_X(VaR_k(X)) - k)\biggr)
+\end{align*}
+
+(2) On suppose que $F_B(0) = 0$. On fixe $k \in [0, F_X(0)]$. Comme $VaR_k(x) = 0$, alors
+
+\begin{align*}
+\ TVaR_k(x) & = \frac{1}{1 - k} E[X \times 1_{\{X > 0\}}] \\
+& = \frac{1}{1 - k} E[X] \\
+& = \frac{1}{1 - k}qE[B]
+\end{align*}
+\
+(3) On suppose que B est une variable aléatoire continue. On fixe $k \in [F_X(0), 1]$. Alors, $F_X(VaR_k(X)) = k$. Et on obtient
+\begin{align*}
+\ TVaR_k(X) & = \frac{1}{1 - k} E[X \times 1_{\{X > VaR_k(X)\}}] \\
+& = \frac{1}{1 - k} P(M = 1)E[B \times 1_{\{B > VaR_k(X)\}}]
+\end{align*}
+
+
+## PComp
+
+$\mathcal{L}_X(t) = P_M(\mathcal{L}_B(t)) = e^{\lambda(\mathcal{L}_B(t) - 1)}$
+
+$$ E[X] = \lambda E[B] $$
+
+$$ Var(X) = \lambda E[B]^2 + \lambda Var(B) = \lambda E[B^2] $$
+
+### Où $B \sim Gamma(\alpha, \beta)$ 
+
+- On obtient la loi de Tweedie
+
+$$ F_X(x) = P(M = 0) + \sum_{k=1}^\infty P(M = k)H(x;\alpha k,\beta) = e^{-\lambda} + \sum_{k=1}^\infty \frac{e^{-\lambda}\lambda^k}{k!}H(x;\alpha k,\beta) $$
+
+## BNComp
+
+**\underline{Loi binomiale négative}**
+
+(1) $M \sim BNeg(r,q)$
+
+(2) Loi de X : $X \sim BinNeg\ Comp(r,q,F_B)$
+
+(3) Note pour EXAMEN : On doit être capable de déduire la loi de X (loi composée) à partir de sa TLS.
+
+(4) $E[M] = r\frac{(1-q)}{q}$
+
+(5) $Var(M) = r\frac{(1-q)}{q^2} = \frac{E[M]}{q} \ge E[M]$
+
+# Lois de sévérité
+
+## Gamma
+
+### Espérance Tronquée
+
+$$ E\left[X \times 1_{\{X > b\}}\right] = \sum_{k=1}^\infty P(M = k)\frac{k\alpha}{\beta}\bar{H}(b;k\alpha + 1, \beta) $$
+### TVaR
+
+$$
+TVaR_k(X) =
+\begin{cases}
+\frac{1}{1-k}E[X], & k \in [0,F_X(0)] \\
+\frac{1}{1-k} \sum_{k=1}^\infty P(M = k)\frac{k\alpha}{\beta}\bar{H}(VaR_k(x); k\alpha + 1, \beta), & k \in [F_X(0),1]
+\end{cases}
+$$
+
+
+[check out the frequence section](#fréquences)
