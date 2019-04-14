@@ -24,8 +24,8 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
                          menuSubItem("Loi normale", tabName = "Normale", icon = icon("neos")),
                          menuSubItem(" Loi gamma", icon = icon("google"), tabName = "gamma")
                 ),
-                menuItem("Lois discrètes", icon = icon("chart-bar")#,
-                         # menuSubItem("Loi binomiale", tabName = "Binomiale", icon = icon("neos")), # exemple d'utilisation, pas défini
+                menuItem("Lois discrètes", icon = icon("chart-bar"),
+                        menuSubItem("Loi binomiale", tabName = "Binomiale", icon = icon("bold"))
                 ),
    br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), # Espace avec la section À propos
    menuItem("À propos", icon = icon("info-circle"),
@@ -43,6 +43,9 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
               ),
           tabItems(
         
+            
+    ## LOIS CONTINUES
+            
         # LOI NORMALE
         {tabItem(tabName = "Normale",
         fluidPage(
@@ -166,6 +169,71 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
 )},
         
 
+    ## LOIS DISCRÈTE
+        
+      # LOI BINOMIALE
+        {tabItem(tabName = "Binomiale",
+         fluidPage(
+           titlePanel("Loi Binomiale"), withMathJax(), helpText("\\(X \\sim\\mathcal{B}(n, p)\\)"), align = "center"),
+         fluidRow(
+           column(width = 2, 
+                  box(title = "Paramètres", status = "primary", solidHeader = T, width = NULL,
+                      numericInput('nBIN', withMathJax('$$n$$'), value = 5, step = 1),
+                      numericInput('pBIN', '$$p$$', value = 0.5, min = 0, max = 1, step = 0.05)), align = "center"
+                  
+           ),
+           
+           ## Moments
+           column(width = 3,
+                  tags$style(" * {font-size:20px}"), # grosseur du tezte
+                  box(
+                    title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
+                    uiOutput("meanBIN"), 
+                    uiOutput("varBIN")), 
+                  align = "center",
+                  
+                  box(
+                    title = "Autres Moments", width = NULL, solidHeader = TRUE, status = "warning", 
+                    numericInput('dBIN', withMathJax('$$d$$'), value = 0, width = "20px"),
+                    # radioButtons('equalityNORM', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
+                    uiOutput("EspTronqBIN"), 
+                    uiOutput("EspLimBIN"), 
+                    uiOutput("StopLossBIN"), 
+                    uiOutput("ExcesMoyBIN"),
+                    align = "center")
+           ),
+           
+           ## Fonctions
+           column(width = 3,
+                  box(
+                    title = "Fonctions", width = NULL, solidHeader = TRUE, 
+                    tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
+                    status = "danger", # pour couleur de la boite, diff couleur pour statut
+                    numericInput('xBIN', '$$x$$', min = 0, max = 5, value = 0, step = 1), 
+                    uiOutput("densityBIN"), 
+                    uiOutput("repartBIN"),
+                    plotlyOutput("FxBIN")),
+                  align = "center"
+                  
+                  
+           ),
+           
+           column(width =3,
+                  boxPlus(
+                    title = "Mesure de risques", width = NULL, solidHeader = TRUE, status = "success",
+                    tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
+                    numericInput('kBIN', '$$\\kappa$$', value = 0.99, step = 0.005), 
+                    uiOutput("VaRBIN"), 
+                    uiOutput("TVaRBIN")), 
+                  
+                  align = "center"
+           )
+         )
+)
+},
+
+
+
         # À PROPOS
         {
   tabItem(tabName = "about", h2("Nous contacter "), br(), widgetUserBox(
@@ -189,7 +257,7 @@ ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité
 
 
 ## Serveur
-server <- function(input, output) 
+server <- function(input, output, session) 
 {
     # SERVEUR LOI NORMALE
     {
@@ -344,6 +412,85 @@ stat_function(fun = dnorm, args = list(mean = muNORM(), sd = sqrt(sigma2NORM()))
           
         })
     }
+
+    # SERVEUR LOI BINOMIALE
+    {
+    nBIN <- reactive({input$nBIN})
+    
+    pBIN <- reactive({input$pBIN})
+    
+    meanBIN <- reactive({nBIN() * pBIN()})
+    
+    varBIN <- reactive({nBIN() * pBIN() * (1 - pBIN())})   
+    
+    densityBIN <- reactive({format(dbinom(input$xBIN, nBIN(), pBIN()), nsmall = 6)})
+    
+    repartBIN <- reactive({format(pbinom(input$xBIN, nBIN(), pBIN()), nsmall = 6)})
+    
+    VaRBIN <- reactive({format(qbinom(input$kBIN, nBIN(), pBIN()), nsmall = 4)})
+    
+    TVaRBIN <- reactive({format(0, nsmall = 4)})
+    
+    EspTronqBIN <- reactive({0})
+    
+    StopLossBIN <- reactive({0})
+    
+    EspLimBIN <- reactive({0})
+    
+    ExcesMoyBIN <- reactive({0})
+    
+    output$meanBIN <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
+                                                     meanBIN()
+    ))})
+    
+    output$varBIN <- renderUI({withMathJax(sprintf("$$Var(X) = %s$$", 
+                                                    varBIN()
+    ))})
+    
+    output$densityBIN <- renderUI({withMathJax(sprintf("$$f_{X}(%s) = %s$$", 
+                                                        input$xBIN,
+                                                        densityBIN()
+    ))})
+    output$repartBIN <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$", 
+                                                       input$xBIN,
+                                                       repartBIN()
+    ))})
+    output$VaRBIN <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$", 
+                                                    input$kBIN,
+                                                    VaRBIN()
+    ))})
+    output$TVaRBIN <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$", 
+                                                     input$kBIN,
+                                                     TVaRBIN()
+    ))})
+    output$EspTronqBIN <- renderUI({withMathJax(sprintf("$$E[X \\times 1_{\\{X \\leqslant %s\\}}] = %.4f$$", 
+                                                         input$dBIN,
+                                                         EspTronqBIN()
+    ))})
+    
+    output$StopLossBIN <- renderUI({withMathJax(sprintf("$$ \\pi_{%s}(X) = %.4f$$", 
+                                                         input$dBIN,
+                                                         StopLossBIN()
+    ))})
+    
+    output$EspLimBIN <- renderUI({withMathJax(sprintf("$$E[\\text{min}(X;{%s})] = %.4f$$", 
+                                                       input$dBIN,
+                                                       EspLimBIN()
+    ))})
+    
+    output$ExcesMoyBIN <- renderUI({withMathJax(sprintf("$$e_{%s}(X) = %.4f$$", 
+                                                         input$dBIN,
+                                                         ExcesMoyBIN()
+    ))})
+    
+    output$FxBIN <- renderPlotly({ggplot(data.frame(x = 0:nBIN(), y = dbinom(0:nBIN(), nBIN(), pBIN())), aes(x = x, y = y)) + geom_bar(stat = "identity", col = "red", fill ="red", alpha = 0.7, width = 0.3) + theme_classic() + ylab("P(X=x")
+    
+      })
+    
+    # Reactive slider
+    observeEvent(input$nBIN,{updateSliderInput(session = session, inputId = "xBIN", max = input$nBIN)
+    })
+  }  
 }
 
 
