@@ -25,7 +25,7 @@ source(file = "functions.R")
                                             menuSubItem(" Loi gamma", icon = icon("google"), tabName = "gamma")
                                    ),
                                    
-                                   menuItem("Lois discrètes", icon = icon("chart-bar")
+                                   menuItem("Lois discrètes", icon = icon("chart-bar"),
                                             menuSubItem("Loi binomiale", tabName = "Binomiale", icon = icon("bold"))
                                    ),
                                    br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(),
