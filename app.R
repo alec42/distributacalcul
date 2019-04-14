@@ -9,7 +9,7 @@
     library(plotly)
 }
 source(file = "myUI.R", local = T)
-source(file = "myserver.R", local = T)
+source(file = "myserver.R")
 source(file = "functions.R")
 
 shinyApp(
