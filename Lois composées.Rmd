@@ -1,0 +1,24 @@
+---
+title: Lois composées
+output: pdf_document    
+---
+    
+# Lois de fréquence
+
+## BinComp
+
+
+## PComp
+
+
+## BNComp
+
+
+# Lois de sévérité
+
+## Gamma
+
+### Espérance Tronquée
+
+$$ E\left[X \times 1_{\{X > b\}}\right] = \sum_{k=1}^\infty P(M = k)\frac{k\alpha}{\beta}\bar{H}(b;k\alpha + 1, \beta) $$
+#### 
