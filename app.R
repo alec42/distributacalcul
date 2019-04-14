@@ -11,8 +11,8 @@ library(plotly)
 source(file = "functions.R")
 
 
-# UI ----
 {
+# UI ----
     ui <- dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité", titleWidth = 200),
   
   # Paneau Latéral                  
@@ -49,8 +49,8 @@ source(file = "functions.R")
       
       tabItems(
           
-    ## LOI NORMALE ----
     {
+    ## LOI NORMALE ----
         tabItem(tabName = "Normale",
                 fluidPage(
                     titlePanel("Loi Normale"),
@@ -143,8 +143,8 @@ source(file = "functions.R")
         )
     },
     
-    #### Loi Gamma ####
     {
+    #### Loi Gamma ####
         tabItem(
             tabName = "gamma",
             fluidPage(
@@ -155,7 +155,7 @@ source(file = "functions.R")
             ),
             
             fluidRow(
-                ### Paramètres Gamma ----
+                ### Paramètres Gamma 
                 {column(
                     width = 2,
                     box(
@@ -180,7 +180,7 @@ source(file = "functions.R")
                 )
                 },
                 
-                ### Moments Gamma ----
+                ### Moments Gamma 
                 {column(
                     width = 3,
                     tags$style(" * {font-size:20px;}"), # grosseur du tezte
@@ -211,7 +211,7 @@ source(file = "functions.R")
                 )
                 }, 
                 
-                ### Fonctions Gamma ----
+                ### Fonctions Gamma 
                 {column(
                     width = 3,
                     box(
@@ -228,7 +228,7 @@ source(file = "functions.R")
                 )
                 },
                 
-                ### Mesures de risque Gamma ----
+                ### Mesures de risque Gamma 
                 {column(
                     width = 3,
                     boxPlus(
@@ -247,8 +247,8 @@ source(file = "functions.R")
         )
     },
     
-    # À PROPOS
     {
+    ## À PROPOS ----
         tabItem(
             tabName = "about",
             h2("Nous contacter "),
