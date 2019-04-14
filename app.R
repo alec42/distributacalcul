@@ -7,6 +7,7 @@
     library(ggplot2)
     library(rsconnect)
     library(plotly)
+    library(shinyWidgets)
 }
 source(file = "myUI.R", local = T, encoding = "UTF-8")
 source(file = "myserver.R")
@@ -16,3 +17,4 @@ shinyApp(
     ui <- myUI,
     server <- myserver
 )
+
