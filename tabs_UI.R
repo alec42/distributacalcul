@@ -121,7 +121,7 @@ tab_GAMMA_UI <- tabItem(
                         status = "primary",
                         solidHeader = T,
                         width = NULL,
-                        numericInput('alphaGAMMA', withMathJax('$$\\alpha$$'), value = 1),
+                        numericInput('alphaGAMMA', withMathJax('$$\\alpha$$'), value = 2),
                         numericInput('betaGAMMA', '$$\\beta$$', value = 0.1),
                         switchInput(
                             inputId = "distrchoiceGAMMA",
