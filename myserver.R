@@ -126,22 +126,38 @@ myserver <- function(input, output, session)
             }
         })
         
-        # observeEvent(input$distrchoiceEXPOFAM, {
-        #     x <- input$distrchoiceEXPOFAM
-        #     updateNumericInput(session, 
-        #                        if(x == "Gamma")
-        #                        {
-        #                            betaGAMMA = 0.1
-        #                        } else if(x == "Exponentielle"){
-        #                            alphaGAMMA = 0.1
-        #                        } else{
-        #                            betaGAMMA = 0.5
-        #                        }
-        #                        
-        #     )
-        # })
-        
         alphaGAMMA <- reactive({input$alphaGAMMA})
+
+       observeEvent(input$distrchoiceEXPOFAM, {
+           x <- input$distrchoiceEXPOFAM
+           updateNumericInput(session, "betaGAMMA", value = 
+                              if(x == "Khi carré")
+                              {
+                                  betaGAMMA = 0.5
+                              } else{
+                                  betaGAMMA = 0.1
+                              }
+       
+           )
+           updateNumericInput(
+               session,
+               "alphaGAMMA",
+               value =
+                   if (x == "Exponentielle")
+                   {
+                       alphaGAMMA = 1
+                   } #else if (x == "Khi carré") {
+               #         alphaGAMMA = alphaGAMMA() / 2
+               #     },
+               # label = if (x == "Khi carré") {
+               #     value = "$$n$$"
+               # } else
+               #     value = '$$\\alpha$$'
+               # j'essaye de faire la khi-deux avec un n mais ça ne fonctionne pas
+               
+           )
+       })
+        
         
         densityGAMMA <- reactive({format(dgamma(input$xGAMMA, alphaGAMMA(), betaGAMMA()),scientific = F,  nsmall = 6)})
         
