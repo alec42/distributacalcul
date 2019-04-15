@@ -102,6 +102,12 @@ tab_GAMMA_UI <- tabItem(
             titlePanel("Loi Gamma"),
             withMathJax(),
             helpText("\\(X \\sim\\mathcal{G}(\\alpha, \\beta)\\)"),
+            radioGroupButtons(
+                inputId = "distrchoiceEXPOFAM",
+                label = "", 
+                choices = c("Gamma", "Exponentielle", "Khi carré"),
+                status = "primary"
+            ),
             align = "center"
         ),
         
@@ -117,16 +123,13 @@ tab_GAMMA_UI <- tabItem(
                         width = NULL,
                         numericInput('alphaGAMMA', withMathJax('$$\\alpha$$'), value = 1),
                         numericInput('betaGAMMA', '$$\\beta$$', value = 0.1),
-                        radioButtons(
+                        switchInput(
                             inputId = "distrchoiceGAMMA",
-                            label = "",
-                            choices = c(
-                                "Fréquence (Rate)" = "rate",
-                                "Échelle (Scale)" = "scale")
-                            ,
-                            selected = "rate"
+                            onLabel = "Fréquence (Rate)",
+                            offLabel = "Échelle (Scale)",
+                            value = T
                         ),
-                        align = "left"
+                        align = "center"
                     ), 
                     align = "center"
                 )

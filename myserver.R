@@ -118,7 +118,28 @@ myserver <- function(input, output, session)
   
     {
         ## Loi Gamma Serveur ----
-        betaGAMMA <- reactive({if(input$distrchoiceGAMMA == "rate") {input$betaGAMMA} else {1/input$betaGAMMA}})
+        betaGAMMA <- reactive({
+            if (input$distrchoiceGAMMA == T) {
+                input$betaGAMMA
+            } else {
+                1 / input$betaGAMMA
+            }
+        })
+        
+        # observeEvent(input$distrchoiceEXPOFAM, {
+        #     x <- input$distrchoiceEXPOFAM
+        #     updateNumericInput(session, 
+        #                        if(x == "Gamma")
+        #                        {
+        #                            betaGAMMA = 0.1
+        #                        } else if(x == "Exponentielle"){
+        #                            alphaGAMMA = 0.1
+        #                        } else{
+        #                            betaGAMMA = 0.5
+        #                        }
+        #                        
+        #     )
+        # })
         
         alphaGAMMA <- reactive({input$alphaGAMMA})
         
