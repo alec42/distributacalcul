@@ -109,7 +109,7 @@ tab_GAMMA_UI <- tabItem(
             {
                 ### Paramètres Gamma ----
                 column(
-                    width = 2,
+                    width = 3,
                     box(
                         title = "Paramètres",
                         status = "primary",
@@ -117,15 +117,16 @@ tab_GAMMA_UI <- tabItem(
                         width = NULL,
                         numericInput('alphaGAMMA', withMathJax('$$\\alpha$$'), value = 1),
                         numericInput('betaGAMMA', '$$\\beta$$', value = 0.1),
-                        selectInput(
+                        radioButtons(
                             inputId = "distrchoiceGAMMA",
                             label = "",
                             choices = c(
-                                "Intensité (Rate)" = "rate",
+                                "Fréquence (Rate)" = "rate",
                                 "Échelle (Scale)" = "scale")
                             ,
                             selected = "rate"
-                        )
+                        ),
+                        align = "left"
                     ), 
                     align = "center"
                 )
