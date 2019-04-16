@@ -1,6 +1,7 @@
 #### Loi Normale UI ----
 tab_NORM_UI <- tabItem(tabName = "Normale",
         fluidPage(
+            useShinyjs(),
             titlePanel("Loi Normale"),
             withMathJax(),
             helpText("\\(X \\sim\\mathcal{N}(\\mu, \\sigma^2)\\)"),

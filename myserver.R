@@ -127,6 +127,7 @@ myserver <- function(input, output, session)
         })
         
         alphaGAMMA <- reactive({input$alphaGAMMA})
+        
 
        observeEvent(input$distrchoiceEXPOFAM, {
            x <- input$distrchoiceEXPOFAM
@@ -139,14 +140,24 @@ myserver <- function(input, output, session)
                               }
        
            )
-           updateNumericInput(
-               session,
-               "alphaGAMMA",
-               value =
-                   if (x == "Exponentielle")
+           if(x == "Khi carré")
+               disable("betaGAMMA")
+           else
+               enable("betaGAMMA")
+           updateNumericInput(session, "alphaGAMMA", value =
+                   if(x == "Exponentielle")
                    {
                        alphaGAMMA = 1
-                   } #else if (x == "Khi carré") {
+                   } 
+                   else{ 
+                       alphaGAMMA = 2
+                   }
+                       )
+           if(x == "Exponentielle")
+               disable("alphaGAMMA")
+           else
+               enable("alphaGAMMA")
+                   #else if (x == "Khi carré") {
                #         alphaGAMMA = alphaGAMMA() / 2
                #     },
                # label = if (x == "Khi carré") {
@@ -155,7 +166,6 @@ myserver <- function(input, output, session)
                #     value = '$$\\alpha$$'
                # j'essaye de faire la khi-deux avec un n mais ça ne fonctionne pas
                
-           )
        })
         
         

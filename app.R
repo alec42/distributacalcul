@@ -8,6 +8,7 @@
     library(rsconnect)
     library(plotly)
     library(shinyWidgets)
+    library(shinyjs)
 }
 source(file = "myUI.R", local = T)
 source(file = "myserver.R")
