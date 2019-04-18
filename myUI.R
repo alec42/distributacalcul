@@ -1,6 +1,6 @@
 source('tabs_UI.R')
 myUI <- shinyUI({
-    dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité", titleWidth = 200),
+    dashboardPage(skin = "blue", dashboardHeader(title = "Lois de probabilité", titleWidth = NULL),
                   
               # Paneau Latéral                  
                 {

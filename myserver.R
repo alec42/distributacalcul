@@ -157,15 +157,6 @@ myserver <- function(input, output, session)
                disable("alphaGAMMA")
            else
                enable("alphaGAMMA")
-                   #else if (x == "Khi carré") {
-               #         alphaGAMMA = alphaGAMMA() / 2
-               #     },
-               # label = if (x == "Khi carré") {
-               #     value = "$$n$$"
-               # } else
-               #     value = '$$\\alpha$$'
-               # j'essaye de faire la khi-deux avec un n mais ça ne fonctionne pas
-               
        })
         
         
