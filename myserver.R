@@ -10,6 +10,8 @@ myserver <- function(input, output, session)
         
         repartNORM <- reactive({format(pnorm(input$xNORM, muNORM(), sqrt(sigma2NORM())), nsmall = 6)})
         
+        survieNORM <- reactive({format(pnorm(input$xNORM, muNORM(), sqrt(sigma2NORM()), lower.tail = F), nsmall = 6)})
+        
         VaRNORM <- reactive({format(qnorm(input$kNORM, muNORM(), sqrt(sigma2NORM())), nsmall = 6)})
         
         TVaRNORM <- reactive({format(muNORM() +
@@ -63,6 +65,10 @@ myserver <- function(input, output, session)
                                                            input$xNORM,
                                                            repartNORM()
         ))})
+        output$survieNORM <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$", 
+                                                           input$xNORM,
+                                                           survieNORM()
+        ))})
         output$VaRNORM <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$", 
                                                         input$kNORM,
                                                         VaRNORM()
@@ -107,6 +113,28 @@ myserver <- function(input, output, session)
                     fun = dnorm,
                     args = list(mean = muNORM(), sd = sqrt(sigma2NORM())),
                     xlim = c(muNORM() - 4 * sqrt(sigma2NORM()), input$xNORM),
+                    geom = "area",
+                    fill = "red",
+                    alpha = 0.7
+                )
+        })
+        
+        output$SxNORM <- renderPlotly({
+            ggplot(
+                data = data.frame(x = c(muNORM() - 4 * sqrt(sigma2NORM()),
+                                        muNORM() + 4 * sqrt(sigma2NORM()))),
+                aes(x)
+            ) + 
+                stat_function(fun = dnorm, 
+                              args = list(mean = muNORM(), 
+                                          sd = sqrt(sigma2NORM()))
+                ) + 
+                ylab("f(x)") + 
+                theme_classic() +
+                stat_function(
+                    fun = dnorm,
+                    args = list(mean = muNORM(), sd = sqrt(sigma2NORM())),
+                    xlim = c(muNORM() + 4 * sqrt(sigma2NORM()), input$xNORM),
                     geom = "area",
                     fill = "red",
                     alpha = 0.7

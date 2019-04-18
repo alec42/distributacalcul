@@ -68,8 +68,19 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
                         status = "danger", # pour couleur de la boite, diff couleur pour statut
                         numericInput('xNORM', '$$x$$', value = 0),
                         uiOutput("densityNORM"),
-                        uiOutput("repartNORM"),
-                        plotlyOutput("FxNORM")
+                    
+                    tabBox(
+                        width = NULL,
+                        tabPanel("Répartition",
+                            uiOutput("repartNORM"),
+                            plotlyOutput("FxNORM")
+                        ),
+                        tabPanel("Survie",
+                            uiOutput("survieNORM"),
+                            plotlyOutput("SxNORM")
+                        )
+                        
+                    )
                     ),
                     align = "center"
                 )
