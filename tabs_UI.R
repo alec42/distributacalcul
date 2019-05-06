@@ -1,9 +1,9 @@
 #### Loi Normale UI ----
 tab_NORM_UI <- tabItem(tabName = "Normale",
         fluidPage(
-            useShinyjs(),
+            useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
             titlePanel("Loi Normale"),
-            withMathJax(),
+            # withMathJax(),
             helpText("\\(X \\sim\\mathcal{N}(\\mu, \\sigma^2)\\)"),
             align = "center"
         ), 
@@ -13,11 +13,11 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
                 ### Paramètres Normale ----
                 column(
                     width = 2,
-                    box(
+                    boxPlus(
                         title = "Paramètres",
                         status = "primary",
                         solidHeader = T,
-                        width = NULL,
+                        width = NULL,closable = F,
                         numericInput('muNORM', withMathJax('$$\\mu$$'), value = 0),
                         numericInput('sigmaNORM', '$$\\sigma^2$$', value = 1)
                     ),

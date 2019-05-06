@@ -156,7 +156,21 @@ myserver <- function(input, output, session)
         
         alphaGAMMA <- reactive({input$alphaGAMMA})
         
-
+        observeEvent(input$distrchoiceGAMMA, {
+            y <- input$distrchoiceGAMMA
+            updateNumericInput(session, "betaGAMMA", value = 
+                                   if (input$distrchoiceGAMMA == T) {
+                                       input$betaGAMMA
+                                   } else {
+                                       1 / input$betaGAMMA
+                                   },step =  
+                                   if (input$distrchoiceGAMMA == T) {
+                                       1
+                                   } else {
+                                       .1
+                                   }
+                                   )
+        })
        observeEvent(input$distrchoiceEXPOFAM, {
            x <- input$distrchoiceEXPOFAM
            updateNumericInput(session, "betaGAMMA", value = 
