@@ -1,7 +1,6 @@
 myserver <- function(input, output, session) 
 {
-    {
-        ## Loi Normale Serveur ----
+#### Loi Normale Serveur ####
         muNORM <- reactive({input$muNORM})
         
         sigma2NORM <- reactive({input$sigmaNORM})
@@ -141,11 +140,9 @@ myserver <- function(input, output, session)
                 )
         })
         
-    }
     
-  
-    {
-        ## Loi Gamma Serveur ----
+    
+#### Loi Gamma Serveur ####
         betaGAMMA <- reactive({
             if (input$distrchoiceGAMMA == T) {
                 input$betaGAMMA
@@ -162,8 +159,13 @@ myserver <- function(input, output, session)
             else
             {
                 input$alphaGAMMA
-            }})
-        
+            }
+        })
+
+        output$betaGAMMAUI <- renderUI({
+            numericInput('betaGAMMA', '$$\\beta$$', value = 0.1)
+        })
+    
         output$changingalpha <- renderUI({
             numericInput('alphaGAMMA', label = {
                 if (input$distrchoiceEXPOFAM == "Khi carré")
@@ -210,7 +212,7 @@ myserver <- function(input, output, session)
                 disable("betaGAMMA")
             else
                 enable("betaGAMMA")
-            
+
             updateNumericInput(session, "alphaGAMMA",
                                value =
                                    if (x == "Exponentielle")
@@ -222,17 +224,11 @@ myserver <- function(input, output, session)
                                    alphaGAMMA = 2
                                }
             )
-            
             # rend le paramètre impossible à modifier pour l'utilisateur
             if (x == "Exponentielle")
-                disable("alphaGAMMA")
+                hide("alphaGAMMA")
             else
-                enable("alphaGAMMA")
-        })
-        
-        
-        output$betaGAMMAUI <- renderUI({
-            numericInput('betaGAMMA', '$$\\beta$$', value = 0.1)
+                show("alphaGAMMA")
         })
         
         
@@ -343,11 +339,7 @@ myserver <- function(input, output, session)
                 )
         })
     
-    }
-  
-  
-    {    
-        ## Loi Binomiale Serveur ----
+#### Loi Binomiale Serveur ####
         nBIN <- reactive({input$nBIN})
         
         pBIN <- reactive({input$pBIN})
@@ -426,4 +418,3 @@ myserver <- function(input, output, session)
     } 
     
 
-}
