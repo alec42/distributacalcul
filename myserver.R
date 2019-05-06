@@ -154,52 +154,86 @@ myserver <- function(input, output, session)
             }
         })
         
-        alphaGAMMA <- reactive({input$alphaGAMMA})
+        alphaGAMMA <- reactive({
+            if (input$distrchoiceEXPOFAM == "Khi carré")
+            {
+                2 * input$alphaGAMMA
+            }
+            else
+            {
+                input$alphaGAMMA
+            }})
         
-        observeEvent(input$distrchoiceGAMMA, {
+        output$changingalpha <- renderUI({
+            numericInput('alphaGAMMA', label = {
+                if (input$distrchoiceEXPOFAM == "Khi carré")
+                {
+                    '$$n$$'
+                }
+                else{
+                    '$$\\alpha$$'
+                }
+            }, value = 2)
+        })
+        
+        ## Ici on crée un gros observeEvent qui va modifier les paramètres de la gamma/exponentielle/khi-carrée selon les 2 radio buttons:
+        ## x: selection de distribution
+        ## y: selection de si c'est fréquence ou échelle
+        observeEvent({
+            input$distrchoiceGAMMA
+            input$distrchoiceEXPOFAM #liste des inputs à observer entre {}
+        },
+        {
+            x <- input$distrchoiceEXPOFAM
             y <- input$distrchoiceGAMMA
-            updateNumericInput(session, "betaGAMMA", value = 
-                                   if (input$distrchoiceGAMMA == T) {
-                                       input$betaGAMMA
-                                   } else {
-                                       1 / input$betaGAMMA
-                                   },step =  
-                                   if (input$distrchoiceGAMMA == T) {
+            
+            # modification du beta
+            updateNumericInput(session,
+                               "betaGAMMA",
+                               value =
+                                   if (x == "Khi carré")
+                                   {
+                                       if (y == T) {
+                                           betaGAMMA = 0.5
+                                       } else {
+                                           betaGAMMA = 2
+                                       }
+                                   },
+                               step =
+                                   if (y == T) {
                                        1
                                    } else {
                                        .1
+                                   })
+            # rend le paramètre impossible à modifier pour l'utilisateur
+            if (x == "Khi carré")
+                disable("betaGAMMA")
+            else
+                enable("betaGAMMA")
+            
+            updateNumericInput(session, "alphaGAMMA",
+                               value =
+                                   if (x == "Exponentielle")
+                                   {
+                                       alphaGAMMA = 1
                                    }
-                                   )
+                               else
+                               {
+                                   alphaGAMMA = 2
+                               }
+            )
+            
+            # rend le paramètre impossible à modifier pour l'utilisateur
+            if (x == "Exponentielle")
+                disable("alphaGAMMA")
+            else
+                enable("alphaGAMMA")
         })
-       observeEvent(input$distrchoiceEXPOFAM, {
-           x <- input$distrchoiceEXPOFAM
-           updateNumericInput(session, "betaGAMMA", value = 
-                              if(x == "Khi carré")
-                              {
-                                  betaGAMMA = 0.5
-                              } else{
-                                  betaGAMMA = 0.1
-                              }
-       
-           )
-           if(x == "Khi carré")
-               disable("betaGAMMA")
-           else
-               enable("betaGAMMA")
-           updateNumericInput(session, "alphaGAMMA", value =
-                   if(x == "Exponentielle")
-                   {
-                       alphaGAMMA = 1
-                   } 
-                   else{ 
-                       alphaGAMMA = 2
-                   }
-                       )
-           if(x == "Exponentielle")
-               disable("alphaGAMMA")
-           else
-               enable("alphaGAMMA")
-       })
+        
+        
+        output$betaGAMMAUI <- renderUI({
+            numericInput('betaGAMMA', '$$\\beta$$', value = 0.1)
+        })
         
         
         densityGAMMA <- reactive({format(dgamma(input$xGAMMA, alphaGAMMA(), betaGAMMA()),scientific = F,  nsmall = 6)})

@@ -133,8 +133,10 @@ tab_GAMMA_UI <- tabItem(
                         status = "primary",
                         solidHeader = T,
                         width = NULL,
-                        numericInput('alphaGAMMA', withMathJax('$$\\alpha$$'), value = 2),
-                        numericInput('betaGAMMA', '$$\\beta$$', value = 0.1),
+                        # numericInput('alphaGAMMA', label = withMathJax('$$\\alpha$$'), value = 2),
+                        uiOutput("changingalpha"),
+                        # numericInput('betaGAMMA', '$$\\beta$$', value = 0.1),
+                        uiOutput("betaGAMMAUI"),
                         switchInput(
                             inputId = "distrchoiceGAMMA",
                             onLabel = "Fréquence (Rate)",
