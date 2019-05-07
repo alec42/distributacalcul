@@ -93,7 +93,8 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
                     boxPlus(
                         title = "Mesure de risques",
                         width = NULL,
-                        solidHeader = TRUE,
+                        solidHeader = TRUE, 
+                        closable = F,
                         status = "success",
                         # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
                         numericInput('kNORM', '$$\\kappa$$', value = 0.99, step = 0.005),
@@ -192,8 +193,18 @@ tab_GAMMA_UI <- tabItem(
                         status = "danger", # couleur de la boite
                         numericInput('xGAMMA', '$$x$$', value = 10),
                         uiOutput("densityGAMMA"),
-                        uiOutput("repartGAMMA"),
-                        plotlyOutput("FxGAMMA")
+                        tabBox(
+                            width = NULL,
+                            tabPanel("Répartition",
+                                     uiOutput("repartGAMMA"),
+                                     plotlyOutput("FxGAMMA")
+                            ),
+                            tabPanel("Survie",
+                                     uiOutput("survieGAMMA"),
+                                     plotlyOutput("SxGAMMA")
+                            )
+                            
+                        )
                     ),
                     align = "center"
                 )
@@ -207,6 +218,7 @@ tab_GAMMA_UI <- tabItem(
                         title = "Mesure de risques",
                         width = NULL,
                         solidHeader = TRUE,
+                        closable = F,
                         status = "success", # grosseur du tezte
                         numericInput('kGAMMA', '$$\\kappa$$', value = 0.99, step = 0.005),
                         uiOutput("VaRGAMMA"),

@@ -69,6 +69,7 @@ myUI <- shinyUI({
             ## Lois Continues
                 tab_NORM_UI,
                 tab_GAMMA_UI,
+                # tab_PARETO_UI,
                 
             ## Lois Discrètes
             tab_BIN_UI,

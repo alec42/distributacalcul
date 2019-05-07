@@ -1,144 +1,123 @@
 myserver <- function(input, output, session) 
 {
 #### Loi Normale Serveur ####
-        muNORM <- reactive({input$muNORM})
         
-        sigma2NORM <- reactive({input$sigmaNORM})
+    
+    muNORM <- reactive({input$muNORM})
         
-        densityNORM <- reactive({format(dnorm(input$xNORM, muNORM(), sqrt(sigma2NORM())), nsmall = 6)})
+    sigma2NORM <- reactive({input$sigmaNORM})
         
-        repartNORM <- reactive({format(pnorm(input$xNORM, muNORM(), sqrt(sigma2NORM())), nsmall = 6)})
+    densityNORM <- reactive({format(dnorm(input$xNORM, muNORM(), sqrt(sigma2NORM())), nsmall = 6)})
         
-        survieNORM <- reactive({format(pnorm(input$xNORM, muNORM(), sqrt(sigma2NORM()), lower.tail = F), nsmall = 6)})
+    repartNORM <- reactive({format(pnorm(input$xNORM, muNORM(), sqrt(sigma2NORM())), nsmall = 6)})
         
-        VaRNORM <- reactive({format(qnorm(input$kNORM, muNORM(), sqrt(sigma2NORM())), nsmall = 6)})
+    survieNORM <- reactive({format(pnorm(input$xNORM, muNORM(), sqrt(sigma2NORM()), lower.tail = F), nsmall = 6)})
         
-        TVaRNORM <- reactive({format(muNORM() +
-                                         (1/(1 - input$kNORM)) *
-                                         sqrt(sigma2NORM()/(2*pi)) *
-                                         exp(-qnorm(input$kNORM, muNORM(), sqrt(sigma2NORM())) / 2), 
-                                     nsmall = 6)
+    VaRNORM <- reactive({format(VaR_norm(kappa = input$kNORM, mu = muNORM(), sig = sqrt(sigma2NORM())), nsmall = 6)})
+        
+    TVaRNORM <- reactive({format(TVaR_norm(kappa = input$kNORM, mu = muNORM(), sig = sqrt(sigma2NORM())), nsmall = 6)})
+        
+    EspTronqNORM <- reactive({Etronq_norm(d = input$dNORM, mu = muNORM(), sig = sqrt(sigma2NORM()))})
+        
+    StopLossNORM <- reactive({SL_norm(d = input$dNORM, mu = muNORM(), sig = sqrt(sigma2NORM()))})
+        
+    EspLimNORM <- reactive({Elim_norm(d = input$dNORM, mu = muNORM(), sig = sqrt(sigma2NORM()))})
+    
+    ExcesMoyNORM <- reactive({Mexcess_norm(d = input$dNORM, mu = muNORM(), sig = sqrt(sigma2NORM()))})
+    
+    output$meanNORM <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
+                                                     muNORM()))
         })
-        
-        EspTronqNORM <- reactive({muNORM() *
-                pnorm((input$dNORM - muNORM()) / sqrt(sigma2NORM()), 0, 1) -
-                sqrt(sigma2NORM()/ 2 * pi) *
-                exp(-(input$dNORM - muNORM())^2 / 2 * sigma2NORM())
+    
+    output$varNORM <- renderUI({withMathJax(sprintf("$$Var(X) = %s$$", 
+                                                    sigma2NORM()))
         })
-        
-        StopLossNORM <- reactive({(muNORM() +
-                                       input$dNORM) *
-                (1 - pnorm((input$dNORM - muNORM())/sqrt(sigma2NORM()), 0, 1)) -
-                sqrt(sigma2NORM()/ 2 * pi) *
-                exp(-(input$dNORM - muNORM())^2/2 * sigma2NORM())
+    
+    output$densityNORM <- renderUI({withMathJax(sprintf("$$f_{X}(%s) = %s$$", 
+                                                        input$xNORM,
+                                                        densityNORM()))
         })
-        
-        EspLimNORM <- reactive({muNORM() * 
-                pnorm((input$dNORM - muNORM()) / sqrt(sigma2NORM()), 0, 1) - 
-                sqrt(sigma2NORM()/ 2 * pi) * 
-                exp(-(input$dNORM - muNORM())^2/2 * sigma2NORM()) + 
-                input$dNORM * 
-                (1 - pnorm((input$dNORM - muNORM()) / sqrt(sigma2NORM()), 0, 1))
+    output$repartNORM <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$",
+                                                       input$xNORM,
+                                                       repartNORM()))
         })
-        
-        ExcesMoyNORM <- reactive({muNORM() + 
-                input$dNORM - 
-                1 / (1 - pnorm((input$dNORM - muNORM())/sqrt(sigma2NORM()), 0, 1)) * 
-                sqrt(sigma2NORM()/ 2 * pi) * 
-                exp(-(input$dNORM - muNORM())^2 / (2 * sigma2NORM()))
+    
+    output$survieNORM <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
+                                                       input$xNORM,
+                                                       survieNORM()))
         })
-        
-        output$meanNORM <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
-                                                         muNORM()
-        ))})
-        
-        output$varNORM <- renderUI({withMathJax(sprintf("$$Var(X) = %s$$", 
-                                                        sigma2NORM()
-        ))})
-        
-        output$densityNORM <- renderUI({withMathJax(sprintf("$$f_{X}(%s) = %s$$", 
-                                                            input$xNORM,
-                                                            densityNORM()
-        ))})
-        output$repartNORM <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$", 
-                                                           input$xNORM,
-                                                           repartNORM()
-        ))})
-        output$survieNORM <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$", 
-                                                           input$xNORM,
-                                                           survieNORM()
-        ))})
-        output$VaRNORM <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$", 
-                                                        input$kNORM,
-                                                        VaRNORM()
-        ))})
-        output$TVaRNORM <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$", 
-                                                         input$kNORM,
-                                                         TVaRNORM()
-        ))})
-        output$EspTronqNORM <- renderUI({withMathJax(sprintf("$$E[X \\times 1_{\\{X \\leqslant %s\\}}] = %.4f$$", 
-                                                             input$dNORM,
-                                                             EspTronqNORM()
-        ))})
-        
-        output$StopLossNORM <- renderUI({withMathJax(sprintf("$$ \\pi_{%s}(X) = %.4f$$", 
-                                                             input$dNORM,
-                                                             StopLossNORM()
-        ))})
-        
-        output$EspLimNORM <- renderUI({withMathJax(sprintf("$$E[\\text{min}(X;{%s})] = %.4f$$", 
-                                                           input$dNORM,
-                                                           EspLimNORM()
-        ))})
-        
-        output$ExcesMoyNORM <- renderUI({withMathJax(sprintf("$$e_{%s}(X) = %.4f$$", 
-                                                             input$dNORM,
-                                                             ExcesMoyNORM()
-        ))})
-        
-        output$FxNORM <- renderPlotly({
-            ggplot(
-                data = data.frame(x = c(muNORM() - 4 * sqrt(sigma2NORM()),
-                                        muNORM() + 4 * sqrt(sigma2NORM()))),
-                aes(x)
-            ) + 
-                stat_function(fun = dnorm, 
-                              args = list(mean = muNORM(), 
-                                          sd = sqrt(sigma2NORM()))
-                ) + 
-                ylab("f(x)") + 
-                theme_classic() +
-                stat_function(
-                    fun = dnorm,
-                    args = list(mean = muNORM(), sd = sqrt(sigma2NORM())),
-                    xlim = c(muNORM() - 4 * sqrt(sigma2NORM()), input$xNORM),
-                    geom = "area",
-                    fill = "red",
-                    alpha = 0.7
-                )
+    
+    output$VaRNORM <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
+                                                    input$kNORM,
+                                                    VaRNORM()))
         })
-        
-        output$SxNORM <- renderPlotly({
-            ggplot(
-                data = data.frame(x = c(muNORM() - 4 * sqrt(sigma2NORM()),
-                                        muNORM() + 4 * sqrt(sigma2NORM()))),
-                aes(x)
-            ) + 
-                stat_function(fun = dnorm, 
-                              args = list(mean = muNORM(), 
-                                          sd = sqrt(sigma2NORM()))
-                ) + 
-                ylab("f(x)") + 
-                theme_classic() +
-                stat_function(
-                    fun = dnorm,
-                    args = list(mean = muNORM(), sd = sqrt(sigma2NORM())),
-                    xlim = c(muNORM() + 4 * sqrt(sigma2NORM()), input$xNORM),
-                    geom = "area",
-                    fill = "red",
-                    alpha = 0.7
-                )
+    
+    output$TVaRNORM <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$",
+                                                     input$kNORM,
+                                                     TVaRNORM()))
         })
+    
+    output$EspTronqNORM <- renderUI({withMathJax(sprintf("$$E[X \\times 1_{\\{X \\leqslant %s\\}}] = %.4f$$",
+                                                         input$dNORM,
+                                                         EspTronqNORM()))
+        })
+    
+    output$StopLossNORM <- renderUI({withMathJax(sprintf("$$ \\pi_{%s}(X) = %.4f$$",
+                                                         input$dNORM,
+                                                         StopLossNORM()))
+        })
+    
+    output$EspLimNORM <- renderUI({withMathJax(sprintf("$$E[\\text{min}(X;{%s})] = %.4f$$",
+                                                       input$dNORM,
+                                                       EspLimNORM()))
+        })
+    
+    output$ExcesMoyNORM <- renderUI({withMathJax(sprintf("$$e_{%s}(X) = %.4f$$",
+                                                         input$dNORM,
+                                                         ExcesMoyNORM()))
+        })
+    
+    output$FxNORM <- renderPlotly({
+        ggplot(data = data.frame(x = c(
+            muNORM() - 4 * sqrt(sigma2NORM()),
+            muNORM() + 4 * sqrt(sigma2NORM())
+        )),
+        aes(x)) +
+            stat_function(fun = dnorm,
+                          args = list(mean = muNORM(),
+                                      sd = sqrt(sigma2NORM()))) +
+            ylab("f(x)") +
+            theme_classic() +
+            stat_function(
+                fun = dnorm,
+                args = list(mean = muNORM(), sd = sqrt(sigma2NORM())),
+                xlim = c(muNORM() - 4 * sqrt(sigma2NORM()), input$xNORM),
+                geom = "area",
+                fill = "red",
+                alpha = 0.7
+            )
+    })
+    
+    output$SxNORM <- renderPlotly({
+        ggplot(data = data.frame(x = c(
+            muNORM() - 4 * sqrt(sigma2NORM()),
+            muNORM() + 4 * sqrt(sigma2NORM())
+        )),
+        aes(x)) +
+            stat_function(fun = dnorm,
+                          args = list(mean = muNORM(),
+                                      sd = sqrt(sigma2NORM()))) +
+            ylab("f(x)") +
+            theme_classic() +
+            stat_function(
+                fun = dnorm,
+                args = list(mean = muNORM(), sd = sqrt(sigma2NORM())),
+                xlim = c(muNORM() + 4 * sqrt(sigma2NORM()), input$xNORM),
+                geom = "area",
+                fill = "red",
+                alpha = 0.7
+            )
+    })
         
     
     
@@ -167,15 +146,7 @@ myserver <- function(input, output, session)
         })
     
         output$changingalpha <- renderUI({
-            numericInput('alphaGAMMA', label = {
-                if (input$distrchoiceEXPOFAM == "Khi carré")
-                {
-                    '$$n$$'
-                }
-                else{
-                    '$$\\alpha$$'
-                }
-            }, value = 2)
+            numericInput('alphaGAMMA', label = '$$\\alpha$$', value = 2)
         })
         
         ## Ici on crée un gros observeEvent qui va modifier les paramètres de la gamma/exponentielle/khi-carrée selon les 2 radio buttons:
@@ -222,6 +193,15 @@ myserver <- function(input, output, session)
                                else
                                {
                                    alphaGAMMA = 2
+                               },
+                               label = {
+                                   if (x == "Khi carré")
+                                   {
+                                       '$$n$$'
+                                   }
+                                   else{
+                                       '$$\\alpha$$'
+                                   }
                                }
             )
             # rend le paramètre impossible à modifier pour l'utilisateur
@@ -236,42 +216,23 @@ myserver <- function(input, output, session)
         
         repartGAMMA <- reactive({format(pgamma(input$xGAMMA, alphaGAMMA(), betaGAMMA()), nsmall = 6, scientific = F)})
         
-        VaRGAMMA <- reactive({format(qgamma(input$kGAMMA, alphaGAMMA(), betaGAMMA()), nsmall = 6)})
+        survieGAMMA <- reactive({format(pgamma(input$xGAMMA, alphaGAMMA(), betaGAMMA(), lower.tail = F), nsmall = 6, scientific = F)})
         
-        VaRTVARGAMMA <- reactive({qgamma(input$kGAMMA, alphaGAMMA(), betaGAMMA())})
+        VaRGAMMA <- reactive({format(VaR_gamma(kappa = input$kGAMMA, a = alphaGAMMA(), b = betaGAMMA()), nsmall = 6)})
         
-        TVaRGAMMA <- reactive({format((alphaGAMMA() / betaGAMMA()) * 
-                                          (1/(1 - input$kGAMMA)) * 
-                                          pgamma(VaRTVARGAMMA(), alphaGAMMA() + 1, betaGAMMA(), lower.tail = F), 
-                                      nsmall = 6)
-        })
+        TVaRGAMMA <- reactive({format(TVaR_gamma(kappa = input$kGAMMA, a = alphaGAMMA(), b = betaGAMMA()), nsmall = 6)})
         
-        EspTronqGAMMA <- reactive({(alphaGAMMA()/betaGAMMA()) * pgamma(input$dGAMMA, alphaGAMMA() + 1, betaGAMMA())})
+        EspTronqGAMMA <- reactive({Etronq_gamma(d = input$dGAMMA, a = alphaGAMMA(), b = betaGAMMA())})
         
-        StopLossGAMMA <-reactive({
-            (alphaGAMMA() / betaGAMMA()) * 
-                pgamma(input$dGAMMA, alphaGAMMA() + 1, betaGAMMA(), lower.tail = F) - 
-                input$dGAMMA * 
-                pgamma(input$dGAMMA, alphaGAMMA(), betaGAMMA(), lower.tail = F)
-        })
+        StopLossGAMMA <- reactive({SL_gamma(d = input$dGAMMA, a = alphaGAMMA(), b = betaGAMMA())})
         
-        EspLimGAMMA <- reactive({
-            (alphaGAMMA() / betaGAMMA()) * 
-                pgamma(input$dGAMMA, alphaGAMMA() + 1, betaGAMMA()) + 
-                input$dGAMMA * 
-                pgamma(input$dGAMMA, alphaGAMMA(), betaGAMMA(), lower.tail = F)
-        })
+        EspLimGAMMA <- reactive({Elim_gamma(d = input$dGAMMA, a = alphaGAMMA(), b = betaGAMMA())})
         
-        ExcesMoyGAMMA <- reactive({
-            (alphaGAMMA() / betaGAMMA()) * 
-                (pgamma(input$dGAMMA, alphaGAMMA() + 1, betaGAMMA(), lower.tail = F)) / 
-                (pgamma(input$dGAMMA, alphaGAMMA(), betaGAMMA(), lower.tail = F)) - 
-                input$dGAMMA
-        })
+        ExcesMoyGAMMA <- reactive({Mexcess_gamma(d = input$dGAMMA, a = alphaGAMMA(), b = betaGAMMA())})
         
-        meanGAMMA <- reactive({(alphaGAMMA()/betaGAMMA())})
+        meanGAMMA <- reactive({E_gamma(a = alphaGAMMA(), b = betaGAMMA())})
         
-        varianceGAMMA <- reactive({(alphaGAMMA()/(betaGAMMA()^2))})
+        varianceGAMMA <- reactive({V_gamma(a = alphaGAMMA(), b = betaGAMMA())})
         
         output$meanGAMMA <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
                                                           meanGAMMA()
@@ -289,6 +250,13 @@ myserver <- function(input, output, session)
                                                             input$xGAMMA,
                                                             repartGAMMA()
         ))})
+        
+        output$survieGAMMA <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
+                                                           input$xNORM,
+                                                           survieGAMMA()))
+        })
+        
+        
         output$VaRGAMMA <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$", 
                                                          input$kGAMMA,
                                                          VaRGAMMA()
@@ -297,10 +265,10 @@ myserver <- function(input, output, session)
                                                           input$kGAMMA,
                                                           TVaRGAMMA()
         ))})
-        output$EspTronqGAMMA <- renderUI({withMathJax(sprintf("$$E[X \\times 1_{\\{X \\leqslant %s\\}}] = %.4f$$", 
+        output$EspTronqGAMMA <- renderUI({sprintf("$$E[X \\times 1_{\\{X \\leqslant %s\\}}] = %.4f$$", 
                                                               input$dGAMMA,
                                                               EspTronqGAMMA()
-        ))})
+        )})
         
         output$StopLossGAMMA <- renderUI({withMathJax(sprintf("$$ \\pi_{%s}(X) = %.4f$$", 
                                                               input$dGAMMA,
@@ -333,6 +301,28 @@ myserver <- function(input, output, session)
                     fun = dgamma,
                     args = list(shape = alphaGAMMA(), rate = betaGAMMA()),
                     xlim = c(0, input$xGAMMA),
+                    geom = "area",
+                    fill = "red",
+                    alpha = 0.7
+                )
+        })
+        
+        output$SxGAMMA <- renderPlotly({
+            ggplot(data = data.frame(x = c(0,
+                                           meanGAMMA() +
+                                               3 *
+                                               sqrt(varianceGAMMA()))
+            ),
+            aes(x)) + 
+                stat_function(fun = dgamma,
+                              args = list(shape = alphaGAMMA(), 
+                                          rate = betaGAMMA())) + 
+                ylab("f(x)") + 
+                theme_classic() +
+                stat_function(
+                    fun = dgamma,
+                    args = list(shape = alphaGAMMA(), rate = betaGAMMA()),
+                    # xlim = c(input$xGAMMA, VaR_gamma(kappa = 1, a = alphaGAMMA(), b = betaGAMMA())),
                     geom = "area",
                     fill = "red",
                     alpha = 0.7
