@@ -77,27 +77,26 @@ myUI <- shinyUI({
                     tabItem(
                         tabName = "about",
                         h2("Nous contacter "),
-                        br(),
-                        widgetUserBox(
-                            title = "Marc-André Devost",
-                            subtitle = "marc-andre.devost.1@ulaval.ca",
-                            type = NULL,
-                            src = "marc.jpg",
-                            color = "blue",
-                            collapsible = F,
-                            ""
-                        ),
-                        
-                        widgetUserBox(
+                        align = "center",
+                        box(
                             title = "Alec James van Rassel",
-                            subtitle = "alec.van-rassel.1@ulaval.ca",
-                            type = NULL,
-                            src = "alec.jpg",
-                            color = "blue",
-                            collapsible = F,
-                            ""
+                            status = "primary",
+                            solidHeader = T,
+                            boxProfile(
+                                src = "alec.jpg",
+                                title = "Alec James van Rassel",
+                                subtitle = "alec.van-rassel.1@ulaval.ca"
+                            )),
+                        box(
+                            title = "Marc-André Devost",
+                            status = "primary",
+                            solidHeader = T,
+                            boxProfile(
+                                src = "marc.jpg",
+                                title = "Marc-André Devost",
+                                subtitle = "marc-andre.devost.1@ulaval.ca"
+                            )
                         )
-                        
                     )
                 }
             
