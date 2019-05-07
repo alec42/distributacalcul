@@ -203,9 +203,9 @@ myserver <- function(input, output, session)
                                    },
                                step =
                                    if (y == T) {
-                                       1
-                                   } else {
                                        .1
+                                   } else {
+                                       1
                                    })
             # rend le paramètre impossible à modifier pour l'utilisateur
             if (x == "Khi carré")
