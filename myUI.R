@@ -1,8 +1,12 @@
 source('tabs_UI.R')
 myUI <- shinyUI({
-    dashboardPage(
+    dashboardPagePlus(
         skin = "blue",
-        dashboardHeader(title = "Lois de probabilité", titleWidth = NULL),
+        dashboardHeaderPlus(title = "Lois de probabilité", 
+                            titleWidth = NULL, 
+                            enable_rightsidebar = T, 
+                            # rightSidebarIcon = "question-circle"
+                            rightSidebarIcon = "info-circle"),
         
         # Paneau Latéral
         {
@@ -38,20 +42,20 @@ myUI <- shinyUI({
                             "Loi binomiale",
                             tabName = "Binomiale",
                             icon = icon("bold")
-                        )
-                    ),
-                    br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(),
-                    menuItem(
-                        "À propos",
-                        icon = icon("info-circle"),
-                        menuSubItem(
-                            " Développeurs",
-                            icon = icon("user-tie"),
-                            tabName = "about"
-                        ),
-                        menuSubItem(" Site du projet", icon = icon("compass"), href = "https://alec42.github.io/distributacalcul/"),
-                        menuSubItem(" GitHub", icon = icon("github"), href = "https://github.com/alec42/distributacalcul.git")
-                    )
+                        ))
+                    # ),
+                    # br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(),
+                    # menuItem(
+                    #     "À propos",
+                    #     icon = icon("info-circle"),
+                    #     menuSubItem(
+                    #         " Développeurs",
+                    #         icon = icon("user-tie"),
+                    #         tabName = "about"
+                    #     ),
+                    #     menuSubItem(" Site du projet", icon = icon("compass"), href = "https://alec42.github.io/distributacalcul/"),
+                        # menuSubItem(" GitHub", icon = icon("github"), href = "https://github.com/alec42/distributacalcul.git")
+                    # )
                 )
             )
         }, 
@@ -103,6 +107,22 @@ myUI <- shinyUI({
             
             )
         )
+        },
+        
+        # paneau latéral à la droite
+        {
+            rightSidebar(
+                collapsed = F,
+                background = "dark",
+                rightSidebarTabContent(id = "Site du projet",
+                                       icon = icon("compass"),
+                                       href = "https://alec42.github.io/distributacalcul/"),
+                
+                rightSidebarTabContent(id = "GitHub",
+                                       icon = icon("github"),
+                                       href = "https://github.com/alec42/distributacalcul.git")
+                
+            )
         }
     )
 })
