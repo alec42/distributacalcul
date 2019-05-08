@@ -1,13 +1,12 @@
 #### Loi Normale UI ----
 tab_NORM_UI <- tabItem(tabName = "Normale",
-        fluidPage(
+        fluidRow(
             useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
             titlePanel("Loi Normale"),
             # withMathJax(),
             helpText("\\(X \\sim\\mathcal{N}(\\mu, \\sigma^2)\\)"),
             align = "center"
         ), 
-        
         fluidRow(
             {
                 ### Paramètres Normale ----
@@ -59,7 +58,7 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
             {
                 ### Fonctions Normale ----
                 column(
-                    width = 3,
+                    width = 4,
                     box(
                         title = "Fonctions",
                         width = NULL,
@@ -293,7 +292,7 @@ tab_PARETO_UI <- tabItem(tabName = "Pareto",
                            {
                                ### Fonctions Pareto ----
                                column(
-                                   width = 3,
+                                   width = 4,
                                    box(
                                        title = "Fonctions",
                                        width = NULL,
@@ -403,7 +402,7 @@ tab_BURR_UI <- tabItem(tabName = "Burr",
                              {
                                  ### Fonctions BURR ----
                                  column(
-                                     width = 3,
+                                     width = 4,
                                      box(
                                          title = "Fonctions",
                                          width = NULL,
