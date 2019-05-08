@@ -500,23 +500,20 @@ myserver <- function(input, output, session)
                                          nsmall = 6)})
         
         VaRBURR <- reactive({format(qburr(p = input$kBURR,
-                                          shape2 = alphaBURR(), 
-                                          shape1 = tauBURR(),
+                                          shape1 = alphaBURR(), 
+                                          shape2 = tauBURR(),
                                           rate = lambdaBURR()), 
                                       nsmall = 6)
         })
         
         VaRBURR_a <- reactive({qburr(p = input$kBURR,
-                                     shape2 = alphaBURR(), 
-                                     shape1 = tauBURR(),
+                                     shape1 = alphaBURR(), 
+                                     shape2 = tauBURR(),
                                      rate = lambdaBURR())
         })
         
         
-        TVaRBURR <- reactive({format(((1 - kBURR()) * gamma(alphaBURR()))^(-1) * (lambdaBURR()^(1/tauBURR()) * gamma(1 + 1/tauBURR()) * gamma(alphaBURR() - 1/tauBURR()) * pbeta(q = VaRBURR_a()^tauBURR() / (lambdaBURR() + VaRBURR_a()^tauBURR()), 
-                                                        shape2 = alphaBURR() - 1/tauBURR(), 
-                                                        shape1 = 1 + 1/tauBURR(), 
-                                                        lower.tail = F)), 
+        TVaRBURR <- reactive({format(1/((1 - kBURR()) * gamma(alphaBURR())) * ((lambdaBURR()^(1/tauBURR())) * gamma(1 + 1/tauBURR()) * gamma(alphaBURR() - 1/tauBURR()) * pbeta(q = (VaRBURR_a()^tauBURR()) / (lambdaBURR() + VaRBURR_a()^tauBURR()), shape1 = alphaBURR() - 1/tauBURR(), shape2 = 1 + 1/tauBURR(), lower.tail = F)), 
                                        nsmall = 6)
         })
         
@@ -540,7 +537,7 @@ myserver <- function(input, output, session)
         })
         
         ExcesMoyBURR <- reactive({
-            ((lambdaBURR() + dBURR()^tauBURR())^alphaBURR() * gamma(1 + 1/tauBURR()) * gamma(alphaBURR() - 1/tauBURR()))/(lambdaBURR()^(alphaBURR() - 1/tauBURR()) * gamma(alphaBURR())) * pbeta(q = dBURR() ^ tauBURR() / (lambdaBURR() + (dBURR()^tauBURR())), shape2 = alphaBURR() - 1 /tauBURR(), shape1 = 1 + 1/tauBURR(), lower.tail = F)
+            (((lambdaBURR() + dBURR()^tauBURR())^alphaBURR()) * gamma(1 + 1/tauBURR()) * gamma(alphaBURR() - 1/tauBURR()))/((lambdaBURR()^(alphaBURR() - 1/tauBURR())) * gamma(alphaBURR())) * pbeta(q = (dBURR()^tauBURR())/(lambdaBURR() + (dBURR()^tauBURR())), shape2 = alphaBURR() - 1 /tauBURR(), shape1 = 1 + 1/tauBURR(), lower.tail = F) - dBURR()
         })
         
         meanBURR <- reactive({E_burr(lam = lambdaBURR(),
