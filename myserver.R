@@ -2,7 +2,6 @@ myserver <- function(input, output, session)
 {
 #### Loi Normale Serveur ####
         
-    
     muNORM <- reactive({input$muNORM})
         
     sigma2NORM <- reactive({input$sigmaNORM})
@@ -142,11 +141,11 @@ myserver <- function(input, output, session)
         })
 
         output$betaGAMMAUI <- renderUI({
-            numericInput('betaGAMMA', '$$\\beta$$', value = 0.1)
+            numericInput('betaGAMMA', '$$\\beta$$', value = 1, min = 0)
         })
     
         output$changingalpha <- renderUI({
-            numericInput('alphaGAMMA', label = '$$\\alpha$$', value = 2)
+            numericInput('alphaGAMMA', label = '$$\\alpha$$', value = 2, min = 0)
         })
         
         ## Ici on crée un gros observeEvent qui va modifier les paramètres de la gamma/exponentielle/khi-carrée selon les 2 radio buttons:
@@ -180,9 +179,9 @@ myserver <- function(input, output, session)
                                    })
             # rend le paramètre impossible à modifier pour l'utilisateur
             if (x == "Khi carré")
-                disable("betaGAMMA")
+                hide("betaGAMMA")
             else
-                enable("betaGAMMA")
+                show("betaGAMMA")
 
             updateNumericInput(session, "alphaGAMMA",
                                value =
@@ -233,6 +232,25 @@ myserver <- function(input, output, session)
         meanGAMMA <- reactive({E_gamma(a = alphaGAMMA(), b = betaGAMMA())})
         
         varianceGAMMA <- reactive({V_gamma(a = alphaGAMMA(), b = betaGAMMA())})
+        
+        output$loi_gamma <- renderText({
+            if(input$distrchoiceEXPOFAM == "Gamma")
+                "Loi Gamma"
+            else if (input$distrchoiceEXPOFAM == "Exponentielle")
+                "Loi Exponentielle"
+            else
+                "Loi Khi carré"
+        })
+        
+        output$distr_gamma <- renderText({
+            if(input$distrchoiceEXPOFAM == "Gamma")
+                "\\(X \\sim\\mathcal{G}(\\alpha, \\beta)\\)"
+            else if (input$distrchoiceEXPOFAM == "Exponentielle")
+                "\\(X \\sim\\mathcal{Exp}(\\beta)\\)"
+            else
+                "\\(X \\sim\\mathcal{\\chi^2}(n)\\)"
+        })
+        
         
         output$meanGAMMA <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
                                                           meanGAMMA()
@@ -328,7 +346,269 @@ myserver <- function(input, output, session)
                     alpha = 0.7
                 )
         })
+#### Loi Pareto Serveur ####
+        
+        alphaPARETO <- reactive({input$alphaPARETO})
+        
+        lambdaPARETO <- reactive({input$lambdaPARETO})
+        
+        densityPARETO <- reactive({format(dpareto(x = input$xPARETO, 
+                                                 shape = alphaPARETO(), 
+                                                 scale = lambdaPARETO()), 
+                                         nsmall = 6)})
+        
+        repartPARETO <- reactive({format(ppareto(q = input$xPARETO, 
+                                                 shape = alphaPARETO(), 
+                                                 scale = lambdaPARETO()), 
+                                         nsmall = 6)})
+        
+        surviePARETO <- reactive({format(ppareto(q = input$xPARETO, 
+                                                              shape = alphaPARETO(), 
+                                                              scale = lambdaPARETO(),
+                                                 lower.tail = F), 
+                                         nsmall = 6)})
+        
+        VaRPARETO <- reactive({format(VaR_pareto(kappa = input$kPARETO,
+                                                 alph = alphaPARETO(), 
+                                                 lam = lambdaPARETO()), 
+                                      nsmall = 6)
+            })
+        
+        TVaRPARETO <- reactive({format(TVaR_pareto(kappa = input$kPARETO, 
+                                                   alph = alphaPARETO(), 
+                                                   lam = lambdaPARETO()), 
+                                       nsmall = 6)
+            })
+        
+        EspTronqPARETO <- reactive({Etronq_pareto(d = input$dPARETO, 
+                                                  alph = alphaPARETO(),
+                                                  lam = lambdaPARETO())
+            })
+        
+        StopLossPARETO <- reactive({SL_pareto(d = input$dPARETO, 
+                                              alph = alphaPARETO(), 
+                                              lam = lambdaPARETO())
+            })
+        
+        EspLimPARETO <- reactive({Elim_pareto(d = input$dPARETO, 
+                                              alph = alphaPARETO(), 
+                                              lam = lambdaPARETO())
+            })
+        
+        meanPARETO <- reactive({E_pareto(alph = alphaPARETO(), 
+                                         lam = lambdaPARETO())
+            })
+        
+        variancePARETO <- reactive({V_pareto(alph = alphaPARETO(), 
+                                             lam = lambdaPARETO())
+            })
+        
+        ExcesMoyPARETO <- reactive({Mexcess_pareto(d = input$dPARETO, 
+                                                   alph = alphaPARETO(),
+                                                   lam = lambdaPARETO())
+            })
+        
+        output$meanPARETO <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
+                                                          meanPARETO()))
+        })
+        
+        output$varPARETO <- renderUI({withMathJax(sprintf("$$Var(X) = %s$$", 
+                                                          variancePARETO()))
+        })
+        
+        output$densityPARETO <- renderUI({withMathJax(sprintf("$$f_{X}(%s) = %s$$", 
+                                                            input$xPARETO,
+                                                            densityPARETO()))
+        })
+        output$repartPARETO <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$",
+                                                           input$xPARETO,
+                                                           repartPARETO()))
+        })
+        
+        output$surviePARETO <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
+                                                           input$xPARETO,
+                                                           surviePARETO()))
+        })
+        
+        output$VaRPARETO <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
+                                                        input$kPARETO,
+                                                        VaRPARETO()))
+        })
+        
+        output$TVaRPARETO <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$",
+                                                         input$kPARETO,
+                                                         TVaRPARETO()))
+        })
+        
+        output$EspTronqPARETO <- renderUI({withMathJax(sprintf("$$E[X \\times 1_{\\{X \\leqslant %s\\}}] = %.4f$$",
+                                                             input$dPARETO,
+                                                             EspTronqPARETO()))
+        })
+        
+        output$StopLossPARETO <- renderUI({withMathJax(sprintf("$$ \\pi_{%s}(X) = %.4f$$",
+                                                             input$dPARETO,
+                                                             StopLossPARETO()))
+        })
+        
+        output$EspLimPARETO <- renderUI({withMathJax(sprintf("$$E[\\text{min}(X;{%s})] = %.4f$$",
+                                                           input$dPARETO,
+                                                           EspLimPARETO()))
+        })
+        
+        output$ExcesMoyPARETO <- renderUI({withMathJax(sprintf("$$e_{%s}(X) = %.4f$$",
+                                                             input$dPARETO,
+                                                             ExcesMoyPARETO()))
+        })
+        
+        
+        # output$FxPARETO 
+        
+        # output$SxPARETO
+        
+        
+        
     
+#### Loi Burr Serveur ####
+        
+        alphaBURR <- reactive({input$alphaBURR})
+        
+        lambdaBURR <- reactive({input$lambdaBURR})
+        
+        tauBURR <- reactive({input$tauBURR})
+        
+        dBURR <- reactive({input$dBURR})
+        
+        kBURR <- reactive({input$kBURR})
+        
+        densityBURR <- reactive({format(dburr(x = input$xBURR, 
+                                              shape2 = alphaBURR(), 
+                                              shape1 = tauBURR(),
+                                              rate = lambdaBURR()), 
+                                          nsmall = 6)})
+        
+        repartBURR <- reactive({format(pburr(q = input$xBURR, 
+                                             shape2 = alphaBURR(), 
+                                             shape1 = tauBURR(),
+                                             rate = lambdaBURR()), 
+                                         nsmall = 6)})
+        
+        survieBURR <- reactive({format(pburr(q = input$xBURR, 
+                                             shape2 = alphaBURR(), 
+                                             shape1 = tauBURR(),
+                                             rate = lambdaBURR(),
+                                             lower.tail = F), 
+                                         nsmall = 6)})
+        
+        VaRBURR <- reactive({format(qburr(p = input$kBURR,
+                                          shape2 = alphaBURR(), 
+                                          shape1 = tauBURR(),
+                                          rate = lambdaBURR()), 
+                                      nsmall = 6)
+        })
+        
+        VaRBURR_a <- reactive({qburr(p = input$kBURR,
+                                     shape2 = alphaBURR(), 
+                                     shape1 = tauBURR(),
+                                     rate = lambdaBURR())
+        })
+        
+        
+        TVaRBURR <- reactive({format(((1 - kBURR()) * gamma(alphaBURR()))^(-1) * (lambdaBURR()^(1/tauBURR()) * gamma(1 + 1/tauBURR()) * gamma(alphaBURR() - 1/tauBURR()) * pbeta(q = VaRBURR_a()^tauBURR() / (lambdaBURR() + VaRBURR_a()^tauBURR()), 
+                                                        shape2 = alphaBURR() - 1/tauBURR(), 
+                                                        shape1 = 1 + 1/tauBURR(), 
+                                                        lower.tail = F)), 
+                                       nsmall = 6)
+        })
+        
+        EspTronqBURR <- reactive({
+            1/(gamma(alphaBURR())) * (lambdaBURR()^(1/tauBURR())) * gamma(1 + 1/tauBURR()) * gamma(alphaBURR() - 1/tauBURR()) * pbeta(q = (dBURR()^tauBURR()) / (lambdaBURR() + (dBURR()^tauBURR())), 
+                  shape2 = alphaBURR() - 1/tauBURR(), 
+                  shape1 = 1 + 1/tauBURR())
+        })
+        
+        StopLossBURR <- reactive({
+            1/(gamma(alphaBURR())) * (lambdaBURR()^(1/tauBURR())) * gamma(1 + 1/tauBURR()) * gamma(alphaBURR() - 1/tauBURR()) * pbeta(q = dBURR()^tauBURR() / (lambdaBURR() + (dBURR()^tauBURR())), 
+                  shape2 = alphaBURR() - 1/tauBURR(), 
+                  shape1 = 1 + 1/tauBURR(), 
+                  lower.tail = F) - dBURR() * (lambdaBURR()/((lambdaBURR() + dBURR()^tauBURR())^alphaBURR()))
+        })
+        
+        EspLimBURR <- reactive({
+            (gamma(alphaBURR()))^(-1) * lambdaBURR()^(1/tauBURR()) * gamma(1 + 1/tauBURR()) * gamma(alphaBURR() - 1/tauBURR()) * pbeta(q = dBURR()^tauBURR() / (lambdaBURR() + dBURR()^tauBURR()), 
+                  shape2 = alphaBURR() - 1/tauBURR(), 
+                  shape1 = 1 + 1/tauBURR()) + dBURR() * (lambdaBURR()/((lambdaBURR() + dBURR()^tauBURR())^alphaBURR()))
+        })
+        
+        ExcesMoyBURR <- reactive({
+            ((lambdaBURR() + dBURR()^tauBURR())^alphaBURR() * gamma(1 + 1/tauBURR()) * gamma(alphaBURR() - 1/tauBURR()))/(lambdaBURR()^(alphaBURR() - 1/tauBURR()) * gamma(alphaBURR())) * pbeta(q = dBURR() ^ tauBURR() / (lambdaBURR() + (dBURR()^tauBURR())), shape2 = alphaBURR() - 1 /tauBURR(), shape1 = 1 + 1/tauBURR(), lower.tail = F)
+        })
+        
+        meanBURR <- reactive({E_burr(lam = lambdaBURR(),
+                                     alph = alphaBURR(),
+                                     rho = tauBURR())
+        })
+        
+        varianceBURR <- reactive({V_burr(lam = lambdaBURR(),
+                                         alph = alphaBURR(),
+                                         rho = tauBURR())
+        })
+        
+        output$meanBURR <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
+                                                           meanBURR()))
+        })
+        
+        output$varBURR <- renderUI({withMathJax(sprintf("$$Var(X) = %s$$", 
+                                                          varianceBURR()))
+        })
+        
+        output$densityBURR <- renderUI({withMathJax(sprintf("$$f_{X}(%s) = %s$$", 
+                                                              input$xBURR,
+                                                              densityBURR()))
+        })
+        output$repartBURR <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$",
+                                                             input$xBURR,
+                                                             repartBURR()))
+        })
+        
+        output$survieBURR <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
+                                                             input$xBURR,
+                                                             survieBURR()))
+        })
+        
+        output$VaRBURR <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
+                                                          input$kBURR,
+                                                          VaRBURR()))
+        })
+        
+        output$TVaRBURR <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$",
+                                                           input$kBURR,
+                                                           TVaRBURR()))
+        })
+        
+        output$EspTronqBURR <- renderUI({withMathJax(sprintf("$$E[X \\times 1_{\\{X \\leqslant %s\\}}] = %.4f$$",
+                                                               input$dBURR,
+                                                               EspTronqBURR()))
+        })
+        
+        output$StopLossBURR <- renderUI({withMathJax(sprintf("$$ \\pi_{%s}(X) = %.4f$$",
+                                                               input$dBURR,
+                                                               StopLossBURR()))
+        })
+        
+        output$EspLimBURR <- renderUI({withMathJax(sprintf("$$E[\\text{min}(X;{%s})] = %.4f$$",
+                                                             input$dBURR,
+                                                             EspLimBURR()))
+        })
+        
+        output$ExcesMoyBURR <- renderUI({withMathJax(sprintf("$$e_{%s}(X) = %.4f$$",
+                                                               input$dBURR,
+                                                               ExcesMoyBURR()))
+        })
+        
+        # output$FxBURR 
+        
+        # output$SxBURR
+      
 #### Loi Binomiale Serveur ####
         nBIN <- reactive({input$nBIN})
         
@@ -405,6 +685,7 @@ myserver <- function(input, output, session)
         # Reactive slider
         observeEvent(input$nBIN,{updateSliderInput(session = session, inputId = "xBIN", max = input$nBIN)
         })
-    } 
+        
+} 
     
 

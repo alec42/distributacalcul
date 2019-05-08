@@ -97,7 +97,7 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
                         closable = F,
                         status = "success",
                         # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
-                        numericInput('kNORM', '$$\\kappa$$', value = 0.99, step = 0.005),
+                        numericInput('kNORM', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                         uiOutput("VaRNORM"),
                         uiOutput("TVaRNORM")
                     ),
@@ -112,9 +112,10 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
 tab_GAMMA_UI <- tabItem(
         tabName = "gamma",
         fluidPage(
-            titlePanel("Loi Gamma"),
+            tags$style("#loi_gamma {font-size:30px;}"),
+            textOutput("loi_gamma"),
             withMathJax(),
-            helpText("\\(X \\sim\\mathcal{G}(\\alpha, \\beta)\\)"),
+            textOutput("distr_gamma"),
             radioGroupButtons(
                 inputId = "distrchoiceEXPOFAM",
                 label = "", 
@@ -170,7 +171,7 @@ tab_GAMMA_UI <- tabItem(
                         width = NULL,
                         solidHeader = TRUE,
                         status = "warning",
-                        numericInput('dGAMMA', withMathJax('$$d$$'), value = 0, width = "20px"),
+                        numericInput('dGAMMA', withMathJax('$$d$$'), value = 0, width = "20px", min = 0),
                         # radioButtons('equalityGAMMA', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
                         uiOutput("EspTronqGAMMA"),
                         uiOutput("EspLimGAMMA"),
@@ -191,7 +192,7 @@ tab_GAMMA_UI <- tabItem(
                         width = NULL,
                         solidHeader = TRUE, # grosseur du tezte
                         status = "danger", # couleur de la boite
-                        numericInput('xGAMMA', '$$x$$', value = 10),
+                        numericInput('xGAMMA', '$$x$$', value = 10, min = 0),
                         uiOutput("densityGAMMA"),
                         tabBox(
                             width = NULL,
@@ -220,7 +221,7 @@ tab_GAMMA_UI <- tabItem(
                         solidHeader = TRUE,
                         closable = F,
                         status = "success", # grosseur du tezte
-                        numericInput('kGAMMA', '$$\\kappa$$', value = 0.99, step = 0.005),
+                        numericInput('kGAMMA', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                         uiOutput("VaRGAMMA"),
                         uiOutput("TVaRGAMMA")
                     ),
@@ -230,6 +231,225 @@ tab_GAMMA_UI <- tabItem(
         )
     )
 
+
+#### Loi Pareto UI ----
+tab_PARETO_UI <- tabItem(tabName = "Pareto",
+                       fluidPage(
+                           useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
+                           titlePanel("Loi Pareto"),
+                           # withMathJax(),
+                           helpText("\\(X \\sim\\mathcal{Pareto}(\\alpha, \\lambda)\\)"),
+                           align = "center"
+                       ), 
+                       
+                       fluidRow(
+                           {
+                               ### Paramètres Pareto ----
+                               column(
+                                   width = 2,
+                                   boxPlus(
+                                       title = "Paramètres",
+                                       status = "primary",
+                                       solidHeader = T,
+                                       width = NULL,closable = F,
+                                       numericInput('alphaPARETO', withMathJax('$$\\alpha$$'), value = 3, min = 0),
+                                       numericInput('lambdaPARETO', '$$\\lambda$$', value = 1, min = 0)
+                                   ),
+                                   align = "center"
+                               )
+                           },
+                           
+                           {
+                               ### Moments Pareto  ----
+                               column(
+                                   width = 3,
+                                   box(
+                                       title = "Moments",
+                                       width = NULL,
+                                       solidHeader = TRUE,
+                                       status = "warning",
+                                       uiOutput("meanPARETO"),
+                                       uiOutput("varPARETO")
+                                   ),
+                                   
+                                   box(
+                                       title = "Autres Moments",
+                                       width = NULL,
+                                       solidHeader = TRUE,
+                                       status = "warning",
+                                       numericInput('dPARETO', withMathJax('$$d$$'), value = 0, width = "20px", min = 0),
+                                       # radioButtons('equalityPARETO', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
+                                       uiOutput("EspTronqPARETO"),
+                                       uiOutput("EspLimPARETO"),
+                                       uiOutput("StopLossPARETO"),
+                                       uiOutput("ExcesMoyPARETO")
+                                       #,
+                                       # align = "center"
+                                   ),
+                                   align = "center"
+                               )
+                           },
+                           
+                           {
+                               ### Fonctions Pareto ----
+                               column(
+                                   width = 3,
+                                   box(
+                                       title = "Fonctions",
+                                       width = NULL,
+                                       solidHeader = TRUE,
+                                       # tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
+                                       status = "danger", # pour couleur de la boite, diff couleur pour statut
+                                       numericInput('xPARETO', '$$x$$', value = 0, min = 0),
+                                       uiOutput("densityPARETO"),
+                                       
+                                       tabBox(
+                                           width = NULL,
+                                           tabPanel("Répartition",
+                                                    uiOutput("repartPARETO"),
+                                                    plotlyOutput("FxPARETO")
+                                           ),
+                                           tabPanel("Survie",
+                                                    uiOutput("surviePARETO"),
+                                                    plotlyOutput("SxPARETO")
+                                           )
+                                           
+                                       )
+                                   ),
+                                   align = "center"
+                               )
+                           }, 
+                           
+                           {
+                               ### Mesures de risque Pareto  ----
+                               column(
+                                   width = 3,
+                                   boxPlus(
+                                       title = "Mesure de risques",
+                                       width = NULL,
+                                       solidHeader = TRUE, 
+                                       closable = F,
+                                       status = "success",
+                                       # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
+                                       numericInput('kPARETO', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
+                                       uiOutput("VaRPARETO"),
+                                       uiOutput("TVaRPARETO")
+                                   ),
+                                   align = "center"
+                               )
+                           }
+                       )
+)
+
+#### Loi Burr UI ----
+tab_BURR_UI <- tabItem(tabName = "Burr",
+                         fluidPage(
+                             useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
+                             titlePanel("Loi Burr"),
+                             # withMathJax(),
+                             helpText("\\(X \\sim\\mathcal{Burr}(\\alpha, \\lambda, \\tau)\\)"),
+                             align = "center"
+                         ), 
+                         
+                         fluidRow(
+                             {
+                                 ### Paramètres Burr ----
+                                 column(
+                                     width = 2,
+                                     boxPlus(
+                                         title = "Paramètres",
+                                         status = "primary",
+                                         solidHeader = T,
+                                         width = NULL,closable = F,
+                                         numericInput('alphaBURR', withMathJax('$$\\alpha$$'), value = 3, step = 1, min = 0),
+                                         numericInput('tauBURR', withMathJax('$$\\tau$$'), value = 1, step = 1, min = 0),
+                                         numericInput('lambdaBURR', '$$\\lambda$$', value = 1, step = 1, min = 0)
+                                     ),
+                                     align = "center"
+                                 )
+                             },
+                             
+                             {
+                                 ### Moments BURR  ----
+                                 column(
+                                     width = 3,
+                                     box(
+                                         title = "Moments",
+                                         width = NULL,
+                                         solidHeader = TRUE,
+                                         status = "warning",
+                                         uiOutput("meanBURR"),
+                                         uiOutput("varBURR")
+                                     ),
+                                     
+                                     box(
+                                         title = "Autres Moments",
+                                         width = NULL,
+                                         solidHeader = TRUE,
+                                         status = "warning",
+                                         numericInput('dBURR', withMathJax('$$d$$'), value = 0, width = "20px", min = 0, step = 1),
+                                         # radioButtons('equalityBURR', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
+                                         uiOutput("EspTronqBURR"),
+                                         uiOutput("EspLimBURR"),
+                                         uiOutput("StopLossBURR"),
+                                         uiOutput("ExcesMoyBURR")
+                                         #,
+                                         # align = "center"
+                                     ),
+                                     align = "center"
+                                 )
+                             },
+                             
+                             {
+                                 ### Fonctions BURR ----
+                                 column(
+                                     width = 3,
+                                     box(
+                                         title = "Fonctions",
+                                         width = NULL,
+                                         solidHeader = TRUE,
+                                         # tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
+                                         status = "danger", # pour couleur de la boite, diff couleur pour statut
+                                         numericInput('xBURR', '$$x$$', value = 0, min = 0, step = 1),
+                                         uiOutput("densityBURR"),
+                                         
+                                         tabBox(
+                                             width = NULL,
+                                             tabPanel("Répartition",
+                                                      uiOutput("repartBURR"),
+                                                      plotlyOutput("FxBURR")
+                                             ),
+                                             tabPanel("Survie",
+                                                      uiOutput("survieBURR"),
+                                                      plotlyOutput("SxBURR")
+                                             )
+                                             
+                                         )
+                                     ),
+                                     align = "center"
+                                 )
+                             }, 
+                             
+                             {
+                                 ### Mesures de risque BURR  ----
+                                 column(
+                                     width = 3,
+                                     boxPlus(
+                                         title = "Mesure de risques",
+                                         width = NULL,
+                                         solidHeader = TRUE, 
+                                         closable = F,
+                                         status = "success",
+                                         # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
+                                         numericInput('kBURR', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
+                                         uiOutput("VaRBURR"),
+                                         uiOutput("TVaRBURR")
+                                     ),
+                                     align = "center"
+                                 )
+                             }
+                         )
+)
 
 #### Loi binomiale UI #### 
 tab_BIN_UI <- tabItem(tabName = "Binomiale",

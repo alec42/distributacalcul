@@ -20,15 +20,26 @@ myUI <- shinyUI({
                         "Lois continues",
                         icon = icon("chart-area"),
                         menuSubItem(
-                            "Loi normale",
+                            "Normale",
                             tabName = "Normale",
                             icon = icon("neos")
                         ),
                         menuSubItem(
-                            " Loi gamma",
+                            "Gamma, Exponentielle, & Khi-Carré",
                             icon = icon("google"),
                             tabName = "gamma"
+                        ),
+                        menuSubItem(
+                            "Pareto",
+                            icon = icon("product-hunt"),
+                            tabName = "Pareto"
+                        ),
+                        menuSubItem(
+                            "Burr",
+                            icon = icon("product-hunt"),
+                            tabName = "Burr"
                         )
+                        
                     ),
                     
                     menuItem(
@@ -40,7 +51,6 @@ myUI <- shinyUI({
                             icon = icon("bold")
                         )
                     ),
-                    br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(),
                     menuItem(
                         "À propos",
                         icon = icon("info-circle"),
@@ -69,37 +79,38 @@ myUI <- shinyUI({
             ## Lois Continues
                 tab_NORM_UI,
                 tab_GAMMA_UI,
-                # tab_PARETO_UI,
+                tab_PARETO_UI,
+                tab_BURR_UI,
                 
             ## Lois Discrètes
             tab_BIN_UI,
-                {
-                ## À propos ----
-                    tabItem(
-                        tabName = "about",
-                        h2("Nous contacter "),
-                        align = "center",
-                        box(
+            
+            ## À propos ----
+                tabItem(
+                    tabName = "about",
+                    h2("Nous contacter "),
+                    align = "center",
+                    box(
+                        title = "Alec James van Rassel",
+                        status = "primary",
+                        solidHeader = T,
+                        boxProfile(
+                            src = "alec.jpg",
                             title = "Alec James van Rassel",
-                            status = "primary",
-                            solidHeader = T,
-                            boxProfile(
-                                src = "alec.jpg",
-                                title = "Alec James van Rassel",
-                                subtitle = "alec.van-rassel.1@ulaval.ca"
-                            )),
-                        box(
+                            subtitle = "alec.van-rassel.1@ulaval.ca"
+                        )
+                    ),
+                    box(
+                        title = "Marc-André Devost",
+                        status = "primary",
+                        solidHeader = T,
+                        boxProfile(
+                            src = "marc.jpg",
                             title = "Marc-André Devost",
-                            status = "primary",
-                            solidHeader = T,
-                            boxProfile(
-                                src = "marc.jpg",
-                                title = "Marc-André Devost",
-                                subtitle = "marc-andre.devost.1@ulaval.ca"
-                            )
+                            subtitle = "marc-andre.devost.1@ulaval.ca"
                         )
                     )
-                }
+                )
             
             )
         )
