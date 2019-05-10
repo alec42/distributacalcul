@@ -670,6 +670,116 @@ tab_WEIBULL_UI <- tabItem(tabName = "Weibull",
                          )
 )
 
+#### Loi Beta UI ----
+tab_BETA_UI <- tabItem(tabName = "Beta",
+                        fluidRow(
+                            useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
+                            titlePanel("Beta"),
+                            # withMathJax(),
+                            helpText("\\(X \\sim\\mathcal{B}(\\alpha, \\beta)\\)"),
+                            align = "center"
+                        ), 
+                        fluidRow(
+                            {
+                                ### Paramètres Beta ----
+                                column(
+                                    width = 2,
+                                    boxPlus(
+                                        title = "Paramètres",
+                                        status = "primary",
+                                        solidHeader = T,
+                                        width = NULL,closable = F,
+                                        numericInput('alphaBETA', withMathJax('$$\\alpha$$'), value = 2, min = 1),
+                                        numericInput('betaBETA', '$$\\beta$$', value = 1, min = 1)
+                                    ),
+                                    align = "center"
+                                )
+                            },
+                            
+                            {
+                                ### Moments Beta  ----
+                                column(
+                                    width = 3,
+                                    box(
+                                        title = "Moments",
+                                        width = NULL,
+                                        solidHeader = TRUE,
+                                        status = "warning",
+                                        uiOutput("meanBETA"),
+                                        uiOutput("varianceBETA")
+                                    ),
+                                    
+                                    box(
+                                        title = "Autres Moments",
+                                        width = NULL,
+                                        solidHeader = TRUE,
+                                        status = "warning",
+                                        numericInput('dBETA', withMathJax('$$d$$'), value = .5, width = "20px", min = 0, max = 1, step = .1),
+                                        uiOutput("EspLimBETA"),
+                                        uiOutput("StopLossBETA"),
+                                        uiOutput("ExcesMoyBETA"),
+                                        uiOutput("kthmomentBETA"),
+                                        numericInput('d2BETA', withMathJax('$$d$$'), value = 1, width = "20px"),
+                                        uiOutput("EspTronqBETA")
+                                        # align = "center"
+                                    ),
+                                    align = "center"
+                                )
+                            },
+                            
+                            {
+                                ### Fonctions Beta ----
+                                column(
+                                    width = 4,
+                                    box(
+                                        title = "Fonctions",
+                                        width = NULL,
+                                        solidHeader = TRUE,
+                                        # tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
+                                        status = "danger", # pour couleur de la boite, diff couleur pour statut
+                                        numericInput('xBETA', '$$x$$', value = 0.5, min = 0, max = 1, step = .1),
+                                        uiOutput("densityBETA"),
+                                        
+                                        tabBox(
+                                            width = NULL,
+                                            tabPanel("Répartition",
+                                                     uiOutput("repartBETA"),
+                                                     plotlyOutput("FxBETA")
+                                            ),
+                                            tabPanel("Survie",
+                                                     uiOutput("survieBETA"),
+                                                     plotlyOutput("SxBETA")
+                                            )
+                                            
+                                        )
+                                    ),
+                                    align = "center"
+                                )
+                            }, 
+                            
+                            {
+                                ### Mesures de risque Beta  ----
+                                column(
+                                    width = 3,
+                                    boxPlus(
+                                        title = "Mesure de risques",
+                                        width = NULL,
+                                        solidHeader = TRUE, 
+                                        closable = F,
+                                        status = "success",
+                                        # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
+                                        numericInput('kBETA', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
+                                        uiOutput("VaRBETA"),
+                                        uiOutput("TVaRBETA")
+                                    ),
+                                    align = "center"
+                                )
+                            }
+                        )
+)
+
+
+
 #### Loi binomiale UI #### 
 tab_BIN_UI <- tabItem(tabName = "Binomiale",
          fluidPage(

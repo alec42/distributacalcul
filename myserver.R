@@ -689,7 +689,8 @@ myserver <- function(input, output, session)
         
         output$kthmomentWEIBULL <- renderUI({withMathJax(sprintf("$$E(X^%s) = %s$$", 
                                                                  input$dWEIBULL,
-                                                                 kthmomentWEIBULL()))
+                                                                 format(kthmomentWEIBULL(),
+                                                                        nsmall = 6)))
         })
         
         output$varianceWEIBULL <- renderUI({withMathJax(sprintf("$$Var(X) = %s$$", 
@@ -880,6 +881,138 @@ myserver <- function(input, output, session)
         
         # output$SxLNORM
         
+        
+        
+#### Loi Beta Serveur ####
+        
+        alphaBETA <- reactive({input$alphaBETA})
+        
+        betaBETA <- reactive({input$betaBETA})
+        
+        densityBETA <- reactive({format(dbeta(x = input$xBETA, 
+                                                  shape1 = alphaBETA(), 
+                                                  shape2 = betaBETA()), 
+                                          nsmall = 6)})
+        
+        repartBETA <- reactive({format(pbeta(q = input$xBETA, 
+                                                 shape1 = alphaBETA(), 
+                                                 shape2 = betaBETA()), 
+                                         nsmall = 6)})
+        
+        survieBETA <- reactive({format(pbeta(q = input$xBETA, 
+                                             shape1 = alphaBETA(), 
+                                             shape2 = betaBETA(),
+                                             lower.tail = F), 
+                                         nsmall = 6)})
+        
+        VaRBETA <- reactive({format(VaR_beta(k = input$kBETA,
+                                             a = alphaBETA(), 
+                                             b = betaBETA()), 
+                                      nsmall = 6)
+        })
+        
+        TVaRBETA <- reactive({format(TVaR_beta(k = input$kBETA, 
+                                               a = alphaBETA(), 
+                                               b = betaBETA()), 
+                                       nsmall = 6)
+        })
+        
+        EspTronqBETA <- reactive({Etronq_beta(d = input$dBETA, 
+                                              a = alphaBETA(),
+                                              b = betaBETA())
+        })
+        
+        StopLossBETA <- reactive({SL_beta(d = input$dBETA, 
+                                          a = alphaBETA(),
+                                          b = betaBETA())
+        })
+        
+        EspLimBETA <- reactive({Elim_beta(d = input$dBETA, 
+                                          a = alphaBETA(),
+                                          b = betaBETA())
+        })
+        
+        meanBETA <- reactive({E_beta(a = alphaBETA(),
+                                     b = betaBETA())
+        })
+        
+        varianceBETA <- reactive({V_beta(a = alphaBETA(),
+                                         b = betaBETA())
+        })
+        
+        ExcesMoyBETA <- reactive({Mexcess_beta(d = input$dBETA, 
+                                               a = alphaBETA(),
+                                               b = betaBETA())
+        })
+        
+        kthmomentBETA <- reactive({kthmoment_beta(k = input$dBETA, 
+                                                  a = alphaBETA(),
+                                                  b = betaBETA())})
+        
+        output$meanBETA <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
+                                                           format(meanBETA(),
+                                                                  nsmall = 6)))
+        })
+        
+        output$kthmomentBETA <- renderUI({withMathJax(sprintf("$$E[X^{%s}] = %s$$", 
+                                                              input$dBETA,
+                                                              format(kthmomentBETA(),
+                                                                     nsmall = 6)))
+        })
+        
+        output$varianceBETA <- renderUI({withMathJax(sprintf("$$Var(X) = %s$$", 
+                                                             format(varianceBETA(),
+                                                                    nsmall = 6)))
+        })
+        
+        output$densityBETA <- renderUI({withMathJax(sprintf("$$f_{X}(%s) = %s$$", 
+                                                              input$xBETA,
+                                                              densityBETA()))
+        })
+        output$repartBETA <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$",
+                                                             input$xBETA,
+                                                             repartBETA()))
+        })
+        
+        output$survieBETA <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
+                                                             input$xBETA,
+                                                             survieBETA()))
+        })
+        
+        output$VaRBETA <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
+                                                          input$kBETA,
+                                                          VaRBETA()))
+        })
+        
+        output$TVaRBETA <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$",
+                                                           input$kBETA,
+                                                           TVaRBETA()))
+        })
+        
+        output$EspTronqBETA <- renderUI({withMathJax(sprintf("$$E[X \\times 1_{\\{X \\leqslant %s\\}}] = %.4f$$",
+                                                               input$d2BETA,
+                                                               EspTronqBETA()))
+        })
+        
+        output$StopLossBETA <- renderUI({withMathJax(sprintf("$$ \\pi_{%s}(X) = %.4f$$",
+                                                               input$dBETA,
+                                                               StopLossBETA()))
+        })
+        
+        output$EspLimBETA <- renderUI({withMathJax(sprintf("$$E[\\text{min}(X;{%s})] = %.4f$$",
+                                                             input$dBETA,
+                                                             EspLimBETA()))
+        })
+        
+        output$ExcesMoyBETA <- renderUI({withMathJax(sprintf("$$e_{%s}(X) = %.4f$$",
+                                                               input$dBETA,
+                                                               ExcesMoyBETA()))
+        })
+        
+        
+        # output$FxBETA 
+        
+        # output$SxBETA
         
         
 #### Loi Binomiale Serveur ####

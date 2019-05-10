@@ -2,18 +2,18 @@ source('tabs_UI.R')
 myUI <- shinyUI({
     dashboardPage(
         skin = "blue",
-        dashboardHeader(title = "Lois de probabilité", titleWidth = NULL),
+        dashboardHeader(title = "Lois de probabilité"),
         
         # Paneau Latéral
         {
             dashboardSidebar(
                 collapsed = F,
-                sidebarSearchForm(
-                    textId = "searchbar",
-                    buttonId = "search",
-                    label = "Recherche"
-                ),
                 #Ajout d'une search bar (À retravailler)
+                # sidebarSearchForm(
+                #     textId = "searchbar",
+                #     buttonId = "search",
+                #     label = "Recherche"
+                # ),
                 sidebarMenu(
                     id = "tabs",
                     menuItem(
@@ -27,7 +27,7 @@ myUI <- shinyUI({
                         menuSubItem(
                             "Lognormale",
                             tabName = "Lognormale",
-                            icon = icon("neos")
+                            icon = icon("ruler-combined")
                         ),
                         menuSubItem(
                             "Gamma, Exponentielle, & Khi-Carré",
@@ -36,7 +36,7 @@ myUI <- shinyUI({
                         ),
                         menuSubItem(
                             "Weibull",
-                            icon = icon("google"),
+                            icon = icon("wikipedia-w"),
                             tabName = "Weibull"
                         ),
                         menuSubItem(
@@ -46,8 +46,13 @@ myUI <- shinyUI({
                         ),
                         menuSubItem(
                             "Burr",
-                            icon = icon("product-hunt"),
+                            icon = icon("btc"),
                             tabName = "Burr"
+                        ),
+                        menuSubItem(
+                            "Beta",
+                            icon = icon("behance"),
+                            tabName = "Beta"
                         )
                         
                     ),
@@ -93,6 +98,7 @@ myUI <- shinyUI({
                 tab_PARETO_UI,
                 tab_BURR_UI,
                 tab_LNORM_UI,
+                tab_BETA_UI,
                 
             ## Lois Discrètes
             tab_BIN_UI,

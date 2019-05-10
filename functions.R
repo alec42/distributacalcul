@@ -173,3 +173,9 @@ kthmoment_lnorm <- function(k, mu, sig)
 {
     exp(mu * k + k ^ 2 * (sig ^ 2) / 2)
 }
+
+kthmoment_beta <- function(k, a, b)
+{
+    (gamma(a + k) * gamma(a + b))/(gamma(a) * gamma(a + b + k))
+}
+
