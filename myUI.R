@@ -25,6 +25,11 @@ myUI <- shinyUI({
                             icon = icon("neos")
                         ),
                         menuSubItem(
+                            "Lognormale",
+                            tabName = "Lognormale",
+                            icon = icon("neos")
+                        ),
+                        menuSubItem(
                             "Gamma, Exponentielle, & Khi-Carré",
                             icon = icon("google"),
                             tabName = "gamma"
@@ -81,6 +86,7 @@ myUI <- shinyUI({
                 tab_GAMMA_UI,
                 tab_PARETO_UI,
                 tab_BURR_UI,
+                tab_LNORM_UI,
                 
             ## Lois Discrètes
             tab_BIN_UI,

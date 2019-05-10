@@ -35,3 +35,70 @@ generateOptions_withHTML <- function (inputId, choices, selected, inline, type =
     }, SIMPLIFY = FALSE, USE.NAMES = FALSE)
     div(class = "shiny-options-group", options)
 }
+
+Mexcess_burr <- function(lam, alpha, tau, d) {
+    (((lam + d ^ tau) ^ alpha) *
+         gamma(1 + 1 / tau) *
+         gamma(alpha - 1 / tau)) /
+        ((lam ^ (alpha - 1 / tau)) *
+             gamma(alpha)) *
+        pbeta(
+            q = (d ^ tau) / (lam + (d ^ tau)),
+            shape1 = 1 + 1 / tau,
+            shape2 = alpha - 1 / tau,
+            lower.tail = F
+        ) - d
+}
+
+Elim_burr <- function(d, alpha, lam, tau) {
+    1/gamma(alpha) * 
+        lam^(1/tau) * 
+        gamma(1 + 1/tau) * 
+        gamma(alpha - 1/tau) * 
+        pbeta(q = d^tau / (lam + d^tau), 
+              shape1 = 1 + 1/tau, 
+              shape2 = alpha - 1/tau) + 
+        d * 
+        (lam / (lam + d^tau)) ^ alpha
+}
+
+SL_burr <- function(d, alpha, lam, tau) {
+    1/(gamma(alpha)) * 
+        (lam^(1/tau)) * 
+        gamma(1 + 1/tau) * 
+        gamma(alpha - 1/tau) * 
+        pbeta(q = (d^tau / (lam + (d^tau))), 
+              shape1 = 1 + 1/tau, 
+              shape2 = alpha - 1/tau, 
+              lower.tail = F) - 
+        d * 
+        (lam / (lam + d^tau)) ^ alpha
+}
+
+Etronq_burr <- function(d, alpha, lam, tau) {
+    1/(gamma(alpha)) * 
+        (lam^(1/tau)) * 
+        gamma(1 + 1/tau) * 
+        gamma(alpha - 1/tau) * 
+        pbeta(q = (d^tau / (lam + (d^tau))), 
+              shape1 = 1 + 1/tau, 
+              shape2 = alpha - 1/tau)
+}
+
+TVaR_burr <- function(k, var, alpha, lam, tau) {
+    1/((1 - k) * gamma(alpha)) * 
+        (
+            (lam^(1 / tau)) *
+                gamma(1 + 1 / tau) *
+                gamma(alpha - 1 / tau) *
+                pbeta(q = (var^tau) / (lam + var^tau),
+                      shape1 = 1 + 1 / tau,
+                      shape2 = alpha - 1 / tau,
+                      lower.tail = F)
+        )
+    
+}
+
+VaR_burr <- function(k, alpha, lam, tau) {
+    (lam * ((1 - k)^(-1/alpha) - 1))^(1/tau)
+}

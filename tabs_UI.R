@@ -107,6 +107,115 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
 )
 
 
+#### Loi Lognormale UI ----
+tab_LNORM_UI <- tabItem(tabName = "Lognormale",
+                       fluidRow(
+                           useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
+                           titlePanel("Loi Lognormale"),
+                           # withMathJax(),
+                           helpText("\\(X \\sim\\mathcal{LN}(\\mu, \\sigma^2)\\)"),
+                           align = "center"
+                       ), 
+                       fluidRow(
+                           {
+                               ### Paramètres LNORMale ----
+                               column(
+                                   width = 2,
+                                   boxPlus(
+                                       title = "Paramètres",
+                                       status = "primary",
+                                       solidHeader = T,
+                                       width = NULL,closable = F,
+                                       numericInput('muLNORM', withMathJax('$$\\mu$$'), value = 0),
+                                       numericInput('sigmaLNORM', '$$\\sigma^2$$', value = 1)
+                                   ),
+                                   align = "center"
+                               )
+                           },
+                           
+                           {
+                               ### Moments Lognormale  ----
+                               column(
+                                   width = 3,
+                                   # tags$style(" * {font-size:40000px}"), # grosseur du tezte
+                                   box(
+                                       title = "Moments",
+                                       width = NULL,
+                                       solidHeader = TRUE,
+                                       status = "warning",
+                                       uiOutput("meanLNORM"),
+                                       uiOutput("varLNORM")
+                                   ),
+                                   
+                                   box(
+                                       title = "Autres Moments",
+                                       width = NULL,
+                                       solidHeader = TRUE,
+                                       status = "warning",
+                                       numericInput('dLNORM', withMathJax('$$d$$'), value = 0, width = "20px"),
+                                       # radioButtons('equalityLNORM', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
+                                       uiOutput("EspTronqLNORM"),
+                                       uiOutput("EspLimLNORM"),
+                                       uiOutput("StopLossLNORM"),
+                                       uiOutput("ExcesMoyLNORM")#,
+                                       # align = "center"
+                                   ),
+                                   align = "center"
+                               )
+                           },
+                           
+                           {
+                               ### Fonctions Lognormale ----
+                               column(
+                                   width = 4,
+                                   box(
+                                       title = "Fonctions",
+                                       width = NULL,
+                                       solidHeader = TRUE,
+                                       # tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
+                                       status = "danger", # pour couleur de la boite, diff couleur pour statut
+                                       numericInput('xLNORM', '$$x$$', value = 0),
+                                       uiOutput("densityLNORM"),
+                                       
+                                       tabBox(
+                                           width = NULL,
+                                           tabPanel("Répartition",
+                                                    uiOutput("repartLNORM"),
+                                                    plotlyOutput("FxLNORM")
+                                           ),
+                                           tabPanel("Survie",
+                                                    uiOutput("survieLNORM"),
+                                                    plotlyOutput("SxLNORM")
+                                           )
+                                           
+                                       )
+                                   ),
+                                   align = "center"
+                               )
+                           }, 
+                           
+                           {
+                               ### Mesures de risque Lognormale  ----
+                               column(
+                                   width = 3,
+                                   boxPlus(
+                                       title = "Mesure de risques",
+                                       width = NULL,
+                                       solidHeader = TRUE, 
+                                       closable = F,
+                                       status = "success",
+                                       # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
+                                       numericInput('kLNORM', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
+                                       uiOutput("VaRLNORM"),
+                                       uiOutput("TVaRLNORM")
+                                   ),
+                                   align = "center"
+                               )
+                           }
+                       )
+)
+
+
 #### Loi Gamma UI ####
 tab_GAMMA_UI <- tabItem(
         tabName = "gamma",
