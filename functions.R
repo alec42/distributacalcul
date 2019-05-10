@@ -102,3 +102,74 @@ TVaR_burr <- function(k, var, alpha, lam, tau) {
 VaR_burr <- function(k, alpha, lam, tau) {
     (lam * ((1 - k)^(-1/alpha) - 1))^(1/tau)
 }
+
+Mexcess_weibull <- function(d, tau, beta)
+{
+    exp((beta * d)^tau) / beta * 
+        gamma(1 + 1/tau) * 
+        pgamma(q = d^tau,
+               shape = 1 + 1/tau,
+               scale = beta^tau,
+               lower.tail = F) - 
+        d
+}
+
+Elim_weibull <- function(d, tau, beta)
+{
+    1 / beta * 
+        gamma(1 + 1/tau) * 
+        pgamma(q = d^tau,
+               shape = 1 + 1/tau,
+               scale = beta^tau) +
+        d * exp(-(beta * d)^tau)
+}
+
+SL_weibull <- function(d, tau, beta)
+{
+    1 / beta * 
+        gamma(1 + 1/tau) * 
+        pgamma(q = d^tau,
+               shape = 1 + 1/tau,
+               scale = beta^tau,
+               lower.tail = F) -
+        d * exp(-(beta * d)^tau)
+}
+
+Etronq_weibull <- function(d, tau, beta)
+{
+    1 / beta * 
+        gamma(1 + 1/tau) * 
+        pgamma(q = d^tau,
+               shape = 1 + 1/tau,
+               scale = beta^tau)
+}
+
+TVaR_weibull <- function(k, tau, beta)
+{
+    1 / (beta * (1 - k)) * 
+        gamma(1 + 1/tau) * 
+        pgamma(q = -log(1 - k),
+               shape = 1 + 1/tau,
+               scale = 1,
+               lower.tail = F)
+}
+
+VaR_weibull <- function(k, tau, beta)
+{
+    1 / beta * (-log(1 - k))^(1/tau)
+}
+
+E_weibull <- function(tau, beta, k = 1)
+{
+    1/(beta^k) * gamma(1 + k/tau)
+}
+
+V_weibull <- function(tau, beta)
+{
+    E_weibull(tau = tau, beta = beta, k = 2) - (E_weibull(tau = tau, beta = beta, k = 1))^2
+}
+
+kthmoment_lnorm <- function(k, mu, sig)
+{
+    exp(mu * k + k ^ 2 * (sig ^ 2) / 2)
+}

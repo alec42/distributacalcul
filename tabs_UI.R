@@ -152,12 +152,13 @@ tab_LNORM_UI <- tabItem(tabName = "Lognormale",
                                        width = NULL,
                                        solidHeader = TRUE,
                                        status = "warning",
-                                       numericInput('dLNORM', withMathJax('$$d$$'), value = 0, width = "20px"),
+                                       numericInput('dLNORM', withMathJax('$$d$$'), value = 1, width = "20px"),
                                        # radioButtons('equalityLNORM', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
                                        uiOutput("EspTronqLNORM"),
                                        uiOutput("EspLimLNORM"),
                                        uiOutput("StopLossLNORM"),
-                                       uiOutput("ExcesMoyLNORM")#,
+                                       uiOutput("ExcesMoyLNORM"),
+                                       uiOutput("kthmomentLNORM")
                                        # align = "center"
                                    ),
                                    align = "center"
@@ -552,6 +553,116 @@ tab_BURR_UI <- tabItem(tabName = "Burr",
                                          numericInput('kBURR', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                          uiOutput("VaRBURR"),
                                          uiOutput("TVaRBURR")
+                                     ),
+                                     align = "center"
+                                 )
+                             }
+                         )
+)
+
+#### Loi Weibull UI ----
+tab_WEIBULL_UI <- tabItem(tabName = "Weibull",
+                         fluidPage(
+                             useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
+                             titlePanel("Loi Weibull"),
+                             # withMathJax(),
+                             helpText("\\(X \\sim\\mathcal{Wei}(\\tau, \\beta)\\)"),
+                             align = "center"
+                         ), 
+                         
+                         fluidRow(
+                             {
+                                 ### Paramètres Weibull ----
+                                 column(
+                                     width = 2,
+                                     boxPlus(
+                                         title = "Paramètres",
+                                         status = "primary",
+                                         solidHeader = T,
+                                         width = NULL,closable = F,
+                                         numericInput('tauWEIBULL', withMathJax('$$\\tau$$'), value = 2, min = 0),
+                                         numericInput('betaWEIBULL', '$$\\beta$$', value = 1, min = 0)
+                                     ),
+                                     align = "center"
+                                 )
+                             },
+                             
+                             {
+                                 ### Moments Weibull  ----
+                                 column(
+                                     width = 3,
+                                     box(
+                                         title = "Moments",
+                                         width = NULL,
+                                         solidHeader = TRUE,
+                                         status = "warning",
+                                         uiOutput("meanWEIBULL"),
+                                         uiOutput("varianceWEIBULL")
+                                     ),
+                                     
+                                     box(
+                                         title = "Autres Moments",
+                                         width = NULL,
+                                         solidHeader = TRUE,
+                                         status = "warning",
+                                         numericInput('dWEIBULL', withMathJax('$$d$$'), value = 1, width = "20px", min = 0),
+                                         # radioButtons('equalityWEIBULL', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
+                                         uiOutput("EspTronqWEIBULL"),
+                                         uiOutput("EspLimWEIBULL"),
+                                         uiOutput("StopLossWEIBULL"),
+                                         uiOutput("ExcesMoyWEIBULL"),
+                                         uiOutput("kthmomentWEIBULL")
+                                         #,
+                                         # align = "center"
+                                     ),
+                                     align = "center"
+                                 )
+                             },
+                             
+                             {
+                                 ### Fonctions Weibull ----
+                                 column(
+                                     width = 4,
+                                     box(
+                                         title = "Fonctions",
+                                         width = NULL,
+                                         solidHeader = TRUE,
+                                         # tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
+                                         status = "danger", # pour couleur de la boite, diff couleur pour statut
+                                         numericInput('xWEIBULL', '$$x$$', value = 0, min = 0),
+                                         uiOutput("densityWEIBULL"),
+                                         
+                                         tabBox(
+                                             width = NULL,
+                                             tabPanel("Répartition",
+                                                      uiOutput("repartWEIBULL"),
+                                                      plotlyOutput("FxWEIBULL")
+                                             ),
+                                             tabPanel("Survie",
+                                                      uiOutput("survieWEIBULL"),
+                                                      plotlyOutput("SxWEIBULL")
+                                             )
+                                             
+                                         )
+                                     ),
+                                     align = "center"
+                                 )
+                             }, 
+                             
+                             {
+                                 ### Mesures de risque Weibull  ----
+                                 column(
+                                     width = 3,
+                                     boxPlus(
+                                         title = "Mesure de risques",
+                                         width = NULL,
+                                         solidHeader = TRUE, 
+                                         closable = F,
+                                         status = "success",
+                                         # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
+                                         numericInput('kWEIBULL', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
+                                         uiOutput("VaRWEIBULL"),
+                                         uiOutput("TVaRWEIBULL")
                                      ),
                                      align = "center"
                                  )

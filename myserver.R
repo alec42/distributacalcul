@@ -611,6 +611,140 @@ myserver <- function(input, output, session)
         
         # output$SxBURR
       
+#### Loi Weibull Serveur ####
+        
+        betaWEIBULL <- reactive({input$betaWEIBULL})
+        
+        tauWEIBULL <- reactive({input$tauWEIBULL})
+        
+        dWEIBULL <- reactive({input$dWEIBULL})
+        
+        kWEIBULL <- reactive({input$kWEIBULL})
+        
+        densityWEIBULL <- reactive({format(dweibull(x = input$xWEIBULL, 
+                                              shape = tauWEIBULL(),
+                                              scale = betaWEIBULL()), 
+                                        nsmall = 6)})
+        
+        repartWEIBULL <- reactive({format(pweibull(q = input$xWEIBULL, 
+                                                   shape = tauWEIBULL(),
+                                                   scale = betaWEIBULL()), 
+                                       nsmall = 6)})
+        
+        survieWEIBULL <- reactive({format(pweibull(q = input$xWEIBULL, 
+                                                   shape = tauWEIBULL(),
+                                                   scale = betaWEIBULL(),
+                                                   lower.tail = F), 
+                                       nsmall = 6)})
+        
+        VaRWEIBULL <- reactive({format(VaR_weibull(k = kWEIBULL(),
+                                                   tau = tauWEIBULL(), 
+                                                   beta = betaWEIBULL()),
+                                    nsmall = 6)
+        })
+        
+        TVaRWEIBULL <- reactive({format(TVaR_weibull(k = kWEIBULL(),
+                                                     tau = tauWEIBULL(), 
+                                                     beta = betaWEIBULL()), 
+                                     nsmall = 6)
+        })
+        
+        EspTronqWEIBULL <- reactive({Etronq_weibull(d = dWEIBULL(),
+                                                    beta = betaWEIBULL(),
+                                                    tau = tauWEIBULL())
+        })
+        
+        StopLossWEIBULL <- reactive({SL_weibull(d = dWEIBULL(),
+                                                beta = betaWEIBULL(),
+                                                tau = tauWEIBULL())
+        })
+        
+        EspLimWEIBULL <- reactive({Elim_weibull(d = dWEIBULL(),
+                                                beta = betaWEIBULL(),
+                                                tau = tauWEIBULL())
+        })
+        
+        ExcesMoyWEIBULL <- reactive({Mexcess_weibull(d = dWEIBULL(),
+                                                     beta = betaWEIBULL(),
+                                                     tau = tauWEIBULL())
+        })
+        
+        meanWEIBULL <- reactive({E_weibull(beta = betaWEIBULL(),
+                                           tau = tauWEIBULL())
+        })
+        
+        kthmomentWEIBULL <- reactive({E_weibull(beta = betaWEIBULL(),
+                                                tau = tauWEIBULL(),
+                                                k = dWEIBULL())
+        })
+        
+        varianceWEIBULL <- reactive({V_weibull(beta = betaWEIBULL(),
+                                               tau = tauWEIBULL())
+        })
+        
+        output$meanWEIBULL <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
+                                                            format(meanWEIBULL(),
+                                                                   nsmall = 6)))
+        })
+        
+        output$kthmomentWEIBULL <- renderUI({withMathJax(sprintf("$$E(X^%s) = %s$$", 
+                                                                 input$dWEIBULL,
+                                                                 kthmomentWEIBULL()))
+        })
+        
+        output$varianceWEIBULL <- renderUI({withMathJax(sprintf("$$Var(X) = %s$$", 
+                                                                format(varianceWEIBULL(),
+                                                                       nsmall = 6)))
+        })
+        
+        output$densityWEIBULL <- renderUI({withMathJax(sprintf("$$f_{X}(%s) = %s$$", 
+                                                            input$xWEIBULL,
+                                                            densityWEIBULL()))
+        })
+        output$repartWEIBULL <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$",
+                                                           input$xWEIBULL,
+                                                           repartWEIBULL()))
+        })
+        
+        output$survieWEIBULL <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
+                                                           input$xWEIBULL,
+                                                           survieWEIBULL()))
+        })
+        
+        output$VaRWEIBULL <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
+                                                        input$kWEIBULL,
+                                                        VaRWEIBULL()))
+        })
+        
+        output$TVaRWEIBULL <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$",
+                                                         input$kWEIBULL,
+                                                         TVaRWEIBULL()))
+        })
+        
+        output$EspTronqWEIBULL <- renderUI({withMathJax(sprintf("$$E[X \\times 1_{\\{X \\leqslant %s\\}}] = %.4f$$",
+                                                             input$dWEIBULL,
+                                                             EspTronqWEIBULL()))
+        })
+        
+        output$StopLossWEIBULL <- renderUI({withMathJax(sprintf("$$ \\pi_{%s}(X) = %.4f$$",
+                                                             input$dWEIBULL,
+                                                             StopLossWEIBULL()))
+        })
+        
+        output$EspLimWEIBULL <- renderUI({withMathJax(sprintf("$$E[\\text{min}(X;{%s})] = %.4f$$",
+                                                           input$dWEIBULL,
+                                                           EspLimWEIBULL()))
+        })
+        
+        output$ExcesMoyWEIBULL <- renderUI({withMathJax(sprintf("$$e_{%s}(X) = %.4f$$",
+                                                             input$dWEIBULL,
+                                                             ExcesMoyWEIBULL()))
+        })
+        
+        # output$FxWEIBULL 
+        
+        # output$SxWEIBULL
+        
 #### Loi Lognormale Serveur ####
         
         muLNORM <- reactive({input$muLNORM})
@@ -672,6 +806,12 @@ myserver <- function(input, output, session)
                                          sig = sqrt(sigma2LNORM()))
             })
         
+        kthmomentLNORM <- reactive({kthmoment_lnorm(k = input$dLNORM,
+                                                    mu = muLNORM(),
+                                                    sig = sqrt(sigma2LNORM()))
+            })
+        
+        
         varianceLNORM <- reactive({V_lnorm(mu = muLNORM(),
                                           sig = sqrt(sigma2LNORM()))
         })
@@ -679,6 +819,12 @@ myserver <- function(input, output, session)
         output$meanLNORM <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
                                                          format(meanLNORM(), 
                                                                 nsmall = 6)))
+        })
+        
+        output$kthmomentLNORM <- renderUI({withMathJax(sprintf("$$E(X^%s) = %s$$", 
+                                                               input$dLNORM,
+                                                               format(kthmomentLNORM(), 
+                                                                 nsmall = 6)))
         })
         
         output$varLNORM <- renderUI({withMathJax(sprintf("$$Var(X) = %s$$", 
@@ -815,4 +961,3 @@ myserver <- function(input, output, session)
         
 } 
     
-

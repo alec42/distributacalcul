@@ -35,6 +35,11 @@ myUI <- shinyUI({
                             tabName = "gamma"
                         ),
                         menuSubItem(
+                            "Weibull",
+                            icon = icon("google"),
+                            tabName = "Weibull"
+                        ),
+                        menuSubItem(
                             "Pareto",
                             icon = icon("product-hunt"),
                             tabName = "Pareto"
@@ -84,6 +89,7 @@ myUI <- shinyUI({
             ## Lois Continues
                 tab_NORM_UI,
                 tab_GAMMA_UI,
+                tab_WEIBULL_UI,
                 tab_PARETO_UI,
                 tab_BURR_UI,
                 tab_LNORM_UI,
