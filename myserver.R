@@ -1028,9 +1028,17 @@ myserver <- function(input, output, session)
         
         repartBIN <- reactive({format(pbinom(input$xBIN, nBIN(), pBIN()), nsmall = 6)})
         
-        VaRBIN <- reactive({format(qbinom(input$kBIN, nBIN(), pBIN()), nsmall = 4)})
+        VaRBIN <- reactive({format(qbinom(input$kBIN, 
+                                          nBIN(), 
+                                          pBIN()), 
+                                   nsmall = 6)
+            })
         
-        TVaRBIN <- reactive({format(0, nsmall = 4)})
+        TVaRBIN <- reactive({format(TVaR_binom(kappa = input$kBIN,
+                                               n = nBIN(),
+                                               p = pBIN()), 
+                                    nsmall = 6)
+            })
         
         EspTronqBIN <- reactive({0})
         
