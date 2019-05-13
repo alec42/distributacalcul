@@ -220,10 +220,19 @@ Elim_erlang <- function(d, n, b)
 
 Mexcess_erlang <- function(d, n, b)
 {
-    (n / b) * pgamma(q = d, shape = n + 1, rate = b) + d * pgamma(q = d, shape = n, rate = b, lower.tail = F)
+    (n / b) * pgamma(q = d, shape = n + 1, rate = b, lower.tail = F)/pgamma(q = d, shape = n, rate = b, lower.tail = F) - d
 }
 
-perlang <- function(x, n, b)
+perlang <- function(x, n, b, lower.tail = T)
 {
-    (1 - exp(-b * x) * sum(sapply(0:(n - 1), function(j) ((b * x)^j)/factorial(j))))
+    if(lower.tail = T)
+        (1 - exp(-b * x) * sum(sapply(0:(n - 1), function(j) ((b * x)^j)/factorial(j))))
+    else
+        exp(-b * x) * sum(sapply(0:(n - 1), function(j) ((b * x)^j)/factorial(j)))
 }
+
+derlang <- function(x, n, b)
+{
+    ((b ^ n) / gamma(n)) * (x^(n - 1)) * exp(-b * x)
+}
+
