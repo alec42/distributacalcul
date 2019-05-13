@@ -179,3 +179,51 @@ kthmoment_beta <- function(k, a, b)
     (gamma(a + k) * gamma(a + b))/(gamma(a) * gamma(a + b + k))
 }
 
+E_erlang <- function(n, b)
+{
+    n/b
+}
+
+V_erlang <- function(n, b)
+{
+    n/b^2
+}
+
+# prod(c(2, 2))
+
+
+
+kthmoment_erlang <- function(k, n, b)
+{
+    prod(sapply(0:(k - 1), function(i) (n + i)))/(b^k)
+}
+
+Etronq_erlang <- function(d, n, b)
+{
+    n/b * (1 - exp(-b * d) * sum(sapply(0:n, function(j) ((b * d)^j)/factorial(j) )))
+}
+
+TVaR_erlang <- function(vark, k, n, b)
+{
+    (n / ((1 - k) * b)) * (exp(-b * vark) * sum(sapply(0:n, function(j) ((b * vark)^j)/factorial(j) )))
+}
+
+SL_erlang <- function(d, n, b)
+{
+    (n/b) * pgamma(q = d, shape = n + 1, rate = b, lower.tail = F) - d * pgamma(q = d, shape = n, rate = b, lower.tail = F)
+}
+
+Elim_erlang <- function(d, n, b)
+{
+    (n/b) * pgamma(q = d, shape = n + 1, rate = b) + d * pgamma(q = d, shape = n, rate = b, lower.tail = F)
+}
+
+Mexcess_erlang <- function(d, n, b)
+{
+    (n / b) * pgamma(q = d, shape = n + 1, rate = b) + d * pgamma(q = d, shape = n, rate = b, lower.tail = F)
+}
+
+perlang <- function(x, n, b)
+{
+    (1 - exp(-b * x) * sum(sapply(0:(n - 1), function(j) ((b * x)^j)/factorial(j))))
+}
