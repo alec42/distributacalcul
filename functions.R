@@ -46,8 +46,7 @@ Mexcess_burr <- function(lam, alpha, tau, d) {
             q = (d ^ tau) / (lam + (d ^ tau)),
             shape1 = 1 + 1 / tau,
             shape2 = alpha - 1 / tau,
-            lower.tail = F
-        ) - d
+            lower.tail = F) - d
 }
 
 Elim_burr <- function(d, alpha, lam, tau) {
@@ -225,7 +224,7 @@ Mexcess_erlang <- function(d, n, b)
 
 perlang <- function(x, n, b, lower.tail = T)
 {
-    if(lower.tail = T)
+    if(lower.tail == T)
         (1 - exp(-b * x) * sum(sapply(0:(n - 1), function(j) ((b * x)^j)/factorial(j))))
     else
         exp(-b * x) * sum(sapply(0:(n - 1), function(j) ((b * x)^j)/factorial(j)))
@@ -236,3 +235,15 @@ derlang <- function(x, n, b)
     ((b ^ n) / gamma(n)) * (x^(n - 1)) * exp(-b * x)
 }
 
+# derlang_gen <- function(x, n = length(b), b)
+# {
+#     sum(sapply(1:n, function(i)
+#         b[i] *
+#             exp(-b[i] * x) *
+#             prod(sapply(c(1:(i - 1),
+#                           (i + 1):n),
+#                         function(j)
+#                             (b[j] / (b[j] - b[i]))))))
+# }
+# 
+# derlang_gen(x = 1, b = c(3, 4))
