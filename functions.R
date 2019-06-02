@@ -84,6 +84,12 @@ Etronq_burr <- function(d, alpha, lam, tau) {
               shape2 = alpha - 1/tau)
 }
 
+#-tau < k < alpha * tau
+kthmoment_burr <- function(k, alpha, lam, tau)
+{
+    (1/gamma(alpha)) * lam^(k/tau) * gamma(1 + k/tau) * gamma(alpha - k/tau)
+}
+
 TVaR_burr <- function(k, var, alpha, lam, tau) {
     1/((1 - k) * gamma(alpha)) * 
         (
@@ -187,6 +193,20 @@ V_erlang <- function(n, b)
 {
     n/b^2
 }
+
+# alpha > k
+kthmoment_pareto1 <- function(alpha, lam, k)
+{
+    (lam^k * factorial(k))/prod(alpha - seq(from = 1, to = k, by = 1))
+}
+
+# -1 < k < alpha
+kthmoment_pareto2 <- function(alpha, lam, k)
+{
+    (lam^k * gamma(k + 1) * gamma(alpha - k))/gamma(alpha)
+}
+
+
 
 # prod(c(2, 2))
 

@@ -395,6 +395,19 @@ myserver <- function(input, output, session)
                                               lam = lambdaPARETO())
             })
         
+        kthmomentPARETO <- reactive({
+            if(alphaPARETO() > input$dPARETO)
+                kthmoment_pareto1(k = input$dPARETO, 
+                                  alpha = alphaPARETO(), 
+                                  lam = lambdaPARETO())
+            else
+                kthmoment_pareto2(k = input$dPARETO, 
+                                  alpha = alphaPARETO(), 
+                                  lam = lambdaPARETO())
+        })
+        
+        
+        
         meanPARETO <- reactive({E_pareto(alph = alphaPARETO(), 
                                          lam = lambdaPARETO())
             })
@@ -458,6 +471,11 @@ myserver <- function(input, output, session)
         output$ExcesMoyPARETO <- renderUI({withMathJax(sprintf("$$e_{%s}(X) = %.4f$$",
                                                              input$dPARETO,
                                                              ExcesMoyPARETO()))
+        })
+        
+        output$kthmomentPARETO <- renderUI({withMathJax(sprintf("$$E[X^{%s}] = %.4f$$",
+                                                               input$dPARETO,
+                                                               kthmomentPARETO()))
         })
         
         
@@ -539,6 +557,12 @@ myserver <- function(input, output, session)
                                           tau = tauBURR())
         })
         
+        kthmomentBURR <- reactive({kthmoment_burr(k = kBURR(),
+                                                  alpha = alphaBURR(),
+                                                  lam = lambdaBURR(),
+                                                  tau = tauBURR())
+        })
+        
         ExcesMoyBURR <- reactive({Mexcess_burr(lam = lambdaBURR(), 
                                                alpha = alphaBURR(),
                                                tau = tauBURR(),
@@ -606,6 +630,12 @@ myserver <- function(input, output, session)
                                                                input$dBURR,
                                                                ExcesMoyBURR()))
         })
+        
+        output$kthmomentBURR <- renderUI({withMathJax(sprintf("$$E[X^{%s}] = %.4f$$",
+                                                             input$dBURR,
+                                                             ExcesMoyBURR()))
+        })
+        
         
         # output$FxBURR 
         

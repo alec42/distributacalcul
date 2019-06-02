@@ -391,8 +391,8 @@ tab_PARETO_UI <- tabItem(tabName = "Pareto",
                                        uiOutput("EspTronqPARETO"),
                                        uiOutput("EspLimPARETO"),
                                        uiOutput("StopLossPARETO"),
-                                       uiOutput("ExcesMoyPARETO")
-                                       #,
+                                       uiOutput("ExcesMoyPARETO"),
+                                       uiOutput("kthmomentPARETO")
                                        # align = "center"
                                    ),
                                    align = "center"
@@ -501,8 +501,8 @@ tab_BURR_UI <- tabItem(tabName = "Burr",
                                          uiOutput("EspTronqBURR"),
                                          uiOutput("EspLimBURR"),
                                          uiOutput("StopLossBURR"),
-                                         uiOutput("ExcesMoyBURR")
-                                         #,
+                                         uiOutput("ExcesMoyBURR"),
+                                         uiOutput("kthmomentBURR")
                                          # align = "center"
                                      ),
                                      align = "center"
