@@ -799,17 +799,18 @@ tab_BIN_UI <- tabItem(tabName = "Binomiale",
                         title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
                         uiOutput("meanBIN"), 
                         uiOutput("varBIN")), 
-                    align = "center",
+                    align = "center"
+                    # ,
                     
-                    box(
-                        title = "Autres Moments", width = NULL, solidHeader = TRUE, status = "warning", 
-                        numericInput('dBIN', withMathJax('$$d$$'), value = 0, width = "20px"),
-                        # radioButtons('equalityNORM', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
-                        uiOutput("EspTronqBIN"), 
-                        uiOutput("EspLimBIN"), 
-                        uiOutput("StopLossBIN"), 
-                        uiOutput("ExcesMoyBIN"),
-                        align = "center")
+                    # box(
+                    #     title = "Fonctions g", width = NULL, solidHeader = TRUE, status = "warning", 
+                    #     numericInput('dBIN', withMathJax('$$d$$'), value = 0, width = "20px"),
+                    #     # radioButtons('equalityNORM', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
+                    #     uiOutput("EspTronqBIN"), 
+                    #     uiOutput("EspLimBIN"), 
+                    #     uiOutput("StopLossBIN"), 
+                    #     uiOutput("ExcesMoyBIN"),
+                    #     align = "center")
              ),
              
              ## Fonctions
@@ -820,22 +821,109 @@ tab_BIN_UI <- tabItem(tabName = "Binomiale",
                         status = "danger", # pour couleur de la boite, diff couleur pour statut
                         numericInput('xBIN', '$$x$$', min = 0, max = 5, value = 0, step = 1), 
                         uiOutput("densityBIN"), 
-                        uiOutput("repartBIN"),
-                        plotlyOutput("FxBIN")),
+                        tabBox(
+                            width = NULL,
+                            tabPanel("Répartition",
+                                     uiOutput("repartBIN")
+                                     # ,
+                                     # plotlyOutput("FxBIN")
+                            ),
+                            tabPanel("Survie",
+                                     uiOutput("survieBIN")
+                                     # ,
+                                     # plotlyOutput("SxBIN")
+                            )
+                            
+                        )
+                    ),
                     align = "center"
                     
                     
-             ),
-             
-             column(width =3,
-                    boxPlus(
-                        title = "Mesure de risques", width = NULL, solidHeader = TRUE, status = "success",
-                        tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
-                        numericInput('kBIN', '$$\\kappa$$', value = 0.99, step = 0.005), 
-                        uiOutput("VaRBIN"), 
-                        uiOutput("TVaRBIN")), 
-                    
-                    align = "center"
              )
+             # ,
+             # 
+             # column(width =3,
+             #        boxPlus(
+             #            title = "Mesure de risques", width = NULL, solidHeader = TRUE, status = "success",
+             #            tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
+             #            numericInput('kBIN', '$$\\kappa$$', value = 0.99, step = 0.005), 
+             #            uiOutput("VaRBIN"), 
+             #            uiOutput("TVaRBIN")), 
+             #        
+             #        align = "center"
+             # )
          )
 )
+
+#### Loi Poisson UI #### 
+tab_POI_UI <- tabItem(tabName = "Poisson",
+                      fluidPage(
+                          titlePanel("Loi Poisson"), withMathJax(), helpText("\\(X \\sim\\mathcal{P}(\\lambda)\\)"), align = "center"),
+                      fluidRow(
+                          column(width = 2,
+                                 box(title = "Paramètres", status = "primary", solidHeader = T, width = NULL,
+                                     numericInput('lamPOI', '$$\\lambda$$', value = 1, min = 0, step = 1)), align = "center"
+                                 
+                          ),
+                          
+                          ## Moments
+                          column(width = 3,
+                                 tags$style(" * {font-size:20px}"), # grosseur du tezte
+                                 box(
+                                     title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
+                                     uiOutput("meanPOI"),
+                                     uiOutput("varPOI")),
+                                 align = "center"
+                                 # ,
+                                 
+                                 # box(
+                                 #     title = "Fonctions g", width = NULL, solidHeader = TRUE, status = "warning",
+                                 #     numericInput('dPOI', withMathJax('$$d$$'), value = 0, width = "20px"),
+                                 #     # radioButtons('equalityNORM', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
+                                 #     uiOutput("EspTronqPOI"),
+                                 #     uiOutput("EspLimPOI"),
+                                 #     uiOutput("StopLossPOI"),
+                                 #     uiOutput("ExcesMoyPOI"),
+                                 #     align = "center")
+                          ),
+                          
+                          ## Fonctions
+                          column(width = 3,
+                                 box(
+                                     title = "Fonctions", width = NULL, solidHeader = TRUE,
+                                     tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
+                                     status = "danger", # pour couleur de la boite, diff couleur pour statut
+                                     numericInput('xPOI', '$$x$$', min = 0, value = 0, step = 1),
+                                     uiOutput("densityPOI"),
+                                     
+                                     tabBox(
+                                         width = NULL,
+                                         tabPanel("Répartition",
+                                                  uiOutput("repartPOI")
+                                                  # ,
+                                                  # plotlyOutput("FxPOI")
+                                         ),
+                                         tabPanel("Survie",
+                                                  uiOutput("surviePOI")
+                                                  # ,
+                                                  # plotlyOutput("SxBETA")
+                                         )
+                                         
+                                     )
+                                 ),
+                                 align = "center"
+                                     
+                                 ),
+                                 
+                                 column(width =3,
+                                        boxPlus(
+                                            title = "Mesure de risques", width = NULL, solidHeader = TRUE, status = "success",
+                                            tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
+                                            numericInput('kPOI', '$$\\kappa$$', value = 0.99, step = 0.005),
+                                            uiOutput("VaRPOI"),
+                                            uiOutput("TVaRPOI")),
+                                        
+                                        align = "center"
+                                 )
+                          )
+                      )

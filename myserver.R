@@ -1058,25 +1058,27 @@ myserver <- function(input, output, session)
         
         repartBIN <- reactive({format(pbinom(input$xBIN, nBIN(), pBIN()), nsmall = 6)})
         
-        VaRBIN <- reactive({format(qbinom(input$kBIN, 
-                                          nBIN(), 
-                                          pBIN()), 
-                                   nsmall = 6)
-            })
+        survieBIN <- reactive({format(pbinom(input$xBIN, nBIN(), pBIN(), lower.tail = F), nsmall = 6)})
         
-        TVaRBIN <- reactive({format(TVaR_binom(kappa = input$kBIN,
-                                               n = nBIN(),
-                                               p = pBIN()), 
-                                    nsmall = 6)
-            })
+        # VaRBIN <- reactive({format(qbinom(input$kBIN,
+        #                                   nBIN(), 
+        #                                   pBIN()), 
+        #                            nsmall = 6)
+        #     })
         
-        EspTronqBIN <- reactive({0})
+        # TVaRBIN <- reactive({format(TVaR_binom(kappa = input$kBIN,
+        #                                        n = nBIN(),
+        #                                        p = pBIN()),
+        #                             nsmall = 6)
+        #     })
         
-        StopLossBIN <- reactive({0})
+        # EspTronqBIN <- reactive({0})
         
-        EspLimBIN <- reactive({0})
+        # StopLossBIN <- reactive({0})
         
-        ExcesMoyBIN <- reactive({0})
+        # EspLimBIN <- reactive({0})
+        
+        # ExcesMoyBIN <- reactive({0})
         
         output$meanBIN <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
                                                         meanBIN()
@@ -1094,41 +1096,129 @@ myserver <- function(input, output, session)
                                                           input$xBIN,
                                                           repartBIN()
         ))})
-        output$VaRBIN <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$", 
-                                                       input$kBIN,
-                                                       VaRBIN()
-        ))})
-        output$TVaRBIN <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$", 
-                                                        input$kBIN,
-                                                        TVaRBIN()
-        ))})
-        output$EspTronqBIN <- renderUI({withMathJax(sprintf("$$E[X \\times 1_{\\{X \\leqslant %s\\}}] = %.4f$$", 
-                                                            input$dBIN,
-                                                            EspTronqBIN()
-        ))})
+
+        output$survieBIN <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
+                                                            input$xBIN,
+                                                            survieBIN()))
+        })
         
-        output$StopLossBIN <- renderUI({withMathJax(sprintf("$$ \\pi_{%s}(X) = %.4f$$", 
-                                                            input$dBIN,
-                                                            StopLossBIN()
-        ))})
-        
-        output$EspLimBIN <- renderUI({withMathJax(sprintf("$$E[\\text{min}(X;{%s})] = %.4f$$", 
-                                                          input$dBIN,
-                                                          EspLimBIN()
-        ))})
-        
-        output$ExcesMoyBIN <- renderUI({withMathJax(sprintf("$$e_{%s}(X) = %.4f$$", 
-                                                            input$dBIN,
-                                                            ExcesMoyBIN()
-        ))})
+        # output$VaRBIN <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$", 
+        #                                                input$kBIN,
+        #                                                VaRBIN()
+        # ))})
+        # output$TVaRBIN <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$", 
+        #                                                 input$kBIN,
+        #                                                 TVaRBIN()
+        # ))})
+        # output$EspTronqBIN <- renderUI({withMathJax(sprintf("$$E[X \\times 1_{\\{X \\leqslant %s\\}}] = %.4f$$", 
+        #                                                     input$dBIN,
+        #                                                     EspTronqBIN()
+        # ))})
+        # 
+        # output$StopLossBIN <- renderUI({withMathJax(sprintf("$$ \\pi_{%s}(X) = %.4f$$", 
+        #                                                     input$dBIN,
+        #                                                     StopLossBIN()
+        # ))})
+        # 
+        # output$EspLimBIN <- renderUI({withMathJax(sprintf("$$E[\\text{min}(X;{%s})] = %.4f$$", 
+        #                                                   input$dBIN,
+        #                                                   EspLimBIN()
+        # ))})
+        # 
+        # output$ExcesMoyBIN <- renderUI({withMathJax(sprintf("$$e_{%s}(X) = %.4f$$", 
+        #                                                     input$dBIN,
+        #                                                     ExcesMoyBIN()
+        # ))})
         
         output$FxBIN <- renderPlotly({ggplot(data.frame(x = 0:nBIN(), y = dbinom(0:nBIN(), nBIN(), pBIN())), aes(x = x, y = y)) + geom_bar(stat = "identity", col = "red", fill ="red", alpha = 0.7, width = 0.3) + theme_classic() + ylab("P(X=x")
             
         })
         
+        
+        
         # Reactive slider
         observeEvent(input$nBIN,{updateSliderInput(session = session, inputId = "xBIN", max = input$nBIN)
         })
-        
-} 
     
+#### Loi Poisson Serveur ####
+    lamPOI <- reactive({input$lamPOI})
+    
+    densityPOI <- reactive({format(dpois(input$xPOI, lamPOI()), nsmall = 6)})
+    
+    repartPOI <- reactive({format(ppois(input$xPOI, lamPOI()), nsmall = 6)})
+    
+    surviePOI <- reactive({format(ppois(input$xPOI, lamPOI(), lower.tail = F), nsmall = 6)})
+    
+    VaRPOI <- reactive({format(qpois(input$kPOI,
+                                     lambda = input$lamPOI),
+                               nsmall = 6)
+        })
+    
+    # TVaRPOI <- reactive({format(TVaR_pois(kappa = input$kPOI,
+    #                                       lam = input$lamPOI),
+    #                             nsmall = 6)
+    #     })
+    
+    # EspTronqPOI <- reactive({0})
+    
+    # StopLossPOI <- reactive({0})
+    
+    # EspLimPOI <- reactive({0})
+    
+    # ExcesMoyPOI <- reactive({0})
+    
+    output$meanPOI <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
+                                                    lamPOI()
+    ))})
+    
+    output$varPOI <- renderUI({withMathJax(sprintf("$$Var(X) = %s$$", 
+                                                   lamPOI()
+    ))})
+    
+    output$densityPOI <- renderUI({withMathJax(sprintf("$$f_{X}(%s) = %s$$", 
+                                                       input$xPOI,
+                                                       densityPOI()
+    ))})
+    output$repartPOI <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$", 
+                                                      input$xPOI,
+                                                      repartPOI()
+    ))})
+    
+    output$surviePOI <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
+                                                      input$xPOI,
+                                                      surviePOI()))
+    })
+    
+    output$VaRPOI <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
+                                                   input$kPOI,
+                                                   VaRPOI()
+    ))})
+    # output$TVaRPOI <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$",
+    #                                                 input$kPOI,
+    #                                                 TVaRPOI()
+    # ))})
+    # output$EspTronqPOI <- renderUI({withMathJax(sprintf("$$E[X \\times 1_{\\{X \\leqslant %s\\}}] = %.4f$$", 
+    #                                                     input$dPOI,
+    #                                                     EspTronqPOI()
+    # ))})
+    # 
+    # output$StopLossPOI <- renderUI({withMathJax(sprintf("$$ \\pi_{%s}(X) = %.4f$$", 
+    #                                                     input$dPOI,
+    #                                                     StopLossPOI()
+    # ))})
+    # 
+    # output$EspLimPOI <- renderUI({withMathJax(sprintf("$$E[\\text{min}(X;{%s})] = %.4f$$", 
+    #                                                   input$dPOI,
+    #                                                   EspLimPOI()
+    # ))})
+    # 
+    # output$ExcesMoyPOI <- renderUI({withMathJax(sprintf("$$e_{%s}(X) = %.4f$$", 
+    #                                                     input$dPOI,
+    #                                                     ExcesMoyPOI()
+    # ))})
+    
+    # output$FxPOI <- renderPlotly({ggplot(data.frame(x = 0:nPOI(), y = dPOIom(0:nPOI(), nPOI(), pPOI())), aes(x = x, y = y)) + geom_bar(stat = "identity", col = "red", fill ="red", alpha = 0.7, width = 0.3) + theme_classic() + ylab("P(X=x")
+    #     
+    # })
+    
+}
