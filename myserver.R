@@ -1221,8 +1221,84 @@ myserver <- function(input, output, session)
     #     
     # })
     
-
-#### Loi BNomiale Serveur ####
+#### Loi Binomiale Négative Serveur ####
+    
+    rBN <- reactive({input$rBN})
+    
+    qBN <- reactive({
+        if (input$distrchoiceqBN == T) {
+            input$qBN
+        } else {
+            ((1 - input$qBN) / input$qBN)
+        }
+    })
+    
+    output$changingqBN <- renderUI({
+        numericInput('qBN', '$$q$$', value = 0.5, min = 0, max = 1, step = 0.1)
+    })
+    
+    output$changingrBN <- renderUI({
+        numericInput('rBN', label = '$$r$$', value = 1, min = 0, step = 1)
+    })
+    
+    ## Ici on crée un gros observeEvent qui va modifier les paramètres de la gamma/exponentielle/khi-carrée selon les 2 radio buttons:
+    ## x: selection de distribution
+    ## y: selection de si c'est fréquence ou échelle
+    observeEvent(
+    {
+        input$distrchoiceqBN
+        input$distrchoiceBNFAM 
+    },
+    {
+        x <- input$distrchoiceBNFAM
+        y <- input$distrchoiceqBN
+        
+        updateNumericInput(session, "rBN",
+                           value =
+                               if (x == "Géometrique")
+                               {
+                                   rBN = 1
+                               }
+                           else
+                           {
+                               rBN = 2
+                           }
+        )
+        updateNumericInput(session, "qBN",
+                           label = {
+                               if (y == T)
+                               {
+                                   '$$q$$'
+                               }
+                               else{
+                                   '$$\\beta$$'
+                               }
+                           }
+        )
+        
+        
+        # rend le paramètre impossible à modifier pour l'utilisateur
+        if (x == "Géometrique")
+            hide("rBN")
+        else
+            show("rBN")
+        
+    })
+    
+    
+    output$loi_BN <- renderText({
+        if(input$distrchoiceBNFAM == "Géometrique")
+            "Loi Géometrique"
+        else
+            "Loi Binomiale Négative"
+    })
+    
+    output$distr_BN <- renderText({
+        if(input$distrchoiceBNFAM == "Géometrique")
+            "\\(X \\sim\\text{Géo}(q)\\)"
+        else
+            "\\(X \\sim\\text{BN}(r, q)\\)"
+    })
     
     rBN <- reactive({input$rBN})
     

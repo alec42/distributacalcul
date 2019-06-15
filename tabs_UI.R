@@ -235,93 +235,87 @@ tab_GAMMA_UI <- tabItem(
         ),
         
         fluidRow(
-            {
-                ### Paramètres Gamma ----
-                column(
-                    width = 3,
-                    box(
-                        title = "Paramètres",
-                        status = "primary",
-                        solidHeader = T,
+            
+            #### Paramètres Gamma ####
+            column(
+                width = 3,
+                box(
+                    title = "Paramètres",
+                    status = "primary",
+                    solidHeader = T,
+                    width = NULL,
+                    # numericInput('alphaGAMMA', label = withMathJax('$$\\alpha$$'), value = 2),
+                    uiOutput("changingalpha"),
+                    # numericInput('betaGAMMA', '$$\\beta$$', value = 0.1),
+                    uiOutput("betaGAMMAUI"),
+                    switchInput(
+                        inputId = "distrchoiceGAMMA",
+                        onLabel = "Fréquence (Rate)",
+                        offLabel = "Échelle (Scale)",
+                        value = T
+                    ),
+                    align = "center"
+                ), 
+                align = "center"
+            ),
+            
+            #### Moments Gamma ####
+            column(
+                width = 3,
+                tags$style(" * {font-size:20px;}"), # grosseur du tezte
+                box(
+                    title = "Moments",
+                    width = NULL,
+                    solidHeader = TRUE,
+                    status = "warning",
+                    uiOutput("meanGAMMA"),
+                    uiOutput("varianceGAMMA")
+                ),
+                align = "center",
+                
+                box(
+                    title = "Autres Moments",
+                    width = NULL,
+                    solidHeader = TRUE,
+                    status = "warning",
+                    numericInput('dGAMMA', withMathJax('$$d$$'), value = 0, width = "20px", min = 0),
+                    # radioButtons('equalityGAMMA', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
+                    uiOutput("EspTronqGAMMA"),
+                    uiOutput("EspLimGAMMA"),
+                    uiOutput("StopLossGAMMA"),
+                    uiOutput("ExcesMoyGAMMA"),
+                    align = "center"
+                ),
+                align = "center"
+            ),
+            
+            #### Fonctions Gamma ####
+            column(
+                width = 3,
+                box(
+                    title = "Fonctions",
+                    width = NULL,
+                    solidHeader = TRUE, # grosseur du tezte
+                    status = "danger", # couleur de la boite
+                    numericInput('xGAMMA', '$$x$$', value = 10, min = 0),
+                    uiOutput("densityGAMMA"),
+                    tabBox(
                         width = NULL,
-                        # numericInput('alphaGAMMA', label = withMathJax('$$\\alpha$$'), value = 2),
-                        uiOutput("changingalpha"),
-                        # numericInput('betaGAMMA', '$$\\beta$$', value = 0.1),
-                        uiOutput("betaGAMMAUI"),
-                        switchInput(
-                            inputId = "distrchoiceGAMMA",
-                            onLabel = "Fréquence (Rate)",
-                            offLabel = "Échelle (Scale)",
-                            value = T
+                        tabPanel("Répartition",
+                                 uiOutput("repartGAMMA"),
+                                 plotlyOutput("FxGAMMA")
                         ),
-                        align = "center"
-                    ), 
-                    align = "center"
-                )
-            },
-            
-            {
-                ### Moments Gamma ----
-                column(
-                    width = 3,
-                    tags$style(" * {font-size:20px;}"), # grosseur du tezte
-                    box(
-                        title = "Moments",
-                        width = NULL,
-                        solidHeader = TRUE,
-                        status = "warning",
-                        uiOutput("meanGAMMA"),
-                        uiOutput("varianceGAMMA")
-                    ),
-                    align = "center",
-                    
-                    box(
-                        title = "Autres Moments",
-                        width = NULL,
-                        solidHeader = TRUE,
-                        status = "warning",
-                        numericInput('dGAMMA', withMathJax('$$d$$'), value = 0, width = "20px", min = 0),
-                        # radioButtons('equalityGAMMA', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
-                        uiOutput("EspTronqGAMMA"),
-                        uiOutput("EspLimGAMMA"),
-                        uiOutput("StopLossGAMMA"),
-                        uiOutput("ExcesMoyGAMMA"),
-                        align = "center"
-                    ),
-                    align = "center"
-                )
-            }, 
-            
-            {
-                ### Fonctions Gamma ----
-                column(
-                    width = 3,
-                    box(
-                        title = "Fonctions",
-                        width = NULL,
-                        solidHeader = TRUE, # grosseur du tezte
-                        status = "danger", # couleur de la boite
-                        numericInput('xGAMMA', '$$x$$', value = 10, min = 0),
-                        uiOutput("densityGAMMA"),
-                        tabBox(
-                            width = NULL,
-                            tabPanel("Répartition",
-                                     uiOutput("repartGAMMA"),
-                                     plotlyOutput("FxGAMMA")
-                            ),
-                            tabPanel("Survie",
-                                     uiOutput("survieGAMMA"),
-                                     plotlyOutput("SxGAMMA")
-                            )
-                            
+                        tabPanel("Survie",
+                                 uiOutput("survieGAMMA"),
+                                 plotlyOutput("SxGAMMA")
                         )
-                    ),
-                    align = "center"
-                )
-            },
+                        
+                    )
+                ),
+                align = "center"
+            ),
             
-            {
-                ### Mesures de risque Gamma ----
+            #### Mesures de risque Gamma ####
                 column(
                     width = 3,
                     boxPlus(
@@ -336,7 +330,8 @@ tab_GAMMA_UI <- tabItem(
                     ),
                     align = "center"
                 )
-            }
+            
+            #### ####
         )
     )
 
@@ -856,78 +851,114 @@ tab_BIN_UI <- tabItem(tabName = "Binomiale",
 )
 
 #### Loi binomiale Négative UI #### 
-tab_BN_UI <- tabItem(tabName = "Binomiale_Négative",
-                      fluidPage(
-                          titlePanel("Loi Binomiale Négative"), withMathJax(), helpText("\\(X \\sim\\mathcal{BN}(r, q)\\)"), align = "center"),
-                      fluidRow(
-                          column(width = 2, 
-                                 box(title = "Paramètres", status = "primary", solidHeader = T, width = NULL,
-                                     numericInput('rBN', withMathJax('$$r$$'), value = 2, step = 1),
-                                     numericInput('qBN', '$$q$$', value = 0.5, min = 0, max = 1, step = 0.05)), align = "center"
-                                 
-                          ),
-                          
-                          ## Moments
-                          column(width = 3,
-                                 tags$style(" * {font-size:20px}"), # grosseur du tezte
-                                 box(
-                                     title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
-                                     uiOutput("meanBN"), 
-                                     uiOutput("varBN")), 
-                                 align = "center"
-                                 # ,
-                                 
-                                 # box(
-                                 #     title = "Fonctions g", width = NULL, solidHeader = TRUE, status = "warning", 
-                                 #     numericInput('dBN', withMathJax('$$d$$'), value = 0, width = "20px"),
-                                 #     # radioButtons('equalityNORM', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
-                                 #     uiOutput("EspTronqBN"), 
-                                 #     uiOutput("EspLimBN"), 
-                                 #     uiOutput("StopLossBN"), 
-                                 #     uiOutput("ExcesMoyBN"),
-                                 #     align = "center")
-                          ),
-                          
-                          ## Fonctions
-                          column(width = 3,
-                                 box(
-                                     title = "Fonctions", width = NULL, solidHeader = TRUE, 
-                                     tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
-                                     status = "danger", # pour couleur de la boite, diff couleur pour statut
-                                     numericInput('xBN', '$$x$$', min = 0, max = 5, value = 0, step = 1), 
-                                     uiOutput("densityBN"), 
-                                     tabBox(
-                                         width = NULL,
-                                         tabPanel("Répartition",
-                                                  uiOutput("repartBN")
-                                                  # ,
-                                                  # plotlyOutput("FxBN")
-                                         ),
-                                         tabPanel("Survie",
-                                                  uiOutput("survieBN")
-                                                  # ,
-                                                  # plotlyOutput("SxBN")
-                                         )
-                                         
-                                     )
-                                 ),
-                                 align = "center"
-                                 
-                                 
-                          )
-                          # ,
-                          # 
-                          # column(width =3,
-                          #        boxPlus(
-                          #            title = "Mesure de risques", width = NULL, solidHeader = TRUE, status = "success",
-                          #            tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
-                          #            numericInput('kBN', '$$\\kappa$$', value = 0.99, step = 0.005),
-                          #            uiOutput("VaRBN"),
-                          #            uiOutput("TVaRBN")),
-                          #        
-                          #        align = "center"
-                          # )
-                      )
+tab_BN_UI <- tabItem(
+    tabName = "Binomiale_Négative",
+    
+    fluidPage(
+        tags$style("#loi_BN {font-size:30px;}"),
+        textOutput("loi_BN"),
+        withMathJax(),
+        textOutput("distr_BN"),
+        radioGroupButtons(
+            inputId = "distrchoiceBNFAM",
+            label = "", 
+            choices = c("Binomiale Négative", "Géometrique"),
+            status = "primary"
+        ),
+        align = "center"
+    ),
+    
+    fluidRow(
+        
+        #### Paramètres ####
+        column(
+            width = 2, 
+            box(
+                title = "Paramètres", 
+                status = "primary", 
+                solidHeader = T, 
+                width = NULL,
+                # numericInput('rBN', withMathJax('$$r$$'), value = 2, step = 1),
+                uiOutput("changingrBN"),
+                # numericInput('qBN', '$$q$$', value = 0.5, min = 0, max = 1, step = 0.05)), align = "center"
+                uiOutput("changingqBN"),
+                switchInput(
+                    inputId = "distrchoiceqBN",
+                    onLabel = "Probabilité (q)",
+                    offLabel = "Échelle ($$\\beta$$)",
+                    value = T
+                ),
+                align = "center"
+            ), 
+            align = "center"
+        ),
+        
+        
+        #### Moments BN ####
+        column(
+            width = 3,
+            tags$style(" * {font-size:20px}"), # grosseur du tezte
+            box(
+                title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
+                uiOutput("meanBN"), 
+                uiOutput("varBN")), 
+            align = "center"
+            # ,
+               # box(
+               #     title = "Autres Moments", 
+               #     width = NULL, solidHeader = TRUE, status = "warning", 
+               #     numericInput('dBN', withMathJax('$$d$$'), value = 0, width = "20px"),
+               #     # radioButtons('equalityNORM', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
+               #     uiOutput("EspTronqBN"), 
+               #     uiOutput("EspLimBN"), 
+               #     uiOutput("StopLossBN"), 
+               #     uiOutput("ExcesMoyBN"),
+               #     align = "center")
+        ),
+        
+        #### Fonctions BN ####
+        column(width = 3,
+               box(
+                   title = "Fonctions", width = NULL, solidHeader = TRUE, 
+                   status = "danger", # pour couleur de la boite, diff couleur pour statut
+                   numericInput('xBN', '$$x$$', min = 0, value = 0, step = 1), 
+                   uiOutput("densityBN"), 
+                   tabBox(
+                       width = NULL,
+                       tabPanel("Répartition",
+                                uiOutput("repartBN")
+                                # ,
+                                # plotlyOutput("FxBN")
+                       ),
+                       tabPanel("Survie",
+                                uiOutput("survieBN")
+                                # ,
+                                # plotlyOutput("SxBN")
+                       )
+                       
+                   )
+               ),
+               align = "center"
+        )
+        # ,
+        #### Mesures de risque BN ####
+        # column(width = 3,
+        #        boxPlus(
+        #            title = "Mesure de risques", 
+        #            width = NULL, 
+        #            solidHeader = TRUE,
+        #            closable = F,
+        #            status = "success",
+        #            tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
+        #            numericInput('kBN', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
+        #            uiOutput("VaRBN"),
+        #            uiOutput("TVaRBN")
+        #        ),
+        #        align = "center"
+        # )
+        
+        #### ####
+    )
 )
 
 #### Loi Poisson UI #### 
