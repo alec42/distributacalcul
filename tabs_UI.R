@@ -840,19 +840,94 @@ tab_BIN_UI <- tabItem(tabName = "Binomiale",
                     
                     
              )
-             # ,
-             # 
-             # column(width =3,
-             #        boxPlus(
-             #            title = "Mesure de risques", width = NULL, solidHeader = TRUE, status = "success",
-             #            tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
-             #            numericInput('kBIN', '$$\\kappa$$', value = 0.99, step = 0.005), 
-             #            uiOutput("VaRBIN"), 
-             #            uiOutput("TVaRBIN")), 
-             #        
-             #        align = "center"
-             # )
+             ,
+
+             column(width =3,
+                    boxPlus(
+                        title = "Mesure de risques", width = NULL, solidHeader = TRUE, status = "success",
+                        tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
+                        numericInput('kBIN', '$$\\kappa$$', value = 0.99, step = 0.005),
+                        uiOutput("VaRBIN"),
+                        uiOutput("TVaRBIN")),
+
+                    align = "center"
+             )
          )
+)
+
+#### Loi binomiale Négative UI #### 
+tab_BN_UI <- tabItem(tabName = "Binomiale_Négative",
+                      fluidPage(
+                          titlePanel("Loi Binomiale Négative"), withMathJax(), helpText("\\(X \\sim\\mathcal{BN}(r, q)\\)"), align = "center"),
+                      fluidRow(
+                          column(width = 2, 
+                                 box(title = "Paramètres", status = "primary", solidHeader = T, width = NULL,
+                                     numericInput('rBN', withMathJax('$$r$$'), value = 2, step = 1),
+                                     numericInput('qBN', '$$q$$', value = 0.5, min = 0, max = 1, step = 0.05)), align = "center"
+                                 
+                          ),
+                          
+                          ## Moments
+                          column(width = 3,
+                                 tags$style(" * {font-size:20px}"), # grosseur du tezte
+                                 box(
+                                     title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
+                                     uiOutput("meanBN"), 
+                                     uiOutput("varBN")), 
+                                 align = "center"
+                                 # ,
+                                 
+                                 # box(
+                                 #     title = "Fonctions g", width = NULL, solidHeader = TRUE, status = "warning", 
+                                 #     numericInput('dBN', withMathJax('$$d$$'), value = 0, width = "20px"),
+                                 #     # radioButtons('equalityNORM', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
+                                 #     uiOutput("EspTronqBN"), 
+                                 #     uiOutput("EspLimBN"), 
+                                 #     uiOutput("StopLossBN"), 
+                                 #     uiOutput("ExcesMoyBN"),
+                                 #     align = "center")
+                          ),
+                          
+                          ## Fonctions
+                          column(width = 3,
+                                 box(
+                                     title = "Fonctions", width = NULL, solidHeader = TRUE, 
+                                     tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
+                                     status = "danger", # pour couleur de la boite, diff couleur pour statut
+                                     numericInput('xBN', '$$x$$', min = 0, max = 5, value = 0, step = 1), 
+                                     uiOutput("densityBN"), 
+                                     tabBox(
+                                         width = NULL,
+                                         tabPanel("Répartition",
+                                                  uiOutput("repartBN")
+                                                  # ,
+                                                  # plotlyOutput("FxBN")
+                                         ),
+                                         tabPanel("Survie",
+                                                  uiOutput("survieBN")
+                                                  # ,
+                                                  # plotlyOutput("SxBN")
+                                         )
+                                         
+                                     )
+                                 ),
+                                 align = "center"
+                                 
+                                 
+                          )
+                          # ,
+                          # 
+                          # column(width =3,
+                          #        boxPlus(
+                          #            title = "Mesure de risques", width = NULL, solidHeader = TRUE, status = "success",
+                          #            tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
+                          #            numericInput('kBN', '$$\\kappa$$', value = 0.99, step = 0.005),
+                          #            uiOutput("VaRBN"),
+                          #            uiOutput("TVaRBN")),
+                          #        
+                          #        align = "center"
+                          # )
+                      )
 )
 
 #### Loi Poisson UI #### 

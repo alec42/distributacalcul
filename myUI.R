@@ -66,6 +66,11 @@ myUI <- shinyUI({
                             icon = icon("bold")
                         ),
                         menuSubItem(
+                            "Loi Binomiale Négative",
+                            tabName = "Binomiale_Négative",
+                            icon = icon("bold")
+                        ),
+                        menuSubItem(
                             "Loi Poisson",
                             tabName = "Poisson"
                         )
@@ -106,6 +111,7 @@ myUI <- shinyUI({
                 
             ## Lois Discrètes
             tab_BIN_UI,
+            tab_BN_UI,
             tab_POI_UI,
             
             ## À propos ----

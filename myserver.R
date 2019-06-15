@@ -1060,17 +1060,17 @@ myserver <- function(input, output, session)
         
         survieBIN <- reactive({format(pbinom(input$xBIN, nBIN(), pBIN(), lower.tail = F), nsmall = 6)})
         
-        # VaRBIN <- reactive({format(qbinom(input$kBIN,
-        #                                   nBIN(), 
-        #                                   pBIN()), 
-        #                            nsmall = 6)
-        #     })
+        VaRBIN <- reactive({format(VaR_binom(input$kBIN,
+                                          nBIN(),
+                                          pBIN()),
+                                   nsmall = 6)
+            })
         
-        # TVaRBIN <- reactive({format(TVaR_binom(kappa = input$kBIN,
-        #                                        n = nBIN(),
-        #                                        p = pBIN()),
-        #                             nsmall = 6)
-        #     })
+        TVaRBIN <- reactive({format(TVaR_binom(kappa = input$kBIN,
+                                               n = nBIN(),
+                                               p = pBIN()),
+                                    nsmall = 6)
+            })
         
         # EspTronqBIN <- reactive({0})
         
@@ -1102,14 +1102,14 @@ myserver <- function(input, output, session)
                                                             survieBIN()))
         })
         
-        # output$VaRBIN <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$", 
-        #                                                input$kBIN,
-        #                                                VaRBIN()
-        # ))})
-        # output$TVaRBIN <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$", 
-        #                                                 input$kBIN,
-        #                                                 TVaRBIN()
-        # ))})
+        output$VaRBIN <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
+                                                       input$kBIN,
+                                                       VaRBIN()
+        ))})
+        output$TVaRBIN <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$",
+                                                        input$kBIN,
+                                                        TVaRBIN()
+        ))})
         # output$EspTronqBIN <- renderUI({withMathJax(sprintf("$$E[X \\times 1_{\\{X \\leqslant %s\\}}] = %.4f$$", 
         #                                                     input$dBIN,
         #                                                     EspTronqBIN()
@@ -1220,5 +1220,96 @@ myserver <- function(input, output, session)
     # output$FxPOI <- renderPlotly({ggplot(data.frame(x = 0:nPOI(), y = dPOIom(0:nPOI(), nPOI(), pPOI())), aes(x = x, y = y)) + geom_bar(stat = "identity", col = "red", fill ="red", alpha = 0.7, width = 0.3) + theme_classic() + ylab("P(X=x")
     #     
     # })
+    
+
+#### Loi BNomiale Serveur ####
+    
+    rBN <- reactive({input$rBN})
+    
+    qBN <- reactive({input$qBN})
+    
+    meanBN <- reactive({rBN() * (1 - qBN())/qBN()})
+    
+    varBN <- reactive({rBN() * (1 - qBN())/(qBN()^2)})   
+    
+    densityBN <- reactive({format(dnbinom(input$xBN, rBN(), qBN()), nsmall = 6)})
+    
+    repartBN <- reactive({format(qnbinom(input$xBN, rBN(), qBN()), nsmall = 6)})
+    
+    survieBN <- reactive({format(qnbinom(input$xBN, rBN(), qBN(), lower.tail = F), nsmall = 6)})
+    
+    # VaRBN <- reactive({format(VaR_BNom(input$kBN,
+    #                                      rBN(),
+    #                                      qBN()),
+    #                            nsmall = 6)
+    # })
+    
+    # TVaRBN <- reactive({format(TVaR_BNom(kappa = input$kBN,
+    #                                        n = rBN(),
+    #                                        p = qBN()),
+    #                             nsmall = 6)
+    # })
+    
+    # EspTronqBN <- reactive({0})
+    
+    # StopLossBN <- reactive({0})
+    
+    # EspLimBN <- reactive({0})
+    
+    # ExcesMoyBN <- reactive({0})
+    
+    output$meanBN <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
+                                                   meanBN()
+    ))})
+    
+    output$varBN <- renderUI({withMathJax(sprintf("$$Var(X) = %s$$", 
+                                                   varBN()
+    ))})
+    
+    output$densityBN <- renderUI({withMathJax(sprintf("$$f_{X}(%s) = %s$$", 
+                                                       input$xBN,
+                                                       densityBN()
+    ))})
+    output$repartBN <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$", 
+                                                      input$xBN,
+                                                      repartBN()
+    ))})
+    
+    output$survieBN <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
+                                                      input$xBN,
+                                                      survieBN()))
+    })
+    
+    # output$VaRBN <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
+    #                                                input$kBN,
+    #                                                VaRBN()
+    # ))})
+    # output$TVaRBN <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$",
+    #                                                 input$kBN,
+    #                                                 TVaRBN()
+    # ))})
+    # output$EspTronqBN <- renderUI({withMathJax(sprintf("$$E[X \\times 1_{\\{X \\leqslant %s\\}}] = %.4f$$", 
+    #                                                     input$dBN,
+    #                                                     EspTronqBN()
+    # ))})
+    # 
+    # output$StopLossBN <- renderUI({withMathJax(sprintf("$$ \\pi_{%s}(X) = %.4f$$", 
+    #                                                     input$dBN,
+    #                                                     StopLossBN()
+    # ))})
+    # 
+    # output$EspLimBN <- renderUI({withMathJax(sprintf("$$E[\\text{min}(X;{%s})] = %.4f$$", 
+    #                                                   input$dBN,
+    #                                                   EspLimBN()
+    # ))})
+    # 
+    # output$ExcesMoyBN <- renderUI({withMathJax(sprintf("$$e_{%s}(X) = %.4f$$", 
+    #                                                     input$dBN,
+    #                                                     ExcesMoyBN()
+    # ))})
+    
+    output$FxBN <- renderPlotly({ggplot(data.frame(x = 0:rBN(), y = dBNom(0:rBN(), rBN(), qBN())), aes(x = x, y = y)) + geom_bar(stat = "identity", col = "red", fill ="red", alpha = 0.7, width = 0.3) + theme_classic() + ylab("P(X=x")
+        
+    })
     
 }
