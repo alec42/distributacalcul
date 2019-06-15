@@ -1300,9 +1300,6 @@ myserver <- function(input, output, session)
             "\\(X \\sim\\text{BN}(r, q)\\)"
     })
     
-    rBN <- reactive({input$rBN})
-    
-    qBN <- reactive({input$qBN})
     
     meanBN <- reactive({rBN() * (1 - qBN())/qBN()})
     
@@ -1310,9 +1307,9 @@ myserver <- function(input, output, session)
     
     densityBN <- reactive({format(dnbinom(input$xBN, rBN(), qBN()), nsmall = 6)})
     
-    repartBN <- reactive({format(qnbinom(input$xBN, rBN(), qBN()), nsmall = 6)})
+    repartBN <- reactive({format(pnbinom(input$xBN, rBN(), qBN()), nsmall = 6)})
     
-    survieBN <- reactive({format(qnbinom(input$xBN, rBN(), qBN(), lower.tail = F), nsmall = 6)})
+    survieBN <- reactive({format(pnbinom(input$xBN, rBN(), qBN(), lower.tail = F), nsmall = 6)})
     
     # VaRBN <- reactive({format(VaR_BNom(input$kBN,
     #                                      rBN(),
@@ -1384,8 +1381,8 @@ myserver <- function(input, output, session)
     #                                                     ExcesMoyBN()
     # ))})
     
-    output$FxBN <- renderPlotly({ggplot(data.frame(x = 0:rBN(), y = dBNom(0:rBN(), rBN(), qBN())), aes(x = x, y = y)) + geom_bar(stat = "identity", col = "red", fill ="red", alpha = 0.7, width = 0.3) + theme_classic() + ylab("P(X=x")
+    # output$FxBN <- renderPlotly({ggplot(data.frame(x = 0:rBN(), y = dBNom(0:rBN(), rBN(), qBN())), aes(x = x, y = y)) + geom_bar(stat = "identity", col = "red", fill ="red", alpha = 0.7, width = 0.3) + theme_classic() + ylab("P(X=x")
         
-    })
+    # })
     
 }
