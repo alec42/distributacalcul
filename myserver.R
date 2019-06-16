@@ -1229,7 +1229,7 @@ myserver <- function(input, output, session)
         if (input$distrchoiceqBN == T) {
             input$qBN
         } else {
-            ((1 - input$qBN) / input$qBN)
+            (1 / (1 + input$qBN))
         }
     })
     
@@ -1300,21 +1300,10 @@ myserver <- function(input, output, session)
             "\\(X \\sim\\text{BN}(r, q)\\)"
     })
     
-    meanBN <- reactive({
-        if (input$distrchoiceqBN == T) {
-            rBN() * (1 - qBN())/qBN()
-        } else {
-            rBN() * qBN()
-        }
-    })
     
-    varBN <- reactive({
-        if (input$distrchoiceqBN == T) {
-            rBN() * (1 - qBN())/(qBN()^2)
-        } else {
-            rBN() * qBN() * (1 + qBN())
-        }
-    })
+    meanBN <- reactive({rBN() * (1 - qBN())/qBN()})
+    
+    varBN <- reactive({rBN() * (1 - qBN())/(qBN()^2)})   
     
     densityBN <- reactive({format(dnbinom(input$xBN, rBN(), qBN()), nsmall = 6)})
     

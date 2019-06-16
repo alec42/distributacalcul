@@ -892,7 +892,19 @@ tab_BN_UI <- tabItem(
                     value = T
                 ),
                 align = "center"
-            ), 
+            ),
+            box(
+                title = "Plus d'information",
+                status = "primary", 
+                solidHeader = T, 
+                collapsed = T,
+                collapsible = T,
+                width = NULL,
+                helpText("Lien entre les paramétrisations 
+                         $$\\beta = \\frac{1 - q}{q}$$
+                         $$q = \\frac{1}{1 + \\beta}$$"),
+                align = "center"
+            ),
             align = "center"
         ),
         
