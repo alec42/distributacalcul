@@ -1,19 +1,15 @@
 source('tabs_UI.R')
+
 myUI <- shinyUI({
     dashboardPage(
-        skin = "blue",
-        dashboardHeader(title = "Lois de probabilité"),
+        skin = "blue", 
+        dashboardHeader(titleWidth = "275px", title = "Lois de probabilité"),
         
         # Paneau Latéral
         {
-            dashboardSidebar(
+            dashboardSidebar(width = "275px",
                 collapsed = F,
-                #Ajout d'une search bar (À retravailler)
-                # sidebarSearchForm(
-                #     textId = "searchbar",
-                #     buttonId = "search",
-                #     label = "Recherche"
-                # ),
+                
                 sidebarMenu(
                     id = "tabs",
                     menuItem(
