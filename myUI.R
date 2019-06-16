@@ -3,7 +3,7 @@ source('tabs_UI.R')
 myUI <- shinyUI({
     dashboardPage(
         skin = "blue", 
-        dashboardHeader(titleWidth = "275px", title = "Lois de probabilité"),
+        dashboardHeader(title = "Lois de probabilité", titleWidth = "275px"),
         
         # Paneau Latéral
         {

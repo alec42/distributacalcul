@@ -852,9 +852,13 @@ tab_BIN_UI <- tabItem(tabName = "Binomiale",
              )
              ,
 
-             column(width =3,
+             column(width = 3,
                     boxPlus(
-                        title = "Mesure de risques", width = NULL, solidHeader = TRUE, status = "success",
+                        title = "Mesure de risques", 
+                        width = NULL, 
+                        solidHeader = TRUE, 
+                        status = "success",
+                        closable = F,
                         tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
                         numericInput('kBIN', '$$\\kappa$$', value = 0.99, step = 0.005),
                         uiOutput("VaRBIN"),
@@ -1063,7 +1067,11 @@ tab_POI_UI <- tabItem(tabName = "Poisson",
                           
                           column(width = 3,
                                  boxPlus(
-                                     title = "Mesure de risques", width = NULL, solidHeader = TRUE, status = "success",
+                                     title = "Mesure de risques", 
+                                     width = NULL, 
+                                     solidHeader = TRUE, 
+                                     status = "success",
+                                     closable = F,
                                      tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
                                      numericInput('kPOI', '$$\\kappa$$', value = 0.99, step = 0.005),
                                      uiOutput("VaRPOI"),
