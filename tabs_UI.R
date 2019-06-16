@@ -218,6 +218,8 @@ tab_LNORM_UI <- tabItem(tabName = "Lognormale",
 
 
 #### Loi Gamma UI ####
+{
+
 tab_GAMMA_UI <- tabItem(
         tabName = "gamma",
         fluidPage(
@@ -334,7 +336,7 @@ tab_GAMMA_UI <- tabItem(
             #### ####
         )
     )
-
+}
 
 #### Loi Pareto UI ----
 tab_PARETO_UI <- tabItem(tabName = "Pareto",
@@ -851,8 +853,9 @@ tab_BIN_UI <- tabItem(tabName = "Binomiale",
 )
 
 #### Loi binomiale Négative UI #### 
+{
 tab_BN_UI <- tabItem(
-    tabName = "Binomiale_Négative",
+    tabName = "Binneg",
     
     fluidPage(
         tags$style("#loi_BN {font-size:30px;}"),
@@ -872,7 +875,7 @@ tab_BN_UI <- tabItem(
         
         #### Paramètres ####
         column(
-            width = 2, 
+            width = 4, 
             box(
                 title = "Paramètres", 
                 status = "primary", 
@@ -882,10 +885,10 @@ tab_BN_UI <- tabItem(
                 uiOutput("changingrBN"),
                 # numericInput('qBN', '$$q$$', value = 0.5, min = 0, max = 1, step = 0.05)), align = "center"
                 uiOutput("changingqBN"),
-                switchInput(
+                switchInput(labelWidth = "10px",handleWidth = "400px",
                     inputId = "distrchoiceqBN",
-                    onLabel = "Probabilité (q)",
-                    offLabel = "Échelle ($$\\beta$$)",
+                    onLabel = 'q',
+                    offLabel = "&beta;", size = "large",
                     value = T
                 ),
                 align = "center"
@@ -896,7 +899,7 @@ tab_BN_UI <- tabItem(
         
         #### Moments BN ####
         column(
-            width = 3,
+            width = 4,
             tags$style(" * {font-size:20px}"), # grosseur du tezte
             box(
                 title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
@@ -917,7 +920,7 @@ tab_BN_UI <- tabItem(
         ),
         
         #### Fonctions BN ####
-        column(width = 3,
+        column(width = 4,
                box(
                    title = "Fonctions", width = NULL, solidHeader = TRUE, 
                    status = "danger", # pour couleur de la boite, diff couleur pour statut
@@ -960,7 +963,7 @@ tab_BN_UI <- tabItem(
         #### ####
     )
 )
-
+}
 #### Loi Poisson UI #### 
 tab_POI_UI <- tabItem(tabName = "Poisson",
                       fluidPage(

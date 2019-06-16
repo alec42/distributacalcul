@@ -67,7 +67,7 @@ myUI <- shinyUI({
                         ),
                         menuSubItem(
                             "Binomiale Négative et Géométrique",
-                            tabName = "Binomiale_Négative",
+                            tabName = "Binneg",
                             icon = icon("bold")
                         ),
                         menuSubItem(
