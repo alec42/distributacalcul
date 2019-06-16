@@ -4,7 +4,7 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
             useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
             titlePanel("Loi Normale"),
             # withMathJax(),
-            helpText("\\(X \\sim\\mathcal{N}(\\mu, \\sigma^2)\\)"),
+            helpText("\\(X \\sim\\mathcal{Normale} \\ (\\mu, \\sigma^2)\\)"),
             align = "center"
         ), 
         fluidRow(
@@ -113,7 +113,7 @@ tab_LNORM_UI <- tabItem(tabName = "Lognormale",
                            useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
                            titlePanel("Loi Lognormale"),
                            # withMathJax(),
-                           helpText("\\(X \\sim\\mathcal{LN}(\\mu, \\sigma^2)\\)"),
+                           helpText("\\(X \\sim\\mathcal{Lognormale} \\ (\\mu, \\sigma^2)\\)"),
                            align = "center"
                        ), 
                        fluidRow(
@@ -344,7 +344,7 @@ tab_PARETO_UI <- tabItem(tabName = "Pareto",
                            useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
                            titlePanel("Loi Pareto"),
                            # withMathJax(),
-                           helpText("\\(X \\sim\\mathcal{Pareto}(\\alpha, \\lambda)\\)"),
+                           helpText("\\(X \\sim\\mathcal{Pareto} \\ (\\alpha, \\lambda)\\)"),
                            align = "center"
                        ), 
                        
@@ -453,7 +453,7 @@ tab_BURR_UI <- tabItem(tabName = "Burr",
                              useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
                              titlePanel("Loi Burr"),
                              # withMathJax(),
-                             helpText("\\(X \\sim\\mathcal{Burr}(\\alpha, \\lambda, \\tau)\\)"),
+                             helpText("\\(X \\sim\\mathcal{Burr} \\ (\\alpha, \\lambda, \\tau)\\)"),
                              align = "center"
                          ), 
                          
@@ -563,7 +563,7 @@ tab_WEIBULL_UI <- tabItem(tabName = "Weibull",
                              useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
                              titlePanel("Loi Weibull"),
                              # withMathJax(),
-                             helpText("\\(X \\sim\\mathcal{Wei}(\\tau, \\beta)\\)"),
+                             helpText("\\(X \\sim\\mathcal{Weibull} \\ (\\tau, \\beta)\\)"),
                              align = "center"
                          ), 
                          
@@ -673,7 +673,7 @@ tab_BETA_UI <- tabItem(tabName = "Beta",
                             useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
                             titlePanel("Beta"),
                             # withMathJax(),
-                            helpText("\\(X \\sim\\mathcal{B}(\\alpha, \\beta)\\)"),
+                            helpText("\\(X \\sim\\mathcal{Beta} \\ (\\alpha, \\beta)\\)"),
                             align = "center"
                         ), 
                         fluidRow(
@@ -779,12 +779,25 @@ tab_BETA_UI <- tabItem(tabName = "Beta",
 
 #### Loi binomiale UI #### 
 tab_BIN_UI <- tabItem(tabName = "Binomiale",
+         
          fluidPage(
-             titlePanel("Loi Binomiale"), withMathJax(), helpText("\\(X \\sim\\mathcal{B}(n, p)\\)"), align = "center"),
+             tags$style("#loi_BIN {font-size:30px;}"),
+             textOutput("loi_BIN"),
+             withMathJax(),
+             textOutput("distr_BIN"),
+             radioGroupButtons(
+                 inputId = "distrchoiceBINFAM",
+                 label = "", 
+                 choices = c("Binomiale", "Bernouilli"),
+                 status = "primary"
+             ),
+             align = "center"
+         ),
+         
          fluidRow(
-             column(width = 2, 
+             column(width = 3, 
                     box(title = "Paramètres", status = "primary", solidHeader = T, width = NULL,
-                        numericInput('nBIN', withMathJax('$$n$$'), value = 5, step = 1),
+                        numericInput('nBIN', withMathJax('$$n$$'), value = 5, step = 1, min = 0),
                         numericInput('pBIN', '$$p$$', value = 0.5, min = 0, max = 1, step = 0.05)), align = "center"
                     
              ),
@@ -882,16 +895,16 @@ tab_BN_UI <- tabItem(
                 solidHeader = T, 
                 width = NULL,
                 # numericInput('rBN', withMathJax('$$r$$'), value = 2, step = 1),
+                uiOutput("changingqBN"),
                 uiOutput("changingrBN"),
                 # numericInput('qBN', '$$q$$', value = 0.5, min = 0, max = 1, step = 0.05)), align = "center"
-                uiOutput("changingqBN"),
+                
                 switchInput(labelWidth = "10px",handleWidth = "400px",
                     inputId = "distrchoiceqBN",
                     onLabel = 'q',
                     offLabel = "&beta;", size = "large",
                     value = T
-                ),
-                align = "center"
+                )
             ),
             box(
                 title = "Plus d'information",
@@ -979,12 +992,21 @@ tab_BN_UI <- tabItem(
 #### Loi Poisson UI #### 
 tab_POI_UI <- tabItem(tabName = "Poisson",
                       fluidPage(
-                          titlePanel("Loi Poisson"), withMathJax(), helpText("\\(X \\sim\\mathcal{P}(\\lambda)\\)"), align = "center"),
+                          titlePanel("Loi Poisson"), 
+                          withMathJax(), 
+                          helpText("\\(X \\sim\\mathcal{Poisson} \\ (\\lambda)\\)"), 
+                          align = "center"
+                      ),
+                      
                       fluidRow(
-                          column(width = 2,
-                                 box(title = "Paramètres", status = "primary", solidHeader = T, width = NULL,
-                                     numericInput('lamPOI', '$$\\lambda$$', value = 1, min = 0, step = 1)), align = "center"
-                                 
+                          column(width = 3,
+                                 box(title = "Paramètres", 
+                                     status = "primary", 
+                                     solidHeader = T, 
+                                     width = NULL,
+                                     numericInput('lamPOI', '$$\\lambda$$', value = 1, min = 0, step = 1)
+                                 ), 
+                                 align = "center"
                           ),
                           
                           ## Moments
@@ -993,7 +1015,8 @@ tab_POI_UI <- tabItem(tabName = "Poisson",
                                  box(
                                      title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
                                      uiOutput("meanPOI"),
-                                     uiOutput("varPOI")),
+                                     uiOutput("varPOI")
+                                 ),
                                  align = "center"
                                  # ,
                                  
@@ -1011,7 +1034,9 @@ tab_POI_UI <- tabItem(tabName = "Poisson",
                           ## Fonctions
                           column(width = 3,
                                  box(
-                                     title = "Fonctions", width = NULL, solidHeader = TRUE,
+                                     title = "Fonctions", 
+                                     width = NULL, 
+                                     solidHeader = TRUE,
                                      tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
                                      status = "danger", # pour couleur de la boite, diff couleur pour statut
                                      numericInput('xPOI', '$$x$$', min = 0, value = 0, step = 1),
@@ -1033,18 +1058,18 @@ tab_POI_UI <- tabItem(tabName = "Poisson",
                                      )
                                  ),
                                  align = "center"
-                                     
-                                 ),
                                  
-                                 column(width =3,
-                                        boxPlus(
-                                            title = "Mesure de risques", width = NULL, solidHeader = TRUE, status = "success",
-                                            tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
-                                            numericInput('kPOI', '$$\\kappa$$', value = 0.99, step = 0.005),
-                                            uiOutput("VaRPOI"),
-                                            uiOutput("TVaRPOI")),
-                                        
-                                        align = "center"
-                                 )
+                          ),
+                          
+                          column(width = 3,
+                                 boxPlus(
+                                     title = "Mesure de risques", width = NULL, solidHeader = TRUE, status = "success",
+                                     tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
+                                     numericInput('kPOI', '$$\\kappa$$', value = 0.99, step = 0.005),
+                                     uiOutput("VaRPOI"),
+                                     uiOutput("TVaRPOI")),
+                                 
+                                 align = "center"
                           )
                       )
+)

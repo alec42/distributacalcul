@@ -244,9 +244,9 @@ myserver <- function(input, output, session)
         
         output$distr_gamma <- renderText({
             if(input$distrchoiceEXPOFAM == "Gamma")
-                "\\(X \\sim\\mathcal{G}(\\alpha, \\beta)\\)"
+                "\\(X \\sim\\mathcal{Gamma}(\\alpha, \\beta)\\)"
             else if (input$distrchoiceEXPOFAM == "Exponentielle")
-                "\\(X \\sim\\mathcal{Exp}(\\beta)\\)"
+                "\\(X \\sim\\mathcal{Exponentielle}(\\beta)\\)"
             else
                 "\\(X \\sim\\mathcal{\\chi^2}(n)\\)"
         })
@@ -1050,6 +1050,49 @@ myserver <- function(input, output, session)
         
         pBIN <- reactive({input$pBIN})
         
+        observeEvent(
+            {
+                input$distrchoiceBINFAM 
+            },
+            {
+                x <- input$distrchoiceBINFAM
+                
+                updateNumericInput(session, "nBIN",
+                                   value =
+                                   if (x == "Bernouilli")
+                                   {
+                                       nBIN = 1
+                                   }
+                                   else
+                                   {
+                                       nBIN = 2
+                                   }
+                )
+                
+                # rend le paramètre impossible à modifier pour l'utilisateur
+                if (x == "Bernouilli")
+                    hide("nBIN")
+                else
+                    show("nBIN")
+                
+            }
+        )
+        
+        
+        output$loi_BIN <- renderText({
+            if(input$distrchoiceBINFAM == "Bernouilli")
+                "Loi Bernouilli"
+            else
+                "Loi Binomiale"
+        })
+        
+        output$distr_BIN <- renderText({
+            if(input$distrchoiceBINFAM == "Bernouilli")
+                "\\(X \\sim\\text{Bernouilli} \\ (p)\\)"
+            else
+                "\\(X \\sim\\text{Binomiale} \\ (n, p)\\)"
+        })
+        
         meanBIN <- reactive({nBIN() * pBIN()})
         
         varBIN <- reactive({nBIN() * pBIN() * (1 - pBIN())})   
@@ -1234,7 +1277,7 @@ myserver <- function(input, output, session)
     })
     
     output$changingqBN <- renderUI({
-        numericInput('qBN', '$$q$$', value = 0.5, min = 0, max = 1, step = 0.1)
+        numericInput('qBN', label = '$$q$$', value = 0.5, min = 0, step = 0.1)
     })
     
     output$changingrBN <- renderUI({
@@ -1264,7 +1307,8 @@ myserver <- function(input, output, session)
                                rBN = 2
                            }
         )
-        updateNumericInput(session, "qBN",
+        updateNumericInput(session,
+                           "qBN",
                            label = {
                                if (y == T)
                                {
@@ -1295,9 +1339,9 @@ myserver <- function(input, output, session)
     
     output$distr_BN <- renderText({
         if(input$distrchoiceBNFAM == "Géometrique")
-            "\\(X \\sim\\text{Géo}(q)\\)"
+            "\\(X \\sim\\text{Géometrique} \\ (q)\\)"
         else
-            "\\(X \\sim\\text{BN}(r, q)\\)"
+            "\\(X \\sim\\text{Binomiale Négative} \\ (r, q)\\)"
     })
     
     
