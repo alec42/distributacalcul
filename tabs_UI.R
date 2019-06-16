@@ -899,8 +899,8 @@ tab_BN_UI <- tabItem(
                 solidHeader = T, 
                 width = NULL,
                 # numericInput('rBN', withMathJax('$$r$$'), value = 2, step = 1),
-                uiOutput("changingqBN"),
                 uiOutput("changingrBN"),
+                uiOutput("changingqBN"),
                 # numericInput('qBN', '$$q$$', value = 0.5, min = 0, max = 1, step = 0.05)), align = "center"
                 
                 switchInput(labelWidth = "10px",handleWidth = "400px",
