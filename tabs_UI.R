@@ -1081,3 +1081,95 @@ tab_POI_UI <- tabItem(tabName = "Poisson",
                           )
                       )
 )
+
+#### Loi Hypergéométrique UI #### 
+tab_HG_UI <- tabItem(tabName = "HG",
+                      fluidPage(
+                          titlePanel("Loi Hypergéométrique"), 
+                          withMathJax(), 
+                          helpText("\\(X \\sim\\mathcal{HyperGéo} \\ (N, n, m)\\)"), 
+                          align = "center"
+                      ),
+                      
+                      fluidRow(
+                          column(width = 3,
+                                 box(title = "Paramètres", 
+                                     status = "primary", 
+                                     solidHeader = T, 
+                                     width = NULL,
+                                     numericInput('grosNHG', '$$N$$', value = 3, min = 0, step = 1),
+                                     numericInput('petitNHG', '$$n$$', value = 2, min = 0, step = 1),
+                                     numericInput('mHG', '$$m$$', value = 1, min = 0, step = 1)
+                                 ),
+                                 align = "center"
+                          ),
+                          
+                          ## Moments
+                          column(width = 3,
+                                 tags$style(" * {font-size:20px}"), # grosseur du tezte
+                                 box(
+                                     title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
+                                     uiOutput("meanHG"),
+                                     uiOutput("varHG")
+                                 ),
+                                 align = "center"
+                                 # ,
+                                 
+                                 # box(
+                                 #     title = "Fonctions g", width = NULL, solidHeader = TRUE, status = "warning",
+                                 #     numericInput('dHG', withMathJax('$$d$$'), value = 0, width = "20px"),
+                                 #     # radioButtons('equalityHG', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
+                                 #     uiOutput("EspTronqHG"),
+                                 #     uiOutput("EspLimHG"),
+                                 #     uiOutput("StopLossHG"),
+                                 #     uiOutput("ExcesMoyHG"),
+                                 #     align = "center")
+                          ),
+                          
+                          ## Fonctions
+                          column(width = 3,
+                                 box(
+                                     title = "Fonctions", 
+                                     width = NULL, 
+                                     solidHeader = TRUE,
+                                     tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
+                                     status = "danger", # pour couleur de la boite, diff couleur pour statut
+                                     numericInput('xHG', '$$x$$', min = 0, value = 0, step = 1),
+                                     uiOutput("densityHG"),
+                                     
+                                     tabBox(
+                                         width = NULL,
+                                         tabPanel("Répartition",
+                                                  uiOutput("repartHG")
+                                                  # ,
+                                                  # plotlyOutput("FxHG")
+                                         ),
+                                         tabPanel("Survie",
+                                                  uiOutput("survieHG")
+                                                  # ,
+                                                  # plotlyOutput("SxBETA")
+                                         )
+                                         
+                                     )
+                                 ),
+                                 align = "center"
+                                 
+                          )
+                          # ,
+                          # 
+                          # column(width = 3,
+                          #        boxPlus(
+                          #            title = "Mesure de risques", 
+                          #            width = NULL, 
+                          #            solidHeader = TRUE, 
+                          #            status = "success",
+                          #            closable = F,
+                          #            tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
+                          #            numericInput('kHG', '$$\\kappa$$', value = 0.99, step = 0.005),
+                          #            uiOutput("VaRHG"),
+                          #            uiOutput("TVaRHG")),
+                          #        
+                          #        align = "center"
+                          # )
+                      )
+)

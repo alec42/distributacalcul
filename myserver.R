@@ -1264,6 +1264,128 @@ myserver <- function(input, output, session)
     #     
     # })
     
+#### Loi Hypergéométrique Serveur ####
+    
+    grosNHG <- reactive({input$grosNHG})
+    
+    petitNHG <- reactive({input$petitNHG})
+    
+    mHG <- reactive({input$mHG})
+    
+    meanHG <- reactive({E_hyper(N = grosNHG(), m = mHG(), n = petitNHG())})
+        
+    varHG <- reactive({
+        format(V_hyper(N = grosNHG(), 
+                       m = mHG(), 
+                       n = petitNHG()
+        ), 
+        nsmall = 6)
+    })
+
+    densityHG <- reactive({
+        format(dhyper(input$xHG, 
+                      m = mHG(), 
+                      n = grosNHG() - mHG(), 
+                      k = petitNHG()
+        ), 
+        nsmall = 6)
+    })
+    
+    repartHG <- reactive({
+        format(phyper(input$xHG, 
+                      m = mHG(), 
+                      n = grosNHG() - mHG(), 
+                      k = petitNHG()
+        ), 
+        nsmall = 6)
+    })
+    
+    survieHG <- reactive({
+        format(phyper(input$xHG, 
+                      m = mHG(), 
+                      n = grosNHG() - mHG(), 
+                      k = petitNHG(),
+                      lower.tail = F 
+        ), 
+        nsmall = 6)
+    })
+    
+    VaRHG <- reactive({
+        format(qhyper(input$xHG, 
+                      m = mHG(), 
+                      n = grosNHG() - mHG(), 
+                      k = petitNHG()
+        ), 
+        nsmall = 6)
+    })
+    
+    # TVaRHG <- reactive({format(TVaR_HGs(kappa = input$kHG,
+    #                                       lam = input$lamHG),
+    #                             nsmall = 6)
+    #     })
+    
+    # EspTronqHG <- reactive({0})
+    
+    # StopLossHG <- reactive({0})
+    
+    # EspLimHG <- reactive({0})
+    
+    # ExcesMoyHG <- reactive({0})
+    
+    output$meanHG <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
+                                                   meanHG()
+    ))})
+    
+    output$varHG <- renderUI({withMathJax(sprintf("$$Var(X) = %s$$", 
+                                                  varHG()
+    ))})
+    
+    output$densityHG <- renderUI({withMathJax(sprintf("$$f_{X}(%s) = %s$$", 
+                                                      input$xHG,
+                                                      densityHG()
+    ))})
+    output$repartHG <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$", 
+                                                     input$xHG,
+                                                     repartHG()
+    ))})
+    
+    output$survieHG <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
+                                                     input$xHG,
+                                                     survieHG()))
+    })
+    
+    output$VaRHG <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
+                                                  input$kHG,
+                                                  VaRHG()
+    ))})
+    # output$TVaRHG <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$",
+    #                                                 input$kHG,
+    #                                                 TVaRHG()
+    # ))})
+    # output$EspTronqHG <- renderUI({withMathJax(sprintf("$$E[X \\times 1_{\\{X \\leqslant %s\\}}] = %.4f$$", 
+    #                                                     input$dHG,
+    #                                                     EspTronqHG()
+    # ))})
+    # 
+    # output$StopLossHG <- renderUI({withMathJax(sprintf("$$ \\pi_{%s}(X) = %.4f$$", 
+    #                                                     input$dHG,
+    #                                                     StopLossHG()
+    # ))})
+    # 
+    # output$EspLimHG <- renderUI({withMathJax(sprintf("$$E[\\text{min}(X;{%s})] = %.4f$$", 
+    #                                                   input$dHG,
+    #                                                   EspLimHG()
+    # ))})
+    # 
+    # output$ExcesMoyHG <- renderUI({withMathJax(sprintf("$$e_{%s}(X) = %.4f$$", 
+    #                                                     input$dHG,
+    #                                                     ExcesMoyHG()
+    # ))})
+    
+    # output$FxHG <- renderPlotly({ggplot(data.frame(x = 0:nHG(), y = dHGom(0:nHG(), nHG(), pHG())), aes(x = x, y = y)) + geom_bar(stat = "identity", col = "red", fill ="red", alpha = 0.7, width = 0.3) + theme_classic() + ylab("P(X=x")
+    #     
+    # })
+
 #### Loi Binomiale Négative Serveur ####
     
     rBN <- reactive({input$rBN})

@@ -69,6 +69,10 @@ myUI <- shinyUI({
                         menuSubItem(
                             "Loi Poisson",
                             tabName = "Poisson"
+                        ),
+                        menuSubItem(
+                            "Loi Hypergéométrique",
+                            tabName = "HG"
                         )
                     ),
                     menuItem(
@@ -109,6 +113,7 @@ myUI <- shinyUI({
             tab_BIN_UI,
             tab_BN_UI,
             tab_POI_UI,
+            tab_HG_UI,
             
             ## À propos ----
                 tabItem(

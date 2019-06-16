@@ -267,3 +267,13 @@ derlang <- function(x, n, b)
 # }
 # 
 # derlang_gen(x = 1, b = c(3, 4))
+
+E_hyper <- function(N, m, n)
+{
+    n * (m / N)
+}
+
+V_hyper <- function(N, m, n)
+{
+    (n * (m / N)) * ((((n - 1) * (m - 1)) / (N - 1)) + 1 - (n * (m / N)))
+}
