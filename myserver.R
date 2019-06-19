@@ -159,6 +159,13 @@ myserver <- function(input, output, session)
             x <- input$distrchoiceEXPOFAM
             y <- input$distrchoiceGAMMA
             
+            updateNumericInput(session,
+                               "distrchoiceGAMMA",
+                               value =
+                                   if (x == "Khi carré")
+                                   {
+                                       y = T
+                                   })
             # modification du beta
             updateNumericInput(session,
                                "betaGAMMA",
@@ -179,10 +186,15 @@ myserver <- function(input, output, session)
                                    })
             # rend le paramètre impossible à modifier pour l'utilisateur
             if (x == "Khi carré")
+            {
                 hide("betaGAMMA")
+                hide("distrchoiceGAMMA")
+            }
             else
+            {
                 show("betaGAMMA")
-
+                show("distrchoiceGAMMA")
+            }
             updateNumericInput(session, "alphaGAMMA",
                                value =
                                    if (x == "Exponentielle")
@@ -1059,7 +1071,7 @@ myserver <- function(input, output, session)
                 
                 updateNumericInput(session, "nBIN",
                                    value =
-                                   if (x == "Bernouilli")
+                                   if (x == "Bernoulli")
                                    {
                                        nBIN = 1
                                    }
@@ -1070,7 +1082,7 @@ myserver <- function(input, output, session)
                 )
                 
                 # rend le paramètre impossible à modifier pour l'utilisateur
-                if (x == "Bernouilli")
+                if (x == "Bernoulli")
                     hide("nBIN")
                 else
                     show("nBIN")
@@ -1080,15 +1092,15 @@ myserver <- function(input, output, session)
         
         
         output$loi_BIN <- renderText({
-            if(input$distrchoiceBINFAM == "Bernouilli")
-                "Loi Bernouilli"
+            if(input$distrchoiceBINFAM == "Bernoulli")
+                "Loi Bernoulli"
             else
                 "Loi Binomiale"
         })
         
         output$distr_BIN <- renderText({
-            if(input$distrchoiceBINFAM == "Bernouilli")
-                "\\(X \\sim\\text{Bernouilli} \\ (p)\\)"
+            if(input$distrchoiceBINFAM == "Bernoulli")
+                "\\(X \\sim\\text{Bernoulli} \\ (p)\\)"
             else
                 "\\(X \\sim\\text{Binomiale} \\ (n, p)\\)"
         })

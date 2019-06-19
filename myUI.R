@@ -57,7 +57,7 @@ myUI <- shinyUI({
                         "Lois discrètes",
                         icon = icon("chart-bar"),
                         menuSubItem(
-                            "Loi Binomiale et Bernouilli",
+                            "Loi Binomiale et Bernoulli",
                             tabName = "Binomiale",
                             icon = icon("bold")
                         ),

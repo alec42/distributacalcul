@@ -788,7 +788,7 @@ tab_BIN_UI <- tabItem(tabName = "Binomiale",
              radioGroupButtons(
                  inputId = "distrchoiceBINFAM",
                  label = "", 
-                 choices = c("Binomiale", "Bernouilli"),
+                 choices = c("Binomiale", "Bernoulli"),
                  status = "primary"
              ),
              align = "center"
