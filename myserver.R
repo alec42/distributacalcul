@@ -1057,6 +1057,151 @@ myserver <- function(input, output, session)
         # output$SxBETA
         
         
+#### Loi Erlang Serveur ####
+        
+        nERLANG <- reactive({input$nERLANG})
+        
+        betaERLANG <- reactive({input$betaERLANG})
+        
+        dERLANG <- reactive({input$dERLANG})
+        
+        kERLANG <- reactive({input$kERLANG})
+        
+        xERLANG <- reactive({input$xERLANG})
+        
+        densityERLANG <- reactive({format(derlang(x = xERLANG(),
+                                                  n = nERLANG(),
+                                                  b = betaERLANG()), 
+                                        nsmall = 6)})
+        
+        repartERLANG <- reactive({format(perlang(x = xERLANG(),
+                                                 n = nERLANG(),
+                                                 b = betaERLANG()), 
+                                       nsmall = 6)})
+        
+        survieERLANG <- reactive({format(perlang(x = xERLANG(),
+                                                 n = nERLANG(),
+                                                 b = betaERLANG(),
+                                                 lower.tail = F), 
+                                       nsmall = 6)})
+        
+        # VaRERLANG <- reactive({format((k = input$kERLANG,
+        #                                      n = nERLANG(),
+        #                                      lam = betaERLANG(),
+        #                                      tau = tauERLANG()), 
+        #                             nsmall = 6)
+        # })
+        # 
+        # VaRERLANG_a <- reactive({VaR_ERLANG(k = input$kERLANG,
+        #                                 n = nERLANG(),
+        #                                 lam = betaERLANG(),
+        #                                 tau = tauERLANG()) 
+        # })
+        # 
+        # 
+        # TVaRERLANG <- reactive({format(TVaR_ERLANG(k = input$kERLANG,
+        #                                        var = VaRERLANG_a(),
+        #                                        n = nERLANG(),
+        #                                        lam = betaERLANG(),
+        #                                        tau = tauERLANG()), 
+        #                              nsmall = 6)
+        # })
+        
+        EspTronqERLANG <- reactive({Etronq_erlang(d = dERLANG(),
+                                                  n = nERLANG(),
+                                                  b = betaERLANG())
+        })
+        
+        StopLossERLANG <- reactive({SL_erlang(d = dERLANG(),
+                                              n = nERLANG(),
+                                              b = betaERLANG())
+        })
+        
+        EspLimERLANG <- reactive({Elim_erlang(d = dERLANG(),
+                                              n = nERLANG(),
+                                              b = betaERLANG())
+        })
+        
+        kthmomentERLANG <- reactive({kthmoment_erlang(k = dERLANG(),
+                                                      n = nERLANG(),
+                                                      b = betaERLANG())
+        })
+        
+        ExcesMoyERLANG <- reactive({Mexcess_erlang(d = dERLANG(),
+                                                   n = nERLANG(),
+                                                   b = betaERLANG())
+        })
+        
+        meanERLANG <- reactive({E_erlang(n = nERLANG(),
+                                         b = betaERLANG())
+        })
+        
+        varianceERLANG <- reactive({V_erlang(n = nERLANG(),
+                                             b = betaERLANG())
+        })
+        
+        output$meanERLANG <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
+                                                           meanERLANG()))
+        })
+        
+        output$varERLANG <- renderUI({withMathJax(sprintf("$$Var(X) = %s$$", 
+                                                          varianceERLANG()))
+        })
+        
+        output$densityERLANG <- renderUI({withMathJax(sprintf("$$f_{X}(%s) = %s$$", 
+                                                              xERLANG(),
+                                                              densityERLANG()))
+        })
+        output$repartERLANG <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$",
+                                                             xERLANG(),
+                                                             repartERLANG()))
+        })
+        
+        output$survieERLANG <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
+                                                             xERLANG(),
+                                                             survieERLANG()))
+        })
+        
+        # output$VaRERLANG <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
+        #                                                   kERLANG(),
+        #                                                   VaRERLANG()))
+        # })
+        # 
+        # output$TVaRERLANG <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$",
+        #                                                  kERLANG(),
+        #                                                  TVaRERLANG()))
+        # })
+        
+        output$EspTronqERLANG <- renderUI({withMathJax(sprintf("$$E[X \\times 1_{\\{X \\leqslant %s\\}}] = %.4f$$",
+                                                             dERLANG(),
+                                                             EspTronqERLANG()))
+        })
+        
+        output$StopLossERLANG <- renderUI({withMathJax(sprintf("$$ \\pi_{%s}(X) = %.4f$$",
+                                                               dERLANG(),
+                                                               StopLossERLANG()))
+        })
+        
+        output$EspLimERLANG <- renderUI({withMathJax(sprintf("$$E[\\text{min}(X;{%s})] = %.4f$$",
+                                                             dERLANG(),
+                                                             EspLimERLANG()))
+        })
+        
+        output$ExcesMoyERLANG <- renderUI({withMathJax(sprintf("$$e_{%s}(X) = %.4f$$",
+                                                               dERLANG(),
+                                                               ExcesMoyERLANG()))
+        })
+        
+        output$kthmomentERLANG <- renderUI({withMathJax(sprintf("$$E[X^{%s}] = %.4f$$",
+                                                                dERLANG(),
+                                                                ExcesMoyERLANG()))
+        })
+        
+        
+        # output$FxERLANG 
+        
+        # output$SxERLANG
+        
 #### Loi Binomiale Serveur ####
         nBIN <- reactive({input$nBIN})
         

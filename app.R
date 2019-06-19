@@ -10,7 +10,7 @@
     library(shinyWidgets)
     library(shinyjs)
     library(tvarPackage)
-}
+} 
 source(file = "myUI.R", local = T)
 source(file = "myserver.R")
 source(file = "functions.R")

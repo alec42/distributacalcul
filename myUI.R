@@ -49,6 +49,11 @@ myUI <- shinyUI({
                             "Beta",
                             icon = icon("behance"),
                             tabName = "Beta"
+                        ),
+                        menuSubItem(
+                            "Erlang",
+                            icon = icon("erlang"),
+                            tabName = "Erlang"
                         )
                         
                     ),
@@ -68,10 +73,12 @@ myUI <- shinyUI({
                         ),
                         menuSubItem(
                             "Loi Poisson",
+                            icon = icon("fish"),
                             tabName = "Poisson"
                         ),
                         menuSubItem(
                             "Loi Hypergéométrique",
+                            icon = icon("hire-a-helper"),
                             tabName = "HG"
                         )
                     ),
@@ -108,6 +115,7 @@ myUI <- shinyUI({
                 tab_BURR_UI,
                 tab_LNORM_UI,
                 tab_BETA_UI,
+                tab_ERLANG_UI,
                 
             ## Lois Discrètes
             tab_BIN_UI,

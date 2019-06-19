@@ -777,6 +777,122 @@ tab_BETA_UI <- tabItem(tabName = "Beta",
 
 
 
+#### Loi Burr UI ----
+tab_ERLANG_UI <- tabItem(tabName = "Erlang",
+                         fluidPage(
+                             useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
+                             titlePanel("Loi Erlang"),
+                             # withMathJax(),
+                             helpText("\\(X \\sim\\mathcal{Erlang} \\ (n, \\beta)\\)"),
+                             align = "center"
+                         ), 
+                         
+                       fluidRow(
+                           {
+                               ### Paramètres ERLANG ----
+                               column(
+                                   width = 3,
+                                   boxPlus(
+                                       title = "Paramètres",
+                                       status = "primary",
+                                       solidHeader = T,
+                                       width = NULL,
+                                       closable = F,
+                                       numericInput('nERLANG', 
+                                                    withMathJax('$$n$$'), 
+                                                    value = 2, step = 1, min = 0),
+                                       numericInput('betaERLANG', 
+                                                    withMathJax('$$\\beta$$'), 
+                                                    value = 1, step = 1, min = 0)
+                                   ),
+                                   align = "center"
+                               )
+                           },
+                           
+                           {
+                               ### Moments Erlang  ----
+                               column(
+                                   width = 4,
+                                   box(
+                                       title = "Moments",
+                                       width = NULL,
+                                       solidHeader = TRUE,
+                                       status = "warning",
+                                       uiOutput("meanERLANG"),
+                                       uiOutput("varERLANG")
+                                   ),
+                                   
+                                   box(
+                                       title = "Autres Moments",
+                                       width = NULL,
+                                       solidHeader = TRUE,
+                                       status = "warning",
+                                       numericInput('dERLANG', 
+                                                    withMathJax('$$d$$'), 
+                                                    value = 0, width = "20px", min = 0, step = 1),
+                                       # radioButtons('equalityERLANG', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
+                                       uiOutput("EspTronqERLANG"),
+                                       uiOutput("EspLimERLANG"),
+                                       uiOutput("StopLossERLANG"),
+                                       uiOutput("ExcesMoyERLANG"),
+                                       uiOutput("kthmomentERLANG")
+                                       # align = "center"
+                                   ),
+                                   align = "center"
+                               )
+                           },
+                           
+                           {
+                               ### Fonctions ERLANG ----
+                               column(
+                                   width = 5,
+                                   box(
+                                       title = "Fonctions",
+                                       width = NULL,
+                                       solidHeader = TRUE,
+                                       # tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
+                                       status = "danger", # pour couleur de la boite, diff couleur pour statut
+                                       numericInput('xERLANG', '$$x$$', value = 0, min = 0, step = 1),
+                                       uiOutput("densityERLANG"),
+                                       
+                                       tabBox(
+                                           width = NULL,
+                                           tabPanel("Répartition",
+                                                    uiOutput("repartERLANG")
+                                                    # ,plotlyOutput("FxERLANG")
+                                           ),
+                                           tabPanel("Survie",
+                                                    uiOutput("survieERLANG")
+                                                    # ,plotlyOutput("SxERLANG")
+                                           )
+                                           
+                                       )
+                                   ),
+                                   align = "center"
+                               )
+                           }, 
+                           
+                           {
+                               ### Mesures de risque ERLANG  ----
+                               # column(
+                               #     width = 3,
+                               #     boxPlus(
+                               #         title = "Mesure de risques",
+                               #         width = NULL,
+                               #         solidHeader = TRUE, 
+                               #         closable = F,
+                               #         status = "success",
+                               #         # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
+                               #         numericInput('kERLANG', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
+                               #         uiOutput("VaRERLANG"),
+                               #         uiOutput("TVaRERLANG")
+                               #     ),
+                               #     align = "center"
+                               # )
+                           }
+                       )
+)
+
 #### Loi binomiale UI #### 
 tab_BIN_UI <- tabItem(tabName = "Binomiale",
          
