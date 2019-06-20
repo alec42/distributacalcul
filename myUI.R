@@ -56,8 +56,8 @@ myUI <- shinyUI({
                             tabName = "Erlang"
                         ),
                         menuSubItem(
-                            "Loglogis",
-                            icon = icon("erlang"),
+                            "Log-logistique",
+                            icon = icon("dolly"),
                             tabName = "LOGLOGIS"
                         )
                         
@@ -74,7 +74,7 @@ myUI <- shinyUI({
                         menuSubItem(
                             "Binomiale Négative et Géométrique",
                             tabName = "Binneg",
-                            icon = icon("bold")
+                            icon = icon("minus")
                         ),
                         menuSubItem(
                             "Loi Poisson",
