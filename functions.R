@@ -210,21 +210,6 @@ derlang <- function(x, n, b)
     ((b ^ n) / gamma(n)) * (x^(n - 1)) * exp(-b * x)
 }
 
-#### Erlang Généralisée ####
-
-# derlang_gen <- function(x, n = length(b), b)
-# {
-#     sum(sapply(1:n, function(i)
-#         b[i] *
-#             exp(-b[i] * x) *
-#             prod(sapply(c(1:(i - 1),
-#                           (i + 1):n),
-#                         function(j)
-#                             (b[j] / (b[j] - b[i]))))))
-# }
-# 
-# derlang_gen(x = 1, b = c(3, 4))
-
 #### Log-logistique ####
 
 kthmoment_llogis <- function(k = 1, lam, tau)
@@ -372,3 +357,111 @@ V_logarithmique <- function(gam)
 #     F <- f0 + sum(fk * pgamma(x, vk * alp, bet))
 #     return(F)
 # }
+#### Erlang Généralisée ####
+
+# derlang_gen <- function(x, n = length(b), b)
+# {
+#     sum(sapply(1:n, function(i)
+#         b[i] *
+#             exp(-b[i] * x) *
+#             prod(sapply(c(1:(i - 1),
+#                           (i + 1):n),
+#                         function(j)
+#                             (b[j] / (b[j] - b[i]))))))
+# }
+# 
+# derlang_gen(x = 1, b = c(3, 4))
+#### Inverse Gaussienne ####
+
+E_IG <- function(mu)
+{
+    mu
+}
+
+V_IG <- function(mu, beta = dispersion * mu^2, dispersion = beta / mu^2)
+{
+    mu * beta
+}
+
+d_IG <- function(x, mu, beta = dispersion * mu^2, dispersion = beta / mu^2)
+{
+    dinvgauss(x = x, mean = mu, dispersion = dispersion)
+}    
+
+p_IG <- function(q, mu, beta = dispersion * mu^2, dispersion = beta / mu^2, lower.tail = T)
+{
+    pinvgauss(q = q, mean = mu, dispersion = dispersion, lower.tail = lower.tail)
+}
+
+MGF_IG <- function(t, mu, beta = dispersion * mu^2, dispersion = beta / mu^2)
+{
+    exp((mu/beta) * (1 - sqrt(1 - 2 * beta * t)))
+}
+
+Etronq_IG <- function(mu, beta = dispersion * mu^2, dispersion = beta / mu^2)
+{
+    d - 
+        (2 * d - mu) *
+        qnorm(p = (d - mu) * 
+                  sqrt(1 / (beta * d))) -
+        (2 * d + mu) * 
+        exp(2 * mu / beta) * 
+        qnorm(p = - (d + mu) * 
+                  sqrt(1 / (beta * d)))
+}
+
+VaR_IG <- function(p, mu, beta = dispersion * mu^2, dispersion = beta / mu^2)
+{
+    qinvgauss(p = p, mean = mu, dispersion = dispersion)
+}
+
+TVaR_IG <- function(vark, mu, beta = dispersion * mu^2, dispersion = beta / mu^2)
+{
+    (1/(1 - k)) * 
+        (mu - vark + 
+             (2 * vark + mu) * 
+             exp(2 * mu / beta)) + 
+        (1/(1 - k)) * 
+        ((2 * vark - mu) * 
+             qnorm(p = (vark - mu) * 
+                       sqrt(1 / (beta * vark))))
+}
+
+SL_IG <- function(d, mu, beta = dispersion * mu^2, dispersion = beta / mu^2)
+{
+    (mu - d) *
+        qnorm(p = (d - mu) * 
+                  sqrt(1 / (beta * d)), 
+              lower.tail = F) +
+        (d + mu) * 
+        exp(2 * mu / beta) * 
+        qnorm(p = - (d + mu) * 
+                  sqrt(1 / (beta * d)))
+}
+
+
+## Doesn't work right now
+# Mexcess_IG <- function(x, d, mu, beta = dispersion * mu^2, dispersion = beta / mu^2)
+# {
+#     ((mu - d) * 
+#         ((1 - qnorm(p = ((d - mu) * 
+#                    sqrt(1 / (beta * d)))))) +
+#          ((mu + d) * 
+#               exp(2 * mu / beta) *
+#               qnorm(p = (-sqrt(1 / (beta * x)) * 
+#                         (d + mu)))
+#          )
+#     ) / (1 - (
+#         qnorm(p = (sqrt(1/(beta * x)) * 
+#                        (d - mu))) +
+#             exp(2 * mu / beta) * 
+#             qnorm(p = (-sqrt(1/(beta * x)) * 
+#                       (d + mu)))
+#     )
+#     ) 
+# }
+
+Elim_IG <- function(d, mu, beta = dispersion * mu^2, dispersion = beta / mu^2)
+{
+    levinvgauss(limit = d, mean = mu, dispersion = dispersion, order = 1)
+}
