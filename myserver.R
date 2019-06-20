@@ -1202,7 +1202,7 @@ myserver <- function(input, output, session)
         
         # output$SxERLANG
         
-#### Loi LOGLOGIS Serveur ####
+#### Loi Log-logistique Serveur ####
         
         lambdaLOGLOGIS <- reactive({input$lambdaLOGLOGIS})
         
@@ -1337,6 +1337,151 @@ myserver <- function(input, output, session)
         # output$FxLOGLOGIS 
         
         # output$SxLOGLOGIS
+        
+#### Loi Weibull Serveur ####
+        
+        betaIG <- reactive({input$betaIG})
+        
+        muIG <- reactive({input$muIG})
+        
+        dIG <- reactive({input$dIG})
+        
+        kIG <- reactive({input$kIG})
+        
+        xIG <- reactive({input$xIG})
+        
+        densityIG <- reactive({format(d_IG(x = xIG(), 
+                                           mu = muIG(),
+                                           beta = betaIG()), 
+                                      nsmall = 6)
+        })
+        
+        repartIG <- reactive({format(p_IG(q = xIG(), 
+                                          mu = muIG(),
+                                          beta = betaIG()), 
+                                     nsmall = 6)
+        })
+        
+        survieIG <- reactive({format(p_IG(q = xIG(), 
+                                         mu = muIG(),
+                                         beta = betaIG(),
+                                         lower.tail = F), 
+                                     nsmall = 6)
+        })
+        
+        VaRIG <- reactive({format(VaR_IG(p = kIG(),
+                                         mu = muIG(), 
+                                         beta = betaIG()),
+                                  nsmall = 6)
+        })
+        
+        VaRIG_a <- reactive({VaR_IG(p = kIG(),
+                                    mu = muIG(), 
+                                    beta = betaIG())
+        })
+        
+        TVaRIG <- reactive({format(TVaR_IG(vark = VaRIG_a(),
+                                           mu = muIG(), 
+                                           k = kIG(),
+                                           beta = betaIG()), 
+                                   nsmall = 6)
+        })
+        
+        EspTronqIG <- reactive({Etronq_IG(d = dIG(),
+                                          beta = betaIG(),
+                                          mu = muIG())
+        })
+        
+        StopLossIG <- reactive({SL_IG(d = dIG(),
+                                      beta = betaIG(),
+                                      mu = muIG())
+        })
+        
+        EspLimIG <- reactive({Elim_IG(d = dIG(),
+                                      beta = betaIG(),
+                                      mu = muIG())
+        })
+        
+        # ExcesMoyIG <- reactive({Mexcess_IG(d = dIG(),
+        #                                    beta = betaIG(),
+        #                                    mu = muIG())
+        # })
+        
+        meanIG <- reactive({E_IG( mu = muIG())
+        })
+        
+        # kthmomentIG <- reactive({E_IG(beta = betaIG(),
+        #                               mu = muIG(),
+        #                               k = dIG())
+        # })
+        
+        varianceIG <- reactive({V_IG(beta = betaIG(),
+                                     mu = muIG())
+        })
+        
+        output$meanIG <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
+                                                       format(meanIG(),
+                                                              nsmall = 6)))
+        })
+        # 
+        # output$kthmomentIG <- renderUI({withMathJax(sprintf("$$E(X^%s) = %s$$", 
+        #                                                     input$dIG,
+        #                                                     format(kthmomentIG(),
+        #                                                            nsmall = 6)))
+        # })
+        
+        output$varianceIG <- renderUI({withMathJax(sprintf("$$Var(X) = %s$$", 
+                                                           format(varianceIG(),
+                                                                  nsmall = 6)))
+        })
+        
+        output$densityIG <- renderUI({withMathJax(sprintf("$$f_{X}(%s) = %s$$", 
+                                                               input$xIG,
+                                                               densityIG()))
+        })
+        output$repartIG <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$",
+                                                              input$xIG,
+                                                              repartIG()))
+        })
+        
+        output$survieIG <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
+                                                              input$xIG,
+                                                              survieIG()))
+        })
+        
+        output$VaRIG <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
+                                                           input$kIG,
+                                                           VaRIG()))
+        })
+        
+        output$TVaRIG <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$",
+                                                            input$kIG,
+                                                            TVaRIG()))
+        })
+        
+        output$EspTronqIG <- renderUI({withMathJax(sprintf("$$E[X \\times 1_{\\{X \\leqslant %s\\}}] = %.4f$$",
+                                                                input$dIG,
+                                                                EspTronqIG()))
+        })
+        
+        output$StopLossIG <- renderUI({withMathJax(sprintf("$$ \\pi_{%s}(X) = %.4f$$",
+                                                                input$dIG,
+                                                                StopLossIG()))
+        })
+        
+        output$EspLimIG <- renderUI({withMathJax(sprintf("$$E[\\text{min}(X;{%s})] = %.4f$$",
+                                                              input$dIG,
+                                                              EspLimIG()))
+        })
+        
+        # output$ExcesMoyIG <- renderUI({withMathJax(sprintf("$$e_{%s}(X) = %.4f$$",
+        #                                                         input$dIG,
+        #                                                         ExcesMoyIG()))
+        # })
+        
+        # output$FxIG 
+        
+        # output$SxIG
         
 #### Loi Binomiale Serveur ####
         nBIN <- reactive({input$nBIN})

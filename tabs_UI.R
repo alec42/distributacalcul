@@ -667,6 +667,116 @@ tab_WEIBULL_UI <- tabItem(tabName = "Weibull",
                          )
 )
 
+#### Loi Weibull UI ----
+tab_IG_UI <- tabItem(tabName = "IG",
+                          fluidPage(
+                              useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
+                              titlePanel("Loi Inverse Gaussienne"),
+                              # withMathJax(),
+                              helpText("\\(X \\sim\\mathcal{IG} \\ (\\mu, \\beta)\\)"),
+                              align = "center"
+                          ), 
+                          
+                          fluidRow(
+                              {
+                                  ### Paramètres IG ----
+                                  column(
+                                      width = 2,
+                                      boxPlus(
+                                          title = "Paramètres",
+                                          status = "primary",
+                                          solidHeader = T,
+                                          width = NULL,closable = F,
+                                          numericInput('muIG', withMathJax('$$\\mu$$'), value = 2, min = 0),
+                                          numericInput('betaIG', '$$\\beta$$', value = 1, min = 0)
+                                      ),
+                                      align = "center"
+                                  )
+                              },
+                              
+                              {
+                                  ### Moments IG  ----
+                                  column(
+                                      width = 3,
+                                      box(
+                                          title = "Moments",
+                                          width = NULL,
+                                          solidHeader = TRUE,
+                                          status = "warning",
+                                          uiOutput("meanIG"),
+                                          uiOutput("varianceIG")
+                                      ),
+                                      
+                                      box(
+                                          title = "Autres Moments",
+                                          width = NULL,
+                                          solidHeader = TRUE,
+                                          status = "warning",
+                                          numericInput('dIG', withMathJax('$$d$$'), value = 1, width = "20px", min = 0),
+                                          # radioButtons('equalityIG', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
+                                          uiOutput("EspTronqIG"),
+                                          uiOutput("EspLimIG"),
+                                          uiOutput("StopLossIG")
+                                          # ,uiOutput("ExcesMoyIG"),
+                                          # uiOutput("kthmomentIG")
+                                          #,
+                                          # align = "center"
+                                      ),
+                                      align = "center"
+                                  )
+                              },
+                              
+                              {
+                                  ### Fonctions IG ----
+                                  column(
+                                      width = 4,
+                                      box(
+                                          title = "Fonctions",
+                                          width = NULL,
+                                          solidHeader = TRUE,
+                                          # tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
+                                          status = "danger", # pour couleur de la boite, diff couleur pour statut
+                                          numericInput('xIG', '$$x$$', value = 0, min = 0),
+                                          uiOutput("densityIG"),
+                                          
+                                          tabBox(
+                                              width = NULL,
+                                              tabPanel("Répartition",
+                                                       uiOutput("repartIG"),
+                                                       plotlyOutput("FxIG")
+                                              ),
+                                              tabPanel("Survie",
+                                                       uiOutput("survieIG"),
+                                                       plotlyOutput("SxIG")
+                                              )
+                                              
+                                          )
+                                      ),
+                                      align = "center"
+                                  )
+                              }, 
+                              
+                              {
+                                  ### Mesures de risque IG  ----
+                                  column(
+                                      width = 3,
+                                      boxPlus(
+                                          title = "Mesure de risques",
+                                          width = NULL,
+                                          solidHeader = TRUE, 
+                                          closable = F,
+                                          status = "success",
+                                          # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
+                                          numericInput('kIG', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
+                                          uiOutput("VaRIG"),
+                                          uiOutput("TVaRIG")
+                                      ),
+                                      align = "center"
+                                  )
+                              }
+                          )
+)
+
 #### Loi Beta UI ----
 tab_BETA_UI <- tabItem(tabName = "Beta",
                         fluidRow(

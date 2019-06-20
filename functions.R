@@ -398,7 +398,7 @@ MGF_IG <- function(t, mu, beta = dispersion * mu^2, dispersion = beta / mu^2)
     exp((mu/beta) * (1 - sqrt(1 - 2 * beta * t)))
 }
 
-Etronq_IG <- function(mu, beta = dispersion * mu^2, dispersion = beta / mu^2)
+Etronq_IG <- function(d, mu, beta = dispersion * mu^2, dispersion = beta / mu^2)
 {
     d - 
         (2 * d - mu) *
@@ -415,7 +415,7 @@ VaR_IG <- function(p, mu, beta = dispersion * mu^2, dispersion = beta / mu^2)
     qinvgauss(p = p, mean = mu, dispersion = dispersion)
 }
 
-TVaR_IG <- function(vark, mu, beta = dispersion * mu^2, dispersion = beta / mu^2)
+TVaR_IG <- function(k, vark, mu, beta = dispersion * mu^2, dispersion = beta / mu^2)
 {
     (1/(1 - k)) * 
         (mu - vark + 
@@ -440,25 +440,54 @@ SL_IG <- function(d, mu, beta = dispersion * mu^2, dispersion = beta / mu^2)
 }
 
 
-## Doesn't work right now
+# Doesn't work right now
 # Mexcess_IG <- function(x, d, mu, beta = dispersion * mu^2, dispersion = beta / mu^2)
 # {
-#     ((mu - d) * 
-#         ((1 - qnorm(p = ((d - mu) * 
-#                    sqrt(1 / (beta * d)))))) +
-#          ((mu + d) * 
+#     (
+#         (mu - d) * (
+#             (1 - qnorm(p = 
+#                            (
+#                                (d - mu) * sqrt(1 / (beta * d))
+#                            )
+#                       )
+#             )
+#         )
+#     ) / 
+#         (1 - (qnorm(p = 
+#                         (
+#                             (sqrt(1 / (beta * x)) * (d - mu))
+#                         )
+#                     ) +
 #               exp(2 * mu / beta) *
-#               qnorm(p = (-sqrt(1 / (beta * x)) * 
-#                         (d + mu)))
-#          )
-#     ) / (1 - (
-#         qnorm(p = (sqrt(1/(beta * x)) * 
-#                        (d - mu))) +
-#             exp(2 * mu / beta) * 
-#             qnorm(p = (-sqrt(1/(beta * x)) * 
-#                       (d + mu)))
-#     )
-#     ) 
+#               qnorm(p = 
+#                         (
+#                             (- sqrt(1 / (beta * x)) * (d + mu))
+#                         )
+#                     )
+#               )
+#         ) +
+#     (
+#         (mu + d) * 
+#             exp(2 * mu / beta) *
+#             qnorm(p = 
+#                       (
+#                           (-sqrt(1 / (beta * x)) * (d + mu))
+#                       )
+#                   )
+#     ) /
+#         (1 - (qnorm(p = 
+#                         (
+#                             (sqrt(1 / (beta * x)) * (d - mu))
+#                         )
+#                    ) +
+#              exp(2 * mu / beta) *
+#              qnorm(p = 
+#                       (
+#                           (- sqrt(1 / (beta * x)) * (d + mu))
+#                       )
+#                  )
+#             )
+#         )
 # }
 
 Elim_IG <- function(d, mu, beta = dispersion * mu^2, dispersion = beta / mu^2)

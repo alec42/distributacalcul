@@ -59,6 +59,11 @@ myUI <- shinyUI({
                             "Log-logistique",
                             icon = icon("dolly"),
                             tabName = "LOGLOGIS"
+                        ),
+                        menuSubItem(
+                            "Loi Inverse Gaussienne",
+                            icon = icon("yahoo"),
+                            tabName = "IG"
                         )
                         
                     ),
@@ -127,6 +132,7 @@ myUI <- shinyUI({
                 tab_BETA_UI,
                 tab_ERLANG_UI,
                 tab_LOGLOGIS_UI,
+                tab_IG_UI,
                 
             ## Lois Discrètes
             tab_BIN_UI,
