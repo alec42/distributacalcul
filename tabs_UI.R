@@ -777,7 +777,7 @@ tab_BETA_UI <- tabItem(tabName = "Beta",
 
 
 
-#### Loi Burr UI ----
+#### Loi Erlang UI ----
 tab_ERLANG_UI <- tabItem(tabName = "Erlang",
                          fluidPage(
                              useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
@@ -889,6 +889,119 @@ tab_ERLANG_UI <- tabItem(tabName = "Erlang",
                                #     ),
                                #     align = "center"
                                # )
+                           }
+                       )
+)
+
+#### Loi Log-logistique UI ----
+tab_LOGLOGIS_UI <- tabItem(tabName = "LOGLOGIS",
+                       fluidPage(
+                           useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
+                           titlePanel("Loi Log-logistique"),
+                           # withMathJax(),
+                           helpText("\\(X \\sim\\mathcal{LL} \\ (\\lambda, \\tau)\\)"),
+                           align = "center"
+                       ), 
+                       
+                       fluidRow(
+                           {
+                               ### Paramètres LOGLOGIS ----
+                               column(
+                                   width = 2,
+                                   boxPlus(
+                                       title = "Paramètres",
+                                       status = "primary",
+                                       solidHeader = T,
+                                       width = NULL,closable = F,
+                                       numericInput('tauLOGLOGIS', 
+                                                    withMathJax('$$\\tau$$'), 
+                                                    value = 4, step = 1, min = 0),
+                                       numericInput('lambdaLOGLOGIS', 
+                                                    '$$\\lambda$$', 
+                                                    value = 3, step = 1, min = 0)
+                                   ),
+                                   align = "center"
+                               )
+                           },
+                           
+                           {
+                               ### Moments LOGLOGIS  ----
+                               column(
+                                   width = 3,
+                                   box(
+                                       title = "Moments",
+                                       width = NULL,
+                                       solidHeader = TRUE,
+                                       status = "warning",
+                                       uiOutput("meanLOGLOGIS"),
+                                       uiOutput("varLOGLOGIS")
+                                   ),
+                                   
+                                   box(
+                                       title = "Autres Moments",
+                                       width = NULL,
+                                       solidHeader = TRUE,
+                                       status = "warning",
+                                       numericInput('dLOGLOGIS', withMathJax('$$d$$'), value = 0, width = "20px", min = 0, step = 1),
+                                       # radioButtons('equalityLOGLOGIS', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
+                                       uiOutput("EspTronqLOGLOGIS"),
+                                       uiOutput("EspLimLOGLOGIS"),
+                                       uiOutput("StopLossLOGLOGIS"),
+                                       uiOutput("ExcesMoyLOGLOGIS"),
+                                       uiOutput("kthmomentLOGLOGIS")
+                                       # align = "center"
+                                   ),
+                                   align = "center"
+                               )
+                           },
+                           
+                           {
+                               ### Fonctions LOGLOGIS ----
+                               column(
+                                   width = 4,
+                                   box(
+                                       title = "Fonctions",
+                                       width = NULL,
+                                       solidHeader = TRUE,
+                                       # tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
+                                       status = "danger", # pour couleur de la boite, diff couleur pour statut
+                                       numericInput('xLOGLOGIS', '$$x$$', value = 0, min = 0, step = 1),
+                                       uiOutput("densityLOGLOGIS"),
+                                       
+                                       tabBox(
+                                           width = NULL,
+                                           tabPanel("Répartition",
+                                                    uiOutput("repartLOGLOGIS"),
+                                                    plotlyOutput("FxLOGLOGIS")
+                                           ),
+                                           tabPanel("Survie",
+                                                    uiOutput("survieLOGLOGIS"),
+                                                    plotlyOutput("SxLOGLOGIS")
+                                           )
+                                           
+                                       )
+                                   ),
+                                   align = "center"
+                               )
+                           }, 
+                           
+                           {
+                               ### Mesures de risque LOGLOGIS  ----
+                               column(
+                                   width = 3,
+                                   boxPlus(
+                                       title = "Mesure de risques",
+                                       width = NULL,
+                                       solidHeader = TRUE, 
+                                       closable = F,
+                                       status = "success",
+                                       # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
+                                       numericInput('kLOGLOGIS', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
+                                       uiOutput("VaRLOGLOGIS"),
+                                       uiOutput("TVaRLOGLOGIS")
+                                   ),
+                                   align = "center"
+                               )
                            }
                        )
 )

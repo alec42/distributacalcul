@@ -1202,6 +1202,142 @@ myserver <- function(input, output, session)
         
         # output$SxERLANG
         
+#### Loi LOGLOGIS Serveur ####
+        
+        lambdaLOGLOGIS <- reactive({input$lambdaLOGLOGIS})
+        
+        tauLOGLOGIS <- reactive({input$tauLOGLOGIS})
+        
+        dLOGLOGIS <- reactive({input$dLOGLOGIS})
+        
+        kLOGLOGIS <- reactive({input$kLOGLOGIS})
+        
+        xLOGLOGIS <- reactive({input$xLOGLOGIS})
+        
+        densityLOGLOGIS <- reactive({format(dllogis(x = xLOGLOGIS(), 
+                                                    shape = lambdaLOGLOGIS(), 
+                                                    rate = tauLOGLOGIS()), 
+                                            nsmall = 6)})
+        
+        repartLOGLOGIS <- reactive({format(pllogis(q = xLOGLOGIS(), 
+                                                   shape = lambdaLOGLOGIS(), 
+                                                   rate = tauLOGLOGIS()), 
+                                           nsmall = 6)})
+        
+        survieLOGLOGIS <- reactive({format(pllogis(q = xLOGLOGIS(), 
+                                                   shape = lambdaLOGLOGIS(), 
+                                                   rate = tauLOGLOGIS(),
+                                                   lower.tail = F), 
+                                           nsmall = 6)})
+        
+        VaRLOGLOGIS <- reactive({format(VaR_llogis(k = kLOGLOGIS(), 
+                                                   lam = lambdaLOGLOGIS(), 
+                                                   tau = tauLOGLOGIS()), 
+                                        nsmall = 6)
+        })
+        
+        TVaRLOGLOGIS <- reactive({format(TVaR_llogis(k = kLOGLOGIS(),
+                                                     lam = lambdaLOGLOGIS(),
+                                                     tau = tauLOGLOGIS()), 
+                                         nsmall = 6)
+        })
+        
+        EspTronqLOGLOGIS <- reactive({Etronq_llogis(d = dLOGLOGIS(),
+                                                    lam = lambdaLOGLOGIS(),
+                                                    tau = tauLOGLOGIS())
+        })
+        
+        StopLossLOGLOGIS <- reactive({SL_llogis(d = dLOGLOGIS(),
+                                                lam = lambdaLOGLOGIS(),
+                                                tau = tauLOGLOGIS())
+        })
+        
+        EspLimLOGLOGIS <- reactive({Elim_llogis(d = dLOGLOGIS(),
+                                              lam = lambdaLOGLOGIS(),
+                                              tau = tauLOGLOGIS())
+        })
+        
+        kthmomentLOGLOGIS <- reactive({kthmoment_llogis(k = kLOGLOGIS(),
+                                                        lam = lambdaLOGLOGIS(),
+                                                        tau = tauLOGLOGIS())
+        })
+        
+        ExcesMoyLOGLOGIS <- reactive({Mexcess_llogis(d = dLOGLOGIS(),
+                                                     lam = lambdaLOGLOGIS(),
+                                                     tau = tauLOGLOGIS())
+        })
+        
+        meanLOGLOGIS <- reactive({kthmoment_llogis(k = 1,
+                                                   lam = lambdaLOGLOGIS(),
+                                                   tau = tauLOGLOGIS())
+        })
+        
+        varianceLOGLOGIS <- reactive({V_llogis(lam = lambdaLOGLOGIS(),
+                                               tau = tauLOGLOGIS())
+        })
+        
+        output$meanLOGLOGIS <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
+                                                             meanLOGLOGIS()))
+        })
+        
+        output$varLOGLOGIS <- renderUI({withMathJax(sprintf("$$Var(X) = %s$$", 
+                                                            varianceLOGLOGIS()))
+        })
+        
+        output$densityLOGLOGIS <- renderUI({withMathJax(sprintf("$$f_{X}(%s) = %s$$", 
+                                                                xLOGLOGIS(),
+                                                                densityLOGLOGIS()))
+        })
+        output$repartLOGLOGIS <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$",
+                                                               xLOGLOGIS(),
+                                                               repartLOGLOGIS()))
+        })
+        
+        output$survieLOGLOGIS <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
+                                                               xLOGLOGIS(),
+                                                               survieLOGLOGIS()))
+        })
+        
+        output$VaRLOGLOGIS <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
+                                                            kLOGLOGIS(),
+                                                            VaRLOGLOGIS()))
+        })
+        
+        output$TVaRLOGLOGIS <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$",
+                                                             kLOGLOGIS(),
+                                                             TVaRLOGLOGIS()))
+        })
+        
+        output$EspTronqLOGLOGIS <- renderUI({withMathJax(sprintf("$$E[X \\times 1_{\\{X \\leqslant %s\\}}] = %.4f$$",
+                                                                 dLOGLOGIS(),
+                                                                 EspTronqLOGLOGIS()))
+        })
+        
+        output$StopLossLOGLOGIS <- renderUI({withMathJax(sprintf("$$ \\pi_{%s}(X) = %.4f$$",
+                                                                 dLOGLOGIS(),
+                                                                 StopLossLOGLOGIS()))
+        })
+        
+        output$EspLimLOGLOGIS <- renderUI({withMathJax(sprintf("$$E[\\text{min}(X;{%s})] = %.4f$$",
+                                                               dLOGLOGIS(),
+                                                               EspLimLOGLOGIS()))
+        })
+        
+        output$ExcesMoyLOGLOGIS <- renderUI({withMathJax(sprintf("$$e_{%s}(X) = %.4f$$",
+                                                                 dLOGLOGIS(),
+                                                                 ExcesMoyLOGLOGIS()))
+        })
+        
+        output$kthmomentLOGLOGIS <- renderUI({withMathJax(sprintf("$$E[X^{%s}] = %.4f$$",
+                                                                  dLOGLOGIS(),
+                                                                  kthmomentLOGLOGIS()))
+        })
+        
+        
+        # output$FxLOGLOGIS 
+        
+        # output$SxLOGLOGIS
+        
 #### Loi Binomiale Serveur ####
         nBIN <- reactive({input$nBIN})
         

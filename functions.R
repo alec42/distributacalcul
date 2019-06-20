@@ -225,6 +225,92 @@ derlang <- function(x, n, b)
 # 
 # derlang_gen(x = 1, b = c(3, 4))
 
+#### Log-logistique ####
+
+kthmoment_llogis <- function(k = 1, lam, tau)
+{
+    lam^k * gamma(1 + k/tau) * gamma(1 - k/tau)
+}
+
+V_llogis <- function(lam, tau)
+{
+    kthmoment_llogis(k = 2,
+                     lam = lam,
+                     tau = tau) - 
+        kthmoment_llogis(k = 1,
+                         lam = lam,
+                         tau = tau)^2
+}
+
+VaR_llogis <- function(k, lam, tau)
+{
+    lam * (k^(-1) - 1)^(-1/tau)
+}
+
+TVaR_llogis <- function(k, lam, tau)
+{
+    lam / (1 - k) * 
+        gamma(1 + 1/tau) * 
+        gamma(1 - 1/tau) * 
+        pbeta(q = k,
+              shape1 = 1 + 1/tau,
+              shape2 = 1 - 1/tau,
+              lower.tail = F)
+}
+
+SL_llogis <- function(d, lam, tau)
+{
+    lam * 
+        gamma(1 + 1/tau) * 
+        gamma(1 - 1/tau) * 
+        pbeta(q = (d^tau)/(lam^tau + d^tau),
+              shape1 = 1 + 1/tau,
+              shape2 = 1 - 1/tau,
+              lower.tail = F) -
+        (d * (lam^tau)) / 
+        (lam^tau + d^tau)
+}
+
+Mexcess_llogis <- function(d, lam, tau)
+{
+    (d^tau + lam^tau) / (lam^(tau - 1)) * 
+        gamma(1 + 1/tau) * 
+        gamma(1 - 1/tau) * 
+        pbeta(q = (d^tau)/(lam^tau + d^tau),
+              shape1 = 1 + 1/tau,
+              shape2 = 1 - 1/tau,
+              lower.tail = F) -
+        d
+    
+}
+
+Elim_llogis <- function(d, lam, tau)
+{
+    lam * 
+        gamma(1 + 1/tau) * 
+        gamma(1 - 1/tau) * 
+        pbeta(q = (d^tau)/(lam^tau + d^tau),
+              shape1 = 1 + 1/tau,
+              shape2 = 1 - 1/tau) +
+        (d * (lam^tau)) / 
+        (lam^tau + d^tau)
+}
+
+Etronq_llogis <- function(d, lam, tau)
+{
+    lam * 
+        gamma(1 + 1/tau) * 
+        gamma(1 - 1/tau) * 
+        pbeta(q = (d^tau)/(lam^tau + d^tau),
+              shape1 = 1 + 1/tau,
+              shape2 = 1 - 1/tau)
+}
+
+
+
+
+
+
 
 #### Hypergéometrique ####
 
@@ -251,3 +337,26 @@ kthmoment_pareto2 <- function(alpha, lam, k)
 {
     (lam^k * gamma(k + 1) * gamma(alpha - k))/gamma(alpha)
 }
+
+#### Poisson Composée ####
+# Début conceptualisation de l'espérance PComp
+# E_PCOMP <- function(lambda, distribution_montant_sinistre)
+# {
+#     if(distribution_montant_sinistre = "Gamma")
+#     {
+#         E_gamma(a = , b = ) * lambda
+#     }
+#     else if (distribution_montant_sinistre = "Normale")
+#     {
+#         
+#     }
+# }
+# ?actuar
+# pPcomp <- function(x, lam, alp, bet, k0 = 1000)
+# {
+#     f0 <- dpois(0, lam)
+#     vk <- 1:1000
+#     fk <- dpois(vk, lambda)
+#     F <- f0 + sum(fk * pgamma(x, vk * alp, bet))
+#     return(F)
+# }

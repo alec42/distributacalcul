@@ -54,6 +54,11 @@ myUI <- shinyUI({
                             "Erlang",
                             icon = icon("erlang"),
                             tabName = "Erlang"
+                        ),
+                        menuSubItem(
+                            "Loglogis",
+                            icon = icon("erlang"),
+                            tabName = "LOGLOGIS"
                         )
                         
                     ),
@@ -116,6 +121,7 @@ myUI <- shinyUI({
                 tab_LNORM_UI,
                 tab_BETA_UI,
                 tab_ERLANG_UI,
+                tab_LOGLOGIS_UI,
                 
             ## Lois Discrètes
             tab_BIN_UI,
