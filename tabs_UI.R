@@ -1321,7 +1321,7 @@ tab_HG_UI <- tabItem(tabName = "HG",
                       ),
                       
                       fluidRow(
-                          column(width = 3,
+                          column(width = 4,
                                  box(title = "Paramètres", 
                                      status = "primary", 
                                      solidHeader = T, 
@@ -1334,7 +1334,7 @@ tab_HG_UI <- tabItem(tabName = "HG",
                           ),
                           
                           ## Moments
-                          column(width = 3,
+                          column(width = 4,
                                  tags$style(" * {font-size:20px}"), # grosseur du tezte
                                  box(
                                      title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
@@ -1356,7 +1356,7 @@ tab_HG_UI <- tabItem(tabName = "HG",
                           ),
                           
                           ## Fonctions
-                          column(width = 3,
+                          column(width = 4,
                                  box(
                                      title = "Fonctions", 
                                      width = NULL, 
@@ -1401,4 +1401,97 @@ tab_HG_UI <- tabItem(tabName = "HG",
                           #        align = "center"
                           # )
                       )
+)
+
+#### Loi Logarithmique UI #### 
+tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
+                     fluidPage(
+                         titlePanel("Loi Logarithmique"), 
+                         withMathJax(), 
+                         helpText("\\(X \\sim\\mathcal{Logarithmique} \\ (\\gamma)\\)"), 
+                         align = "center"
+                     ),
+                     
+                     fluidRow(
+                         column(width = 3,
+                                box(title = "Paramètres", 
+                                    status = "primary", 
+                                    solidHeader = T, 
+                                    width = NULL,
+                                    numericInput('gammaLOGARITHMIQUE',
+                                                 '$$\\gamma$$', 
+                                                 value = .2, min = 0, max = 1, step = .1)
+                                ),
+                                align = "center"
+                         ),
+                         
+                         ## Moments
+                         column(width = 3,
+                                tags$style(" * {font-size:20px}"), # grosseur du tezte
+                                box(
+                                    title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
+                                    uiOutput("meanLOGARITHMIQUE"),
+                                    uiOutput("varLOGARITHMIQUE")
+                                ),
+                                align = "center"
+                                # ,
+                                
+                                # box(
+                                #     title = "Fonctions g", width = NULL, solidHeader = TRUE, status = "warning",
+                                #     numericInput('dLOGARITHMIQUE', withMathJax('$$d$$'), value = 0, width = "20px"),
+                                #     # radioButtons('equalityLOGARITHMIQUE', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
+                                #     uiOutput("EspTronqLOGARITHMIQUE"),
+                                #     uiOutput("EspLimLOGARITHMIQUE"),
+                                #     uiOutput("StopLossLOGARITHMIQUE"),
+                                #     uiOutput("ExcesMoyLOGARITHMIQUE"),
+                                #     align = "center")
+                         ),
+                         
+                         ## Fonctions
+                         column(width = 3,
+                                box(
+                                    title = "Fonctions", 
+                                    width = NULL, 
+                                    solidHeader = TRUE,
+                                    tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
+                                    status = "danger", # pour couleur de la boite, diff couleur pour statut
+                                    numericInput('xLOGARITHMIQUE', '$$x$$', min = 0, value = 0, step = 1),
+                                    uiOutput("densityLOGARITHMIQUE"),
+                                    
+                                    tabBox(
+                                        width = NULL,
+                                        tabPanel("Répartition",
+                                                 uiOutput("repartLOGARITHMIQUE")
+                                                 # ,
+                                                 # plotlyOutput("FxLOGARITHMIQUE")
+                                        ),
+                                        tabPanel("Survie",
+                                                 uiOutput("survieLOGARITHMIQUE")
+                                                 # ,
+                                                 # plotlyOutput("SxBETA")
+                                        )
+                                        
+                                    )
+                                ),
+                                align = "center"
+                                
+                         )
+                         ,
+
+                         column(width = 3,
+                                boxPlus(
+                                    title = "Mesure de risques",
+                                    width = NULL,
+                                    solidHeader = TRUE,
+                                    status = "success",
+                                    closable = F,
+                                    tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
+                                    numericInput('kLOGARITHMIQUE', '$$\\kappa$$', value = 0.99, step = 0.005),
+                                    uiOutput("VaRLOGARITHMIQUE")
+                                    # ,uiOutput("TVaRLOGARITHMIQUE")
+                                    ),
+
+                                align = "center"
+                         )
+                     )
 )

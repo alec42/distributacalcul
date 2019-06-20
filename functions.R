@@ -338,6 +338,18 @@ kthmoment_pareto2 <- function(alpha, lam, k)
     (lam^k * gamma(k + 1) * gamma(alpha - k))/gamma(alpha)
 }
 
+#### Logarithmique ####
+
+E_logarithmique <- function(gam)
+{
+    (-gam) / (log(1 - gam) * (1 - gam))
+}
+
+V_logarithmique <- function(gam)
+{
+    (gam + log(1 - gam)) / ((1 - gam)^2 * (log(1 - gam))^2)
+}
+
 #### Poisson Composée ####
 # Début conceptualisation de l'espérance PComp
 # E_PCOMP <- function(lambda, distribution_montant_sinistre)

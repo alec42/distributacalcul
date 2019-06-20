@@ -85,6 +85,11 @@ myUI <- shinyUI({
                             "Loi Hypergéométrique",
                             icon = icon("hire-a-helper"),
                             tabName = "HG"
+                        ),
+                        menuSubItem(
+                            "Loi Logarithmique",
+                            icon = icon("yahoo"),
+                            tabName = "Logarithmique"
                         )
                     ),
                     menuItem(
@@ -128,6 +133,7 @@ myUI <- shinyUI({
             tab_BN_UI,
             tab_POI_UI,
             tab_HG_UI,
+            tab_LOGARITHMIQUE_UI,
             
             ## À propos ----
                 tabItem(

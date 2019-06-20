@@ -1679,6 +1679,75 @@ myserver <- function(input, output, session)
     #     
     # })
 
+#### Loi logarithmique Serveur ####
+    
+    gammaLOGARITHMIQUE <- reactive({input$gammaLOGARITHMIQUE})
+    
+    xLOGARITHMIQUE <- reactive({input$xLOGARITHMIQUE})
+    
+    kLOGARITHMIQUE <- reactive({input$kLOGARITHMIQUE})
+    
+    meanLOGARITHMIQUE <- reactive({E_logarithmique(gam = gammaLOGARITHMIQUE())})
+    
+    varLOGARITHMIQUE <- reactive({
+        format(V_logarithmique(gam = gammaLOGARITHMIQUE()), 
+               nsmall = 6)
+    })
+    
+    densityLOGARITHMIQUE <- reactive({
+        format(dlogarithmic(x = xLOGARITHMIQUE(), 
+                            prob = gammaLOGARITHMIQUE()), 
+        nsmall = 6)
+    })
+    
+    repartLOGARITHMIQUE <- reactive({
+        format(plogarithmic(q = xLOGARITHMIQUE(), 
+                            prob = gammaLOGARITHMIQUE()), 
+               nsmall = 6)
+    })
+    
+    survieLOGARITHMIQUE <- reactive({
+        format(plogarithmic(q = xLOGARITHMIQUE(), 
+                      prob = gammaLOGARITHMIQUE(),
+                      lower.tail = F 
+        ), 
+        nsmall = 6)
+    })
+    
+    VaRLOGARITHMIQUE <- reactive({
+        format(qlogarithmic(p = kLOGARITHMIQUE(),
+                            prob = gammaLOGARITHMIQUE()
+        ), 
+        nsmall = 6)
+    })
+    
+    output$meanLOGARITHMIQUE <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
+                                                              meanLOGARITHMIQUE()
+    ))})
+    
+    output$varLOGARITHMIQUE <- renderUI({withMathJax(sprintf("$$Var(X) = %s$$", 
+                                                             varLOGARITHMIQUE()
+    ))})
+    
+    output$densityLOGARITHMIQUE <- renderUI({withMathJax(sprintf("$$f_{X}(%s) = %s$$", 
+                                                                 xLOGARITHMIQUE(),
+                                                                 densityLOGARITHMIQUE()
+    ))})
+    output$repartLOGARITHMIQUE <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$", 
+                                                                xLOGARITHMIQUE(),
+                                                                repartLOGARITHMIQUE()
+    ))})
+    
+    output$survieLOGARITHMIQUE <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
+                                                                xLOGARITHMIQUE(),
+                                                                survieLOGARITHMIQUE()))
+    })
+    
+    output$VaRLOGARITHMIQUE <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
+                                                             kLOGARITHMIQUE(),
+                                                             VaRLOGARITHMIQUE()
+    ))})
+    
 #### Loi Binomiale Négative Serveur ####
     
     rBN <- reactive({input$rBN})
