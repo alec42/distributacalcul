@@ -62,7 +62,7 @@ myUI <- shinyUI({
                         ),
                         menuSubItem(
                             "Loi Inverse Gaussienne",
-                            icon = icon("yahoo"),
+                            icon = icon("italic"),
                             tabName = "IG"
                         )
                         
