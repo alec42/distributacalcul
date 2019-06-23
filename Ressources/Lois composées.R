@@ -4,7 +4,7 @@
 
 ### Gamma
 
-Fx <- function(x) 
+Fx <- function(x, r, q, k0, alpha, beta) 
 {
     dnbinom(x = 0, size = r, prob = q) + sum(sapply(1:k0, function(i) dnbinom(x = i, size = r, prob = q) * pgamma(q = x, shape = alpha * i, rate = beta)))
 }
@@ -117,7 +117,7 @@ k0 <- 1000
 
 
 (esperance_wn <- 2 * 1.5 / (1.5/100))
-(var_wn <- (2*1.5/(1.5/100)^2 + 2*(1.5/(1.5/100))^2)/n)
+(var_wn <- (lambda*shape/(shape/100)^2 + lambda*(shape/(shape/100))^2)/n)
 
 
 

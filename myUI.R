@@ -98,6 +98,25 @@ myUI <- shinyUI({
                         )
                     ),
                     menuItem(
+                        "Lois composées",
+                        icon = icon("chart-area"),
+                        menuSubItem(
+                            "Binomiale Négative",
+                            tabName = "BNCOMP",
+                            icon = icon("neos")
+                        ),
+                        # menuSubItem(
+                        #     "Binomiale",
+                        #     tabName = "Normale",
+                        #     icon = icon("neos")
+                        # ),
+                        menuSubItem(
+                            "Poisson",
+                            tabName = "PCOMP",
+                            icon = icon("neos")
+                        )
+                    ),
+                    menuItem(
                         "À propos",
                         icon = icon("info-circle"),
                         menuSubItem(
@@ -122,7 +141,7 @@ myUI <- shinyUI({
             ), 
             
             tabItems(
-            ## Lois Continues
+                ## Lois Continues
                 tab_NORM_UI,
                 tab_GAMMA_UI,
                 tab_WEIBULL_UI,
@@ -134,12 +153,17 @@ myUI <- shinyUI({
                 tab_LOGLOGIS_UI,
                 tab_IG_UI,
                 
-            ## Lois Discrètes
-            tab_BIN_UI,
-            tab_BN_UI,
-            tab_POI_UI,
-            tab_HG_UI,
-            tab_LOGARITHMIQUE_UI,
+                ## Lois Discrètes
+                tab_BIN_UI,
+                tab_BN_UI,
+                tab_POI_UI,
+                tab_HG_UI,
+                tab_LOGARITHMIQUE_UI,
+                
+                ## Lois composées
+                tab_BNCOMP_UI,
+                tab_PCOMP_UI,
+                # tab_BINCOMP_UI,
             
             ## À propos ----
                 tabItem(

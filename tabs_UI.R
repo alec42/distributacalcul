@@ -1605,3 +1605,218 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                          )
                      )
 )
+
+
+#### Loi BNComp UI ####
+{
+    
+    tab_BNCOMP_UI <- tabItem(
+        tabName = "BNCOMP",
+        fluidPage(
+            tags$style("#loi_BNCOMP {font-size:30px;}"),
+            textOutput("loi_BNCOMP"),
+            withMathJax(),
+            textOutput("loi_BNCOMP_severity"),
+            textOutput("distr_BNCOMP"),
+            radioGroupButtons(
+                inputId = "severityBNCOMP",
+                label = "", 
+                choices = c("Gamma"
+                            #, "Lognormale"
+                            ),
+                status = "primary"
+            ),
+            align = "center"
+        ),
+        
+        fluidRow(
+            
+            #### Paramètres BNComp ####
+            column(
+                width = 3,
+                box(
+                    title = "Paramètres",
+                    status = "primary",
+                    solidHeader = T,
+                    width = NULL,
+                    numericInput('rBNCOMP', label = withMathJax('$$r$$'), value = 5),
+                    numericInput('qBNCOMP', label = withMathJax('$$q$$'), min = 0, max = 1, step = .1, value = .5),
+                    numericInput('koBNCOMP', label = withMathJax('$$k_{0}$$'), value = 1000, step = 100),
+                    uiOutput("shapeBNCOMPUI"),
+                    uiOutput("rateBNCOMPUI"),
+                    switchInput(
+                        inputId = "distrchoiceGAMMA",
+                        onLabel = "Fréquence (Rate)",
+                        offLabel = "Échelle (Scale)",
+                        value = T
+                    ),
+                    align = "center"
+                ), 
+                align = "center"
+            ),
+            
+            #### Moments BNComp ####
+            # column(
+            #     width = 3,
+            #     tags$style(" * {font-size:20px;}"), # grosseur du tezte
+            #     box(
+            #         title = "Moments",
+            #         width = NULL,
+            #         solidHeader = TRUE,
+            #         status = "warning",
+            #         uiOutput("meanBNComp"),
+            #         uiOutput("varianceBNComp")
+            #     ),
+            #     align = "center"
+            # ),
+            
+            #### Fonctions BNComp ####
+            column(
+                width = 3,
+                box(
+                    title = "Fonctions",
+                    width = NULL,
+                    solidHeader = TRUE, # grosseur du tezte
+                    status = "danger", # couleur de la boite
+                    numericInput('xBNComp', '$$x$$', value = 10, min = 0),
+                    # uiOutput("densityBNComp"),
+                    tabBox(
+                        width = NULL,
+                        tabPanel("Répartition",
+                                 uiOutput("repartBNComp")
+                                 
+                        )
+                        # ,tabPanel("Survie",
+                        #          uiOutput("survieBNComp")
+                        
+                        # )
+                        
+                    )
+                ),
+                align = "center"
+            ),
+            
+            #### Mesures de risque BNComp ####
+            column(
+                width = 3,
+                boxPlus(
+                    title = "Mesure de risques",
+                    width = NULL,
+                    solidHeader = TRUE,
+                    closable = F,
+                    status = "success", # grosseur du tezte
+                    numericInput('kBNComp', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
+                    uiOutput("VaRBNComp"),
+                    uiOutput("TVaRBNComp")
+                ),
+                align = "center"
+            )
+            
+        )
+    )
+}
+
+#### Loi Poisson Composée UI ####
+{
+    
+    tab_PCOMP_UI <- tabItem(
+        tabName = "PCOMP",
+        fluidPage(
+            tags$style("#loi_PCOMP {font-size:30px;}"),
+            textOutput("loi_PCOMP"),
+            withMathJax(),
+            textOutput("distr_PCOMP"),
+            radioGroupButtons(
+                inputId = "severityPCOMP",
+                label = "", 
+                choices = c("Gamma"
+                            #, "Lognormale"
+                            ),
+                status = "primary"
+            ),
+            align = "center"
+        ),
+        
+        fluidRow(
+            
+            #### Paramètres PCOMP ####
+            column(
+                width = 3,
+                box(
+                    title = "Paramètres",
+                    status = "primary",
+                    solidHeader = T,
+                    width = NULL,
+                    numericInput('lambdaPCOMP', label = withMathJax('$$\\lambda$$'), value = 5, min = 0),
+                    numericInput('koPCOMP', label = withMathJax('$$k_{0}$$'), value = 1000, step = 100),
+                    uiOutput("shapePCOMPUI"),
+                    uiOutput("ratePCOMPUI"),
+                    switchInput(
+                        inputId = "distrchoiceGAMMA",
+                        onLabel = "Fréquence (Rate)",
+                        offLabel = "Échelle (Scale)",
+                        value = T
+                    ),
+                    align = "center"
+                ), 
+                align = "center"
+            ),
+            
+            #### Moments PCOMP ####
+            column(
+                width = 3,
+                tags$style(" * {font-size:20px;}"), # grosseur du texte
+                box(
+                    title = "Moments",
+                    width = NULL,
+                    solidHeader = TRUE,
+                    status = "warning",
+                    uiOutput("meanPCOMP"),
+                    uiOutput("variancePCOMP")
+                ),
+                align = "center"
+            ),
+            
+            #### Fonctions PCOMP ####
+            column(
+                width = 3,
+                box(
+                    title = "Fonctions",
+                    width = NULL,
+                    solidHeader = TRUE, # grosseur du tezte
+                    status = "danger", # couleur de la boite
+                    numericInput('xPCOMP', '$$x$$', value = 10, min = 0),
+                    tabBox(
+                        width = NULL,
+                        tabPanel("Répartition",
+                                 uiOutput("repartPCOMP")
+                        )
+                        # ,
+                        # tabPanel("Survie",
+                        #          uiOutput("surviePCOMP")
+                        # )
+                        
+                    )
+                ),
+                align = "center"
+            ),
+            
+            #### Mesures de risque PCOMP ####
+            column(
+                width = 3,
+                boxPlus(
+                    title = "Mesure de risques",
+                    width = NULL,
+                    solidHeader = TRUE,
+                    closable = F,
+                    status = "success", # grosseur du tezte
+                    numericInput('kPCOMP', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
+                    uiOutput("VaRPCOMP"),
+                    uiOutput("TVaRPCOMP")
+                ),
+                align = "center"
+            )
+            
+        )
+    )
+}

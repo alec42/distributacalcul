@@ -2058,4 +2058,367 @@ myserver <- function(input, output, session)
         
     # })
     
+#### Loi BNComp Serveur ####
+    
+    
+    xBNCOMP <- reactive({input$xBNCOMP})
+    rBNCOMP <- reactive({input$rBNCOMP})
+    qBNCOMP <- reactive({input$qBNCOMP})
+    koBNCOMP <- reactive({input$koBNCOMP})
+    
+    rateBNCOMP <- reactive({
+        if (input$distrchoiceGAMMA == T) {
+            input$rateBNCOMP
+        } else {
+            1 / input$rateBNCOMP
+        }
+    })
+    
+    shapeBNCOMP <- reactive({input$shapeBNCOMP})
+    
+    output$rateBNCOMPUI <- renderUI({
+        if (input$distrchoiceEXPOFAM == "Gamma") {
+            numericInput('rateBNCOMP', '$$\\beta$$', value = 1, min = 0)
+        } else {
+            numericInput('rateBNCOMP', '$$\\sigma^2$$', value = 1, min = 0)
+        }
+    })
+    
+    output$shapeBNCOMPUI <- renderUI({
+        if (input$distrchoiceEXPOFAM == "Gamma") {
+            numericInput('shapeBNCOMP', label = '$$\\alpha$$', value = 2, min = 0)
+        } else {
+            numericInput('shapeBNCOMP', '$$\\mu$$', value = 2, min = 0)
+        }
+        
+    })
+    
+    ## Ici on crée un gros observeEvent qui va modifier les paramètres de la BNCOMP/exponentielle/khi-carrée selon les 2 radio buttons:
+    ## x: selection de distribution
+    ## y: selection de si c'est fréquence ou échelle
+    observeEvent({
+        input$distrchoiceGAMMA
+        input$severityBNCOMP #liste des inputs à observer entre {}
+    },
+    {
+        y <- input$distrchoiceGAMMA
+        x <- input$severityBNCOMP
+        
+        updateNumericInput(session,
+                           "distrchoiceGAMMA",
+                           value =
+                               if (x == "Lognormale")
+                               {
+                                   y = T
+                               })
+        
+        # modification du beta
+        updateNumericInput(session,
+                           "rateBNCOMP",
+                           step =
+                               if (y == T) {
+                                   .1
+                               } else {
+                                   1
+                               },
+                           label = {
+                               if (x == "Lognormale")
+                               {
+                                   '$$\\sigma^2$$'
+                               }
+                               else{
+                                   '$$\\beta$$'
+                               }
+                           })
+        
+        # rend le paramètre impossible à modifier pour l'utilisateur
+        if (x == "Lognormale")
+        {
+            hide("distrchoiceGAMMA")
+        }
+        else
+        {
+            show("distrchoiceGAMMA")
+        }
+        
+        updateNumericInput(session, "shapeBNCOMP",
+                           label = {
+                               if (x == "Lognormale")
+                               {
+                                   '$$\\mu$$'
+                               }
+                               else{
+                                   '$$\\alpha$$'
+                               }
+                           }
+        )
+    })
+    
+    
+    # densityBNCOMP <- reactive({format(dBNCOMP(input$xBNCOMP, shapeBNCOMP(), rateBNCOMP()),scientific = F,  nsmall = 6)})
+    
+    repartBNCOMP <- reactive({format(p_BNComp(x = xBNCOMP(), 
+                                              r = rBNCOMP(),
+                                              q = qBNCOMP(),
+                                              shape = shapeBNCOMP(), 
+                                              rate = rateBNCOMP(),
+                                              ko = koBNCOMP()), 
+                                     nsmall = 6, scientific = F)
+    })
+    
+    # survieBNCOMP <- reactive({format(pBNCOMP(input$xBNCOMP, shapeBNCOMP(), rateBNCOMP(), lower.tail = F), nsmall = 6, scientific = F)})
+
+    VaRBNCOMP <- reactive({format(VaR_BNComp(k = kBNCOMP(), ko = koBNCOMP()), 
+                                  nsmall = 6)
+    })
+    
+    varkBNCOMP <- reactive({VaR_BNComp(k = kBNCOMP(), ko = koBNCOMP())})
+    
+    TVaRBNCOMP <- reactive({format(TVaR_BNComp(x     = xBNCOMP(),
+                                               shape = shapeBNCOMP(), 
+                                               rate  = rateBNCOMP(),
+                                               r     = rBNCOMP(),
+                                               q     = qBNCOMP(),
+                                               vark  = varkBNCOMP(),
+                                               ko    = koBNCOMP()
+                                               ), 
+                                   nsmall = 6)
+    })
+    
+    # meanBNCOMP <- reactive({E_BNCOMP(a = shapeBNCOMP(), b = rateBNCOMP())})
+    
+    # varianceBNCOMP <- reactive({V_BNCOMP(a = shapeBNCOMP(), b = rateBNCOMP())})
+    
+    output$loi_BNCOMP <- renderText({
+            "Binomiale composée"
+    })
+    
+    output$loi_BNCOMP_severity <- renderText({
+        if(input$distrchoiceEXPOFAM == "Gamma")
+            "Gamma"
+        else if (input$distrchoiceEXPOFAM == "Lognormale")
+            "Lognormale"
+    })
+    
+    
+    output$distr_BNCOMP <- renderText({
+        if(input$distrchoiceEXPOFAM == "Gamma")
+            "\\(X \\sim\\mathcal{BNComp}(r, q; F_B \\sim \\Gamma (\\alpha, \\beta))\\)"
+        else if (input$distrchoiceEXPOFAM == "Lognormale")
+            "\\(X \\sim\\mathcal{BNComp}(r, q; F_B \\sim \\text{LN} (\\mu, \\sigma^2))\\)"
+    })
+    
+    
+    # output$meanBNCOMP <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
+    #                                                   meanBNCOMP()
+    # ))})
+    # 
+    # output$varianceBNCOMP <- renderUI({withMathJax(sprintf("$$Var(X) = %s$$", 
+    #                                                       varianceBNCOMP()
+    # ))})
+    
+    # output$densityBNCOMP <- renderUI({withMathJax(sprintf("$$f_{X}(%s) = %s$$", 
+    #                                                      input$xBNCOMP,
+    #                                                      densityBNCOMP()
+    # ))})
+    
+    output$repartBNCOMP <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$", 
+                                                         xBNCOMP(),
+                                                         repartBNCOMP()
+    ))})
+    
+    # output$survieBNCOMP <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
+    #                                                     input$xNORM,
+    #                                                     survieBNCOMP()))
+    # })
+    # 
+    
+    output$VaRBNCOMP <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$", 
+                                                     kBNCOMP(),
+                                                     VaRBNCOMP()
+    ))})
+    output$TVaRBNCOMP <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$", 
+                                                      kBNCOMP(),
+                                                      TVaRBNCOMP()
+    ))})
+#### Loi PCOMP Serveur ####
+    
+    
+    xPCOMP <- reactive({input$xPCOMP})
+    lambdaPCOMP <- reactive({input$rPCOMP})
+    koPCOMP <- reactive({input$koPCOMP})
+    kPCOMP <- reactive({input$kPCOMP})
+    
+    ratePCOMP <- reactive({
+        if (input$distrchoiceGAMMA == T) {
+            input$ratePCOMP
+        } else {
+            1 / input$ratePCOMP
+        }
+    })
+    
+    shapePCOMP <- reactive({input$shapePCOMP})
+    
+    output$ratePCOMPUI <- renderUI({
+        if (input$severityPCOMP == "Gamma") {
+            numericInput('ratePCOMP', '$$\\beta$$', value = 1, min = 0)
+        } else {
+            numericInput('ratePCOMP', '$$\\sigma^2$$', value = 1, min = 0)
+        }
+    })
+    
+    output$shapePCOMPUI <- renderUI({
+        if (input$severityPCOMP == "Gamma") {
+            numericInput('shapePCOMP', label = '$$\\alpha$$', value = 2, min = 0)
+        } else {
+            numericInput('shapePCOMP', '$$\\mu$$', value = 2, min = 0)
+        }
+        
+    })
+    
+    ## Ici on crée un gros observeEvent qui va modifier les paramètres de la PCOMP/exponentielle/khi-carrée selon les 2 radio buttons:
+    ## x: selection de distribution
+    ## y: selection de si c'est fréquence ou échelle
+    observeEvent({
+        input$distrchoiceGAMMA
+        input$severityPCOMP #liste des inputs à observer entre {}
+    },
+    {
+        y <- input$distrchoiceGAMMA
+        x <- input$severityPCOMP
+        
+        updateNumericInput(session,
+                           "distrchoiceGAMMA",
+                           value =
+                               if (x == "Lognormale")
+                               {
+                                   y = T
+                               })
+        
+        # modification du beta
+        updateNumericInput(session,
+                           "ratePCOMP",
+                           step =
+                               if (y == T) {
+                                   .1
+                               } else {
+                                   1
+                               },
+                           label = {
+                               if (x == "Lognormale")
+                               {
+                                   '$$\\sigma^2$$'
+                               }
+                               else{
+                                   '$$\\beta$$'
+                               }
+                           })
+        
+        # rend le paramètre impossible à modifier pour l'utilisateur
+        if (x == "Lognormale")
+        {
+            hide("distrchoiceGAMMA")
+        }
+        else
+        {
+            show("distrchoiceGAMMA")
+        }
+        
+        updateNumericInput(session, "shapePCOMP",
+                           label = {
+                               if (x == "Lognormale")
+                               {
+                                   '$$\\mu$$'
+                               }
+                               else{
+                                   '$$\\alpha$$'
+                               }
+                           }
+        )
+    })
+    
+    
+    # densityPCOMP <- reactive({format(dPCOMP(input$xPCOMP, shapePCOMP(), ratePCOMP()),scientific = F,  nsmall = 6)})
+    
+    repartPCOMP <- reactive({format(p_Pcomp(x = xPCOMP(), 
+                                            lambda = lambdaPCOMP(),
+                                            shape = shapePCOMP(), 
+                                            rate = ratePCOMP(),
+                                            ko = koPCOMP(),
+                                            distr_severity_Gamma = T), 
+                                    nsmall = 6)
+    })
+    
+    # surviePCOMP <- reactive({format(pPCOMP(input$xPCOMP, shapePCOMP(), ratePCOMP(), lower.tail = F), nsmall = 6, scientific = F)})
+    
+    VaRPCOMP <- reactive({format(VaR_PComp(k = kPCOMP(), ko = koPCOMP()), 
+                                  nsmall = 6)
+    })
+    
+    varkPCOMP <- reactive({VaR_PComp(k = kPCOMP(), ko = koPCOMP())})
+    
+    TVaRPCOMP <- reactive({format(TVaR_PComp(x = xPCOMP(),
+                                             shape = shapePCOMP(), 
+                                             rate  = ratePCOMP(),
+                                             lambda = lambdaPCOMP(),
+                                               var  = varkPCOMP(),
+                                               ko    = koPCOMP()), nsmall = 6)
+    })
+    
+    # meanPCOMP <- reactive({E_PCOMP(a = shapePCOMP(), b = ratePCOMP())})
+    
+    # variancePCOMP <- reactive({V_PCOMP(a = shapePCOMP(), b = ratePCOMP())})
+    
+    output$loi_PCOMP <- renderText({
+        "Poisson composée"
+    })
+    
+    output$distr_PComp <- renderText({
+        if(input$severityPCOMP == "Gamma")
+            "Gamma"
+        else if (input$severityPCOMP == "Lognormale")
+            "Lognormale"
+    })
+    
+    
+    output$distr_PCOMP <- renderText({
+        if(input$severityPCOMP == "Gamma")
+            "\\(X \\sim\\mathcal{PComp}(\\lambda ; F_B \\sim \\Gamma (\\alpha, \\beta))\\)"
+        else if (input$severityPCOMP == "Lognormale")
+            "\\(X \\sim\\mathcal{PComp}(\\lambda ; F_B \\sim \\text{LN} (\\mu, \\sigma^2))\\)"
+    })
+    
+    
+    # output$meanPCOMP <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
+    #                                                   meanPCOMP()
+    # ))})
+    # 
+    # output$variancePCOMP <- renderUI({withMathJax(sprintf("$$Var(X) = %s$$", 
+    #                                                       variancePCOMP()
+    # ))})
+    
+    # output$densityPCOMP <- renderUI({withMathJax(sprintf("$$f_{X}(%s) = %s$$", 
+    #                                                      input$xPCOMP,
+    #                                                      densityPCOMP()
+    # ))})
+    
+    output$repartPCOMP <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$", 
+                                                         xPCOMP(),
+                                                         repartPCOMP()
+    ))})
+    
+    # output$surviePCOMP <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
+    #                                                     input$xNORM,
+    #                                                     surviePCOMP()))
+    # })
+    # 
+    
+    output$VaRPCOMP <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$", 
+                                                      kPCOMP(),
+                                                      VaRPCOMP()
+    ))})
+    output$TVaRPCOMP <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$", 
+                                                       kPCOMP(),
+                                                       TVaRPCOMP()
+    ))})
 }

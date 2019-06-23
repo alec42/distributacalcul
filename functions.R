@@ -335,28 +335,6 @@ V_logarithmique <- function(gam)
     (gam + log(1 - gam)) / ((1 - gam)^2 * (log(1 - gam))^2)
 }
 
-#### Poisson Composée ####
-# Début conceptualisation de l'espérance PComp
-# E_PCOMP <- function(lambda, distribution_montant_sinistre)
-# {
-#     if(distribution_montant_sinistre = "Gamma")
-#     {
-#         E_gamma(a = , b = ) * lambda
-#     }
-#     else if (distribution_montant_sinistre = "Normale")
-#     {
-#         
-#     }
-# }
-# ?actuar
-# pPcomp <- function(x, lam, alp, bet, k0 = 1000)
-# {
-#     f0 <- dpois(0, lam)
-#     vk <- 1:1000
-#     fk <- dpois(vk, lambda)
-#     F <- f0 + sum(fk * pgamma(x, vk * alp, bet))
-#     return(F)
-# }
 #### Erlang Généralisée ####
 
 # derlang_gen <- function(x, n = length(b), b)
@@ -494,3 +472,105 @@ Elim_IG <- function(d, mu, beta = dispersion * mu^2, dispersion = beta / mu^2)
 {
     levinvgauss(limit = d, mean = mu, dispersion = dispersion, order = 1)
 }
+#### Poisson Composée ####
+
+# E_PCOMP <- function(rate, shape, lambda, distr_severity = "Gamma")
+# {
+#     if(distr_severity = "Gamma")
+#     {
+#         shape / rate * lambmda
+#     }
+#     else if (distr_severity = "Lognormale")
+#     {
+#         exp(shape + rate^2 / 2) * lambda
+#     }
+# }
+
+
+p_Pcomp <- function(x, lambda, shape, rate, ko = 1000, distr_severity_Gamma = T){
+    if(distr_severity_Gamma == T){
+        dpois(x = x, lambda = lambda) + sum(sapply(1:ko, function(k) dpois(x = k, lambda = lambda) * pgamma(q = x, shape = shape * k, rate = rate)))
+    } 
+    else{0}
+}
+
+VaR_PComp <- function(k, ko = 1e3) 
+{
+    if(k <= p_Pcomp(0))
+        0
+    else
+        optimise(function(x) abs(p_Pcomp(x) - k), c(0, ko))$minimum
+}
+
+TVaR_PComp <- function(x, lambda, ko, shape, rate, var)
+{
+    sum(sapply(1:ko, function(k) dpois(x = k, lambda = lambda) * (shape * k )/rate *pgamma(q = var, shape = shape * k + 1, rate = rate, lower.tail = F)))/(1 - x)
+}
+
+#### BN Composée ####
+
+p_BNComp <- function(x, r, q, ko, shape, rate, distr_severity = "Gamma") 
+{
+    if(distr_severity == "Gamma")
+    {
+        dnbinom(x = 0, size = r, prob = q) + sum(sapply(1:ko, function(i) dnbinom(x = i, size = r, prob = q) * pgamma(q = x, shape = shape * i, rate = rate)))
+    }
+    else
+    {
+        0
+    }
+}
+
+VaR_BNComp <- function(k, ko = 1e3)
+{
+    if(k <= Fx(0))
+        0
+    else
+        optimize(function(i) abs(Fx(i) - k), c(0, ko))$minimum
+}
+
+TVaR_BNComp <- function(x, shape, rate, r, q, vark, ko){
+    
+    if (vark == 0)
+    {
+        (shape / rate * r * (1 - q) / q) / (1 - x)
+    }
+    else
+    {
+        (sum(sapply(1:ko, function(i) dnbinom(x = i, size = r, prob = q) * (shape / rate) * pgamma(q = vark, shape = shape * i + 1, rate = rate, lower.tail = F))) / (1 - x))
+    }
+}
+#### Bin Composée ####
+
+p_BINComp <- function(x, r, q, ko, shape, rate, distr_severity_Gamma = T) 
+{
+    if(distr_severity_Gamma == T)
+    {
+        dbinom(x = 0, size = r, prob = q) + sum(sapply(1:ko, function(i) dbinom(x = i, size = r, prob = q) * pgamma(q = x, shape = shape * i, rate = rate)))
+    }
+    else
+    {
+        0
+    }
+}
+
+VaR_BINComp <- function(k, ko = 1e3)
+{
+    if(k <= Fx(0))
+        0
+    else
+        optimize(function(i) abs(Fx(i) - k), c(0, ko))$minimum
+}
+
+TVaR_BINComp <- function(x, shape, rate, r, q, vark, ko){
+    
+    if (vark == 0)
+    {
+        (shape / rate * r * (1 - q) / q) / (1 - x)
+    }
+    else
+    {
+        (sum(sapply(1:ko, function(i) dnbinom(x = i, size = r, prob = q) * (shape * i / rate) * pgamma(q = vark, shape = shape * i + 1, rate = rate, lower.tail = F))) / (1 - x))
+    }
+}
+
