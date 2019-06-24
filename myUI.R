@@ -113,7 +113,7 @@ myUI <- shinyUI({
                         menuSubItem(
                             "Poisson",
                             tabName = "PCOMP"
-                            # , icon = icon("neos")
+                            #   , icon = icon("neos")
                         )
                     ),
                     menuItem(
