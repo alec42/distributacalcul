@@ -4,50 +4,94 @@ title: {{ site.name }}
 ---
 
 <div id="home">
-	<h1>But long-terme est que la calcultrice:</h1>
-  <h1>Calcule</h1>
-    <ol>
-      <li>Moments</li>
-      <li>Variance </li>
-      <li>Fonction de densité</li>
-      <li>Fonction de répartition</li>
-      <li>Fonction de survie / VaR</li>
-      <li>TVaR</li>
-      <li>Fonction d'excès moyen</li>
-      <li>Fonction stop-loss</li>
-      <li>Espérance limitée</li>
-    </ol>
-  <h1>Distributions continues</h1>
-    <ol>    
-      <li>Normale</li>
-      <li>Gamma</li>
-      <li>Exponentielle</li>
-      <li>Pareto</li>
-      <li>Burr</li>
-      <li>Beta</li>
-      <li>Log-logistique</li>
-      <li>Uniforme</li>
-      <li>Erlang</li>
-      <li>Erlang Généralisée</li>
-      <li>Weibull</li>
-      <li>Lognormale</li>
-      <li>Inverse Gaussienne</li>
-      <li>F-Généralisée</li>
-    </ol>
-  <h1>Distributions discrètes</h1>
-    <ol>
-      <li>Poisson</li>
-      <li>Binomiale</li>
-      <li>Bernouilli</li>
-      <li>Binomiale Négative</li>
-      <li>Géometrique</li>
-      <li>Hypergéometrique</li>
-      <li>Logarithmique</li>
-    </ol>
+
+<nav>
+  <ul>
+    <li><a href="#section-1">Distributions complétées</a></li>
+    <li><a href="#section-2">Distributions non-complétées</a></li>
+    <li><a href="#section-3">Ajouts potentielles</a></li>
+    <li><a href="#section-4">Fonctions calculées</a></li>
+  </ul>
+</nav>
+
+<main>
+	<section id="section-1">
+    <h1>Distributions complétées</h1>
+	    <h2>Distributions continues</h2>
+	    	<ol>    
+		      <li>Normale</li>
+		      <li>Lognormale</li>
+		      <li>Gamma</li>
+		      <li>Exponentielle</li>
+		      <li>Khi-Carrée</li>
+		      <li>Weibull</li>
+		      <li>Pareto</li>
+		      <li>Burr</li>
+		      <li>Beta</li>
+		      <li>Erlang</li>
+		      <li>Log-logistique</li>
+		      <li>Inverse Gaussienne</li>
+	    	</ol>
+	  	<h2>Distributions discrètes</h2>
+	    <ol>
+	      <li>Binomiale</li>
+	      <li>Bernouilli</li>
+	      <li>Binomiale Négative</li>
+	      <li>Géometrique</li>
+	      <li>Poisson</li>
+	      <li>Hypergéometrique</li>
+	      <li>Logarithmique</li>
+	    </ol>
+		<h1>Distributions composées</h1>
+	    <ol>
+	      <li>Binomiale Négative Composée</li>
+	      <li>Poisson Composée</li>
+	    </ol>
+  </section>
+  <section id="section-2">
+  <h1>Distributions non-complétées</h1>
+	<h2>Distributions continues</h2>
+	   	<ol>
+	   		<li>Erlang Généralisée</li>
+			<li>Uniforme</li>
+			<li>F-Généralisée</li>
+		</ol>
 	<h1>Distributions composées</h1>
-    <ol>
-      <li>BNComp</li>
-      <li>BComp</li>
-      <li>PComp</li>
-    </ol>
+	   	<ol>
+			<li>Binomiale Composée</li>
+		</ol>
+  </section>
+  <section id="section-3">
+    <h1>Ajouts potentielles</h1>
+    	<p>
+    		Incorporer des distributions mélange (comme la Tweedy). \n
+    		Rajouter les mesures de risque (TVaR et VaR) aux distributions discrètes en ajoutant une erreur souhaitée par l'utilisateur. \n
+    		Évaluer comment voir les formules pour les espérance, variance, stop-loss, ... en hoverant au-dessus de ces moments \n
+    		Ajouter la deuxième interprétation de la binomiale négative \n
+    		Ajouter au moins la log-normale comme loi de sévérité pour les lois composées \n
+    		Ajouter des notes sur les distributions à propos des paramètres utilisés, les fonctions de densité, les liens entre les distributions, les domaines, ... \n
+    		Ajouter les graphiques pour les fonctions quantile et de répartition pour toutes les distributions \n
+    		Évaluer comment entrer des fractions comme argument \n
+    		Évaluer la possibilité d'avoir le site en anglais et en français \n
+    		Évaluer la mise en oeuvre d'un solveur pour les paramètres à partir de données / un GLM ou quelque-chose du genre pour pouvoir déduire les distributions \n
+    		Évaluer comment inclure un search box pour les distributions dans le menu \n
+    	</p>
+  </section>
+  <section id="section-4">
+    <h1>Fonctions calculées</h1>
+    <ul>
+		<li>Fonction de densité</li>
+		<li>Fonction de répartition</li>
+		<li>Fonction de survie</li>
+		<li>Fonction quantile (VaR)</li>
+		<li>TVaR</li>
+		<li>Variance</li>
+		<li>Espérance</li>
+		<li>Espérance tronquée</li>
+		<li>K-ème moment</li>
+		<li>Fonction d'excès moyen</li>
+		<li>Fonction stop-loss</li>
+		<li>Espérance limitée</li>
+	</ul>
+  </section>
 </div> 
