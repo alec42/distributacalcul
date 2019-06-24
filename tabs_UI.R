@@ -6,7 +6,7 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
             # withMathJax(),
             helpText("\\(X \\sim\\mathcal{Normale} \\ (\\mu, \\sigma^2)\\)"),
             align = "center"
-        ), 
+        ),
         fluidRow(
             {
                 ### Paramètres Normale ----
@@ -23,7 +23,7 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
                     align = "center"
                 )
             },
-            
+
             {
                 ### Moments Normale  ----
                 column(
@@ -37,7 +37,7 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
                         uiOutput("meanNORM"),
                         uiOutput("varNORM")
                     ),
-                    
+
                     box(
                         title = "Autres Moments",
                         width = NULL,
@@ -54,7 +54,7 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
                     align = "center"
                 )
             },
-            
+
             {
                 ### Fonctions Normale ----
                 column(
@@ -67,7 +67,7 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
                         status = "danger", # pour couleur de la boite, diff couleur pour statut
                         numericInput('xNORM', '$$x$$', value = 0),
                         uiOutput("densityNORM"),
-                    
+
                     tabBox(
                         width = NULL,
                         tabPanel("Répartition",
@@ -78,13 +78,13 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
                             uiOutput("survieNORM"),
                             plotlyOutput("SxNORM")
                         )
-                        
+
                     )
                     ),
                     align = "center"
                 )
-            }, 
-            
+            },
+
             {
                 ### Mesures de risque Normale  ----
                 column(
@@ -92,7 +92,7 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
                     boxPlus(
                         title = "Mesure de risques",
                         width = NULL,
-                        solidHeader = TRUE, 
+                        solidHeader = TRUE,
                         closable = F,
                         status = "success",
                         # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
@@ -115,7 +115,7 @@ tab_LNORM_UI <- tabItem(tabName = "Lognormale",
                            # withMathJax(),
                            helpText("\\(X \\sim\\mathcal{Lognormale} \\ (\\mu, \\sigma^2)\\)"),
                            align = "center"
-                       ), 
+                       ),
                        fluidRow(
                            {
                                ### Paramètres LNORMale ----
@@ -132,7 +132,7 @@ tab_LNORM_UI <- tabItem(tabName = "Lognormale",
                                    align = "center"
                                )
                            },
-                           
+
                            {
                                ### Moments Lognormale  ----
                                column(
@@ -146,7 +146,7 @@ tab_LNORM_UI <- tabItem(tabName = "Lognormale",
                                        uiOutput("meanLNORM"),
                                        uiOutput("varLNORM")
                                    ),
-                                   
+
                                    box(
                                        title = "Autres Moments",
                                        width = NULL,
@@ -164,7 +164,7 @@ tab_LNORM_UI <- tabItem(tabName = "Lognormale",
                                    align = "center"
                                )
                            },
-                           
+
                            {
                                ### Fonctions Lognormale ----
                                column(
@@ -177,7 +177,7 @@ tab_LNORM_UI <- tabItem(tabName = "Lognormale",
                                        status = "danger", # pour couleur de la boite, diff couleur pour statut
                                        numericInput('xLNORM', '$$x$$', value = 0),
                                        uiOutput("densityLNORM"),
-                                       
+
                                        tabBox(
                                            width = NULL,
                                            tabPanel("Répartition",
@@ -188,13 +188,13 @@ tab_LNORM_UI <- tabItem(tabName = "Lognormale",
                                                     uiOutput("survieLNORM"),
                                                     plotlyOutput("SxLNORM")
                                            )
-                                           
+
                                        )
                                    ),
                                    align = "center"
                                )
-                           }, 
-                           
+                           },
+
                            {
                                ### Mesures de risque Lognormale  ----
                                column(
@@ -202,7 +202,7 @@ tab_LNORM_UI <- tabItem(tabName = "Lognormale",
                                    boxPlus(
                                        title = "Mesure de risques",
                                        width = NULL,
-                                       solidHeader = TRUE, 
+                                       solidHeader = TRUE,
                                        closable = F,
                                        status = "success",
                                        # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
@@ -229,15 +229,15 @@ tab_GAMMA_UI <- tabItem(
             textOutput("distr_gamma"),
             radioGroupButtons(
                 inputId = "distrchoiceEXPOFAM",
-                label = "", 
+                label = "",
                 choices = c("Gamma", "Exponentielle", "Khi carré"),
                 status = "primary"
             ),
             align = "center"
         ),
-        
+
         fluidRow(
-            
+
             #### Paramètres Gamma ####
             column(
                 width = 3,
@@ -257,10 +257,10 @@ tab_GAMMA_UI <- tabItem(
                         value = T
                     ),
                     align = "center"
-                ), 
+                ),
                 align = "center"
             ),
-            
+
             #### Moments Gamma ####
             column(
                 width = 3,
@@ -274,7 +274,7 @@ tab_GAMMA_UI <- tabItem(
                     uiOutput("varianceGAMMA")
                 ),
                 align = "center",
-                
+
                 box(
                     title = "Autres Moments",
                     width = NULL,
@@ -290,7 +290,7 @@ tab_GAMMA_UI <- tabItem(
                 ),
                 align = "center"
             ),
-            
+
             #### Fonctions Gamma ####
             column(
                 width = 3,
@@ -311,12 +311,12 @@ tab_GAMMA_UI <- tabItem(
                                  uiOutput("survieGAMMA"),
                                  plotlyOutput("SxGAMMA")
                         )
-                        
+
                     )
                 ),
                 align = "center"
             ),
-            
+
             #### Mesures de risque Gamma ####
                 column(
                     width = 3,
@@ -332,7 +332,7 @@ tab_GAMMA_UI <- tabItem(
                     ),
                     align = "center"
                 )
-            
+
             #### ####
         )
     )
@@ -346,8 +346,8 @@ tab_PARETO_UI <- tabItem(tabName = "Pareto",
                            # withMathJax(),
                            helpText("\\(X \\sim\\mathcal{Pareto} \\ (\\alpha, \\lambda)\\)"),
                            align = "center"
-                       ), 
-                       
+                       ),
+
                        fluidRow(
                            {
                                ### Paramètres Pareto ----
@@ -364,7 +364,7 @@ tab_PARETO_UI <- tabItem(tabName = "Pareto",
                                    align = "center"
                                )
                            },
-                           
+
                            {
                                ### Moments Pareto  ----
                                column(
@@ -377,7 +377,7 @@ tab_PARETO_UI <- tabItem(tabName = "Pareto",
                                        uiOutput("meanPARETO"),
                                        uiOutput("varPARETO")
                                    ),
-                                   
+
                                    box(
                                        title = "Autres Moments",
                                        width = NULL,
@@ -395,7 +395,7 @@ tab_PARETO_UI <- tabItem(tabName = "Pareto",
                                    align = "center"
                                )
                            },
-                           
+
                            {
                                ### Fonctions Pareto ----
                                column(
@@ -408,7 +408,7 @@ tab_PARETO_UI <- tabItem(tabName = "Pareto",
                                        status = "danger", # pour couleur de la boite, diff couleur pour statut
                                        numericInput('xPARETO', '$$x$$', value = 0, min = 0),
                                        uiOutput("densityPARETO"),
-                                       
+
                                        tabBox(
                                            width = NULL,
                                            tabPanel("Répartition",
@@ -419,13 +419,13 @@ tab_PARETO_UI <- tabItem(tabName = "Pareto",
                                                     uiOutput("surviePARETO"),
                                                     plotlyOutput("SxPARETO")
                                            )
-                                           
+
                                        )
                                    ),
                                    align = "center"
                                )
-                           }, 
-                           
+                           },
+
                            {
                                ### Mesures de risque Pareto  ----
                                column(
@@ -433,7 +433,7 @@ tab_PARETO_UI <- tabItem(tabName = "Pareto",
                                    boxPlus(
                                        title = "Mesure de risques",
                                        width = NULL,
-                                       solidHeader = TRUE, 
+                                       solidHeader = TRUE,
                                        closable = F,
                                        status = "success",
                                        # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
@@ -455,8 +455,8 @@ tab_BURR_UI <- tabItem(tabName = "Burr",
                              # withMathJax(),
                              helpText("\\(X \\sim\\mathcal{Burr} \\ (\\alpha, \\lambda, \\tau)\\)"),
                              align = "center"
-                         ), 
-                         
+                         ),
+
                          fluidRow(
                              {
                                  ### Paramètres Burr ----
@@ -474,7 +474,7 @@ tab_BURR_UI <- tabItem(tabName = "Burr",
                                      align = "center"
                                  )
                              },
-                             
+
                              {
                                  ### Moments BURR  ----
                                  column(
@@ -487,7 +487,7 @@ tab_BURR_UI <- tabItem(tabName = "Burr",
                                          uiOutput("meanBURR"),
                                          uiOutput("varBURR")
                                      ),
-                                     
+
                                      box(
                                          title = "Autres Moments",
                                          width = NULL,
@@ -505,7 +505,7 @@ tab_BURR_UI <- tabItem(tabName = "Burr",
                                      align = "center"
                                  )
                              },
-                             
+
                              {
                                  ### Fonctions BURR ----
                                  column(
@@ -518,7 +518,7 @@ tab_BURR_UI <- tabItem(tabName = "Burr",
                                          status = "danger", # pour couleur de la boite, diff couleur pour statut
                                          numericInput('xBURR', '$$x$$', value = 0, min = 0, step = 1),
                                          uiOutput("densityBURR"),
-                                         
+
                                          tabBox(
                                              width = NULL,
                                              tabPanel("Répartition",
@@ -529,13 +529,13 @@ tab_BURR_UI <- tabItem(tabName = "Burr",
                                                       uiOutput("survieBURR"),
                                                       plotlyOutput("SxBURR")
                                              )
-                                             
+
                                          )
                                      ),
                                      align = "center"
                                  )
-                             }, 
-                             
+                             },
+
                              {
                                  ### Mesures de risque BURR  ----
                                  column(
@@ -543,7 +543,7 @@ tab_BURR_UI <- tabItem(tabName = "Burr",
                                      boxPlus(
                                          title = "Mesure de risques",
                                          width = NULL,
-                                         solidHeader = TRUE, 
+                                         solidHeader = TRUE,
                                          closable = F,
                                          status = "success",
                                          # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
@@ -565,8 +565,8 @@ tab_WEIBULL_UI <- tabItem(tabName = "Weibull",
                              # withMathJax(),
                              helpText("\\(X \\sim\\mathcal{Weibull} \\ (\\tau, \\beta)\\)"),
                              align = "center"
-                         ), 
-                         
+                         ),
+
                          fluidRow(
                              {
                                  ### Paramètres Weibull ----
@@ -583,7 +583,7 @@ tab_WEIBULL_UI <- tabItem(tabName = "Weibull",
                                      align = "center"
                                  )
                              },
-                             
+
                              {
                                  ### Moments Weibull  ----
                                  column(
@@ -596,7 +596,7 @@ tab_WEIBULL_UI <- tabItem(tabName = "Weibull",
                                          uiOutput("meanWEIBULL"),
                                          uiOutput("varianceWEIBULL")
                                      ),
-                                     
+
                                      box(
                                          title = "Autres Moments",
                                          width = NULL,
@@ -615,7 +615,7 @@ tab_WEIBULL_UI <- tabItem(tabName = "Weibull",
                                      align = "center"
                                  )
                              },
-                             
+
                              {
                                  ### Fonctions Weibull ----
                                  column(
@@ -628,7 +628,7 @@ tab_WEIBULL_UI <- tabItem(tabName = "Weibull",
                                          status = "danger", # pour couleur de la boite, diff couleur pour statut
                                          numericInput('xWEIBULL', '$$x$$', value = 0, min = 0),
                                          uiOutput("densityWEIBULL"),
-                                         
+
                                          tabBox(
                                              width = NULL,
                                              tabPanel("Répartition",
@@ -639,13 +639,13 @@ tab_WEIBULL_UI <- tabItem(tabName = "Weibull",
                                                       uiOutput("survieWEIBULL"),
                                                       plotlyOutput("SxWEIBULL")
                                              )
-                                             
+
                                          )
                                      ),
                                      align = "center"
                                  )
-                             }, 
-                             
+                             },
+
                              {
                                  ### Mesures de risque Weibull  ----
                                  column(
@@ -653,7 +653,7 @@ tab_WEIBULL_UI <- tabItem(tabName = "Weibull",
                                      boxPlus(
                                          title = "Mesure de risques",
                                          width = NULL,
-                                         solidHeader = TRUE, 
+                                         solidHeader = TRUE,
                                          closable = F,
                                          status = "success",
                                          # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
@@ -675,8 +675,8 @@ tab_IG_UI <- tabItem(tabName = "IG",
                               # withMathJax(),
                               helpText("\\(X \\sim\\mathcal{IG} \\ (\\mu, \\beta)\\)"),
                               align = "center"
-                          ), 
-                          
+                          ),
+
                           fluidRow(
                               {
                                   ### Paramètres IG ----
@@ -693,7 +693,7 @@ tab_IG_UI <- tabItem(tabName = "IG",
                                       align = "center"
                                   )
                               },
-                              
+
                               {
                                   ### Moments IG  ----
                                   column(
@@ -706,7 +706,7 @@ tab_IG_UI <- tabItem(tabName = "IG",
                                           uiOutput("meanIG"),
                                           uiOutput("varianceIG")
                                       ),
-                                      
+
                                       box(
                                           title = "Autres Moments",
                                           width = NULL,
@@ -725,7 +725,7 @@ tab_IG_UI <- tabItem(tabName = "IG",
                                       align = "center"
                                   )
                               },
-                              
+
                               {
                                   ### Fonctions IG ----
                                   column(
@@ -738,7 +738,7 @@ tab_IG_UI <- tabItem(tabName = "IG",
                                           status = "danger", # pour couleur de la boite, diff couleur pour statut
                                           numericInput('xIG', '$$x$$', value = 5, min = 0),
                                           uiOutput("densityIG"),
-                                          
+
                                           tabBox(
                                               width = NULL,
                                               tabPanel("Répartition",
@@ -749,13 +749,13 @@ tab_IG_UI <- tabItem(tabName = "IG",
                                                        uiOutput("survieIG"),
                                                        plotlyOutput("SxIG")
                                               )
-                                              
+
                                           )
                                       ),
                                       align = "center"
                                   )
-                              }, 
-                              
+                              },
+
                               {
                                   ### Mesures de risque IG  ----
                                   column(
@@ -763,7 +763,7 @@ tab_IG_UI <- tabItem(tabName = "IG",
                                       boxPlus(
                                           title = "Mesure de risques",
                                           width = NULL,
-                                          solidHeader = TRUE, 
+                                          solidHeader = TRUE,
                                           closable = F,
                                           status = "success",
                                           # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
@@ -785,7 +785,7 @@ tab_BETA_UI <- tabItem(tabName = "Beta",
                             # withMathJax(),
                             helpText("\\(X \\sim\\mathcal{Beta} \\ (\\alpha, \\beta)\\)"),
                             align = "center"
-                        ), 
+                        ),
                         fluidRow(
                             {
                                 ### Paramètres Beta ----
@@ -802,7 +802,7 @@ tab_BETA_UI <- tabItem(tabName = "Beta",
                                     align = "center"
                                 )
                             },
-                            
+
                             {
                                 ### Moments Beta  ----
                                 column(
@@ -815,7 +815,7 @@ tab_BETA_UI <- tabItem(tabName = "Beta",
                                         uiOutput("meanBETA"),
                                         uiOutput("varianceBETA")
                                     ),
-                                    
+
                                     box(
                                         title = "Autres Moments",
                                         width = NULL,
@@ -833,7 +833,7 @@ tab_BETA_UI <- tabItem(tabName = "Beta",
                                     align = "center"
                                 )
                             },
-                            
+
                             {
                                 ### Fonctions Beta ----
                                 column(
@@ -846,7 +846,7 @@ tab_BETA_UI <- tabItem(tabName = "Beta",
                                         status = "danger", # pour couleur de la boite, diff couleur pour statut
                                         numericInput('xBETA', '$$x$$', value = 0.5, min = 0, max = 1, step = .1),
                                         uiOutput("densityBETA"),
-                                        
+
                                         tabBox(
                                             width = NULL,
                                             tabPanel("Répartition",
@@ -857,13 +857,13 @@ tab_BETA_UI <- tabItem(tabName = "Beta",
                                                      uiOutput("survieBETA"),
                                                      plotlyOutput("SxBETA")
                                             )
-                                            
+
                                         )
                                     ),
                                     align = "center"
                                 )
-                            }, 
-                            
+                            },
+
                             {
                                 ### Mesures de risque Beta  ----
                                 column(
@@ -871,7 +871,7 @@ tab_BETA_UI <- tabItem(tabName = "Beta",
                                     boxPlus(
                                         title = "Mesure de risques",
                                         width = NULL,
-                                        solidHeader = TRUE, 
+                                        solidHeader = TRUE,
                                         closable = F,
                                         status = "success",
                                         # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
@@ -885,8 +885,6 @@ tab_BETA_UI <- tabItem(tabName = "Beta",
                         )
 )
 
-
-
 #### Loi Erlang UI ----
 tab_ERLANG_UI <- tabItem(tabName = "Erlang",
                          fluidPage(
@@ -895,8 +893,8 @@ tab_ERLANG_UI <- tabItem(tabName = "Erlang",
                              # withMathJax(),
                              helpText("\\(X \\sim\\mathcal{Erlang} \\ (n, \\beta)\\)"),
                              align = "center"
-                         ), 
-                         
+                         ),
+
                        fluidRow(
                            {
                                ### Paramètres ERLANG ----
@@ -908,17 +906,17 @@ tab_ERLANG_UI <- tabItem(tabName = "Erlang",
                                        solidHeader = T,
                                        width = NULL,
                                        closable = F,
-                                       numericInput('nERLANG', 
-                                                    withMathJax('$$n$$'), 
+                                       numericInput('nERLANG',
+                                                    withMathJax('$$n$$'),
                                                     value = 2, step = 1, min = 0),
-                                       numericInput('betaERLANG', 
-                                                    withMathJax('$$\\beta$$'), 
+                                       numericInput('betaERLANG',
+                                                    withMathJax('$$\\beta$$'),
                                                     value = 1, step = 1, min = 0)
                                    ),
                                    align = "center"
                                )
                            },
-                           
+
                            {
                                ### Moments Erlang  ----
                                column(
@@ -931,14 +929,14 @@ tab_ERLANG_UI <- tabItem(tabName = "Erlang",
                                        uiOutput("meanERLANG"),
                                        uiOutput("varERLANG")
                                    ),
-                                   
+
                                    box(
                                        title = "Autres Moments",
                                        width = NULL,
                                        solidHeader = TRUE,
                                        status = "warning",
-                                       numericInput('dERLANG', 
-                                                    withMathJax('$$d$$'), 
+                                       numericInput('dERLANG',
+                                                    withMathJax('$$d$$'),
                                                     value = 0, width = "20px", min = 0, step = 1),
                                        # radioButtons('equalityERLANG', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
                                        uiOutput("EspTronqERLANG"),
@@ -951,7 +949,7 @@ tab_ERLANG_UI <- tabItem(tabName = "Erlang",
                                    align = "center"
                                )
                            },
-                           
+
                            {
                                ### Fonctions ERLANG ----
                                column(
@@ -964,7 +962,7 @@ tab_ERLANG_UI <- tabItem(tabName = "Erlang",
                                        status = "danger", # pour couleur de la boite, diff couleur pour statut
                                        numericInput('xERLANG', '$$x$$', value = 0, min = 0, step = 1),
                                        uiOutput("densityERLANG"),
-                                       
+
                                        tabBox(
                                            width = NULL,
                                            tabPanel("Répartition",
@@ -975,13 +973,13 @@ tab_ERLANG_UI <- tabItem(tabName = "Erlang",
                                                     uiOutput("survieERLANG")
                                                     # ,plotlyOutput("SxERLANG")
                                            )
-                                           
+
                                        )
                                    ),
                                    align = "center"
                                )
-                           }, 
-                           
+                           },
+
                            {
                                ### Mesures de risque ERLANG  ----
                                # column(
@@ -989,7 +987,7 @@ tab_ERLANG_UI <- tabItem(tabName = "Erlang",
                                #     boxPlus(
                                #         title = "Mesure de risques",
                                #         width = NULL,
-                               #         solidHeader = TRUE, 
+                               #         solidHeader = TRUE,
                                #         closable = F,
                                #         status = "success",
                                #         # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
@@ -1011,8 +1009,8 @@ tab_LOGLOGIS_UI <- tabItem(tabName = "LOGLOGIS",
                            # withMathJax(),
                            helpText("\\(X \\sim\\mathcal{LL} \\ (\\lambda, \\tau)\\)"),
                            align = "center"
-                       ), 
-                       
+                       ),
+
                        fluidRow(
                            {
                                ### Paramètres LOGLOGIS ----
@@ -1023,17 +1021,17 @@ tab_LOGLOGIS_UI <- tabItem(tabName = "LOGLOGIS",
                                        status = "primary",
                                        solidHeader = T,
                                        width = NULL,closable = F,
-                                       numericInput('tauLOGLOGIS', 
-                                                    withMathJax('$$\\tau$$'), 
+                                       numericInput('tauLOGLOGIS',
+                                                    withMathJax('$$\\tau$$'),
                                                     value = 4, step = 1, min = 0),
-                                       numericInput('lambdaLOGLOGIS', 
-                                                    '$$\\lambda$$', 
+                                       numericInput('lambdaLOGLOGIS',
+                                                    '$$\\lambda$$',
                                                     value = 3, step = 1, min = 0)
                                    ),
                                    align = "center"
                                )
                            },
-                           
+
                            {
                                ### Moments LOGLOGIS  ----
                                column(
@@ -1046,7 +1044,7 @@ tab_LOGLOGIS_UI <- tabItem(tabName = "LOGLOGIS",
                                        uiOutput("meanLOGLOGIS"),
                                        uiOutput("varLOGLOGIS")
                                    ),
-                                   
+
                                    box(
                                        title = "Autres Moments",
                                        width = NULL,
@@ -1064,7 +1062,7 @@ tab_LOGLOGIS_UI <- tabItem(tabName = "LOGLOGIS",
                                    align = "center"
                                )
                            },
-                           
+
                            {
                                ### Fonctions LOGLOGIS ----
                                column(
@@ -1077,7 +1075,7 @@ tab_LOGLOGIS_UI <- tabItem(tabName = "LOGLOGIS",
                                        status = "danger", # pour couleur de la boite, diff couleur pour statut
                                        numericInput('xLOGLOGIS', '$$x$$', value = 0, min = 0, step = 1),
                                        uiOutput("densityLOGLOGIS"),
-                                       
+
                                        tabBox(
                                            width = NULL,
                                            tabPanel("Répartition",
@@ -1088,13 +1086,13 @@ tab_LOGLOGIS_UI <- tabItem(tabName = "LOGLOGIS",
                                                     uiOutput("survieLOGLOGIS"),
                                                     plotlyOutput("SxLOGLOGIS")
                                            )
-                                           
+
                                        )
                                    ),
                                    align = "center"
                                )
-                           }, 
-                           
+                           },
+
                            {
                                ### Mesures de risque LOGLOGIS  ----
                                column(
@@ -1102,7 +1100,7 @@ tab_LOGLOGIS_UI <- tabItem(tabName = "LOGLOGIS",
                                    boxPlus(
                                        title = "Mesure de risques",
                                        width = NULL,
-                                       solidHeader = TRUE, 
+                                       solidHeader = TRUE,
                                        closable = F,
                                        status = "success",
                                        # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
@@ -1116,9 +1114,9 @@ tab_LOGLOGIS_UI <- tabItem(tabName = "LOGLOGIS",
                        )
 )
 
-#### Loi binomiale UI #### 
+#### Loi binomiale UI ####
 tab_BIN_UI <- tabItem(tabName = "Binomiale",
-         
+
          fluidPage(
              tags$style("#loi_BIN {font-size:30px;}"),
              textOutput("loi_BIN"),
@@ -1126,50 +1124,50 @@ tab_BIN_UI <- tabItem(tabName = "Binomiale",
              textOutput("distr_BIN"),
              radioGroupButtons(
                  inputId = "distrchoiceBINFAM",
-                 label = "", 
+                 label = "",
                  choices = c("Binomiale", "Bernoulli"),
                  status = "primary"
              ),
              align = "center"
          ),
-         
+
          fluidRow(
-             column(width = 3, 
+             column(width = 3,
                     box(title = "Paramètres", status = "primary", solidHeader = T, width = NULL,
                         numericInput('nBIN', withMathJax('$$n$$'), value = 5, step = 1, min = 0),
                         numericInput('pBIN', '$$p$$', value = 0.5, min = 0, max = 1, step = 0.05)), align = "center"
-                    
+
              ),
-             
+
              ## Moments
              column(width = 3,
                     tags$style(" * {font-size:20px}"), # grosseur du tezte
                     box(
                         title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
-                        uiOutput("meanBIN"), 
-                        uiOutput("varBIN")), 
+                        uiOutput("meanBIN"),
+                        uiOutput("varBIN")),
                     align = "center"
                     # ,
-                    
+
                     # box(
-                    #     title = "Fonctions g", width = NULL, solidHeader = TRUE, status = "warning", 
+                    #     title = "Fonctions g", width = NULL, solidHeader = TRUE, status = "warning",
                     #     numericInput('dBIN', withMathJax('$$d$$'), value = 0, width = "20px"),
                     #     # radioButtons('equalityNORM', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
-                    #     uiOutput("EspTronqBIN"), 
-                    #     uiOutput("EspLimBIN"), 
-                    #     uiOutput("StopLossBIN"), 
+                    #     uiOutput("EspTronqBIN"),
+                    #     uiOutput("EspLimBIN"),
+                    #     uiOutput("StopLossBIN"),
                     #     uiOutput("ExcesMoyBIN"),
                     #     align = "center")
              ),
-             
+
              ## Fonctions
              column(width = 3,
                     box(
-                        title = "Fonctions", width = NULL, solidHeader = TRUE, 
+                        title = "Fonctions", width = NULL, solidHeader = TRUE,
                         tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
                         status = "danger", # pour couleur de la boite, diff couleur pour statut
-                        numericInput('xBIN', '$$x$$', min = 0, max = 5, value = 0, step = 1), 
-                        uiOutput("densityBIN"), 
+                        numericInput('xBIN', '$$x$$', min = 0, max = 5, value = 0, step = 1),
+                        uiOutput("densityBIN"),
                         tabBox(
                             width = NULL,
                             tabPanel("Répartition",
@@ -1182,20 +1180,20 @@ tab_BIN_UI <- tabItem(tabName = "Binomiale",
                                      # ,
                                      # plotlyOutput("SxBIN")
                             )
-                            
+
                         )
                     ),
                     align = "center"
-                    
-                    
+
+
              )
              ,
 
              column(width = 3,
                     boxPlus(
-                        title = "Mesure de risques", 
-                        width = NULL, 
-                        solidHeader = TRUE, 
+                        title = "Mesure de risques",
+                        width = NULL,
+                        solidHeader = TRUE,
                         status = "success",
                         closable = F,
                         tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
@@ -1208,11 +1206,11 @@ tab_BIN_UI <- tabItem(tabName = "Binomiale",
          )
 )
 
-#### Loi binomiale Négative UI #### 
+#### Loi binomiale Négative UI ####
 {
 tab_BN_UI <- tabItem(
     tabName = "Binneg",
-    
+
     fluidPage(
         tags$style("#loi_BN {font-size:30px;}"),
         textOutput("loi_BN"),
@@ -1220,28 +1218,28 @@ tab_BN_UI <- tabItem(
         textOutput("distr_BN"),
         radioGroupButtons(
             inputId = "distrchoiceBNFAM",
-            label = "", 
+            label = "",
             choices = c("Binomiale Négative", "Géometrique"),
             status = "primary"
         ),
         align = "center"
     ),
-    
+
     fluidRow(
-        
+
         #### Paramètres ####
         column(
-            width = 4, 
+            width = 4,
             box(
-                title = "Paramètres", 
-                status = "primary", 
-                solidHeader = T, 
+                title = "Paramètres",
+                status = "primary",
+                solidHeader = T,
                 width = NULL,
                 # numericInput('rBN', withMathJax('$$r$$'), value = 2, step = 1),
                 uiOutput("changingrBN"),
                 uiOutput("changingqBN"),
                 # numericInput('qBN', '$$q$$', value = 0.5, min = 0, max = 1, step = 0.05)), align = "center"
-                
+
                 switchInput(labelWidth = "10px",handleWidth = "400px",
                     inputId = "distrchoiceqBN",
                     onLabel = 'q',
@@ -1251,49 +1249,49 @@ tab_BN_UI <- tabItem(
             ),
             box(
                 title = "Plus d'information",
-                status = "primary", 
-                solidHeader = T, 
+                status = "primary",
+                solidHeader = T,
                 collapsed = T,
                 collapsible = T,
                 width = NULL,
-                helpText("Lien entre les paramétrisations 
+                helpText("Lien entre les paramétrisations
                          $$\\beta = \\frac{1 - q}{q}$$
                          $$q = \\frac{1}{1 + \\beta}$$"),
                 align = "center"
             ),
             align = "center"
         ),
-        
-        
+
+
         #### Moments BN ####
         column(
             width = 4,
             tags$style(" * {font-size:20px}"), # grosseur du tezte
             box(
                 title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
-                uiOutput("meanBN"), 
-                uiOutput("varBN")), 
+                uiOutput("meanBN"),
+                uiOutput("varBN")),
             align = "center"
             # ,
                # box(
-               #     title = "Autres Moments", 
-               #     width = NULL, solidHeader = TRUE, status = "warning", 
+               #     title = "Autres Moments",
+               #     width = NULL, solidHeader = TRUE, status = "warning",
                #     numericInput('dBN', withMathJax('$$d$$'), value = 0, width = "20px"),
                #     # radioButtons('equalityNORM', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
-               #     uiOutput("EspTronqBN"), 
-               #     uiOutput("EspLimBN"), 
-               #     uiOutput("StopLossBN"), 
+               #     uiOutput("EspTronqBN"),
+               #     uiOutput("EspLimBN"),
+               #     uiOutput("StopLossBN"),
                #     uiOutput("ExcesMoyBN"),
                #     align = "center")
         ),
-        
+
         #### Fonctions BN ####
         column(width = 4,
                box(
-                   title = "Fonctions", width = NULL, solidHeader = TRUE, 
+                   title = "Fonctions", width = NULL, solidHeader = TRUE,
                    status = "danger", # pour couleur de la boite, diff couleur pour statut
-                   numericInput('xBN', '$$x$$', min = 0, value = 0, step = 1), 
-                   uiOutput("densityBN"), 
+                   numericInput('xBN', '$$x$$', min = 0, value = 0, step = 1),
+                   uiOutput("densityBN"),
                    tabBox(
                        width = NULL,
                        tabPanel("Répartition",
@@ -1306,7 +1304,7 @@ tab_BN_UI <- tabItem(
                                 # ,
                                 # plotlyOutput("SxBN")
                        )
-                       
+
                    )
                ),
                align = "center"
@@ -1315,8 +1313,8 @@ tab_BN_UI <- tabItem(
         #### Mesures de risque BN ####
         # column(width = 3,
         #        boxPlus(
-        #            title = "Mesure de risques", 
-        #            width = NULL, 
+        #            title = "Mesure de risques",
+        #            width = NULL,
         #            solidHeader = TRUE,
         #            closable = F,
         #            status = "success",
@@ -1327,31 +1325,31 @@ tab_BN_UI <- tabItem(
         #        ),
         #        align = "center"
         # )
-        
+
         #### ####
     )
 )
 }
-#### Loi Poisson UI #### 
+#### Loi Poisson UI ####
 tab_POI_UI <- tabItem(tabName = "Poisson",
                       fluidPage(
-                          titlePanel("Loi Poisson"), 
-                          withMathJax(), 
-                          helpText("\\(X \\sim\\mathcal{Poisson} \\ (\\lambda)\\)"), 
+                          titlePanel("Loi Poisson"),
+                          withMathJax(),
+                          helpText("\\(X \\sim\\mathcal{Poisson} \\ (\\lambda)\\)"),
                           align = "center"
                       ),
-                      
+
                       fluidRow(
                           column(width = 3,
-                                 box(title = "Paramètres", 
-                                     status = "primary", 
-                                     solidHeader = T, 
+                                 box(title = "Paramètres",
+                                     status = "primary",
+                                     solidHeader = T,
                                      width = NULL,
                                      numericInput('lamPOI', '$$\\lambda$$', value = 1, min = 0, step = 1)
-                                 ), 
+                                 ),
                                  align = "center"
                           ),
-                          
+
                           ## Moments
                           column(width = 3,
                                  tags$style(" * {font-size:20px}"), # grosseur du tezte
@@ -1362,7 +1360,7 @@ tab_POI_UI <- tabItem(tabName = "Poisson",
                                  ),
                                  align = "center"
                                  # ,
-                                 
+
                                  # box(
                                  #     title = "Fonctions g", width = NULL, solidHeader = TRUE, status = "warning",
                                  #     numericInput('dPOI', withMathJax('$$d$$'), value = 0, width = "20px"),
@@ -1373,18 +1371,18 @@ tab_POI_UI <- tabItem(tabName = "Poisson",
                                  #     uiOutput("ExcesMoyPOI"),
                                  #     align = "center")
                           ),
-                          
+
                           ## Fonctions
                           column(width = 3,
                                  box(
-                                     title = "Fonctions", 
-                                     width = NULL, 
+                                     title = "Fonctions",
+                                     width = NULL,
                                      solidHeader = TRUE,
                                      tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
                                      status = "danger", # pour couleur de la boite, diff couleur pour statut
                                      numericInput('xPOI', '$$x$$', min = 0, value = 0, step = 1),
                                      uiOutput("densityPOI"),
-                                     
+
                                      tabBox(
                                          width = NULL,
                                          tabPanel("Répartition",
@@ -1397,44 +1395,44 @@ tab_POI_UI <- tabItem(tabName = "Poisson",
                                                   # ,
                                                   # plotlyOutput("SxBETA")
                                          )
-                                         
+
                                      )
                                  ),
                                  align = "center"
-                                 
+
                           ),
-                          
+
                           column(width = 3,
                                  boxPlus(
-                                     title = "Mesure de risques", 
-                                     width = NULL, 
-                                     solidHeader = TRUE, 
+                                     title = "Mesure de risques",
+                                     width = NULL,
+                                     solidHeader = TRUE,
                                      status = "success",
                                      closable = F,
                                      tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
                                      numericInput('kPOI', '$$\\kappa$$', value = 0.99, step = 0.005),
                                      uiOutput("VaRPOI"),
                                      uiOutput("TVaRPOI")),
-                                 
+
                                  align = "center"
                           )
                       )
 )
 
-#### Loi Hypergéométrique UI #### 
+#### Loi Hypergéométrique UI ####
 tab_HG_UI <- tabItem(tabName = "HG",
                       fluidPage(
-                          titlePanel("Loi Hypergéométrique"), 
-                          withMathJax(), 
-                          helpText("\\(X \\sim\\mathcal{HyperGéo} \\ (N, n, m)\\)"), 
+                          titlePanel("Loi Hypergéométrique"),
+                          withMathJax(),
+                          helpText("\\(X \\sim\\mathcal{HyperGéo} \\ (N, n, m)\\)"),
                           align = "center"
                       ),
-                      
+
                       fluidRow(
                           column(width = 4,
-                                 box(title = "Paramètres", 
-                                     status = "primary", 
-                                     solidHeader = T, 
+                                 box(title = "Paramètres",
+                                     status = "primary",
+                                     solidHeader = T,
                                      width = NULL,
                                      numericInput('grosNHG', '$$N$$', value = 3, min = 0, step = 1),
                                      numericInput('petitNHG', '$$n$$', value = 2, min = 0, step = 1),
@@ -1442,7 +1440,7 @@ tab_HG_UI <- tabItem(tabName = "HG",
                                  ),
                                  align = "center"
                           ),
-                          
+
                           ## Moments
                           column(width = 4,
                                  tags$style(" * {font-size:20px}"), # grosseur du tezte
@@ -1453,7 +1451,7 @@ tab_HG_UI <- tabItem(tabName = "HG",
                                  ),
                                  align = "center"
                                  # ,
-                                 
+
                                  # box(
                                  #     title = "Fonctions g", width = NULL, solidHeader = TRUE, status = "warning",
                                  #     numericInput('dHG', withMathJax('$$d$$'), value = 0, width = "20px"),
@@ -1464,18 +1462,18 @@ tab_HG_UI <- tabItem(tabName = "HG",
                                  #     uiOutput("ExcesMoyHG"),
                                  #     align = "center")
                           ),
-                          
+
                           ## Fonctions
                           column(width = 4,
                                  box(
-                                     title = "Fonctions", 
-                                     width = NULL, 
+                                     title = "Fonctions",
+                                     width = NULL,
                                      solidHeader = TRUE,
                                      tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
                                      status = "danger", # pour couleur de la boite, diff couleur pour statut
                                      numericInput('xHG', '$$x$$', min = 0, value = 0, step = 1),
                                      uiOutput("densityHG"),
-                                     
+
                                      tabBox(
                                          width = NULL,
                                          tabPanel("Répartition",
@@ -1488,53 +1486,53 @@ tab_HG_UI <- tabItem(tabName = "HG",
                                                   # ,
                                                   # plotlyOutput("SxBETA")
                                          )
-                                         
+
                                      )
                                  ),
                                  align = "center"
-                                 
+
                           )
                           # ,
-                          # 
+                          #
                           # column(width = 3,
                           #        boxPlus(
-                          #            title = "Mesure de risques", 
-                          #            width = NULL, 
-                          #            solidHeader = TRUE, 
+                          #            title = "Mesure de risques",
+                          #            width = NULL,
+                          #            solidHeader = TRUE,
                           #            status = "success",
                           #            closable = F,
                           #            tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
                           #            numericInput('kHG', '$$\\kappa$$', value = 0.99, step = 0.005),
                           #            uiOutput("VaRHG"),
                           #            uiOutput("TVaRHG")),
-                          #        
+                          #
                           #        align = "center"
                           # )
                       )
 )
 
-#### Loi Logarithmique UI #### 
+#### Loi Logarithmique UI ####
 tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                      fluidPage(
-                         titlePanel("Loi Logarithmique"), 
-                         withMathJax(), 
-                         helpText("\\(X \\sim\\mathcal{Logarithmique} \\ (\\gamma)\\)"), 
+                         titlePanel("Loi Logarithmique"),
+                         withMathJax(),
+                         helpText("\\(X \\sim\\mathcal{Logarithmique} \\ (\\gamma)\\)"),
                          align = "center"
                      ),
-                     
+
                      fluidRow(
                          column(width = 3,
-                                box(title = "Paramètres", 
-                                    status = "primary", 
-                                    solidHeader = T, 
+                                box(title = "Paramètres",
+                                    status = "primary",
+                                    solidHeader = T,
                                     width = NULL,
                                     numericInput('gammaLOGARITHMIQUE',
-                                                 '$$\\gamma$$', 
+                                                 '$$\\gamma$$',
                                                  value = .2, min = 0, max = 1, step = .1)
                                 ),
                                 align = "center"
                          ),
-                         
+
                          ## Moments
                          column(width = 3,
                                 tags$style(" * {font-size:20px}"), # grosseur du tezte
@@ -1545,7 +1543,7 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                                 ),
                                 align = "center"
                                 # ,
-                                
+
                                 # box(
                                 #     title = "Fonctions g", width = NULL, solidHeader = TRUE, status = "warning",
                                 #     numericInput('dLOGARITHMIQUE', withMathJax('$$d$$'), value = 0, width = "20px"),
@@ -1556,18 +1554,18 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                                 #     uiOutput("ExcesMoyLOGARITHMIQUE"),
                                 #     align = "center")
                          ),
-                         
+
                          ## Fonctions
                          column(width = 3,
                                 box(
-                                    title = "Fonctions", 
-                                    width = NULL, 
+                                    title = "Fonctions",
+                                    width = NULL,
                                     solidHeader = TRUE,
                                     tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
                                     status = "danger", # pour couleur de la boite, diff couleur pour statut
                                     numericInput('xLOGARITHMIQUE', '$$x$$', min = 0, value = 0, step = 1),
                                     uiOutput("densityLOGARITHMIQUE"),
-                                    
+
                                     tabBox(
                                         width = NULL,
                                         tabPanel("Répartition",
@@ -1580,11 +1578,11 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                                                  # ,
                                                  # plotlyOutput("SxBETA")
                                         )
-                                        
+
                                     )
                                 ),
                                 align = "center"
-                                
+
                          )
                          ,
 
@@ -1607,9 +1605,9 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
 )
 
 
-#### Loi BNCOMP UI ####
+#### Loi Binomiale Négative Composée UI ####
 {
-    
+
     tab_BNCOMP_UI <- tabItem(
         tabName = "BNCOMP",
         fluidPage(
@@ -1620,7 +1618,7 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
             textOutput("distr_BNCOMP"),
             radioGroupButtons(
                 inputId = "severityBNCOMP",
-                label = "", 
+                label = "",
                 choices = c("Gamma"
                             #, "Lognormale"
                             ),
@@ -1628,9 +1626,9 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
             ),
             align = "center"
         ),
-        
+
         fluidRow(
-            
+
             #### Paramètres BNCOMP ####
             column(
                 width = 3,
@@ -1651,10 +1649,10 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                         value = T
                     ),
                     align = "center"
-                ), 
+                ),
                 align = "center"
             ),
-            
+
             #### Moments BNCOMP ####
             column(
                 width = 3,
@@ -1669,7 +1667,7 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                 ),
                 align = "center"
             ),
-            
+
             #### Fonctions BNCOMP ####
             column(
                 width = 3,
@@ -1684,18 +1682,18 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                         width = NULL,
                         tabPanel("Répartition",
                                  uiOutput("repartBNCOMP")
-                                 
+
                         )
                         # ,tabPanel("Survie",
                         #          uiOutput("survieBNCOMP")
-                        
+
                         # )
-                        
+
                     )
                 ),
                 align = "center"
             ),
-            
+
             #### Mesures de risque BNCOMP ####
             column(
                 width = 3,
@@ -1711,14 +1709,14 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                 ),
                 align = "center"
             )
-            
+
         )
     )
 }
 
 #### Loi Poisson Composée UI ####
 {
-    
+
     tab_PCOMP_UI <- tabItem(
         tabName = "PCOMP",
         fluidPage(
@@ -1728,7 +1726,7 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
             textOutput("distr_PCOMP"),
             radioGroupButtons(
                 inputId = "severityPCOMP",
-                label = "", 
+                label = "",
                 choices = c("Gamma"
                             #, "Lognormale"
                             ),
@@ -1736,9 +1734,9 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
             ),
             align = "center"
         ),
-        
+
         fluidRow(
-            
+
             #### Paramètres PCOMP ####
             column(
                 width = 3,
@@ -1758,10 +1756,10 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                         value = T
                     ),
                     align = "center"
-                ), 
+                ),
                 align = "center"
             ),
-            
+
             #### Moments PCOMP ####
             column(
                 width = 3,
@@ -1776,7 +1774,7 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                 ),
                 align = "center"
             ),
-            
+
             #### Fonctions PCOMP ####
             column(
                 width = 3,
@@ -1795,12 +1793,12 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                         # tabPanel("Survie",
                         #          uiOutput("surviePCOMP")
                         # )
-                        
+
                     )
                 ),
                 align = "center"
             ),
-            
+
             #### Mesures de risque PCOMP ####
             column(
                 width = 3,
@@ -1816,7 +1814,7 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                 ),
                 align = "center"
             )
-            
+
         )
     )
 }
