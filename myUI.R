@@ -99,11 +99,11 @@ myUI <- shinyUI({
                     ),
                     menuItem(
                         "Lois composées",
-                        icon = icon("chart-area"),
+                        icon = icon("chart-line"),
                         menuSubItem(
                             "Binomiale Négative",
-                            tabName = "BNCOMP",
-                            icon = icon("neos")
+                            tabName = "BNCOMP"
+                            # ,icon = icon("neos")
                         ),
                         # menuSubItem(
                         #     "Binomiale",
@@ -112,8 +112,8 @@ myUI <- shinyUI({
                         # ),
                         menuSubItem(
                             "Poisson",
-                            tabName = "PCOMP",
-                            icon = icon("neos")
+                            tabName = "PCOMP"
+                            # , icon = icon("neos")
                         )
                     ),
                     menuItem(

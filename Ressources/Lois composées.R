@@ -9,8 +9,6 @@ Fx <- function(x, r, q, k0, alpha, beta)
     dnbinom(x = 0, size = r, prob = q) + sum(sapply(1:k0, function(i) dnbinom(x = i, size = r, prob = q) * pgamma(q = x, shape = alpha * i, rate = beta)))
 }
 
-
-
 VaR <- function(k, upper = 1e3)
 {
     if(k <= Fx(0))

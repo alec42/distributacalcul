@@ -667,7 +667,7 @@ tab_WEIBULL_UI <- tabItem(tabName = "Weibull",
                          )
 )
 
-#### Loi Weibull UI ----
+#### Loi Inverse Gaussienne UI ----
 tab_IG_UI <- tabItem(tabName = "IG",
                           fluidPage(
                               useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
@@ -736,7 +736,7 @@ tab_IG_UI <- tabItem(tabName = "IG",
                                           solidHeader = TRUE,
                                           # tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
                                           status = "danger", # pour couleur de la boite, diff couleur pour statut
-                                          numericInput('xIG', '$$x$$', value = 0, min = 0),
+                                          numericInput('xIG', '$$x$$', value = 5, min = 0),
                                           uiOutput("densityIG"),
                                           
                                           tabBox(
@@ -1607,7 +1607,7 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
 )
 
 
-#### Loi BNComp UI ####
+#### Loi BNCOMP UI ####
 {
     
     tab_BNCOMP_UI <- tabItem(
@@ -1631,7 +1631,7 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
         
         fluidRow(
             
-            #### Paramètres BNComp ####
+            #### Paramètres BNCOMP ####
             column(
                 width = 3,
                 box(
@@ -1641,7 +1641,7 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                     width = NULL,
                     numericInput('rBNCOMP', label = withMathJax('$$r$$'), value = 5),
                     numericInput('qBNCOMP', label = withMathJax('$$q$$'), min = 0, max = 1, step = .1, value = .5),
-                    numericInput('koBNCOMP', label = withMathJax('$$k_{0}$$'), value = 1000, step = 100),
+                    numericInput('koBNCOMP', label = withMathJax('$$k_{0}$$'), value = 300, step = 100),
                     uiOutput("shapeBNCOMPUI"),
                     uiOutput("rateBNCOMPUI"),
                     switchInput(
@@ -1655,22 +1655,22 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                 align = "center"
             ),
             
-            #### Moments BNComp ####
-            # column(
-            #     width = 3,
-            #     tags$style(" * {font-size:20px;}"), # grosseur du tezte
-            #     box(
-            #         title = "Moments",
-            #         width = NULL,
-            #         solidHeader = TRUE,
-            #         status = "warning",
-            #         uiOutput("meanBNComp"),
-            #         uiOutput("varianceBNComp")
-            #     ),
-            #     align = "center"
-            # ),
+            #### Moments BNCOMP ####
+            column(
+                width = 3,
+                tags$style(" * {font-size:20px;}"), # grosseur du tezte
+                box(
+                    title = "Moments",
+                    width = NULL,
+                    solidHeader = TRUE,
+                    status = "warning",
+                    uiOutput("meanBNCOMP"),
+                    uiOutput("varianceBNCOMP")
+                ),
+                align = "center"
+            ),
             
-            #### Fonctions BNComp ####
+            #### Fonctions BNCOMP ####
             column(
                 width = 3,
                 box(
@@ -1678,16 +1678,16 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                     width = NULL,
                     solidHeader = TRUE, # grosseur du tezte
                     status = "danger", # couleur de la boite
-                    numericInput('xBNComp', '$$x$$', value = 10, min = 0),
-                    # uiOutput("densityBNComp"),
+                    numericInput('xBNCOMP', '$$x$$', value = 10, min = 0),
+                    # uiOutput("densityBNCOMP"),
                     tabBox(
                         width = NULL,
                         tabPanel("Répartition",
-                                 uiOutput("repartBNComp")
+                                 uiOutput("repartBNCOMP")
                                  
                         )
                         # ,tabPanel("Survie",
-                        #          uiOutput("survieBNComp")
+                        #          uiOutput("survieBNCOMP")
                         
                         # )
                         
@@ -1696,7 +1696,7 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                 align = "center"
             ),
             
-            #### Mesures de risque BNComp ####
+            #### Mesures de risque BNCOMP ####
             column(
                 width = 3,
                 boxPlus(
@@ -1705,9 +1705,9 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                     solidHeader = TRUE,
                     closable = F,
                     status = "success", # grosseur du tezte
-                    numericInput('kBNComp', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
-                    uiOutput("VaRBNComp"),
-                    uiOutput("TVaRBNComp")
+                    numericInput('kBNCOMP', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
+                    uiOutput("VaRBNCOMP"),
+                    uiOutput("TVaRBNCOMP")
                 ),
                 align = "center"
             )
@@ -1748,7 +1748,7 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                     solidHeader = T,
                     width = NULL,
                     numericInput('lambdaPCOMP', label = withMathJax('$$\\lambda$$'), value = 5, min = 0),
-                    numericInput('koPCOMP', label = withMathJax('$$k_{0}$$'), value = 1000, step = 100),
+                    numericInput('koPCOMP', label = withMathJax('$$k_{0}$$'), value = 200, step = 100),
                     uiOutput("shapePCOMPUI"),
                     uiOutput("ratePCOMPUI"),
                     switchInput(

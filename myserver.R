@@ -2065,6 +2065,7 @@ myserver <- function(input, output, session)
     rBNCOMP <- reactive({input$rBNCOMP})
     qBNCOMP <- reactive({input$qBNCOMP})
     koBNCOMP <- reactive({input$koBNCOMP})
+    kBNCOMP <- reactive({input$kBNCOMP})
     
     rateBNCOMP <- reactive({
         if (input$distrchoiceGAMMA == T) {
@@ -2168,13 +2169,19 @@ myserver <- function(input, output, session)
     
     # survieBNCOMP <- reactive({format(pBNCOMP(input$xBNCOMP, shapeBNCOMP(), rateBNCOMP(), lower.tail = F), nsmall = 6, scientific = F)})
 
-    VaRBNCOMP <- reactive({format(VaR_BNComp(k = kBNCOMP(), ko = koBNCOMP()), 
-                                  nsmall = 6)
-    })
+    VaRBNCOMP <- reactive({format(VaR_BNComp(k = kBNCOMP(), ko = koBNCOMP(),shape = shapeBNCOMP(), 
+                                       rate  = rateBNCOMP(),
+                                       r     = rBNCOMP(),
+                                       q     = qBNCOMP()
+    ), nsmall = 6)})
     
-    varkBNCOMP <- reactive({VaR_BNComp(k = kBNCOMP(), ko = koBNCOMP())})
+    varkBNCOMP <- reactive({VaR_BNComp(k = kBNCOMP(), ko = koBNCOMP(),shape = shapeBNCOMP(), 
+                                       rate  = rateBNCOMP(),
+                                       r     = rBNCOMP(),
+                                       q     = qBNCOMP()
+                                       )})
     
-    TVaRBNCOMP <- reactive({format(TVaR_BNComp(x     = xBNCOMP(),
+    TVaRBNCOMP <- reactive({format(TVaR_BNComp(x     = kBNCOMP(),
                                                shape = shapeBNCOMP(), 
                                                rate  = rateBNCOMP(),
                                                r     = rBNCOMP(),
@@ -2185,12 +2192,18 @@ myserver <- function(input, output, session)
                                    nsmall = 6)
     })
     
-    # meanBNCOMP <- reactive({E_BNCOMP(a = shapeBNCOMP(), b = rateBNCOMP())})
-    
-    # varianceBNCOMP <- reactive({V_BNCOMP(a = shapeBNCOMP(), b = rateBNCOMP())})
+    meanBNCOMP <- reactive({E_BNComp(shape = shapeBNCOMP(), 
+                                     rate  = rateBNCOMP(),
+                                     r     = rBNCOMP(),
+                                     q     = qBNCOMP())})
+
+    varianceBNCOMP <- reactive({V_BNComp(shape = shapeBNCOMP(), 
+                                         rate  = rateBNCOMP(),
+                                         r     = rBNCOMP(),
+                                         q     = qBNCOMP())})
     
     output$loi_BNCOMP <- renderText({
-            "Binomiale composée"
+            "Binomiale Négative Composée"
     })
     
     output$loi_BNCOMP_severity <- renderText({
@@ -2209,14 +2222,14 @@ myserver <- function(input, output, session)
     })
     
     
-    # output$meanBNCOMP <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
-    #                                                   meanBNCOMP()
-    # ))})
-    # 
-    # output$varianceBNCOMP <- renderUI({withMathJax(sprintf("$$Var(X) = %s$$", 
-    #                                                       varianceBNCOMP()
-    # ))})
-    
+    output$meanBNCOMP <- renderUI({withMathJax(sprintf("$$E(X) = %s$$",
+                                                      meanBNCOMP()
+    ))})
+
+    output$varianceBNCOMP <- renderUI({withMathJax(sprintf("$$Var(X) = %s$$",
+                                                          varianceBNCOMP()
+    ))})
+
     # output$densityBNCOMP <- renderUI({withMathJax(sprintf("$$f_{X}(%s) = %s$$", 
     #                                                      input$xBNCOMP,
     #                                                      densityBNCOMP()
@@ -2237,6 +2250,7 @@ myserver <- function(input, output, session)
                                                      kBNCOMP(),
                                                      VaRBNCOMP()
     ))})
+    
     output$TVaRBNCOMP <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$", 
                                                       kBNCOMP(),
                                                       TVaRBNCOMP()
@@ -2245,7 +2259,7 @@ myserver <- function(input, output, session)
     
     
     xPCOMP <- reactive({input$xPCOMP})
-    lambdaPCOMP <- reactive({input$rPCOMP})
+    lambdaPCOMP <- reactive({input$lambdaPCOMP})
     koPCOMP <- reactive({input$koPCOMP})
     kPCOMP <- reactive({input$kPCOMP})
     
@@ -2344,33 +2358,38 @@ myserver <- function(input, output, session)
                                             lambda = lambdaPCOMP(),
                                             shape = shapePCOMP(), 
                                             rate = ratePCOMP(),
-                                            ko = koPCOMP(),
-                                            distr_severity_Gamma = T), 
-                                    nsmall = 6)
+                                            ko = koPCOMP()), 
+                                    nsmall = 6, scientific = F)
     })
     
     # surviePCOMP <- reactive({format(pPCOMP(input$xPCOMP, shapePCOMP(), ratePCOMP(), lower.tail = F), nsmall = 6, scientific = F)})
     
-    VaRPCOMP <- reactive({format(VaR_PComp(k = kPCOMP(), ko = koPCOMP()), 
-                                  nsmall = 6)
-    })
+    VaRPCOMP <- reactive({format(VaR_PComp(k = kPCOMP(), 
+                                           ko = koPCOMP(), 
+                                           shape = shapePCOMP(), 
+                                           rate  = ratePCOMP(),
+                                           lambda  = lambdaPCOMP()
+    ), nsmall = 6)})
     
-    varkPCOMP <- reactive({VaR_PComp(k = kPCOMP(), ko = koPCOMP())})
+    varkPCOMP <- reactive({VaR_PComp(k = kPCOMP(), ko = koPCOMP(), shape = shapePCOMP(), 
+                                      rate  = ratePCOMP(),
+                                      lambda     = lambdaPCOMP()
+    )})
     
-    TVaRPCOMP <- reactive({format(TVaR_PComp(x = xPCOMP(),
+    TVaRPCOMP <- reactive({format(TVaR_PComp(x = kPCOMP(),
                                              shape = shapePCOMP(), 
                                              rate  = ratePCOMP(),
-                                             lambda = lambdaPCOMP(),
+                                             lamb = lambdaPCOMP(),
                                                var  = varkPCOMP(),
                                                ko    = koPCOMP()), nsmall = 6)
     })
     
-    # meanPCOMP <- reactive({E_PCOMP(a = shapePCOMP(), b = ratePCOMP())})
+    meanPCOMP <- reactive({E_PCOMP(lambda = lambdaPCOMP(), shape = shapePCOMP(), rate = ratePCOMP())})
     
-    # variancePCOMP <- reactive({V_PCOMP(a = shapePCOMP(), b = ratePCOMP())})
+    variancePCOMP <- reactive({V_PCOMP(lambda = lambdaPCOMP(), shape = shapePCOMP(), rate = ratePCOMP())})
     
     output$loi_PCOMP <- renderText({
-        "Poisson composée"
+        "Poisson Composée"
     })
     
     output$distr_PComp <- renderText({
@@ -2389,13 +2408,13 @@ myserver <- function(input, output, session)
     })
     
     
-    # output$meanPCOMP <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
-    #                                                   meanPCOMP()
-    # ))})
-    # 
-    # output$variancePCOMP <- renderUI({withMathJax(sprintf("$$Var(X) = %s$$", 
-    #                                                       variancePCOMP()
-    # ))})
+    output$meanPCOMP <- renderUI({withMathJax(sprintf("$$E(X) = %s$$",
+                                                      meanPCOMP()
+    ))})
+
+    output$variancePCOMP <- renderUI({withMathJax(sprintf("$$Var(X) = %s$$",
+                                                          variancePCOMP()
+    ))})
     
     # output$densityPCOMP <- renderUI({withMathJax(sprintf("$$f_{X}(%s) = %s$$", 
     #                                                      input$xPCOMP,

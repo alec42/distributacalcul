@@ -380,11 +380,11 @@ Etronq_IG <- function(d, mu, beta = dispersion * mu^2, dispersion = beta / mu^2)
 {
     d - 
         (2 * d - mu) *
-        qnorm(p = (d - mu) * 
+        pnorm(q = (d - mu) * 
                   sqrt(1 / (beta * d))) -
         (2 * d + mu) * 
         exp(2 * mu / beta) * 
-        qnorm(p = - (d + mu) * 
+        pnorm(q = - (d + mu) * 
                   sqrt(1 / (beta * d)))
 }
 
@@ -398,22 +398,26 @@ TVaR_IG <- function(k, vark, mu, beta = dispersion * mu^2, dispersion = beta / m
     (1/(1 - k)) * 
         (mu - vark + 
              (2 * vark + mu) * 
-             exp(2 * mu / beta)) + 
+             exp(2 * mu / beta)
+         ) + 
         (1/(1 - k)) * 
-        ((2 * vark - mu) * 
-             qnorm(p = (vark - mu) * 
-                       sqrt(1 / (beta * vark))))
+        (
+            (2 * vark - mu) * 
+             pnorm(q = ((vark - mu) * 
+                       sqrt(1 / (beta * vark)))
+                   )
+        )
 }
 
 SL_IG <- function(d, mu, beta = dispersion * mu^2, dispersion = beta / mu^2)
 {
     (mu - d) *
-        qnorm(p = (d - mu) * 
+        pnorm(q = (d - mu) * 
                   sqrt(1 / (beta * d)), 
               lower.tail = F) +
         (d + mu) * 
         exp(2 * mu / beta) * 
-        qnorm(p = - (d + mu) * 
+        pnorm(q = - (d + mu) * 
                   sqrt(1 / (beta * d)))
 }
 
@@ -474,40 +478,68 @@ Elim_IG <- function(d, mu, beta = dispersion * mu^2, dispersion = beta / mu^2)
 }
 #### Poisson Composée ####
 
-# E_PCOMP <- function(rate, shape, lambda, distr_severity = "Gamma")
-# {
-#     if(distr_severity = "Gamma")
-#     {
-#         shape / rate * lambmda
-#     }
-#     else if (distr_severity = "Lognormale")
-#     {
-#         exp(shape + rate^2 / 2) * lambda
-#     }
-# }
+E_PCOMP <- function(rate, shape, lambda, distr_severity = "Gamma"){
+    if(distr_severity == "Gamma"){
+        shape / rate * lambda
+    }
+    else{
+        exp(shape + rate^2 / 2) * lambda
+    }
+}
+
+V_PCOMP <- function(rate, shape, lambda, distr_severity = "Gamma"){
+    if(distr_severity == "Gamma"){
+        lambda * shape/(rate^2) * (shape + 1)
+    }
+    else{
+        lambda * kthmoment_lnorm(k = 2, mu = shape, sig = sqrt(rate))
+    }
+}
 
 
-p_Pcomp <- function(x, lambda, shape, rate, ko = 1000, distr_severity_Gamma = T){
-    if(distr_severity_Gamma == T){
+p_Pcomp <- function(x, lambda, shape, rate, ko = 300, distr_severity_Gamma = "Gamma"){
+    if(distr_severity_Gamma == "Gamma"){
         dpois(x = x, lambda = lambda) + sum(sapply(1:ko, function(k) dpois(x = k, lambda = lambda) * pgamma(q = x, shape = shape * k, rate = rate)))
     } 
     else{0}
 }
 
-VaR_PComp <- function(k, ko = 1e3) 
+VaR_PComp <- function(k, ko = 300, lambda, shape, rate, distr_severity_Gamma = "Gamma")
 {
-    if(k <= p_Pcomp(0))
+    if(k <= p_Pcomp(x = 0, lambda = lambda, shape = shape, rate = rate, ko = ko))
         0
     else
-        optimise(function(x) abs(p_Pcomp(x) - k), c(0, ko))$minimum
+        optimize(function(i) abs(p_Pcomp(x = i, lambda = lambda, shape = shape, rate = rate, ko = ko) - k), c(0, ko))$minimum
 }
 
-TVaR_PComp <- function(x, lambda, ko, shape, rate, var)
+
+TVaR_PComp <- function(x, lamb, ko = 300, shape, rate, var)
 {
-    sum(sapply(1:ko, function(k) dpois(x = k, lambda = lambda) * (shape * k )/rate *pgamma(q = var, shape = shape * k + 1, rate = rate, lower.tail = F)))/(1 - x)
+    sum(sapply(1:ko, function(k) dpois(x = k, lambda = lamb) * (shape * k )/rate *pgamma(q = var, shape = shape * k + 1, rate = rate, lower.tail = F)))/(1 - x)
 }
 
 #### BN Composée ####
+
+E_BNComp <- function(r, q, shape, rate, distr_severity = "Gamma") 
+{
+    if(distr_severity == "Gamma")
+    {
+        shape / rate * (r * (1 - q)/q)
+    }
+    else
+        0
+}
+
+V_BNComp <- function(r, q, shape, rate, distr_severity = "Gamma") 
+{
+    if(distr_severity == "Gamma")
+    {
+        (shape / rate)^2 * (r * (1 - q)/(q^2)) + (shape / rate^2) * (r * (1 - q)/q)
+    }
+    else
+        0
+}
+
 
 p_BNComp <- function(x, r, q, ko, shape, rate, distr_severity = "Gamma") 
 {
@@ -521,12 +553,12 @@ p_BNComp <- function(x, r, q, ko, shape, rate, distr_severity = "Gamma")
     }
 }
 
-VaR_BNComp <- function(k, ko = 1e3)
+VaR_BNComp <- function(k, ko = 300, r, q, shape, rate, distr_severity = "Gamma")
 {
-    if(k <= Fx(0))
+    if(k <= p_BNComp(0, r = r, q = q, ko = ko, shape = shape, rate = rate))
         0
     else
-        optimize(function(i) abs(Fx(i) - k), c(0, ko))$minimum
+        optimize(function(i) abs(p_BNComp(i, r = r, q = q, ko = ko, shape = shape, rate = rate) - k), c(0, ko))$minimum
 }
 
 TVaR_BNComp <- function(x, shape, rate, r, q, vark, ko){
