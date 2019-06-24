@@ -1824,7 +1824,7 @@ myserver <- function(input, output, session)
     #     
     # })
 
-#### Loi logarithmique Serveur ####
+#### Loi Logarithmique Serveur ####
     
     gammaLOGARITHMIQUE <- reactive({input$gammaLOGARITHMIQUE})
     
@@ -2058,7 +2058,7 @@ myserver <- function(input, output, session)
         
     # })
     
-#### Loi BNComp Serveur ####
+#### Loi Binomiale Négative Composée Serveur ####
     
     
     xBNCOMP <- reactive({input$xBNCOMP})
@@ -2255,7 +2255,7 @@ myserver <- function(input, output, session)
                                                       kBNCOMP(),
                                                       TVaRBNCOMP()
     ))})
-#### Loi PCOMP Serveur ####
+#### Loi Poisson Composée Serveur ####
     
     
     xPCOMP <- reactive({input$xPCOMP})

@@ -52,3 +52,4 @@ CATKIN_IGNORE
 rsconnect/
 .Rhistory
 .Rhistory
+.Rproj.user
