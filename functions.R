@@ -51,7 +51,8 @@ Etronq_burr <- function(d, alpha, lam, tau) {
 #-tau < k < alpha * tau
 kthmoment_burr <- function(k, alpha, lam, tau)
 {
-    (1 / gamma(alpha)) * lam^(k / tau)  * 
+    (1/gamma(alpha)) * 
+        lam^(k/tau) * 
         gamma(1 + k/tau) * 
         gamma(alpha - k/tau)
 }
