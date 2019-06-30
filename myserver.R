@@ -2428,8 +2428,9 @@ myserver <- function(input, output, session)
     
     # output$surviePCOMP <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
     #                                                     input$xNORM,
-    #                                                     surviePCOMP()))
-    # })
+    #                                                     surviePCOMP())
+        )
+    #   })
     # 
     
     output$VaRPCOMP <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$", 
