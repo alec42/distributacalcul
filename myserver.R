@@ -2428,6 +2428,13 @@ myserver <- function(input, output, session)
                                                          repartPCOMP()
     ))})
     
+    # output$surviePCOMP <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
+    #                                                     input$xNORM,
+    #                                                     surviePCOMP())
+    #    )
+    #   })
+    # 
+    
     output$VaRPCOMP <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$", 
                                                       kPCOMP(),
                                                       VaRPCOMP()
