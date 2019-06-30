@@ -10,7 +10,9 @@ myserver <- function(input, output, session)
         
     repartNORM <- reactive({format(pnorm(input$xNORM, muNORM(), sqrt(sigma2NORM())), nsmall = 6)})
         
-    survieNORM <- reactive({format(pnorm(input$xNORM, muNORM(), sqrt(sigma2NORM()), lower.tail = F), nsmall = 6)})
+    survieNORM <- reactive({format(pnorm(input$xNORM, muNORM(), sqrt(sigma2NORM()), lower.tail = F),
+                                   nsmall = 6)
+    })
         
     VaRNORM <- reactive({format(VaR_norm(kappa = input$kNORM, mu = muNORM(), sig = sqrt(sigma2NORM())), nsmall = 6)})
         
@@ -2425,12 +2427,6 @@ myserver <- function(input, output, session)
                                                          xPCOMP(),
                                                          repartPCOMP()
     ))})
-    
-    # output$surviePCOMP <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
-    #                                                     input$xNORM,
-    #                                                     surviePCOMP()))
-    # })
-    # 
     
     output$VaRPCOMP <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$", 
                                                       kPCOMP(),
