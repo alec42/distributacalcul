@@ -133,6 +133,13 @@ myUI <- shinyUI({
               
         # corps de la page
         {dashboardBody(
+            
+            
+            ### changing theme
+            shinyDashboardThemes(
+                theme = "grey_light"
+            ),
+            
             tags$head(
                 tags$style(
                     type = "text/css",

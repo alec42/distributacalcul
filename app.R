@@ -10,6 +10,7 @@
     library(shinyWidgets)
     library(shinyjs)
     library(tvarPackage)
+    library(dashboardthemes)
 } 
 source(file = "myUI.R", local = T)
 source(file = "myserver.R")
