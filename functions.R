@@ -504,7 +504,9 @@ p_Pcomp <- function(x, lambda, shape, rate, ko = 300, distr_severity_Gamma = "Ga
     if(distr_severity_Gamma == "Gamma"){
         dpois(x = x, lambda = lambda) + sum(sapply(1:ko, function(k) dpois(x = k, lambda = lambda) * pgamma(q = x, shape = shape * k, rate = rate)))
     } 
-    else{0}
+    else{
+        # dpois(x = x, lambda = lambda) + sum(sapply(1:ko, function(k) dpois(x = k, lambda = lambda) * plnorm(q = x, shape = shape * k, rate = rate)))
+    }
 }
 
 VaR_PComp <- function(k, ko = 300, lambda, shape, rate, distr_severity_Gamma = "Gamma")
