@@ -105,11 +105,11 @@ myUI <- shinyUI({
                             tabName = "BNCOMP"
                             # ,icon = icon("neos")
                         ),
-                        # menuSubItem(
-                        #     "Binomiale",
-                        #     tabName = "Normale",
-                        #     icon = icon("neos")
-                        # ),
+                        menuSubItem(
+                            "Binomiale",
+                            tabName = "BINCOMP"
+                            # ,icon = icon("neos")
+                        ),
                         menuSubItem(
                             "Poisson",
                             tabName = "PCOMP"
@@ -134,11 +134,11 @@ myUI <- shinyUI({
         # corps de la page
         {dashboardBody(
             
-            
-            ### changing theme
-            shinyDashboardThemes(
-                theme = "grey_light"
-            ),
+            # 
+            # ### changing theme
+            # shinyDashboardThemes(
+            #     theme = "grey_light"
+            # ),
             
             tags$head(
                 tags$style(
@@ -170,7 +170,7 @@ myUI <- shinyUI({
                 ## Lois composées
                 tab_BNCOMP_UI,
                 tab_PCOMP_UI,
-                # tab_BINCOMP_UI,
+                tab_BINCOMP_UI,
             
             ## À propos ----
                 tabItem(

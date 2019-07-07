@@ -1817,3 +1817,112 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
         )
     )
 }
+
+#### Loi Binomiale Négative Composée UI ####
+{
+    
+    tab_BINCOMP_UI <- tabItem(
+        tabName = "BINCOMP",
+        fluidPage(
+            tags$style("#loi_BINCOMP {font-size:30px;}"),
+            textOutput("loi_BINCOMP"),
+            withMathJax(),
+            textOutput("loi_BINCOMP_severity"),
+            textOutput("distr_BINCOMP"),
+            radioGroupButtons(
+                inputId = "severityBINCOMP",
+                label = "",
+                choices = c("Gamma", 
+                            "Lognormale"
+                ),
+                status = "primary"
+            ),
+            align = "center"
+        ),
+        
+        fluidRow(
+            
+            #### Paramètres BINCOMP ####
+            column(
+                width = 3,
+                box(
+                    title = "Paramètres",
+                    status = "primary",
+                    solidHeader = T,
+                    width = NULL,
+                    numericInput('nBINCOMP', label = withMathJax('$$n$$'), value = 5),
+                    numericInput('qBINCOMP', label = withMathJax('$$q$$'), min = 0, max = 1, step = .1, value = .5),
+                    numericInput('koBINCOMP', label = withMathJax('$$k_{0}$$'), value = 300, step = 100),
+                    uiOutput("shapeBINCOMPUI"),
+                    uiOutput("rateBINCOMPUI"),
+                    switchInput(
+                        inputId = "distrchoiceGAMMA",
+                        onLabel = "Fréquence (Rate)",
+                        offLabel = "Échelle (Scale)",
+                        value = T
+                    ),
+                    align = "center"
+                ),
+                align = "center"
+            ),
+            
+            #### Moments BINCOMP ####
+            column(
+                width = 3,
+                tags$style(" * {font-size:20px;}"), # grosseur du tezte
+                box(
+                    title = "Moments",
+                    width = NULL,
+                    solidHeader = TRUE,
+                    status = "warning",
+                    uiOutput("meanBINCOMP"),
+                    uiOutput("varianceBINCOMP")
+                ),
+                align = "center"
+            ),
+            
+            #### Fonctions BINCOMP ####
+            column(
+                width = 3,
+                box(
+                    title = "Fonctions",
+                    width = NULL,
+                    solidHeader = TRUE, # grosseur du tezte
+                    status = "danger", # couleur de la boite
+                    numericInput('xBINCOMP', '$$x$$', value = 10, min = 0),
+                    # uiOutput("densityBINCOMP"),
+                    tabBox(
+                        width = NULL,
+                        tabPanel("Répartition",
+                                 uiOutput("repartBINCOMP")
+                                 
+                        )
+                        ,tabPanel("Survie",
+                                  uiOutput("survieBINCOMP")
+                                  
+                        )
+                        
+                    )
+                ),
+                align = "center"
+            ),
+            
+            #### Mesures de risque BINCOMP ####
+            column(
+                width = 3,
+                boxPlus(
+                    title = "Mesure de risques",
+                    width = NULL,
+                    solidHeader = TRUE,
+                    closable = F,
+                    status = "success", # grosseur du tezte
+                    numericInput('kBINCOMP', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
+                    uiOutput("VanBINCOMP"),
+                    uiOutput("TVanBINCOMP")
+                ),
+                align = "center"
+            )
+            
+        )
+    )
+}

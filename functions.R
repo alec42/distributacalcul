@@ -566,7 +566,7 @@ p_BNComp <- function(x, r, q, ko, shape, rate, distr_severity = "Gamma")
     }
     else
     {
-        dnbinom(x = 0, size = r, prob = q) + sum(sapply(1:ko, function(i) dnbinom(x = i, size = r, prob = q) * plnorm(q = x, meanlog = shape * i, sdlog = rate)))
+        dnbinom(x = 0, size = r, prob = q) + sum(sapply(1:ko, function(i) dnbinom(x = i, size = r, prob = q) * plnorm(q = x, meanlog = shape * i, sdlog = sqrt(rate))))
     }
 }
 
@@ -590,40 +590,66 @@ TVaR_BNComp <- function(x, shape, rate, r, q, vark, ko, distr_severity = "Gamma"
     }
     else
     {
-        (sum(sapply(1:ko, function(i) dnbinom(x = i, size = r, prob = q) * (shape / rate) * plnorm(q = vark, meanlog = shape * i + 1, sdlog = rate, lower.tail = F))) / (1 - x))
+        (sum(sapply(1:ko, function(i) dnbinom(x = i, size = r, prob = q) * (shape / rate) * plnorm(q = vark, meanlog = shape * i + 1, sdlog = sqrt(rate), lower.tail = F))) / (1 - x))
     }
 }
 #### Bin Composée ####
 
-p_BINComp <- function(x, r, q, ko, shape, rate, distr_severity_Gamma = T) 
+
+E_BINComp <- function(n, q, shape, rate, distr_severity = "Gamma") 
 {
-    if(distr_severity_Gamma == T)
+    if(distr_severity == "Gamma")
     {
-        dbinom(x = 0, size = r, prob = q) + sum(sapply(1:ko, function(i) dbinom(x = i, size = r, prob = q) * pgamma(q = x, shape = shape * i, rate = rate)))
+        shape / rate * n * q
+    }
+    else
+        n * q * E_lnorm(mu = shape, sig = sqrt(rate))
+}
+
+V_BINComp <- function(n, q, shape, rate, distr_severity = "Gamma") 
+{
+    if(distr_severity == "Gamma")
+    {
+        (shape / rate)^2 * n * q * (1 - q) + n * q * V_gamma(a = shape, b = rate)
+    }
+    else
+        E_lnorm(mu = shape, sig = sqrt(rate))^2 * n * q * (1 - q) + n * q * V_lnorm(mu = shape, sig = rate)
+}
+
+p_BINComp <- function(x, n, q, ko, shape, rate, distr_severity = "Gamma") 
+{
+    if(distr_severity == "Gamma")
+    {
+        dbinom(x = 0, size = n, prob = q) + sum(sapply(1:ko, function(i) dbinom(x = i, size = n, prob = q) * pgamma(q = x, shape = shape * i, rate = rate)))
     }
     else
     {
-        0
+        dbinom(x = 0, size = n, prob = q) + sum(sapply(1:ko, function(i) dbinom(x = i, size = n, prob = q) * plnorm(q = x, meanlog = shape * i, sdlog = sqrt(rate))))
     }
 }
 
-VaR_BINComp <- function(k, ko = 1e3)
+
+VaR_BINComp <- function(k, ko = 300, n, q, shape, rate, distr_severity = "Gamma")
 {
-    if(k <= Fx(0))
+    if(k <= p_BINComp(0, n = n, q = q, ko = ko, shape = shape, rate = rate))
         0
     else
-        optimize(function(i) abs(Fx(i) - k), c(0, ko))$minimum
+        optimize(function(i) abs(p_BINComp(i, n = n, q = q, ko = ko, shape = shape, rate = rate) - k), c(0, ko))$minimum
 }
 
-TVaR_BINComp <- function(x, shape, rate, r, q, vark, ko){
+
+TVaR_BINComp <- function(x, shape, rate, n, q, vark, ko, distr_severity = "Gamma"){
     
     if (vark == 0)
     {
-        (shape / rate * r * (1 - q) / q) / (1 - x)
+        E_BINComp(n = n, q = q, shape = shape, rate = rate, distr_severity = distr_severity) / (1 - x)
+    }
+    else if (distr_severity == "Gamma")
+    {
+        (sum(sapply(1:ko, function(i) dbinom(x = i, size = n, prob = q) * (shape * i / rate) * pgamma(q = vark, shape = shape * i + 1, rate = rate, lower.tail = F))) / (1 - x))
     }
     else
     {
-        (sum(sapply(1:ko, function(i) dnbinom(x = i, size = r, prob = q) * (shape * i / rate) * pgamma(q = vark, shape = shape * i + 1, rate = rate, lower.tail = F))) / (1 - x))
+        (sum(sapply(1:ko, function(i) dbinom(x = i, size = n, prob = q) * (shape * i / rate) * plnorm(q = vark, meanlog = shape * i + 1, sdlog = sqrt(rate), lower.tail = F))) / (1 - x))
     }
 }
-

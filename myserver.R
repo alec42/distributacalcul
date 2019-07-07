@@ -2482,4 +2482,220 @@ myserver <- function(input, output, session)
                                                        kPCOMP(),
                                                        TVaRPCOMP()
     ))})
+#### Loi Binomiale Composée Serveur ####
+    
+    
+    xBINCOMP <- reactive({input$xBINCOMP})
+    nBINCOMP <- reactive({input$nBINCOMP})
+    qBINCOMP <- reactive({input$qBINCOMP})
+    koBINCOMP <- reactive({input$koBINCOMP})
+    kBINCOMP <- reactive({input$kBINCOMP})
+    
+    rateBINCOMP <- reactive({
+        if (input$distrchoiceGAMMA == T) {
+            input$rateBINCOMP
+        } else {
+            1 / input$rateBINCOMP
+        }
+    })
+    
+    shapeBINCOMP <- reactive({input$shapeBINCOMP})
+    
+    output$rateBINCOMPUI <- renderUI({
+        if (input$distrchoiceEXPOFAM == "Gamma") {
+            numericInput('rateBINCOMP', '$$\\beta$$', value = 1, min = 0)
+        } else {
+            numericInput('rateBINCOMP', '$$\\sigma^2$$', value = 1, min = 0)
+        }
+    })
+    
+    output$shapeBINCOMPUI <- renderUI({
+        if (input$distrchoiceEXPOFAM == "Gamma") {
+            numericInput('shapeBINCOMP', label = '$$\\alpha$$', value = 2, min = 0)
+        } else {
+            numericInput('shapeBINCOMP', '$$\\mu$$', value = 2, min = 0)
+        }
+        
+    })
+    
+    ## Ici on crée un gros observeEvent qui va modifier les paramètres de la BINCOMP/exponentielle/khi-carrée selon les 2 radio buttons:
+    ## x: selection de distribution
+    ## y: selection de si c'est fréquence ou échelle
+    observeEvent({
+        input$distrchoiceGAMMA
+        input$severityBINCOMP #liste des inputs à observer entre {}
+    },
+    {
+        y <- input$distrchoiceGAMMA
+        x <- input$severityBINCOMP
+        
+        updateNumericInput(session,
+                           "distrchoiceGAMMA",
+                           value =
+                               if (x == "Lognormale")
+                               {
+                                   y = T
+                               })
+        
+        # modification du beta
+        updateNumericInput(session,
+                           "rateBINCOMP",
+                           step =
+                               if (y == T) {
+                                   .1
+                               } else {
+                                   1
+                               },
+                           label = {
+                               if (x == "Lognormale")
+                               {
+                                   '$$\\sigma^2$$'
+                               }
+                               else{
+                                   '$$\\beta$$'
+                               }
+                           })
+        
+        # rend le paramètre impossible à modifier pour l'utilisateur
+        if (x == "Lognormale")
+        {
+            hide("distrchoiceGAMMA")
+        }
+        else
+        {
+            show("distrchoiceGAMMA")
+        }
+        
+        updateNumericInput(session, "shapeBINCOMP",
+                           label = {
+                               if (x == "Lognormale")
+                               {
+                                   '$$\\mu$$'
+                               }
+                               else{
+                                   '$$\\alpha$$'
+                               }
+                           }
+        )
+    })
+    
+    
+    # densityBINCOMP <- reactive({format(dBINCOMP(input$xBINCOMP, shapeBINCOMP(), rateBINCOMP()),scientific = F,  nsmall = 6)})
+    
+    repartBINCOMP <- reactive({format(p_BINComp(x = xBINCOMP(), 
+                                              n = nBINCOMP(),
+                                              q = qBINCOMP(),
+                                              shape = shapeBINCOMP(), 
+                                              rate = rateBINCOMP(),
+                                              ko = koBINCOMP(),
+                                              distr_severity = input$severityBINCOMP), 
+                                     nsmall = 6, scientific = F)
+    })
+    
+    survieBINCOMP <- reactive({format(1 - p_BINComp(x = xBINCOMP(), 
+                                                  n = nBINCOMP(),
+                                                  q = qBINCOMP(),
+                                                  shape = shapeBINCOMP(), 
+                                                  rate = rateBINCOMP(),
+                                                  ko = koBINCOMP(),
+                                                  distr_severity = input$severityBINCOMP), nsmall = 6, scientific = F)})
+    
+    VanBINCOMP <- reactive({format(VaR_BINComp(k = kBINCOMP(), ko = koBINCOMP(),shape = shapeBINCOMP(), 
+                                             rate  = rateBINCOMP(),
+                                             n     = nBINCOMP(),
+                                             q     = qBINCOMP()
+    ), nsmall = 6)})
+    
+    varkBINCOMP <- reactive({VaR_BINComp(k = kBINCOMP(), ko = koBINCOMP(),shape = shapeBINCOMP(), 
+                                       rate  = rateBINCOMP(),
+                                       n     = nBINCOMP(),
+                                       q     = qBINCOMP()
+    )})
+    
+    TVanBINCOMP <- reactive({format(TVaR_BINComp(x     = kBINCOMP(),
+                                               shape = shapeBINCOMP(), 
+                                               rate  = rateBINCOMP(),
+                                               n     = nBINCOMP(),
+                                               q     = qBINCOMP(),
+                                               vark  = varkBINCOMP(),
+                                               ko    = koBINCOMP(),
+                                               distr_severity = input$severityBINCOMP
+    ), 
+    nsmall = 6)
+    })
+    
+    meanBINCOMP <- reactive({format(E_BINComp(shape = shapeBINCOMP(), 
+                                            rate  = rateBINCOMP(),
+                                            n     = nBINCOMP(),
+                                            q     = qBINCOMP(),
+                                            distr_severity = input$severityBINCOMP
+    ),
+    nsmall = 6,
+    scientific = F)
+    })
+    
+    varianceBINCOMP <- reactive({format(V_BINComp(shape = shapeBINCOMP(), 
+                                                rate  = rateBINCOMP(),
+                                                n     = nBINCOMP(),
+                                                q     = qBINCOMP(),
+                                                distr_severity = input$severityBINCOMP
+    ),
+    nsmall = 6,
+    scientific = F)
+    })
+    
+    output$loi_BINCOMP <- renderText({
+        "Binomiale Composée"
+    })
+    
+    output$loi_BINCOMP_severity <- renderText({
+        if(input$distrchoiceEXPOFAM == "Gamma")
+            "Gamma"
+        else if (input$distrchoiceEXPOFAM == "Lognormale")
+            "Lognormale"
+    })
+    
+    
+    output$distr_BINCOMP <- renderText({
+        if(input$severityBINCOMP == "Gamma")
+            "\\(X \\sim\\text{BINComp}(r, q; F_B \\sim \\Gamma (\\alpha, \\beta))\\)"
+        else if (input$severityBINCOMP == "Lognormale")
+            "\\(X \\sim\\text{BINComp}(r, q; F_B \\sim \\text{LN} (\\mu, \\sigma^2))\\)"
+    })
+    
+    
+    output$meanBINCOMP <- renderUI({withMathJax(sprintf("$$E(X) = %s$$",
+                                                       meanBINCOMP()
+    ))})
+    
+    output$varianceBINCOMP <- renderUI({withMathJax(sprintf("$$Var(X) = %s$$",
+                                                           varianceBINCOMP()
+    ))})
+    
+    # output$densityBINCOMP <- renderUI({withMathJax(sprintf("$$f_{X}(%s) = %s$$", 
+    #                                                      input$xBINCOMP,
+    #                                                      densityBINCOMP()
+    # ))})
+    
+    output$repartBINCOMP <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$", 
+                                                         xBINCOMP(),
+                                                         repartBINCOMP()
+    ))})
+    
+    output$survieBINCOMP <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
+                                                         input$xNORM,
+                                                         survieBINCOMP()))
+    })
+    
+    
+    output$VanBINCOMP <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$", 
+                                                      kBINCOMP(),
+                                                      VanBINCOMP()
+    ))})
+    
+    output$TVanBINCOMP <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$", 
+                                                       kBINCOMP(),
+                                                       TVanBINCOMP()
+    ))})
+    
 }
