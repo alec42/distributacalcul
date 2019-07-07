@@ -1619,8 +1619,8 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
             radioGroupButtons(
                 inputId = "severityBNCOMP",
                 label = "",
-                choices = c("Gamma"
-                            #, "Lognormale"
+                choices = c("Gamma", 
+                            "Lognormale"
                             ),
                 status = "primary"
             ),
@@ -1684,10 +1684,10 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                                  uiOutput("repartBNCOMP")
 
                         )
-                        # ,tabPanel("Survie",
-                        #          uiOutput("survieBNCOMP")
+                        ,tabPanel("Survie",
+                              uiOutput("survieBNCOMP")
 
-                        # )
+                        )
 
                     )
                 ),
@@ -1727,8 +1727,8 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
             radioGroupButtons(
                 inputId = "severityPCOMP",
                 label = "",
-                choices = c("Gamma"
-                            #, "Lognormale"
+                choices = c("Gamma", 
+                            "Lognormale"
                             ),
                 status = "primary"
             ),
@@ -1788,11 +1788,10 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                         width = NULL,
                         tabPanel("Répartition",
                                  uiOutput("repartPCOMP")
+                        ),
+                        tabPanel("Survie",
+                                 uiOutput("surviePCOMP")
                         )
-                        # ,
-                        # tabPanel("Survie",
-                        #          uiOutput("surviePCOMP")
-                        # )
 
                     )
                 ),
