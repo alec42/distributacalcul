@@ -1485,6 +1485,102 @@ myserver <- function(input, output, session)
         
         # output$SxIG
         
+#### Loi Uniforme Discrète Serveur ####
+        
+        aUNIC <- reactive({input$aUNIC})
+        bUNIC <- reactive({input$bUNIC})
+        xUNIC <- reactive({input$xUNIC})
+        kUNIC <- reactive({input$kUNIC})
+        
+        
+        meanUNIC <- reactive({E_unif(a = aUNIC(), b = bUNIC())
+        })
+        
+        varUNIC <- reactive({
+            format(V_unif(a = aUNIC(), b = bUNIC()), 
+                   nsmall = 6)
+        })
+        
+        densityUNIC <- reactive({format(dunif(x = xUNIC(), min = aUNIC(), max = bUNIC()),
+                                        nsmall = 6)
+        })
+        
+        repartUNIC <- reactive({format(punif(q = xUNIC(), min = aUNIC(), max = bUNIC()), 
+                                       nsmall = 6)
+        })
+        
+        survieUNIC <- reactive({format(1 - punif(q = xUNIC(), min = aUNIC(), max = bUNIC()), 
+                                       nsmall = 6)
+        })
+        
+        VaRUNIC <- reactive({format(VaR_unif(kappa = kUNIC(), a = aUNIC(), b = bUNIC()),
+                                   nsmall = 6)
+        })
+# 
+#         TVaRUNIC <- reactive({format(TVaR_UNIC(kappa = input$kUNIC,
+#                                               lam = input$lamUNIC),
+#                                     nsmall = 6)
+#             })
+        
+        # EspTronqUNIC <- reactive({0})
+        
+        # StopLossUNIC <- reactive({0})
+        
+        # EspLimUNIC <- reactive({0})
+        
+        # ExcesMoyUNIC <- reactive({0})
+        
+        output$meanUNIC <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
+                                                         meanUNIC()
+        ))})
+        
+        output$varUNIC <- renderUI({withMathJax(sprintf("$$Var(X) = %s$$", 
+                                                        varUNIC()
+        ))})
+        
+        output$densityUNIC <- renderUI({withMathJax(sprintf("$$f_{X}(%s) = %s$$", 
+                                                            input$xUNIC,
+                                                            densityUNIC()
+        ))})
+        
+        output$repartUNIC <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$", 
+                                                           input$xUNIC,
+                                                           repartUNIC()
+        ))})
+        
+        output$survieUNIC <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
+                                                           input$xUNIC,
+                                                           survieUNIC()))
+        })
+        
+        output$VaRUNIC <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
+                                                       input$kUNIC,
+                                                       VaRUNIC()
+        ))})
+        # output$TVaRUNIC <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$",
+        #                                                 input$kUNIC,
+        #                                                 TVaRUNIC()
+        # ))})
+        # output$EspTronqUNIC <- renderUI({withMathJax(sprintf("$$E[X \\times 1_{\\{X \\leqslant %s\\}}] = %.4f$$", 
+        #                                                     input$dUNIC,
+        #                                                     EspTronqUNIC()
+        # ))})
+        # 
+        # output$StopLossUNIC <- renderUI({withMathJax(sprintf("$$ \\pi_{%s}(X) = %.4f$$", 
+        #                                                     input$dUNIC,
+        #                                                     StopLossUNIC()
+        # ))})
+        # 
+        # output$EspLimUNIC <- renderUI({withMathJax(sprintf("$$E[\\text{min}(X;{%s})] = %.4f$$", 
+        #                                                   input$dUNIC,
+        #                                                   EspLimUNIC()
+        # ))})
+        # 
+        # output$ExcesMoyUNIC <- renderUI({withMathJax(sprintf("$$e_{%s}(X) = %.4f$$", 
+        #                                                     input$dUNIC,
+        #                                                     ExcesMoyUNIC()
+        # ))})
+        
 #### Loi Binomiale Serveur ####
         nBIN <- reactive({input$nBIN})
         
@@ -2059,6 +2155,101 @@ myserver <- function(input, output, session)
     # output$FxBN <- renderPlotly({ggplot(data.frame(x = 0:rBN(), y = dBNom(0:rBN(), rBN(), qBN())), aes(x = x, y = y)) + geom_bar(stat = "identity", col = "red", fill ="red", alpha = 0.7, width = 0.3) + theme_classic() + ylab("P(X=x")
         
     # })
+    
+#### Loi Uniforme Discrète Serveur ####
+    
+    aUNID <- reactive({input$aUNID})
+    bUNID <- reactive({input$bUNID})
+    xUNID <- reactive({input$xUNID})
+    
+    meanUNID <- reactive({E_unifD(a = aUNID(), b = bUNID())
+    })
+    
+    varUNID <- reactive({
+        format(V_unifD(a = aUNID(), b = bUNID()), 
+               nsmall = 6)
+    })
+    
+    densityUNID <- reactive({format(d_unifD(x = xUNID(), a = aUNID(), b = bUNID()),
+                                    nsmall = 6)
+    })
+    
+    repartUNID <- reactive({format(p_unifD(q = xUNID(), a = aUNID(), b = bUNID()), 
+                                   nsmall = 6)
+    })
+    
+    survieUNID <- reactive({format(1 - p_unifD(q = xUNID(), a = aUNID(), b = bUNID()), 
+                                   nsmall = 6)
+    })
+    
+    # VaRUNID <- reactive({format(qUNIDs(input$kUNID,
+    #                                  lambda = input$lamUNID),
+    #                            nsmall = 6)
+    # })
+    # 
+    # TVaRUNID <- reactive({format(TVaR_UNIDs(kappa = input$kUNID,
+    #                                       lam = input$lamUNID),
+    #                             nsmall = 6)
+    #     })
+    
+    # EspTronqUNID <- reactive({0})
+    
+    # StopLossUNID <- reactive({0})
+    
+    # EspLimUNID <- reactive({0})
+    
+    # ExcesMoyUNID <- reactive({0})
+    
+    output$meanUNID <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
+                                                    meanUNID()
+    ))})
+    
+    output$varUNID <- renderUI({withMathJax(sprintf("$$Var(X) = %s$$", 
+                                                   varUNID()
+    ))})
+    
+    output$densityUNID <- renderUI({withMathJax(sprintf("$$f_{X}(%s) = %s$$", 
+                                                       input$xUNID,
+                                                       densityUNID()
+    ))})
+    
+    output$repartUNID <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$", 
+                                                      input$xUNID,
+                                                      repartUNID()
+    ))})
+    
+    output$survieUNID <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
+                                                      input$xUNID,
+                                                      survieUNID()))
+    })
+
+    # output$VaRUNID <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
+    #                                                input$kUNID,
+    #                                                VaRUNID()
+    # ))})
+    # output$TVaRUNID <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$",
+    #                                                 input$kUNID,
+    #                                                 TVaRUNID()
+    # ))})
+    # output$EspTronqUNID <- renderUI({withMathJax(sprintf("$$E[X \\times 1_{\\{X \\leqslant %s\\}}] = %.4f$$", 
+    #                                                     input$dUNID,
+    #                                                     EspTronqUNID()
+    # ))})
+    # 
+    # output$StopLossUNID <- renderUI({withMathJax(sprintf("$$ \\pi_{%s}(X) = %.4f$$", 
+    #                                                     input$dUNID,
+    #                                                     StopLossUNID()
+    # ))})
+    # 
+    # output$EspLimUNID <- renderUI({withMathJax(sprintf("$$E[\\text{min}(X;{%s})] = %.4f$$", 
+    #                                                   input$dUNID,
+    #                                                   EspLimUNID()
+    # ))})
+    # 
+    # output$ExcesMoyUNID <- renderUI({withMathJax(sprintf("$$e_{%s}(X) = %.4f$$", 
+    #                                                     input$dUNID,
+    #                                                     ExcesMoyUNID()
+    # ))})
     
 #### Loi Binomiale Négative Composée Serveur ####
     

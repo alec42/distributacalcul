@@ -777,6 +777,97 @@ tab_IG_UI <- tabItem(tabName = "IG",
                           )
 )
 
+#### Loi Uniforme Discrète UI ####
+tab_UNIC_UI <- tabItem(tabName = "UniformeC",
+                       fluidPage(
+                           titlePanel("Loi Uniforme"),
+                           withMathJax(),
+                           helpText("\\(X \\sim\\mathcal{U} \\ (a, b)\\)"),
+                           align = "center"
+                       ),
+                       
+                       fluidRow(
+                           column(width = 3,
+                                  box(title = "Paramètres",
+                                      status = "primary",
+                                      solidHeader = T,
+                                      width = NULL,
+                                      numericInput('aUNIC', '$$a$$', value = 1, min = 0, step = 1),
+                                      numericInput('bUNIC', '$$b$$', value = 2, min = 0, step = 1)
+                                  ),
+                                  align = "center"
+                           ),
+                           
+                           ## Moments
+                           column(width = 3,
+                                  tags$style(" * {font-size:20px}"), # grosseur du tezte
+                                  box(
+                                      title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
+                                      uiOutput("meanUNIC"),
+                                      uiOutput("varUNIC")
+                                  ),
+                                  align = "center"
+                                  # ,
+                                  
+                                  # box(
+                                  #     title = "Fonctions g", width = NULL, solidHeader = TRUE, status = "warning",
+                                  #     numericInput('dUNIC', withMathJax('$$d$$'), value = 0, width = "20px"),
+                                  #     # radioButtons('equalityNORM', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
+                                  #     uiOutput("EspTronqUNIC"),
+                                  #     uiOutput("EspLimUNIC"),
+                                  #     uiOutput("StopLossUNIC"),
+                                  #     uiOutput("ExcesMoyUNIC"),
+                                  #     align = "center")
+                           ),
+                           
+                           ## Fonctions
+                           column(width = 3,
+                                  box(
+                                      title = "Fonctions",
+                                      width = NULL,
+                                      solidHeader = TRUE,
+                                      tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
+                                      status = "danger", # pour couleur de la boite, diff couleur pour statut
+                                      numericInput('xUNIC', '$$x$$', min = 0, value = 0, step = 1),
+                                      uiOutput("densityUNIC"),
+                                      
+                                      tabBox(
+                                          width = NULL,
+                                          tabPanel("Répartition",
+                                                   uiOutput("repartUNIC")
+                                                   # ,
+                                                   # plotlyOutput("FxUNIC")
+                                          ),
+                                          tabPanel("Survie",
+                                                   uiOutput("survieUNIC")
+                                                   # ,
+                                                   # plotlyOutput("SxBETA")
+                                          )
+                                          
+                                      )
+                                  ),
+                                  align = "center"
+                                  
+                           ),
+
+                           column(width = 3,
+                                  boxPlus(
+                                      title = "Mesure de risques",
+                                      width = NULL,
+                                      solidHeader = TRUE,
+                                      status = "success",
+                                      closable = F,
+                                      tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
+                                      numericInput('kUNIC', '$$\\kappa$$', value = 0.99, step = 0.005),
+                                      uiOutput("VaRUNIC")
+                                      # ,uiOutput("TVaRUNIC")
+                                      ),
+
+                                  align = "center"
+                           )
+                       )
+)
+
 #### Loi Beta UI ----
 tab_BETA_UI <- tabItem(tabName = "Beta",
                         fluidRow(
@@ -1604,6 +1695,97 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                      )
 )
 
+
+#### Loi Uniforme Discrète UI ####
+tab_UNID_UI <- tabItem(tabName = "UniformeD",
+                      fluidPage(
+                          titlePanel("Loi Uniforme"),
+                          withMathJax(),
+                          helpText("\\(X \\sim\\mathcal{U} \\ (a, b)\\)"),
+                          align = "center"
+                      ),
+                      
+                      fluidRow(
+                          column(width = 3,
+                                 box(title = "Paramètres",
+                                     status = "primary",
+                                     solidHeader = T,
+                                     width = NULL,
+                                     numericInput('aUNID', '$$a$$', value = 1, min = 0, step = 1),
+                                     numericInput('bUNID', '$$b$$', value = 2, min = 0, step = 1)
+                                 ),
+                                 align = "center"
+                          ),
+                          
+                          ## Moments
+                          column(width = 3,
+                                 tags$style(" * {font-size:20px}"), # grosseur du tezte
+                                 box(
+                                     title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
+                                     uiOutput("meanUNID"),
+                                     uiOutput("varUNID")
+                                 ),
+                                 align = "center"
+                                 # ,
+                                 
+                                 # box(
+                                 #     title = "Fonctions g", width = NULL, solidHeader = TRUE, status = "warning",
+                                 #     numericInput('dUNID', withMathJax('$$d$$'), value = 0, width = "20px"),
+                                 #     # radioButtons('equalityNORM', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
+                                 #     uiOutput("EspTronqUNID"),
+                                 #     uiOutput("EspLimUNID"),
+                                 #     uiOutput("StopLossUNID"),
+                                 #     uiOutput("ExcesMoyUNID"),
+                                 #     align = "center")
+                          ),
+                          
+                          ## Fonctions
+                          column(width = 3,
+                                 box(
+                                     title = "Fonctions",
+                                     width = NULL,
+                                     solidHeader = TRUE,
+                                     tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
+                                     status = "danger", # pour couleur de la boite, diff couleur pour statut
+                                     numericInput('xUNID', '$$x$$', min = 0, value = 0, step = 1),
+                                     uiOutput("densityUNID"),
+                                     
+                                     tabBox(
+                                         width = NULL,
+                                         tabPanel("Répartition",
+                                                  uiOutput("repartUNID")
+                                                  # ,
+                                                  # plotlyOutput("FxUNID")
+                                         ),
+                                         tabPanel("Survie",
+                                                  uiOutput("survieUNID")
+                                                  # ,
+                                                  # plotlyOutput("SxBETA")
+                                         )
+                                         
+                                     )
+                                 ),
+                                 align = "center"
+                                 
+                          )
+                          # ,
+                          # 
+                          # column(width = 3,
+                          #        boxPlus(
+                          #            title = "Mesure de risques",
+                          #            width = NULL,
+                          #            solidHeader = TRUE,
+                          #            status = "success",
+                          #            closable = F,
+                          #            tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
+                          #            numericInput('kUNID', '$$\\kappa$$', value = 0.99, step = 0.005),
+                          #            uiOutput("VaRUNID"),
+                          #            uiOutput("TVaRUNID")),
+                          #        
+                          #        align = "center"
+                          # )
+                      )
+)
 
 #### Loi Binomiale Négative Composée UI ####
 {

@@ -46,6 +46,11 @@ myUI <- shinyUI({
                             tabName = "Burr"
                         ),
                         menuSubItem(
+                            "Loi Uniforme",
+                            # icon = icon("fish"),
+                            tabName = "UniformeC"
+                        ),
+                        menuSubItem(
                             "Beta",
                             icon = icon("behance"),
                             tabName = "Beta"
@@ -71,6 +76,11 @@ myUI <- shinyUI({
                     menuItem(
                         "Lois discrètes",
                         icon = icon("chart-bar"),
+                        menuSubItem(
+                            "Loi Uniforme",
+                            # icon = icon("fish"),
+                            tabName = "UniformeD"
+                        ),
                         menuSubItem(
                             "Loi Binomiale et Bernoulli",
                             tabName = "Binomiale",
@@ -155,12 +165,14 @@ myUI <- shinyUI({
                 tab_PARETO_UI,
                 tab_BURR_UI,
                 tab_LNORM_UI,
+                tab_UNIC_UI,
                 tab_BETA_UI,
                 tab_ERLANG_UI,
                 tab_LOGLOGIS_UI,
                 tab_IG_UI,
                 
                 ## Lois Discrètes
+                tab_UNID_UI,
                 tab_BIN_UI,
                 tab_BN_UI,
                 tab_POI_UI,
