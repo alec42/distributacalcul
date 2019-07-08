@@ -499,13 +499,12 @@ V_PCOMP <- function(rate, shape, lambda, distr_severity = "Gamma"){
     }
 }
 
-
 p_Pcomp <- function(x, lambda, shape, rate, ko = 300, distr_severity = "Gamma"){
     if(distr_severity == "Gamma"){
-        dpois(x = x, lambda = lambda) + sum(sapply(1:ko, function(k) dpois(x = k, lambda = lambda) * pgamma(q = x, shape = shape * k, rate = rate)))
+        (dpois(x = 0, lambda = lambda) + sum(sapply(1:ko, function(k) dpois(x = k, lambda = lambda) * pgamma(q = x, shape = shape * k, rate = rate))))
     } 
     else{
-        dpois(x = x, lambda = lambda) + sum(sapply(1:ko, function(k) dpois(x = k, lambda = lambda) * plnorm(q = x, meanlog = shape * k, sdlog = sqrt(rate))))
+        dpois(x = 0, lambda = lambda) + sum(sapply(1:ko, function(k) dpois(x = k, lambda = lambda) * plnorm(q = x, meanlog = shape * k, sdlog = sqrt(rate))))
     }
 }
 
