@@ -119,7 +119,24 @@ myserver <- function(input, output, session)
                 alpha = 0.7
             )
     })
-        
+      
+    output$QxNORM <- renderPlotly({
+      ggplot(data = data.frame(x = c(0,1)),
+      aes(x)) +
+        stat_function(fun = qnorm,
+                      args = list(mean = muNORM(),
+                                  sd = sqrt(sigma2NORM()))) +
+        ylab("f(x)") +        # Ne marche pas encore je suis en phase de test.
+        theme_classic() +
+        stat_function(
+          fun = qnorm,
+          args = list(mean = muNORM(), sd = sqrt(sigma2NORM())),
+          xlim = c(input$kNORM, 1),
+          geom = "area",
+          fill = "#50CB86",
+          alpha = 0.7
+        )
+    })
     
     
 #### Loi Gamma Serveur ####

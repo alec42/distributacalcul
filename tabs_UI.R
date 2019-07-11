@@ -98,7 +98,8 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
                         # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
                         numericInput('kNORM', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                         uiOutput("VaRNORM"),
-                        uiOutput("TVaRNORM")
+                        uiOutput("TVaRNORM"),
+                        plotlyOutput("QxNORM")
                     ),
                     align = "center"
                 )
