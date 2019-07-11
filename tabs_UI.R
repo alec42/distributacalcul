@@ -2,7 +2,8 @@
 tab_NORM_UI <- tabItem(tabName = "Normale",
         fluidRow(
             useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
-            titlePanel("Loi Normale"),
+            # titlePanel("Loi Normale"),
+            titlePanel(tags$a("Loi Normal",href="https://github.com/alec42/distributacalcul/wiki/Loi-Normal")),
             # withMathJax(),
             helpText("\\(X \\sim\\mathcal{Normale} \\ (\\mu, \\sigma^2)\\)"),
             align = "center"
