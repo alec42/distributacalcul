@@ -3,7 +3,7 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
         fluidRow(
             useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
             # titlePanel("Loi Normale"),
-            titlePanel(tags$a("Loi Normal",href="https://github.com/alec42/distributacalcul/wiki/Loi-Normal")),
+            titlePanel(tags$a("Loi Normal",href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Normal")),
             # withMathJax(),
             helpText("\\(X \\sim\\mathcal{Normale} \\ (\\mu, \\sigma^2)\\)"),
             align = "center"
@@ -113,7 +113,8 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
 tab_LNORM_UI <- tabItem(tabName = "Lognormale",
                        fluidRow(
                            useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
-                           titlePanel("Loi Lognormale"),
+                           # titlePanel("Loi Lognormale"),
+                           titlePanel(tags$a("Loi Lognormale",href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Lognormale")),
                            # withMathJax(),
                            helpText("\\(X \\sim\\mathcal{Lognormale} \\ (\\mu, \\sigma^2)\\)"),
                            align = "center"
@@ -782,7 +783,8 @@ tab_IG_UI <- tabItem(tabName = "IG",
 #### Loi Uniforme Discrète UI ####
 tab_UNIC_UI <- tabItem(tabName = "UniformeC",
                        fluidPage(
-                           titlePanel("Loi Uniforme"),
+                           # titlePanel("Loi Uniforme"),
+                           titlePanel(tags$a("Loi Uniforme",href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Uniforme")),
                            withMathJax(),
                            helpText("\\(X \\sim\\mathcal{U} \\ (a, b)\\)"),
                            align = "center"
