@@ -227,7 +227,7 @@ tab_GAMMA_UI <- tabItem(
         tabName = "gamma",
         fluidPage(
             tags$style("#loi_gamma {font-size:30px;}"),
-            textOutput("loi_gamma"),
+            uiOutput("loi_gamma"),
             withMathJax(),
             textOutput("distr_gamma"),
             radioGroupButtons(
@@ -780,11 +780,11 @@ tab_IG_UI <- tabItem(tabName = "IG",
                           )
 )
 
-#### Loi Uniforme Discrète UI ####
+#### Loi Uniforme Continue UI ####
 tab_UNIC_UI <- tabItem(tabName = "UniformeC",
                        fluidPage(
                            # titlePanel("Loi Uniforme"),
-                           titlePanel(tags$a("Loi Uniforme",href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Uniforme")),
+                           titlePanel(tags$a("Loi Uniforme",href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Uniforme-Continue")),
                            withMathJax(),
                            helpText("\\(X \\sim\\mathcal{U} \\ (a, b)\\)"),
                            align = "center"
@@ -1214,7 +1214,7 @@ tab_BIN_UI <- tabItem(tabName = "Binomiale",
 
          fluidPage(
              tags$style("#loi_BIN {font-size:30px;}"),
-             textOutput("loi_BIN"),
+             uiOutput("loi_BIN"),
              withMathJax(),
              textOutput("distr_BIN"),
              radioGroupButtons(
@@ -1703,7 +1703,7 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
 #### Loi Uniforme Discrète UI ####
 tab_UNID_UI <- tabItem(tabName = "UniformeD",
                       fluidPage(
-                          titlePanel("Loi Uniforme"),
+                          titlePanel(tags$a("Loi  Uniforme",href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Uniforme-Discr%C3%A8te")),
                           withMathJax(),
                           helpText("\\(X \\sim\\mathcal{U} \\ (a, b)\\)"),
                           align = "center"

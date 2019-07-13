@@ -264,11 +264,11 @@ myserver <- function(input, output, session)
         
         varianceGAMMA <- reactive({V_gamma(a = alphaGAMMA(), b = betaGAMMA())})
         
-        output$loi_gamma <- renderText({
+        output$loi_gamma <- renderUI({
             if(input$distrchoiceEXPOFAM == "Gamma")
                 "Loi Gamma"
             else if (input$distrchoiceEXPOFAM == "Exponentielle")
-                "Loi Exponentielle"
+                titlePanel(tags$a("Loi Exponentielle",href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Exponentielle"))
             else
                 "Loi Khi carré"
         })
@@ -1632,11 +1632,11 @@ myserver <- function(input, output, session)
         )
         
         
-        output$loi_BIN <- renderText({
+        output$loi_BIN <- renderUI({
             if(input$distrchoiceBINFAM == "Bernoulli")
-                "Loi Bernoulli"
+                titlePanel(tags$a("Loi Bernoulli",href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Bernoulli"))
             else
-                "Loi Binomiale"
+                titlePanel(tags$a("Loi Binomiale",href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Binomiale"))
         })
         
         output$distr_BIN <- renderText({
