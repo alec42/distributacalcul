@@ -1,5 +1,8 @@
 # Calculatrice de distributions
 
-Pour site voir: https://alec42.github.io/distributacalcul/
-
 Pour calculatrice voir: https://alec42.shinyapps.io/distributacalcul/
+
+Pour wiki de distributions voir: https://gitlab.com/alec42/distributacalcul-wiki/wikis/Home
+
+Pour site du projet voir: https://alec42.github.io/distributacalcul/
+
