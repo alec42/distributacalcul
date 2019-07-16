@@ -1,5 +1,35 @@
 myserver <- function(input, output, session) 
 {
+    shapeEXCESS_MEAN <- reactive({input$shapeEXCESS_MEAN})
+    rateEXCESS_MEAN <- reactive({input$rateEXCESS_MEAN})
+    
+    output$plotEXCESS_MEAN <- renderPlot({  
+        
+        # curve(Mexcess_gamma(d = x, a = shapeEXCESS_MEAN(), b = rateEXCESS_MEAN()))
+        # curve(Mexcess_pareto(d = x, alph = shapeEXCESS_MEAN(), lam = rateEXCESS_MEAN()), add = T)
+        x <- seq(0, 10, 1)
+        y1 <- Mexcess_gamma(d = x, a = shapeEXCESS_MEAN(), b = rateEXCESS_MEAN())
+        y2 <- Mexcess_pareto(d = x, alph = shapeEXCESS_MEAN(), lam = rateEXCESS_MEAN())
+        y3 <- Mexcess_norm(d = x, mu = shapeEXCESS_MEAN(), sig = rateEXCESS_MEAN())
+        ggplot(data.frame(x, y1, y2, y3), aes(x)) +          
+            geom_line(aes(y=y1), colour="red") +  
+            geom_line(aes(y=y2), colour="green") +
+            geom_line(aes(y=y3), colour="blue")
+        
+        # lines(year,chartData[[1]],col="aquamarine4",lwd=3)
+        # lines(year[2:12],na.omit(chartData[[2]]),col="firebrick3",lwd=3)
+        # abline(v=input$vertical,lty=2) 
+        # legend(2012,8,c("Real government spending","Real GDP"), 
+               # col=c('firebrick3','aquamarine4'),pch=15,ncol=1,bty ="n",cex=1.1)
+        
+        # if (input$hor) {
+            # abline(h=0)  
+        # } 
+    }
+    # ,height = 500, width = 600
+    )
+    
+    
 #### Loi Normale Serveur ####
         
     muNORM <- reactive({input$muNORM})

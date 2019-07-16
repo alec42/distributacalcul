@@ -127,6 +127,10 @@ myUI <- shinyUI({
                         )
                     ),
                     menuItem(
+                        "Outils",
+                        menuSubItem("Excès-Moyen", tabName = "excess_mean")
+                    ),
+                    menuItem(
                         "À propos",
                         icon = icon("info-circle"),
                         menuSubItem("Description du projet", tabName = "description", selected = T),
@@ -181,6 +185,7 @@ myUI <- shinyUI({
                 tab_BINCOMP_UI,
             
             ## À propos ----
+                tab_excess_mean,
                 tabItem(
                     tabName = "about",
                     h2("Nous contacter "),
@@ -218,18 +223,11 @@ myUI <- shinyUI({
                 p("Pour plus d'information sur le code utilisé pour créer le projet, voir le lien au GitHub du projet."),
                 align = "center"
                 ,fixedPanel(
-                    actionButton("test", label = "test"),
-                    right = 30,
-                    bottom = 30
+                    actionButton("test", label = "Questions?"),
+                    right = 40,
+                    bottom = 40
                 )
-                # ,material_button(input_id = "Test", depth = 5, color = "blue", label = "test")
-                # ,material_modal(
-                #     modal_id = "Test",
-                #     button_text = "Test",
-                #     button_icon = "open_in_browser",
-                #     title = "Questions, feedback, commentaires",
-                #     tags$p("Modal Content")
-                # )
+
                 
                 
             )

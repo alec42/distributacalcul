@@ -1,3 +1,41 @@
+tab_excess_mean <- tabItem(tabName = "excess_mean",
+                           
+                           fluidRow(
+                               titlePanel("Fonction d'excès-moyen"),
+                               # withMathJax(),
+                               # helpText("\\(X \\sim\\mathcal{Normale} \\ (\\mu, \\sigma^2)\\)"),
+                               align = "center"
+                           ),
+                           fluidRow(
+                               column(
+                                   width = 2,
+                                   boxPlus(
+                                       title = "Paramètres",
+                                       status = "primary",
+                                       solidHeader = T,
+                                       width = NULL,
+                                       closable = F,
+                                       numericInput('shapeEXCESS_MEAN', withMathJax('$$\\alpha$$'), value = 2),
+                                       numericInput('rateEXCESS_MEAN', '$$\\beta$$', value = 1)
+                                   ),
+                                   align = "center"
+                               ),
+                               column(
+                                   width = 10,
+                                   boxPlus(
+                                       title = "Plot",
+                                       status = "primary",
+                                       solidHeader = T,
+                                       width = NULL,
+                                       closable = F,
+                                       plotOutput("plotEXCESS_MEAN")
+                                   )
+                               )
+                               
+                           )
+                           
+                           )
+
 #### Loi Normale UI ----
 tab_NORM_UI <- tabItem(tabName = "Normale",
         fluidRow(
