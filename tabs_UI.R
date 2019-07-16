@@ -862,7 +862,7 @@ tab_UNIC_UI <- tabItem(tabName = "UniformeC",
                                       status = "success",
                                       closable = F,
                                       tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
-                                      numericInput('kUNIC', '$$\\kappa$$', value = 0.99, step = 0.005),
+                                      numericInput('kUNIC', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                       uiOutput("VaRUNIC")
                                       # ,uiOutput("TVaRUNIC")
                                       ),
@@ -1292,7 +1292,7 @@ tab_BIN_UI <- tabItem(tabName = "Binomiale",
                         status = "success",
                         closable = F,
                         tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
-                        numericInput('kBIN', '$$\\kappa$$', value = 0.99, step = 0.005),
+                        numericInput('kBIN', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                         uiOutput("VaRBIN"),
                         uiOutput("TVaRBIN")),
 
@@ -1505,7 +1505,7 @@ tab_POI_UI <- tabItem(tabName = "Poisson",
                                      status = "success",
                                      closable = F,
                                      tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
-                                     numericInput('kPOI', '$$\\kappa$$', value = 0.99, step = 0.005),
+                                     numericInput('kPOI', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                      uiOutput("VaRPOI"),
                                      uiOutput("TVaRPOI")),
 
@@ -1689,7 +1689,7 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                                     status = "success",
                                     closable = F,
                                     tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
-                                    numericInput('kLOGARITHMIQUE', '$$\\kappa$$', value = 0.99, step = 0.005),
+                                    numericInput('kLOGARITHMIQUE', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                     uiOutput("VaRLOGARITHMIQUE")
                                     # ,uiOutput("TVaRLOGARITHMIQUE")
                                     ),
@@ -1825,7 +1825,7 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
                     width = NULL,
                     numericInput('rBNCOMP', label = withMathJax('$$r$$'), value = 5),
                     numericInput('qBNCOMP', label = withMathJax('$$q$$'), min = 0, max = 1, step = .1, value = .5),
-                    numericInput('koBNCOMP', label = withMathJax('$$k_{0}$$'), value = 300, step = 100),
+                    numericInput('koBNCOMP', label = withMathJax('$$k_{0}$$'), value = 300, step = 100, min = 0, max = 1),
                     uiOutput("shapeBNCOMPUI"),
                     uiOutput("rateBNCOMPUI"),
                     switchInput(
@@ -1932,7 +1932,7 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
                     solidHeader = T,
                     width = NULL,
                     numericInput('lambdaPCOMP', label = withMathJax('$$\\lambda$$'), value = 5, min = 0),
-                    numericInput('koPCOMP', label = withMathJax('$$k_{0}$$'), value = 200, step = 100),
+                    numericInput('koPCOMP', label = withMathJax('$$k_{0}$$'), value = 200, step = 100, min = 0, max = 1),
                     uiOutput("shapePCOMPUI"),
                     uiOutput("ratePCOMPUI"),
                     switchInput(
@@ -2038,7 +2038,7 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
                     width = NULL,
                     numericInput('nBINCOMP', label = withMathJax('$$n$$'), value = 5),
                     numericInput('qBINCOMP', label = withMathJax('$$q$$'), min = 0, max = 1, step = .1, value = .5),
-                    numericInput('koBINCOMP', label = withMathJax('$$k_{0}$$'), value = 300, step = 100),
+                    numericInput('koBINCOMP', label = withMathJax('$$k_{0}$$'), value = 300, step = 100, min = 0, max = 1),
                     uiOutput("shapeBINCOMPUI"),
                     uiOutput("rateBINCOMPUI"),
                     switchInput(
