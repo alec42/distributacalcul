@@ -10,7 +10,9 @@ myserver <- function(input, output, session)
         
     repartNORM <- reactive({format(pnorm(input$xNORM, muNORM(), sqrt(sigma2NORM())), nsmall = 6)})
         
-    survieNORM <- reactive({format(pnorm(input$xNORM, muNORM(), sqrt(sigma2NORM()), lower.tail = F), nsmall = 6)})
+    survieNORM <- reactive({format(pnorm(input$xNORM, muNORM(), sqrt(sigma2NORM()), lower.tail = F),
+                                   nsmall = 6)
+    })
         
     VaRNORM <- reactive({format(VaR_norm(kappa = input$kNORM, mu = muNORM(), sig = sqrt(sigma2NORM())), nsmall = 6)})
         
@@ -117,7 +119,24 @@ myserver <- function(input, output, session)
                 alpha = 0.7
             )
     })
-        
+      
+    output$QxNORM <- renderPlotly({
+      ggplot(data = data.frame(x = c(0,1)),
+      aes(x)) +
+        stat_function(fun = qnorm,
+                      args = list(mean = muNORM(),
+                                  sd = sqrt(sigma2NORM()))) +
+        ylab("f(x)") +        # Ne marche pas encore je suis en phase de test.
+        theme_classic() +
+        stat_function(
+          fun = qnorm,
+          args = list(mean = muNORM(), sd = sqrt(sigma2NORM())),
+          xlim = c(input$kNORM, 1),
+          geom = "area",
+          fill = "#50CB86",
+          alpha = 0.7
+        )
+    })
     
     
 #### Loi Gamma Serveur ####
@@ -245,11 +264,11 @@ myserver <- function(input, output, session)
         
         varianceGAMMA <- reactive({V_gamma(a = alphaGAMMA(), b = betaGAMMA())})
         
-        output$loi_gamma <- renderText({
+        output$loi_gamma <- renderUI({
             if(input$distrchoiceEXPOFAM == "Gamma")
                 "Loi Gamma"
             else if (input$distrchoiceEXPOFAM == "Exponentielle")
-                "Loi Exponentielle"
+                titlePanel(tags$a("Loi Exponentielle",href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Exponentielle"))
             else
                 "Loi Khi carré"
         })
@@ -1483,6 +1502,102 @@ myserver <- function(input, output, session)
         
         # output$SxIG
         
+#### Loi Uniforme Discrète Serveur ####
+        
+        aUNIC <- reactive({input$aUNIC})
+        bUNIC <- reactive({input$bUNIC})
+        xUNIC <- reactive({input$xUNIC})
+        kUNIC <- reactive({input$kUNIC})
+        
+        
+        meanUNIC <- reactive({E_unif(a = aUNIC(), b = bUNIC())
+        })
+        
+        varUNIC <- reactive({
+            format(V_unif(a = aUNIC(), b = bUNIC()), 
+                   nsmall = 6)
+        })
+        
+        densityUNIC <- reactive({format(dunif(x = xUNIC(), min = aUNIC(), max = bUNIC()),
+                                        nsmall = 6)
+        })
+        
+        repartUNIC <- reactive({format(punif(q = xUNIC(), min = aUNIC(), max = bUNIC()), 
+                                       nsmall = 6)
+        })
+        
+        survieUNIC <- reactive({format(1 - punif(q = xUNIC(), min = aUNIC(), max = bUNIC()), 
+                                       nsmall = 6)
+        })
+        
+        VaRUNIC <- reactive({format(VaR_unif(kappa = kUNIC(), a = aUNIC(), b = bUNIC()),
+                                   nsmall = 6)
+        })
+# 
+#         TVaRUNIC <- reactive({format(TVaR_UNIC(kappa = input$kUNIC,
+#                                               lam = input$lamUNIC),
+#                                     nsmall = 6)
+#             })
+        
+        # EspTronqUNIC <- reactive({0})
+        
+        # StopLossUNIC <- reactive({0})
+        
+        # EspLimUNIC <- reactive({0})
+        
+        # ExcesMoyUNIC <- reactive({0})
+        
+        output$meanUNIC <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
+                                                         meanUNIC()
+        ))})
+        
+        output$varUNIC <- renderUI({withMathJax(sprintf("$$Var(X) = %s$$", 
+                                                        varUNIC()
+        ))})
+        
+        output$densityUNIC <- renderUI({withMathJax(sprintf("$$f_{X}(%s) = %s$$", 
+                                                            input$xUNIC,
+                                                            densityUNIC()
+        ))})
+        
+        output$repartUNIC <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$", 
+                                                           input$xUNIC,
+                                                           repartUNIC()
+        ))})
+        
+        output$survieUNIC <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
+                                                           input$xUNIC,
+                                                           survieUNIC()))
+        })
+        
+        output$VaRUNIC <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
+                                                       input$kUNIC,
+                                                       VaRUNIC()
+        ))})
+        # output$TVaRUNIC <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$",
+        #                                                 input$kUNIC,
+        #                                                 TVaRUNIC()
+        # ))})
+        # output$EspTronqUNIC <- renderUI({withMathJax(sprintf("$$E[X \\times 1_{\\{X \\leqslant %s\\}}] = %.4f$$", 
+        #                                                     input$dUNIC,
+        #                                                     EspTronqUNIC()
+        # ))})
+        # 
+        # output$StopLossUNIC <- renderUI({withMathJax(sprintf("$$ \\pi_{%s}(X) = %.4f$$", 
+        #                                                     input$dUNIC,
+        #                                                     StopLossUNIC()
+        # ))})
+        # 
+        # output$EspLimUNIC <- renderUI({withMathJax(sprintf("$$E[\\text{min}(X;{%s})] = %.4f$$", 
+        #                                                   input$dUNIC,
+        #                                                   EspLimUNIC()
+        # ))})
+        # 
+        # output$ExcesMoyUNIC <- renderUI({withMathJax(sprintf("$$e_{%s}(X) = %.4f$$", 
+        #                                                     input$dUNIC,
+        #                                                     ExcesMoyUNIC()
+        # ))})
+        
 #### Loi Binomiale Serveur ####
         nBIN <- reactive({input$nBIN})
         
@@ -1517,11 +1632,11 @@ myserver <- function(input, output, session)
         )
         
         
-        output$loi_BIN <- renderText({
+        output$loi_BIN <- renderUI({
             if(input$distrchoiceBINFAM == "Bernoulli")
-                "Loi Bernoulli"
+                titlePanel(tags$a("Loi Bernoulli",href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Bernoulli"))
             else
-                "Loi Binomiale"
+                titlePanel(tags$a("Loi Binomiale",href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Binomiale"))
         })
         
         output$distr_BIN <- renderText({
@@ -2058,6 +2173,101 @@ myserver <- function(input, output, session)
         
     # })
     
+#### Loi Uniforme Discrète Serveur ####
+    
+    aUNID <- reactive({input$aUNID})
+    bUNID <- reactive({input$bUNID})
+    xUNID <- reactive({input$xUNID})
+    
+    meanUNID <- reactive({E_unifD(a = aUNID(), b = bUNID())
+    })
+    
+    varUNID <- reactive({
+        format(V_unifD(a = aUNID(), b = bUNID()), 
+               nsmall = 6)
+    })
+    
+    densityUNID <- reactive({format(d_unifD(x = xUNID(), a = aUNID(), b = bUNID()),
+                                    nsmall = 6)
+    })
+    
+    repartUNID <- reactive({format(p_unifD(q = xUNID(), a = aUNID(), b = bUNID()), 
+                                   nsmall = 6)
+    })
+    
+    survieUNID <- reactive({format(1 - p_unifD(q = xUNID(), a = aUNID(), b = bUNID()), 
+                                   nsmall = 6)
+    })
+    
+    # VaRUNID <- reactive({format(qUNIDs(input$kUNID,
+    #                                  lambda = input$lamUNID),
+    #                            nsmall = 6)
+    # })
+    # 
+    # TVaRUNID <- reactive({format(TVaR_UNIDs(kappa = input$kUNID,
+    #                                       lam = input$lamUNID),
+    #                             nsmall = 6)
+    #     })
+    
+    # EspTronqUNID <- reactive({0})
+    
+    # StopLossUNID <- reactive({0})
+    
+    # EspLimUNID <- reactive({0})
+    
+    # ExcesMoyUNID <- reactive({0})
+    
+    output$meanUNID <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
+                                                    meanUNID()
+    ))})
+    
+    output$varUNID <- renderUI({withMathJax(sprintf("$$Var(X) = %s$$", 
+                                                   varUNID()
+    ))})
+    
+    output$densityUNID <- renderUI({withMathJax(sprintf("$$f_{X}(%s) = %s$$", 
+                                                       input$xUNID,
+                                                       densityUNID()
+    ))})
+    
+    output$repartUNID <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$", 
+                                                      input$xUNID,
+                                                      repartUNID()
+    ))})
+    
+    output$survieUNID <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
+                                                      input$xUNID,
+                                                      survieUNID()))
+    })
+
+    # output$VaRUNID <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
+    #                                                input$kUNID,
+    #                                                VaRUNID()
+    # ))})
+    # output$TVaRUNID <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$",
+    #                                                 input$kUNID,
+    #                                                 TVaRUNID()
+    # ))})
+    # output$EspTronqUNID <- renderUI({withMathJax(sprintf("$$E[X \\times 1_{\\{X \\leqslant %s\\}}] = %.4f$$", 
+    #                                                     input$dUNID,
+    #                                                     EspTronqUNID()
+    # ))})
+    # 
+    # output$StopLossUNID <- renderUI({withMathJax(sprintf("$$ \\pi_{%s}(X) = %.4f$$", 
+    #                                                     input$dUNID,
+    #                                                     StopLossUNID()
+    # ))})
+    # 
+    # output$EspLimUNID <- renderUI({withMathJax(sprintf("$$E[\\text{min}(X;{%s})] = %.4f$$", 
+    #                                                   input$dUNID,
+    #                                                   EspLimUNID()
+    # ))})
+    # 
+    # output$ExcesMoyUNID <- renderUI({withMathJax(sprintf("$$e_{%s}(X) = %.4f$$", 
+    #                                                     input$dUNID,
+    #                                                     ExcesMoyUNID()
+    # ))})
+    
 #### Loi Binomiale Négative Composée Serveur ####
     
     
@@ -2163,11 +2373,18 @@ myserver <- function(input, output, session)
                                               q = qBNCOMP(),
                                               shape = shapeBNCOMP(), 
                                               rate = rateBNCOMP(),
-                                              ko = koBNCOMP()), 
+                                              ko = koBNCOMP(),
+                                              distr_severity = input$severityBNCOMP), 
                                      nsmall = 6, scientific = F)
     })
     
-    # survieBNCOMP <- reactive({format(pBNCOMP(input$xBNCOMP, shapeBNCOMP(), rateBNCOMP(), lower.tail = F), nsmall = 6, scientific = F)})
+    survieBNCOMP <- reactive({format(1 - p_BNComp(x = xBNCOMP(), 
+                                                  r = rBNCOMP(),
+                                                  q = qBNCOMP(),
+                                                  shape = shapeBNCOMP(), 
+                                                  rate = rateBNCOMP(),
+                                                  ko = koBNCOMP(),
+                                                  distr_severity = input$severityBNCOMP), nsmall = 6, scientific = F)})
 
     VaRBNCOMP <- reactive({format(VaR_BNComp(k = kBNCOMP(), ko = koBNCOMP(),shape = shapeBNCOMP(), 
                                        rate  = rateBNCOMP(),
@@ -2187,20 +2404,31 @@ myserver <- function(input, output, session)
                                                r     = rBNCOMP(),
                                                q     = qBNCOMP(),
                                                vark  = varkBNCOMP(),
-                                               ko    = koBNCOMP()
+                                               ko    = koBNCOMP(),
+                                               distr_severity = input$severityBNCOMP
                                                ), 
                                    nsmall = 6)
     })
     
-    meanBNCOMP <- reactive({E_BNComp(shape = shapeBNCOMP(), 
+    meanBNCOMP <- reactive({format(E_BNComp(shape = shapeBNCOMP(), 
                                      rate  = rateBNCOMP(),
                                      r     = rBNCOMP(),
-                                     q     = qBNCOMP())})
+                                     q     = qBNCOMP(),
+                                     distr_severity = input$severityBNCOMP
+                                     ),
+                                   nsmall = 6,
+                                   scientific = F)
+    })
 
-    varianceBNCOMP <- reactive({V_BNComp(shape = shapeBNCOMP(), 
+    varianceBNCOMP <- reactive({format(V_BNComp(shape = shapeBNCOMP(), 
                                          rate  = rateBNCOMP(),
                                          r     = rBNCOMP(),
-                                         q     = qBNCOMP())})
+                                         q     = qBNCOMP(),
+                                         distr_severity = input$severityBNCOMP
+                                         ),
+                                       nsmall = 6,
+                                       scientific = F)
+    })
     
     output$loi_BNCOMP <- renderText({
             "Binomiale Négative Composée"
@@ -2215,9 +2443,9 @@ myserver <- function(input, output, session)
     
     
     output$distr_BNCOMP <- renderText({
-        if(input$distrchoiceEXPOFAM == "Gamma")
+        if(input$severityBNCOMP == "Gamma")
             "\\(X \\sim\\mathcal{BNComp}(r, q; F_B \\sim \\Gamma (\\alpha, \\beta))\\)"
-        else if (input$distrchoiceEXPOFAM == "Lognormale")
+        else if (input$severityBNCOMP == "Lognormale")
             "\\(X \\sim\\mathcal{BNComp}(r, q; F_B \\sim \\text{LN} (\\mu, \\sigma^2))\\)"
     })
     
@@ -2240,11 +2468,11 @@ myserver <- function(input, output, session)
                                                          repartBNCOMP()
     ))})
     
-    # output$survieBNCOMP <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
-    #                                                     input$xNORM,
-    #                                                     survieBNCOMP()))
-    # })
-    # 
+    output$survieBNCOMP <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
+                                                        input$xNORM,
+                                                        survieBNCOMP()))
+    })
+
     
     output$VaRBNCOMP <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$", 
                                                      kBNCOMP(),
@@ -2358,11 +2586,19 @@ myserver <- function(input, output, session)
                                             lambda = lambdaPCOMP(),
                                             shape = shapePCOMP(), 
                                             rate = ratePCOMP(),
-                                            ko = koPCOMP()), 
+                                            ko = koPCOMP(),
+                                            distr_severity = input$severityPCOMP), 
                                     nsmall = 6, scientific = F)
     })
     
-    # surviePCOMP <- reactive({format(pPCOMP(input$xPCOMP, shapePCOMP(), ratePCOMP(), lower.tail = F), nsmall = 6, scientific = F)})
+    surviePCOMP <- reactive({format(1 - p_Pcomp(x = xPCOMP(), 
+                                            lambda = lambdaPCOMP(),
+                                            shape = shapePCOMP(), 
+                                            rate = ratePCOMP(),
+                                            ko = koPCOMP(),
+                                            distr_severity = input$severityPCOMP), 
+                                    nsmall = 6, scientific = F)
+        })
     
     VaRPCOMP <- reactive({format(VaR_PComp(k = kPCOMP(), 
                                            ko = koPCOMP(), 
@@ -2371,22 +2607,35 @@ myserver <- function(input, output, session)
                                            lambda  = lambdaPCOMP()
     ), nsmall = 6)})
     
-    varkPCOMP <- reactive({VaR_PComp(k = kPCOMP(), ko = koPCOMP(), shape = shapePCOMP(), 
-                                      rate  = ratePCOMP(),
-                                      lambda     = lambdaPCOMP()
+    varkPCOMP <- reactive({VaR_PComp(k = kPCOMP(), 
+                                     ko = koPCOMP(),
+                                     shape = shapePCOMP(), 
+                                     rate  = ratePCOMP(),
+                                     lambda     = lambdaPCOMP()
     )})
     
     TVaRPCOMP <- reactive({format(TVaR_PComp(x = kPCOMP(),
                                              shape = shapePCOMP(), 
                                              rate  = ratePCOMP(),
                                              lamb = lambdaPCOMP(),
-                                               var  = varkPCOMP(),
-                                               ko    = koPCOMP()), nsmall = 6)
+                                               vark  = varkPCOMP(),
+                                               ko    = koPCOMP(),
+                                             distr_severity = input$severityPCOMP), nsmall = 6)
     })
     
-    meanPCOMP <- reactive({E_PCOMP(lambda = lambdaPCOMP(), shape = shapePCOMP(), rate = ratePCOMP())})
+    meanPCOMP <- reactive({format(E_PCOMP(lambda = lambdaPCOMP(), 
+                                          shape = shapePCOMP(), 
+                                          rate = ratePCOMP(),
+                                          distr_severity = input$severityPCOMP
+    ), 
+                                  nsmall = 6, 
+                                  scientific = F)
+    })
     
-    variancePCOMP <- reactive({V_PCOMP(lambda = lambdaPCOMP(), shape = shapePCOMP(), rate = ratePCOMP())})
+    variancePCOMP <- reactive({format(V_PCOMP(lambda = lambdaPCOMP(), shape = shapePCOMP(), rate = ratePCOMP()),
+                                      nsmall = 6,
+                                      scientific = F)
+    })
     
     output$loi_PCOMP <- renderText({
         "Poisson Composée"
@@ -2426,11 +2675,12 @@ myserver <- function(input, output, session)
                                                          repartPCOMP()
     ))})
     
-    # output$surviePCOMP <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
-    #                                                     input$xNORM,
-    #                                                     surviePCOMP()))
-    # })
-    # 
+    output$surviePCOMP <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
+                                                        input$xNORM,
+                                                        surviePCOMP())
+       )
+      })
+
     
     output$VaRPCOMP <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$", 
                                                       kPCOMP(),
@@ -2440,4 +2690,220 @@ myserver <- function(input, output, session)
                                                        kPCOMP(),
                                                        TVaRPCOMP()
     ))})
+#### Loi Binomiale Composée Serveur ####
+    
+    
+    xBINCOMP <- reactive({input$xBINCOMP})
+    nBINCOMP <- reactive({input$nBINCOMP})
+    qBINCOMP <- reactive({input$qBINCOMP})
+    koBINCOMP <- reactive({input$koBINCOMP})
+    kBINCOMP <- reactive({input$kBINCOMP})
+    
+    rateBINCOMP <- reactive({
+        if (input$distrchoiceGAMMA == T) {
+            input$rateBINCOMP
+        } else {
+            1 / input$rateBINCOMP
+        }
+    })
+    
+    shapeBINCOMP <- reactive({input$shapeBINCOMP})
+    
+    output$rateBINCOMPUI <- renderUI({
+        if (input$distrchoiceEXPOFAM == "Gamma") {
+            numericInput('rateBINCOMP', '$$\\beta$$', value = 1, min = 0)
+        } else {
+            numericInput('rateBINCOMP', '$$\\sigma^2$$', value = 1, min = 0)
+        }
+    })
+    
+    output$shapeBINCOMPUI <- renderUI({
+        if (input$distrchoiceEXPOFAM == "Gamma") {
+            numericInput('shapeBINCOMP', label = '$$\\alpha$$', value = 2, min = 0)
+        } else {
+            numericInput('shapeBINCOMP', '$$\\mu$$', value = 2, min = 0)
+        }
+        
+    })
+    
+    ## Ici on crée un gros observeEvent qui va modifier les paramètres de la BINCOMP/exponentielle/khi-carrée selon les 2 radio buttons:
+    ## x: selection de distribution
+    ## y: selection de si c'est fréquence ou échelle
+    observeEvent({
+        input$distrchoiceGAMMA
+        input$severityBINCOMP #liste des inputs à observer entre {}
+    },
+    {
+        y <- input$distrchoiceGAMMA
+        x <- input$severityBINCOMP
+        
+        updateNumericInput(session,
+                           "distrchoiceGAMMA",
+                           value =
+                               if (x == "Lognormale")
+                               {
+                                   y = T
+                               })
+        
+        # modification du beta
+        updateNumericInput(session,
+                           "rateBINCOMP",
+                           step =
+                               if (y == T) {
+                                   .1
+                               } else {
+                                   1
+                               },
+                           label = {
+                               if (x == "Lognormale")
+                               {
+                                   '$$\\sigma^2$$'
+                               }
+                               else{
+                                   '$$\\beta$$'
+                               }
+                           })
+        
+        # rend le paramètre impossible à modifier pour l'utilisateur
+        if (x == "Lognormale")
+        {
+            hide("distrchoiceGAMMA")
+        }
+        else
+        {
+            show("distrchoiceGAMMA")
+        }
+        
+        updateNumericInput(session, "shapeBINCOMP",
+                           label = {
+                               if (x == "Lognormale")
+                               {
+                                   '$$\\mu$$'
+                               }
+                               else{
+                                   '$$\\alpha$$'
+                               }
+                           }
+        )
+    })
+    
+    
+    # densityBINCOMP <- reactive({format(dBINCOMP(input$xBINCOMP, shapeBINCOMP(), rateBINCOMP()),scientific = F,  nsmall = 6)})
+    
+    repartBINCOMP <- reactive({format(p_BINComp(x = xBINCOMP(), 
+                                              n = nBINCOMP(),
+                                              q = qBINCOMP(),
+                                              shape = shapeBINCOMP(), 
+                                              rate = rateBINCOMP(),
+                                              ko = koBINCOMP(),
+                                              distr_severity = input$severityBINCOMP), 
+                                     nsmall = 6, scientific = F)
+    })
+    
+    survieBINCOMP <- reactive({format(1 - p_BINComp(x = xBINCOMP(), 
+                                                  n = nBINCOMP(),
+                                                  q = qBINCOMP(),
+                                                  shape = shapeBINCOMP(), 
+                                                  rate = rateBINCOMP(),
+                                                  ko = koBINCOMP(),
+                                                  distr_severity = input$severityBINCOMP), nsmall = 6, scientific = F)})
+    
+    VanBINCOMP <- reactive({format(VaR_BINComp(k = kBINCOMP(), ko = koBINCOMP(),shape = shapeBINCOMP(), 
+                                             rate  = rateBINCOMP(),
+                                             n     = nBINCOMP(),
+                                             q     = qBINCOMP()
+    ), nsmall = 6)})
+    
+    varkBINCOMP <- reactive({VaR_BINComp(k = kBINCOMP(), ko = koBINCOMP(),shape = shapeBINCOMP(), 
+                                       rate  = rateBINCOMP(),
+                                       n     = nBINCOMP(),
+                                       q     = qBINCOMP()
+    )})
+    
+    TVanBINCOMP <- reactive({format(TVaR_BINComp(x     = kBINCOMP(),
+                                               shape = shapeBINCOMP(), 
+                                               rate  = rateBINCOMP(),
+                                               n     = nBINCOMP(),
+                                               q     = qBINCOMP(),
+                                               vark  = varkBINCOMP(),
+                                               ko    = koBINCOMP(),
+                                               distr_severity = input$severityBINCOMP
+    ), 
+    nsmall = 6)
+    })
+    
+    meanBINCOMP <- reactive({format(E_BINComp(shape = shapeBINCOMP(), 
+                                            rate  = rateBINCOMP(),
+                                            n     = nBINCOMP(),
+                                            q     = qBINCOMP(),
+                                            distr_severity = input$severityBINCOMP
+    ),
+    nsmall = 6,
+    scientific = F)
+    })
+    
+    varianceBINCOMP <- reactive({format(V_BINComp(shape = shapeBINCOMP(), 
+                                                rate  = rateBINCOMP(),
+                                                n     = nBINCOMP(),
+                                                q     = qBINCOMP(),
+                                                distr_severity = input$severityBINCOMP
+    ),
+    nsmall = 6,
+    scientific = F)
+    })
+    
+    output$loi_BINCOMP <- renderText({
+        "Binomiale Composée"
+    })
+    
+    output$loi_BINCOMP_severity <- renderText({
+        if(input$distrchoiceEXPOFAM == "Gamma")
+            "Gamma"
+        else if (input$distrchoiceEXPOFAM == "Lognormale")
+            "Lognormale"
+    })
+    
+    
+    output$distr_BINCOMP <- renderText({
+        if(input$severityBINCOMP == "Gamma")
+            "\\(X \\sim\\text{BINComp}(r, q; F_B \\sim \\Gamma (\\alpha, \\beta))\\)"
+        else if (input$severityBINCOMP == "Lognormale")
+            "\\(X \\sim\\text{BINComp}(r, q; F_B \\sim \\text{LN} (\\mu, \\sigma^2))\\)"
+    })
+    
+    
+    output$meanBINCOMP <- renderUI({withMathJax(sprintf("$$E(X) = %s$$",
+                                                       meanBINCOMP()
+    ))})
+    
+    output$varianceBINCOMP <- renderUI({withMathJax(sprintf("$$Var(X) = %s$$",
+                                                           varianceBINCOMP()
+    ))})
+    
+    # output$densityBINCOMP <- renderUI({withMathJax(sprintf("$$f_{X}(%s) = %s$$", 
+    #                                                      input$xBINCOMP,
+    #                                                      densityBINCOMP()
+    # ))})
+    
+    output$repartBINCOMP <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$", 
+                                                         xBINCOMP(),
+                                                         repartBINCOMP()
+    ))})
+    
+    output$survieBINCOMP <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
+                                                         input$xNORM,
+                                                         survieBINCOMP()))
+    })
+    
+    
+    output$VanBINCOMP <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$", 
+                                                      kBINCOMP(),
+                                                      VanBINCOMP()
+    ))})
+    
+    output$TVanBINCOMP <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$", 
+                                                       kBINCOMP(),
+                                                       TVanBINCOMP()
+    ))})
+    
 }

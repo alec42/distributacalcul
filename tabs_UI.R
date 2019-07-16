@@ -2,7 +2,8 @@
 tab_NORM_UI <- tabItem(tabName = "Normale",
         fluidRow(
             useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
-            titlePanel("Loi Normale"),
+            # titlePanel("Loi Normale"),
+            titlePanel(tags$a("Loi Normal",href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Normal")),
             # withMathJax(),
             helpText("\\(X \\sim\\mathcal{Normale} \\ (\\mu, \\sigma^2)\\)"),
             align = "center"
@@ -98,7 +99,8 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
                         # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
                         numericInput('kNORM', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                         uiOutput("VaRNORM"),
-                        uiOutput("TVaRNORM")
+                        uiOutput("TVaRNORM"),
+                        plotlyOutput("QxNORM")
                     ),
                     align = "center"
                 )
@@ -111,7 +113,8 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
 tab_LNORM_UI <- tabItem(tabName = "Lognormale",
                        fluidRow(
                            useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
-                           titlePanel("Loi Lognormale"),
+                           # titlePanel("Loi Lognormale"),
+                           titlePanel(tags$a("Loi Lognormale",href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Lognormale")),
                            # withMathJax(),
                            helpText("\\(X \\sim\\mathcal{Lognormale} \\ (\\mu, \\sigma^2)\\)"),
                            align = "center"
@@ -224,7 +227,7 @@ tab_GAMMA_UI <- tabItem(
         tabName = "gamma",
         fluidPage(
             tags$style("#loi_gamma {font-size:30px;}"),
-            textOutput("loi_gamma"),
+            uiOutput("loi_gamma"),
             withMathJax(),
             textOutput("distr_gamma"),
             radioGroupButtons(
@@ -777,6 +780,98 @@ tab_IG_UI <- tabItem(tabName = "IG",
                           )
 )
 
+#### Loi Uniforme Continue UI ####
+tab_UNIC_UI <- tabItem(tabName = "UniformeC",
+                       fluidPage(
+                           # titlePanel("Loi Uniforme"),
+                           titlePanel(tags$a("Loi Uniforme",href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Uniforme-Continue")),
+                           withMathJax(),
+                           helpText("\\(X \\sim\\mathcal{U} \\ (a, b)\\)"),
+                           align = "center"
+                       ),
+                       
+                       fluidRow(
+                           column(width = 3,
+                                  box(title = "Paramètres",
+                                      status = "primary",
+                                      solidHeader = T,
+                                      width = NULL,
+                                      numericInput('aUNIC', '$$a$$', value = 1, min = 0, step = 1),
+                                      numericInput('bUNIC', '$$b$$', value = 2, min = 0, step = 1)
+                                  ),
+                                  align = "center"
+                           ),
+                           
+                           ## Moments
+                           column(width = 3,
+                                  tags$style(" * {font-size:20px}"), # grosseur du tezte
+                                  box(
+                                      title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
+                                      uiOutput("meanUNIC"),
+                                      uiOutput("varUNIC")
+                                  ),
+                                  align = "center"
+                                  # ,
+                                  
+                                  # box(
+                                  #     title = "Fonctions g", width = NULL, solidHeader = TRUE, status = "warning",
+                                  #     numericInput('dUNIC', withMathJax('$$d$$'), value = 0, width = "20px"),
+                                  #     # radioButtons('equalityNORM', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
+                                  #     uiOutput("EspTronqUNIC"),
+                                  #     uiOutput("EspLimUNIC"),
+                                  #     uiOutput("StopLossUNIC"),
+                                  #     uiOutput("ExcesMoyUNIC"),
+                                  #     align = "center")
+                           ),
+                           
+                           ## Fonctions
+                           column(width = 3,
+                                  box(
+                                      title = "Fonctions",
+                                      width = NULL,
+                                      solidHeader = TRUE,
+                                      tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
+                                      status = "danger", # pour couleur de la boite, diff couleur pour statut
+                                      numericInput('xUNIC', '$$x$$', min = 0, value = 0, step = 1),
+                                      uiOutput("densityUNIC"),
+                                      
+                                      tabBox(
+                                          width = NULL,
+                                          tabPanel("Répartition",
+                                                   uiOutput("repartUNIC")
+                                                   # ,
+                                                   # plotlyOutput("FxUNIC")
+                                          ),
+                                          tabPanel("Survie",
+                                                   uiOutput("survieUNIC")
+                                                   # ,
+                                                   # plotlyOutput("SxBETA")
+                                          )
+                                          
+                                      )
+                                  ),
+                                  align = "center"
+                                  
+                           ),
+
+                           column(width = 3,
+                                  boxPlus(
+                                      title = "Mesure de risques",
+                                      width = NULL,
+                                      solidHeader = TRUE,
+                                      status = "success",
+                                      closable = F,
+                                      tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
+                                      numericInput('kUNIC', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
+                                      uiOutput("VaRUNIC")
+                                      # ,uiOutput("TVaRUNIC")
+                                      ),
+
+                                  align = "center"
+                           )
+                       )
+)
+
 #### Loi Beta UI ----
 tab_BETA_UI <- tabItem(tabName = "Beta",
                         fluidRow(
@@ -1119,7 +1214,7 @@ tab_BIN_UI <- tabItem(tabName = "Binomiale",
 
          fluidPage(
              tags$style("#loi_BIN {font-size:30px;}"),
-             textOutput("loi_BIN"),
+             uiOutput("loi_BIN"),
              withMathJax(),
              textOutput("distr_BIN"),
              radioGroupButtons(
@@ -1197,7 +1292,7 @@ tab_BIN_UI <- tabItem(tabName = "Binomiale",
                         status = "success",
                         closable = F,
                         tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
-                        numericInput('kBIN', '$$\\kappa$$', value = 0.99, step = 0.005),
+                        numericInput('kBIN', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                         uiOutput("VaRBIN"),
                         uiOutput("TVaRBIN")),
 
@@ -1410,7 +1505,7 @@ tab_POI_UI <- tabItem(tabName = "Poisson",
                                      status = "success",
                                      closable = F,
                                      tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
-                                     numericInput('kPOI', '$$\\kappa$$', value = 0.99, step = 0.005),
+                                     numericInput('kPOI', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                      uiOutput("VaRPOI"),
                                      uiOutput("TVaRPOI")),
 
@@ -1594,7 +1689,7 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                                     status = "success",
                                     closable = F,
                                     tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
-                                    numericInput('kLOGARITHMIQUE', '$$\\kappa$$', value = 0.99, step = 0.005),
+                                    numericInput('kLOGARITHMIQUE', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                     uiOutput("VaRLOGARITHMIQUE")
                                     # ,uiOutput("TVaRLOGARITHMIQUE")
                                     ),
@@ -1604,6 +1699,97 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                      )
 )
 
+
+#### Loi Uniforme Discrète UI ####
+tab_UNID_UI <- tabItem(tabName = "UniformeD",
+                      fluidPage(
+                          titlePanel(tags$a("Loi  Uniforme",href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Uniforme-Discr%C3%A8te")),
+                          withMathJax(),
+                          helpText("\\(X \\sim\\mathcal{U} \\ (a, b)\\)"),
+                          align = "center"
+                      ),
+                      
+                      fluidRow(
+                          column(width = 3,
+                                 box(title = "Paramètres",
+                                     status = "primary",
+                                     solidHeader = T,
+                                     width = NULL,
+                                     numericInput('aUNID', '$$a$$', value = 1, min = 0, step = 1),
+                                     numericInput('bUNID', '$$b$$', value = 2, min = 0, step = 1)
+                                 ),
+                                 align = "center"
+                          ),
+                          
+                          ## Moments
+                          column(width = 3,
+                                 tags$style(" * {font-size:20px}"), # grosseur du tezte
+                                 box(
+                                     title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
+                                     uiOutput("meanUNID"),
+                                     uiOutput("varUNID")
+                                 ),
+                                 align = "center"
+                                 # ,
+                                 
+                                 # box(
+                                 #     title = "Fonctions g", width = NULL, solidHeader = TRUE, status = "warning",
+                                 #     numericInput('dUNID', withMathJax('$$d$$'), value = 0, width = "20px"),
+                                 #     # radioButtons('equalityNORM', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
+                                 #     uiOutput("EspTronqUNID"),
+                                 #     uiOutput("EspLimUNID"),
+                                 #     uiOutput("StopLossUNID"),
+                                 #     uiOutput("ExcesMoyUNID"),
+                                 #     align = "center")
+                          ),
+                          
+                          ## Fonctions
+                          column(width = 3,
+                                 box(
+                                     title = "Fonctions",
+                                     width = NULL,
+                                     solidHeader = TRUE,
+                                     tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
+                                     status = "danger", # pour couleur de la boite, diff couleur pour statut
+                                     numericInput('xUNID', '$$x$$', min = 0, value = 0, step = 1),
+                                     uiOutput("densityUNID"),
+                                     
+                                     tabBox(
+                                         width = NULL,
+                                         tabPanel("Répartition",
+                                                  uiOutput("repartUNID")
+                                                  # ,
+                                                  # plotlyOutput("FxUNID")
+                                         ),
+                                         tabPanel("Survie",
+                                                  uiOutput("survieUNID")
+                                                  # ,
+                                                  # plotlyOutput("SxBETA")
+                                         )
+                                         
+                                     )
+                                 ),
+                                 align = "center"
+                                 
+                          )
+                          # ,
+                          # 
+                          # column(width = 3,
+                          #        boxPlus(
+                          #            title = "Mesure de risques",
+                          #            width = NULL,
+                          #            solidHeader = TRUE,
+                          #            status = "success",
+                          #            closable = F,
+                          #            tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
+                          #            numericInput('kUNID', '$$\\kappa$$', value = 0.99, step = 0.005),
+                          #            uiOutput("VaRUNID"),
+                          #            uiOutput("TVaRUNID")),
+                          #        
+                          #        align = "center"
+                          # )
+                      )
+)
 
 #### Loi Binomiale Négative Composée UI ####
 {
@@ -1619,8 +1805,8 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
             radioGroupButtons(
                 inputId = "severityBNCOMP",
                 label = "",
-                choices = c("Gamma"
-                            #, "Lognormale"
+                choices = c("Gamma", 
+                            "Lognormale"
                             ),
                 status = "primary"
             ),
@@ -1639,7 +1825,7 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                     width = NULL,
                     numericInput('rBNCOMP', label = withMathJax('$$r$$'), value = 5),
                     numericInput('qBNCOMP', label = withMathJax('$$q$$'), min = 0, max = 1, step = .1, value = .5),
-                    numericInput('koBNCOMP', label = withMathJax('$$k_{0}$$'), value = 300, step = 100),
+                    numericInput('koBNCOMP', label = withMathJax('$$k_{0}$$'), value = 300, step = 100, min = 0, max = 1),
                     uiOutput("shapeBNCOMPUI"),
                     uiOutput("rateBNCOMPUI"),
                     switchInput(
@@ -1684,10 +1870,10 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                                  uiOutput("repartBNCOMP")
 
                         )
-                        # ,tabPanel("Survie",
-                        #          uiOutput("survieBNCOMP")
+                        ,tabPanel("Survie",
+                              uiOutput("survieBNCOMP")
 
-                        # )
+                        )
 
                     )
                 ),
@@ -1727,8 +1913,8 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
             radioGroupButtons(
                 inputId = "severityPCOMP",
                 label = "",
-                choices = c("Gamma"
-                            #, "Lognormale"
+                choices = c("Gamma", 
+                            "Lognormale"
                             ),
                 status = "primary"
             ),
@@ -1746,7 +1932,7 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                     solidHeader = T,
                     width = NULL,
                     numericInput('lambdaPCOMP', label = withMathJax('$$\\lambda$$'), value = 5, min = 0),
-                    numericInput('koPCOMP', label = withMathJax('$$k_{0}$$'), value = 200, step = 100),
+                    numericInput('koPCOMP', label = withMathJax('$$k_{0}$$'), value = 200, step = 100, min = 0, max = 1),
                     uiOutput("shapePCOMPUI"),
                     uiOutput("ratePCOMPUI"),
                     switchInput(
@@ -1788,11 +1974,10 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                         width = NULL,
                         tabPanel("Répartition",
                                  uiOutput("repartPCOMP")
+                        ),
+                        tabPanel("Survie",
+                                 uiOutput("surviePCOMP")
                         )
-                        # ,
-                        # tabPanel("Survie",
-                        #          uiOutput("surviePCOMP")
-                        # )
 
                     )
                 ),
@@ -1815,6 +2000,115 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                 align = "center"
             )
 
+        )
+    )
+}
+
+#### Loi Binomiale Négative Composée UI ####
+{
+    
+    tab_BINCOMP_UI <- tabItem(
+        tabName = "BINCOMP",
+        fluidPage(
+            tags$style("#loi_BINCOMP {font-size:30px;}"),
+            textOutput("loi_BINCOMP"),
+            withMathJax(),
+            textOutput("loi_BINCOMP_severity"),
+            textOutput("distr_BINCOMP"),
+            radioGroupButtons(
+                inputId = "severityBINCOMP",
+                label = "",
+                choices = c("Gamma", 
+                            "Lognormale"
+                ),
+                status = "primary"
+            ),
+            align = "center"
+        ),
+        
+        fluidRow(
+            
+            #### Paramètres BINCOMP ####
+            column(
+                width = 3,
+                box(
+                    title = "Paramètres",
+                    status = "primary",
+                    solidHeader = T,
+                    width = NULL,
+                    numericInput('nBINCOMP', label = withMathJax('$$n$$'), value = 5),
+                    numericInput('qBINCOMP', label = withMathJax('$$q$$'), min = 0, max = 1, step = .1, value = .5),
+                    numericInput('koBINCOMP', label = withMathJax('$$k_{0}$$'), value = 300, step = 100, min = 0, max = 1),
+                    uiOutput("shapeBINCOMPUI"),
+                    uiOutput("rateBINCOMPUI"),
+                    switchInput(
+                        inputId = "distrchoiceGAMMA",
+                        onLabel = "Fréquence (Rate)",
+                        offLabel = "Échelle (Scale)",
+                        value = T
+                    ),
+                    align = "center"
+                ),
+                align = "center"
+            ),
+            
+            #### Moments BINCOMP ####
+            column(
+                width = 3,
+                tags$style(" * {font-size:20px;}"), # grosseur du tezte
+                box(
+                    title = "Moments",
+                    width = NULL,
+                    solidHeader = TRUE,
+                    status = "warning",
+                    uiOutput("meanBINCOMP"),
+                    uiOutput("varianceBINCOMP")
+                ),
+                align = "center"
+            ),
+            
+            #### Fonctions BINCOMP ####
+            column(
+                width = 3,
+                box(
+                    title = "Fonctions",
+                    width = NULL,
+                    solidHeader = TRUE, # grosseur du tezte
+                    status = "danger", # couleur de la boite
+                    numericInput('xBINCOMP', '$$x$$', value = 10, min = 0),
+                    # uiOutput("densityBINCOMP"),
+                    tabBox(
+                        width = NULL,
+                        tabPanel("Répartition",
+                                 uiOutput("repartBINCOMP")
+                                 
+                        )
+                        ,tabPanel("Survie",
+                                  uiOutput("survieBINCOMP")
+                                  
+                        )
+                        
+                    )
+                ),
+                align = "center"
+            ),
+            
+            #### Mesures de risque BINCOMP ####
+            column(
+                width = 3,
+                boxPlus(
+                    title = "Mesure de risques",
+                    width = NULL,
+                    solidHeader = TRUE,
+                    closable = F,
+                    status = "success", # grosseur du tezte
+                    numericInput('kBINCOMP', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
+                    uiOutput("VanBINCOMP"),
+                    uiOutput("TVanBINCOMP")
+                ),
+                align = "center"
+            )
+            
         )
     )
 }

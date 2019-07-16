@@ -46,6 +46,11 @@ myUI <- shinyUI({
                             tabName = "Burr"
                         ),
                         menuSubItem(
+                            "Loi Uniforme",
+                            # icon = icon("fish"),
+                            tabName = "UniformeC"
+                        ),
+                        menuSubItem(
                             "Beta",
                             icon = icon("behance"),
                             tabName = "Beta"
@@ -71,6 +76,11 @@ myUI <- shinyUI({
                     menuItem(
                         "Lois discrètes",
                         icon = icon("chart-bar"),
+                        menuSubItem(
+                            "Loi Uniforme",
+                            # icon = icon("fish"),
+                            tabName = "UniformeD"
+                        ),
                         menuSubItem(
                             "Loi Binomiale et Bernoulli",
                             tabName = "Binomiale",
@@ -105,11 +115,11 @@ myUI <- shinyUI({
                             tabName = "BNCOMP"
                             # ,icon = icon("neos")
                         ),
-                        # menuSubItem(
-                        #     "Binomiale",
-                        #     tabName = "Normale",
-                        #     icon = icon("neos")
-                        # ),
+                        menuSubItem(
+                            "Binomiale",
+                            tabName = "BINCOMP"
+                            # ,icon = icon("neos")
+                        ),
                         menuSubItem(
                             "Poisson",
                             tabName = "PCOMP"
@@ -124,8 +134,7 @@ myUI <- shinyUI({
                             " Développeurs",
                             icon = icon("user-tie"),
                             tabName = "about"
-                        ),
-                        
+                        ),                      
                         menuSubItem("Plus d'informations", icon = icon("wikipedia-w"), href = "https://gitlab.com/alec42/distributacalcul-wiki/wikis/Home"),
                         menuSubItem(" GitHub", icon = icon("github"), href = "https://github.com/alec42/distributacalcul.git"),
                         menuSubItem(" Site du projet", icon = icon("compass"), href = "https://alec42.github.io/distributacalcul/")
@@ -136,7 +145,6 @@ myUI <- shinyUI({
               
         # corps de la page
         {dashboardBody(
-            
             
             tags$head(
                 tags$style(
@@ -153,12 +161,14 @@ myUI <- shinyUI({
                 tab_PARETO_UI,
                 tab_BURR_UI,
                 tab_LNORM_UI,
+                tab_UNIC_UI,
                 tab_BETA_UI,
                 tab_ERLANG_UI,
                 tab_LOGLOGIS_UI,
                 tab_IG_UI,
                 
                 ## Lois Discrètes
+                tab_UNID_UI,
                 tab_BIN_UI,
                 tab_BN_UI,
                 tab_POI_UI,
@@ -168,7 +178,7 @@ myUI <- shinyUI({
                 ## Lois composées
                 tab_BNCOMP_UI,
                 tab_PCOMP_UI,
-                # tab_BINCOMP_UI,
+                tab_BINCOMP_UI,
             
             ## À propos ----
                 tabItem(

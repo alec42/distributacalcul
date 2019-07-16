@@ -17,7 +17,6 @@ source(file = "myUI.R", local = T)
 source(file = "myserver.R")
 source(file = "functions.R")
 
-
 shinyApp(
     ui <- myUI,
     server <- myserver
