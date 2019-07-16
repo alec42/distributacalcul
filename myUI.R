@@ -119,13 +119,16 @@ myUI <- shinyUI({
                     menuItem(
                         "À propos",
                         icon = icon("info-circle"),
+                        menuSubItem("Description du projet", tabName = "description", selected = T),
                         menuSubItem(
                             " Développeurs",
                             icon = icon("user-tie"),
                             tabName = "about"
                         ),
-                        menuSubItem(" Site du projet", icon = icon("compass"), href = "https://alec42.github.io/distributacalcul/"),
-                        menuSubItem(" GitHub", icon = icon("github"), href = "https://github.com/alec42/distributacalcul.git")
+                        
+                        menuSubItem("Plus d'informations", icon = icon("wikipedia-w"), href = "https://gitlab.com/alec42/distributacalcul-wiki/wikis/Home"),
+                        menuSubItem(" GitHub", icon = icon("github"), href = "https://github.com/alec42/distributacalcul.git"),
+                        menuSubItem(" Site du projet", icon = icon("compass"), href = "https://alec42.github.io/distributacalcul/")
                     )
                 )
             )
@@ -197,7 +200,34 @@ myUI <- shinyUI({
                             subtitle = "marc-andre.devost.1@ulaval.ca"
                         )
                     )
+                ),
+            tabItem(
+                tabName = "description",
+                h1("Description du projet "),
+                p("Ce projet a comme but de simplifier la vie des étudiants en actuariat à l'Université Laval et est conçu pour les cours d'introduction à l'actuariat 2 et d'analyse probabiliste des risques actuariels."),
+                br(),
+                p("Le site inclut une 'calculatrice' de plusieurs paramètres, mesures de risques, moments, etc. pour plusieurs distributions. Également, on peut accéder à un wiki qui contient d'avantage d'information sur les diverses distributions; entre autres les formules pour les fonctions de densité, répartition, mesures de risques, etc. Ce wiki est crée grâce aux notes de cours des professeurs de l'école d'actuariat de l'Université Laval ainsi que les résumés de cours de ses élèves."),
+                br(),
+                p("Pour plus d'information sur les créateurs du projet voir l'onglet Dévelopeurs."),
+                br(),
+                p("Pour plus d'information sur le code utilisé pour créer le projet, voir le lien au GitHub du projet."),
+                align = "center"
+                ,fixedPanel(
+                    actionButton("test", label = "test"),
+                    right = 30,
+                    bottom = 30
                 )
+                # ,material_button(input_id = "Test", depth = 5, color = "blue", label = "test")
+                # ,material_modal(
+                #     modal_id = "Test",
+                #     button_text = "Test",
+                #     button_icon = "open_in_browser",
+                #     title = "Questions, feedback, commentaires",
+                #     tags$p("Modal Content")
+                # )
+                
+                
+            )
             
             )
         )
