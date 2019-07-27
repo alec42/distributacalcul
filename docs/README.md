@@ -6,3 +6,4 @@ Pour wiki de distributions voir: https://gitlab.com/alec42/distributacalcul-wiki
 
 Pour site du projet voir: https://alec42.github.io/distributacalcul/
 
+Pour le package en développement voir: https://github.com/alec42/distributacalcul_package
