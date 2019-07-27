@@ -1418,7 +1418,7 @@ myserver <- function(input, output, session)
                                      nsmall = 6)
         })
         
-        VaRIG <- reactive({format(VaR_IG(p = kIG(),
+        VaRIG <- reactive({format(VaR_IG(k = kIG(),
                                          mu = muIG(), 
                                          beta = betaIG()),
                                   nsmall = 6)
@@ -2428,7 +2428,7 @@ myserver <- function(input, output, session)
                                        q     = qBNCOMP()
                                        )})
     
-    TVaRBNCOMP <- reactive({format(TVaR_BNComp(x     = kBNCOMP(),
+    TVaRBNCOMP <- reactive({format(TVaR_BNComp(k     = kBNCOMP(),
                                                shape = shapeBNCOMP(), 
                                                rate  = rateBNCOMP(),
                                                r     = rBNCOMP(),
@@ -2644,7 +2644,7 @@ myserver <- function(input, output, session)
                                      lambda     = lambdaPCOMP()
     )})
     
-    TVaRPCOMP <- reactive({format(TVaR_PComp(x = kPCOMP(),
+    TVaRPCOMP <- reactive({format(TVaR_PComp(k = kPCOMP(),
                                              shape = shapePCOMP(), 
                                              rate  = ratePCOMP(),
                                              lamb = lambdaPCOMP(),
@@ -2850,7 +2850,7 @@ myserver <- function(input, output, session)
                                        q     = qBINCOMP()
     )})
     
-    TVanBINCOMP <- reactive({format(TVaR_BINComp(x     = kBINCOMP(),
+    TVanBINCOMP <- reactive({format(TVaR_BINComp(k    = kBINCOMP(),
                                                shape = shapeBINCOMP(), 
                                                rate  = rateBINCOMP(),
                                                n     = nBINCOMP(),
