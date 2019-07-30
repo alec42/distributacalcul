@@ -225,7 +225,10 @@ myUI <- shinyUI({
                 ),
             tabItem(
                 tabName = "description",
-                h1("Description du projet"),
+                h1("Distributacalcul"),
+                h3("À propos du projet"),
+                align = "center",
+                
                 accordion(
                     accordionItem(
                         id = 1,
@@ -233,11 +236,11 @@ myUI <- shinyUI({
                         color = "danger",
                         collapsible = F,
                         collapsed = F,
-                        "Ce projet a comme but de simplifier la vie des étudiants en actuariat à l'Université Laval et est conçu pour les cours d'introduction à l'actuariat 2 et d'analyse probabiliste des risques actuariels.",
+                        "Ce projet a comme but de simplifier la vie des étudiants en actuariat à l'Université Laval et est conçu particulièrement pour les cours d'introduction à l'actuariat 2 et d'analyse probabiliste des risques actuariels.",
                         br(),
-                        "Le site inclut une 'calculatrice' de plusieurs paramètres, mesures de risques, moments, etc. pour plusieurs distributions.",
+                        "Le site inclut une 'calculatrice' de plusieurs fonctions, mesures de risques, moments, etc. pour plusieurs distributions discrètes, continues et composées.",
                         br(),
-                        "Également, on peut accéder à un wiki qui contient d'avantage d'information sur les diverses distributions; entre autres les formules pour les fonctions de densité, répartition, mesures de risques, etc.",
+                        "Également, on peut accéder à un wiki qui contient davantage d'information sur les diverses distributions. Entre autres, il contient les formules pour les fonctions de densité, répartition, mesures de risques, etc.",
                         align = "left"
                     ),
                     accordionItem(
@@ -245,25 +248,32 @@ myUI <- shinyUI({
                         title = "Remerciements",
                         color = "info",
                         collapsed = F,
-                        "Cette calculatrice est crée grâce à l'enseignment des professeurs de l'école d'actuariat de l'Université Laval et les notes de ses cours. Particulièrement, un gros merci à Étienne Marceau et Hélène Cossette.",
+                        "Ce projet est crée grâce à l'enseignement des professeurs de l'école d'actuariat de l'Université Laval et les notes de ses cours. Particulièrement, aux professeurs des cours de probabilités Étienne Marceau et Hélène Cossette et des cours d'informatique Vincent Goulet.",
                         br(),
-                        "Un gros merci à tous ceux qui nous ont donné des suggestions, commentaires, reccomendations, etc. sans qui cette calculatrice n'aurait pas plus être réalisée.",
+                        "Un gros merci à tous ceux qui nous ont donné des suggestions, commentaires, avis, etc. sans qui ce projet ne serait pas proche de ce qu'il l'est aujourd'hui.",
                         br(),
-                        "Un gros merci à ceux ayant fournis des résumés de cours, des notes et des explications pour aider à compléter le wiki. Particulièrement, un gros merci à Jean-Christophe Langlois et Mathieu Rhéaume."
+                        "Un gros merci à ceux ayant fourni des résumés de cours, des notes et des explications pour aider à compléter le wiki. Particulièrement, un gros merci à Jean-Christophe Langlois.",
+                        align = "left"
                     ),
+                    accordionItem(
+                        id = 2,
+                        title = "État du projet",
+                        color = "warning",
+                        collapsed = F,
+                        "Ce projet de calculatrice est encore en développement et le sera sûrement pour toujours. Si vous êtes intéressés à y contribuer, contacter-nous afin qu'on puisse collaborer!",
+                        align = "left"),
                     accordionItem(
                         id = 3,
                         title = "Liens",
                         color = "warning",
                         collapsible = F,
                         collapsed = F,
-                        "Pour plus d'information sur les créateurs du projet, voir l'onglet Dévelopeurs.",
+                        "Pour plus de détails sur le code du projet, voir le lien vers le GitHub.",
                         br(),
-                        "Pour plus d'information sur le code du projet, voir le lien vers le GitHub du projet.",
+                        "Pour plus d'information sur les packages utilisés pour le projet, voir cette page (À VENIR) du wiki",
                         br(),
-                        "Pour plus d'information sur les packages utilisé pour le projet, voir cette page du wiki",
-                        br(),
-                        "Pour nous faire part de commentaires, suggestions, questions, ou quoi autre SVP nous contacter"
+                        "Pour nous faire part de tout feed-back (erreurs, commentaires, suggestions, questions...) SVP nous contacter!",
+                        align = "left"
                     )
                 )
                 ,fixedPanel(

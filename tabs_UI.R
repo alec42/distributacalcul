@@ -18,6 +18,16 @@ tab_excess_mean <- tabItem(tabName = "excess_mean",
                                        numericInput('shapeEXCESS_MEAN', withMathJax('$$\\alpha$$'), value = 2),
                                        numericInput('rateEXCESS_MEAN', '$$\\beta$$', value = 1)
                                    ),
+                                   boxPlus(
+                                       title = "Distributions",
+                                       status = "primary",
+                                       solidHeader = T,
+                                       width = NULL,
+                                       closable = F,
+                                       uiOutput("gammaEXCESS_MEAN"),
+                                       uiOutput("paretoEXCESS_MEAN"),
+                                       uiOutput("normXCESS_MEAN"),
+                                   ),
                                    align = "center"
                                ),
                                column(

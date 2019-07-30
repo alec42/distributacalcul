@@ -3,6 +3,11 @@ myserver <- function(input, output, session)
     shapeEXCESS_MEAN <- reactive({input$shapeEXCESS_MEAN})
     rateEXCESS_MEAN <- reactive({input$rateEXCESS_MEAN})
     
+    output$gammaEXCESS_MEAN <- renderUI({withMathJax(sprintf("$$e_X(d) = %s$$", 
+                                                     muNORM()))
+    })
+    
+    
     output$plotEXCESS_MEAN <- renderPlot({  
         
         # curve(Mexcess_gamma(d = x, a = shapeEXCESS_MEAN(), b = rateEXCESS_MEAN()))
