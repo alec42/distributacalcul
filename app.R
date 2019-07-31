@@ -10,7 +10,7 @@
     library(shinyWidgets)
     library(shinyjs)
     library(tvarPackage)
-    library(shinymaterial)
+    # library(shinymaterial)
     # library(dashboardthemes)
 } 
 source(file = "myUI.R", local = T)

@@ -3,7 +3,18 @@ source('tabs_UI.R')
 myUI <- shinyUI({
     dashboardPage(
         skin = "blue", 
-        dashboardHeader(title = "Lois de probabilité", titleWidth = "275px"),
+        dashboardHeader(
+            title = "Lois de probabilité",
+            titleWidth = "275px",
+            tags$li(class = "dropdown",
+                a(actionButton(
+                    inputId = "email1",
+                    label = "Nous contacter",
+                    icon = icon("envelope", lib = "font-awesome")
+                ),
+                href = "mailto:alec.van-rassel.1@ulaval.ca"
+                ))
+        ),             
         
         # Paneau Latéral
         {
@@ -127,6 +138,11 @@ myUI <- shinyUI({
                         )
                     ),
                     menuItem(
+                        "Outils",
+                        icon = icon("wrench"),
+                        menuSubItem("Excès-Moyen", tabName = "excess_mean")
+                    ),
+                    menuItem(
                         "À propos",
                         icon = icon("info-circle"),
                         menuSubItem("Description du projet", tabName = "description", selected = T),
@@ -135,7 +151,7 @@ myUI <- shinyUI({
                             icon = icon("user-tie"),
                             tabName = "about"
                         ),                      
-                        menuSubItem("Plus d'informations", icon = icon("wikipedia-w"), href = "https://gitlab.com/alec42/distributacalcul-wiki/wikis/Home"),
+                        menuSubItem("Théorie et formules", icon = icon("wikipedia-w"), href = "https://gitlab.com/alec42/distributacalcul-wiki/wikis/Home"),
                         menuSubItem(" GitHub", icon = icon("github"), href = "https://github.com/alec42/distributacalcul.git"),
                         menuSubItem(" Site du projet", icon = icon("compass"), href = "https://alec42.github.io/distributacalcul/")
                     )
@@ -147,6 +163,7 @@ myUI <- shinyUI({
         {dashboardBody(
             
             tags$head(
+                
                 tags$style(
                     type = "text/css",
                     "label{ display: table-cell; text-align: center; vertical-align: center; width: 50px; font-size: 13pt} .form-group { display: table-row;}"
@@ -181,6 +198,7 @@ myUI <- shinyUI({
                 tab_BINCOMP_UI,
             
             ## À propos ----
+                tab_excess_mean,
                 tabItem(
                     tabName = "about",
                     h2("Nous contacter "),
@@ -208,28 +226,67 @@ myUI <- shinyUI({
                 ),
             tabItem(
                 tabName = "description",
-                h1("Description du projet "),
-                p("Ce projet a comme but de simplifier la vie des étudiants en actuariat à l'Université Laval et est conçu pour les cours d'introduction à l'actuariat 2 et d'analyse probabiliste des risques actuariels."),
-                br(),
-                p("Le site inclut une 'calculatrice' de plusieurs paramètres, mesures de risques, moments, etc. pour plusieurs distributions. Également, on peut accéder à un wiki qui contient d'avantage d'information sur les diverses distributions; entre autres les formules pour les fonctions de densité, répartition, mesures de risques, etc. Ce wiki est crée grâce aux notes de cours des professeurs de l'école d'actuariat de l'Université Laval ainsi que les résumés de cours de ses élèves."),
-                br(),
-                p("Pour plus d'information sur les créateurs du projet voir l'onglet Dévelopeurs."),
-                br(),
-                p("Pour plus d'information sur le code utilisé pour créer le projet, voir le lien au GitHub du projet."),
-                align = "center"
-                ,fixedPanel(
-                    actionButton("test", label = "test"),
-                    right = 30,
-                    bottom = 30
+                h1("Distributacalcul"),
+                h3("À propos du projet"),
+                align = "center",
+                
+                accordion(
+                    accordionItem(
+                        id = 1,
+                        title = "But du projet",
+                        color = "danger",
+                        collapsible = F,
+                        collapsed = F,
+                        "Ce projet a comme but de simplifier la vie des étudiants en actuariat à l'Université Laval et est conçu particulièrement pour les cours d'introduction à l'actuariat 2 et d'analyse probabiliste des risques actuariels.",
+                        br(),
+                        "Le site inclut une 'calculatrice' de plusieurs fonctions, mesures de risques, moments, etc. pour plusieurs distributions discrètes, continues et composées.",
+                        br(),
+                        "Également en développement est un onglet d'outils qui pour l'instant contient l'ébauche d'une graphique de fonctions d'excès-moyen pour plusieurs distributions.",
+                        br(),
+                        "Également, on peut accéder à un wiki qui contient davantage d'information sur les diverses distributions. Entre autres, il contient les formules pour les fonctions de densité, répartition, mesures de risques, etc.",
+                        align = "left"
+                    ),
+                    accordionItem(
+                        id = 2,
+                        title = "État du projet",
+                        color = "warning",
+                        collapsed = F,
+                        "Ce projet de calculatrice est encore en développement et le sera sûrement pour toujours. Si vous êtes intéressés à y contribuer, contacter-nous afin qu'on puisse collaborer!",
+                        align = "left"),
+                    accordionItem(
+                        id = 2,
+                        title = "Remerciements",
+                        color = "info",
+                        collapsed = F,
+                        "Ce projet est crée grâce à l'enseignement des professeurs de l'école d'actuariat de l'Université Laval et les notes de ses cours. Particulièrement, aux professeurs des cours de probabilités Étienne Marceau et Hélène Cossette et des cours d'informatique Vincent Goulet.",
+                        br(),
+                        "Un gros merci à tous ceux qui nous ont donné des suggestions, commentaires, avis, etc. sans qui ce projet ne serait pas proche de ce qu'il l'est aujourd'hui.",
+                        br(),
+                        "Un gros merci à ceux ayant fourni des résumés de cours, des notes et des explications pour aider à faire le wiki. Particulièrement, un gros merci à Jean-Christophe Langlois.",
+                        align = "left"
+                    ),
+                    accordionItem(
+                        id = 3,
+                        title = "Liens",
+                        color = "warning",
+                        collapsible = F,
+                        collapsed = F,
+                        "Pour plus de détails sur le code du projet, voir le lien vers le GitHub.",
+                        br(),
+                        "Pour plus d'information sur les packages utilisés pour le projet, voir cette page (À VENIR) du wiki",
+                        br(),
+                        "Pour nous faire part de tout feed-back (erreurs, commentaires, suggestions, questions...) SVP nous contacter!",
+                        align = "left"
+                    )
                 )
-                # ,material_button(input_id = "Test", depth = 5, color = "blue", label = "test")
-                # ,material_modal(
-                #     modal_id = "Test",
-                #     button_text = "Test",
-                #     button_icon = "open_in_browser",
-                #     title = "Questions, feedback, commentaires",
-                #     tags$p("Modal Content")
-                # )
+                ,fixedPanel(
+                    a(actionButton(inputId = "email1", label = "Nous contacter", 
+                                   icon = icon("envelope", lib = "font-awesome")),
+                      href="mailto:alec.van-rassel.1@ulaval.ca"),
+                    right = 40,
+                    bottom = 40
+                )
+
                 
                 
             )

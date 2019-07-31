@@ -1,5 +1,80 @@
 myserver <- function(input, output, session) 
 {
+    shapeEXCESS_MEAN <- reactive({input$shapeEXCESS_MEAN})
+    rateEXCESS_MEAN <- reactive({input$rateEXCESS_MEAN})
+    
+    # output$gammaEXCESS_MEAN <- renderUI({withMathJax(sprintf("$$e_X(d) = \\frac{%s}{%s}\\frac{\\bar{H}(d; %s + 1, %s)}{\\bar{H}(d; %s, %s)} - d$$", 
+    #                                                          shapeEXCESS_MEAN(),
+    #                                                          rateEXCESS_MEAN(),
+    #                                                          shapeEXCESS_MEAN(),
+    #                                                          rateEXCESS_MEAN(),
+    #                                                          shapeEXCESS_MEAN(),
+    #                                                          rateEXCESS_MEAN()
+    # ))
+    # })
+    
+    output$gammaEXCESS_MEAN <- renderUI({withMathJax(sprintf("$$\\Gamma(\\alpha = %s, \\beta = %s)$$", 
+                                                             shapeEXCESS_MEAN(),
+                                                             rateEXCESS_MEAN()
+    ))
+    })
+    output$paretoEXCESS_MEAN <- renderUI({withMathJax(sprintf("$$\\text{Pa}(\\alpha = %s, \\lambda = %s)$$", 
+                                                             shapeEXCESS_MEAN(),
+                                                             rateEXCESS_MEAN()
+    ))
+    })
+    output$normEXCESS_MEAN <- renderUI({withMathJax(sprintf("$$\\mathcal{N}(\\mu = %s, \\sigma = %s)$$", 
+                                                             shapeEXCESS_MEAN(),
+                                                             rateEXCESS_MEAN()
+    ))
+    })
+    # output$lnormEXCESS_MEAN <- renderUI({withMathJax(sprintf("$$\\mathcal{LN}(\\mu = %s, \\sigma = %s)$$", 
+    #                                                         shapeEXCESS_MEAN(),
+    #                                                         rateEXCESS_MEAN()
+    # ))
+    # })
+    
+    output$weibullEXCESS_MEAN <- renderUI({withMathJax(sprintf("$$\\text{Wei}(\\tau = %s, \\beta= %s)$$", 
+                                                             shapeEXCESS_MEAN(),
+                                                             rateEXCESS_MEAN()
+    ))
+    })
+    
+    output$plotEXCESS_MEAN <- renderPlot({  
+        
+        # curve(Mexcess_gamma(d = x, a = shapeEXCESS_MEAN(), b = rateEXCESS_MEAN()))
+        # curve(Mexcess_pareto(d = x, alph = shapeEXCESS_MEAN(), lam = rateEXCESS_MEAN()), add = T)
+        x <- seq(0, 10, 1)
+        y1 <- Mexcess_gamma(d = x, a = shapeEXCESS_MEAN(), b = rateEXCESS_MEAN())
+        y2 <- Mexcess_pareto(d = x, alph = shapeEXCESS_MEAN(), lam = rateEXCESS_MEAN())
+        y3 <- Mexcess_norm(d = x, mu = shapeEXCESS_MEAN(), sig = rateEXCESS_MEAN())
+        # y4 <- Mexcess_lnorm(d = x, mu = shapeEXCESS_MEAN(), sig = rateEXCESS_MEAN())
+        y5 <- Mexcess_weibull(d = x, tau = shapeEXCESS_MEAN(), beta = rateEXCESS_MEAN())
+        ggplot(data.frame(x, y1, y2, y3), aes(x)) +          
+            geom_line(aes(y=y1), colour="red") +  
+            geom_line(aes(y=y2), colour="green") +
+            geom_line(aes(y=y3), colour="blue") + 
+            # geom_line(aes(y=y4), colour="orange")
+            geom_line(aes(y=y5), colour="purple") 
+        
+        
+        
+        # lines(year,chartData[[1]],col="aquamarine4",lwd=3)
+        # lines(year[2:12],na.omit(chartData[[2]]),col="firebrick3",lwd=3)
+        # abline(v=input$vertical,lty=2) 
+        # legend(2012,8,c("Real government spending","Real GDP"), 
+               # col=c('firebrick3','aquamarine4'),pch=15,ncol=1,bty ="n",cex=1.1)
+        
+        # if (input$hor) {
+            # abline(h=0)  
+        # } 
+    }
+    # ,height = 500, width = 600
+    )
+    
+    output$descriptionEXCESS_MEAN <- renderText({"Embauche d'outil pour observer la fonction d'excès-moyen pour plusieurs distributions. À travailler après que je comprends mieux la Lognormale et Weibull."})
+    
+    
 #### Loi Normale Serveur ####
         
     muNORM <- reactive({input$muNORM})
@@ -1388,7 +1463,7 @@ myserver <- function(input, output, session)
                                      nsmall = 6)
         })
         
-        VaRIG <- reactive({format(VaR_IG(p = kIG(),
+        VaRIG <- reactive({format(VaR_IG(k = kIG(),
                                          mu = muIG(), 
                                          beta = betaIG()),
                                   nsmall = 6)
@@ -2398,7 +2473,7 @@ myserver <- function(input, output, session)
                                        q     = qBNCOMP()
                                        )})
     
-    TVaRBNCOMP <- reactive({format(TVaR_BNComp(x     = kBNCOMP(),
+    TVaRBNCOMP <- reactive({format(TVaR_BNComp(k     = kBNCOMP(),
                                                shape = shapeBNCOMP(), 
                                                rate  = rateBNCOMP(),
                                                r     = rBNCOMP(),
@@ -2614,7 +2689,7 @@ myserver <- function(input, output, session)
                                      lambda     = lambdaPCOMP()
     )})
     
-    TVaRPCOMP <- reactive({format(TVaR_PComp(x = kPCOMP(),
+    TVaRPCOMP <- reactive({format(TVaR_PComp(k = kPCOMP(),
                                              shape = shapePCOMP(), 
                                              rate  = ratePCOMP(),
                                              lamb = lambdaPCOMP(),
@@ -2820,7 +2895,7 @@ myserver <- function(input, output, session)
                                        q     = qBINCOMP()
     )})
     
-    TVanBINCOMP <- reactive({format(TVaR_BINComp(x     = kBINCOMP(),
+    TVanBINCOMP <- reactive({format(TVaR_BINComp(k    = kBINCOMP(),
                                                shape = shapeBINCOMP(), 
                                                rate  = rateBINCOMP(),
                                                n     = nBINCOMP(),

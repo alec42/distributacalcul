@@ -1,9 +1,75 @@
+tab_excess_mean <- tabItem(tabName = "excess_mean",
+                           
+                           fluidRow(
+                               titlePanel("Fonction d'excès-moyen"),
+                               # withMathJax(),
+                               # helpText("\\(X \\sim\\mathcal{Normale} \\ (\\mu, \\sigma^2)\\)"),
+                               align = "center"
+                           ),
+                           fluidRow(
+                               column(
+                                   width = 2,
+                                   boxPlus(
+                                       title = "Paramètres",
+                                       status = "primary",
+                                       solidHeader = T,
+                                       width = NULL,
+                                       closable = F,
+                                       numericInput('shapeEXCESS_MEAN', withMathJax('$$\\alpha$$'), value = 2),
+                                       numericInput('rateEXCESS_MEAN', '$$\\beta$$', value = 1)
+                                   ),
+                                   boxPlus(
+                                       title = "Distributions",
+                                       status = "primary",
+                                       solidHeader = T,
+                                       width = NULL,
+                                       closable = F,
+                                       uiOutput("gammaEXCESS_MEAN"),
+                                       tags$head(tags$style("#gammaEXCESS_MEAN{color: red}")),
+                                       uiOutput("paretoEXCESS_MEAN"),
+                                       tags$head(tags$style("#paretoEXCESS_MEAN{color: green}")),
+                                       uiOutput("normEXCESS_MEAN"),
+                                       tags$head(tags$style("#normEXCESS_MEAN{color: blue}")),
+                                       # uiOutput("lnormEXCESS_MEAN"),
+                                       # tags$head(tags$style("#lnormEXCESS_MEAN{color: orange}"))
+                                       uiOutput("weibullEXCESS_MEAN"),
+                                       tags$head(tags$style("#weibullEXCESS_MEAN{color: purple}"))
+                                   ),
+                                   align = "center"
+                               ),
+                               column(
+                                   width = 10,
+                                   boxPlus(
+                                       title = "Plot",
+                                       status = "primary",
+                                       solidHeader = T,
+                                       width = NULL,
+                                       closable = F,
+                                       plotOutput("plotEXCESS_MEAN")
+                                   )
+                               )
+                               
+                           ),
+                           fluidRow(
+                               boxPlus(
+                                   title = "Description",
+                                   status = "primary",
+                                   solidHeader = T,
+                                   width = NULL,
+                                   closable = F,
+                                   collapsible = T,
+                                   collapsed = T,
+                                   textOutput("descriptionEXCESS_MEAN")
+                               )
+                           )
+                           )
+
 #### Loi Normale UI ----
 tab_NORM_UI <- tabItem(tabName = "Normale",
         fluidRow(
             useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
             # titlePanel("Loi Normale"),
-            titlePanel(tags$a("Loi Normal",href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Normal")),
+            titlePanel(tags$a("Loi Normale",href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Normal")),
             # withMathJax(),
             helpText("\\(X \\sim\\mathcal{Normale} \\ (\\mu, \\sigma^2)\\)"),
             align = "center"
@@ -233,7 +299,7 @@ tab_GAMMA_UI <- tabItem(
             radioGroupButtons(
                 inputId = "distrchoiceEXPOFAM",
                 label = "",
-                choices = c("Gamma", "Exponentielle", "Khi carré"),
+                choices = c("Exponentielle", "Gamma", "Khi carré"),
                 status = "primary"
             ),
             align = "center"

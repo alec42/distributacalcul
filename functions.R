@@ -391,10 +391,11 @@ Etronq_IG <- function(d, mu, beta = dispersion * mu^2, dispersion = beta / mu^2)
                   sqrt(1 / (beta * d)))
 }
 
-VaR_IG <- function(p, mu, beta = dispersion * mu^2, dispersion = beta / mu^2)
+VaR_IG <- function(k, mu, beta = dispersion * mu^2, dispersion = beta / mu^2)
 {
-    qinvgauss(p = p, mean = mu, dispersion = dispersion)
+    qinvgauss(p = k, mean = mu, dispersion = dispersion)
 }
+
 
 TVaR_IG <- function(k, vark, mu, beta = dispersion * mu^2, dispersion = beta / mu^2)
 {
@@ -517,19 +518,19 @@ VaR_PComp <- function(k, ko = 300, lambda, shape, rate, distr_severity = "Gamma"
 }
 
 
-TVaR_PComp <- function(x, lamb, ko = 300, shape, rate, vark, distr_severity = "Gamma")
+TVaR_PComp <- function(k, lamb, ko = 300, shape, rate, vark, distr_severity = "Gamma")
 {
     if (vark == 0)
     {
-        E_PCOMP(rate = rate, shape = shape, lambda = lamb, distr_severity = distr_severity) / (1 - x)
+        E_PCOMP(rate = rate, shape = shape, lambda = lamb, distr_severity = distr_severity) / (1 - k)
     }
     else if (distr_severity == "Gamma")
     {
-        sum(sapply(1:ko, function(k) dpois(x = k, lambda = lamb) * (shape * k )/rate * pgamma(q = vark, shape = shape * k + 1, rate = rate, lower.tail = F)))/(1 - x)
+        sum(sapply(1:ko, function(k) dpois(x = k, lambda = lamb) * (shape * k )/rate * pgamma(q = vark, shape = shape * k + 1, rate = rate, lower.tail = F)))/(1 - k)
     }
     else
     {
-        sum(sapply(1:ko, function(k) dpois(x = k, lambda = lamb) * (shape * k )/rate * plnorm(q = vark, meanlog = shape * k + 1, sdlog = sqrt(rate), lower.tail = F)))/(1 - x)
+        sum(sapply(1:ko, function(k) dpois(x = k, lambda = lamb) * (shape * k )/rate * plnorm(q = vark, meanlog = shape * k + 1, sdlog = sqrt(rate), lower.tail = F)))/(1 - k)
     }
     
 }
@@ -577,19 +578,19 @@ VaR_BNComp <- function(k, ko = 300, r, q, shape, rate, distr_severity = "Gamma")
         optimize(function(i) abs(p_BNComp(i, r = r, q = q, ko = ko, shape = shape, rate = rate) - k), c(0, ko))$minimum
 }
 
-TVaR_BNComp <- function(x, shape, rate, r, q, vark, ko, distr_severity = "Gamma"){
+TVaR_BNComp <- function(k, shape, rate, r, q, vark, ko, distr_severity = "Gamma"){
     
     if (vark == 0)
     {
-        E_BNComp(r = r, q = q, shape = shape, rate = rate, distr_severity = distr_severity) / (1 - x)
+        E_BNComp(r = r, q = q, shape = shape, rate = rate, distr_severity = distr_severity) / (1 - k)
     }
     else if (distr_severity == "Gamma")
     {
-        (sum(sapply(1:ko, function(i) dnbinom(x = i, size = r, prob = q) * (shape / rate) * pgamma(q = vark, shape = shape * i + 1, rate = rate, lower.tail = F))) / (1 - x))
+        (sum(sapply(1:ko, function(i) dnbinom(x = i, size = r, prob = q) * (shape / rate) * pgamma(q = vark, shape = shape * i + 1, rate = rate, lower.tail = F))) / (1 - k))
     }
-    else
+    else if (distr_severity == "Lognormale")
     {
-        (sum(sapply(1:ko, function(i) dnbinom(x = i, size = r, prob = q) * (shape / rate) * plnorm(q = vark, meanlog = shape * i + 1, sdlog = sqrt(rate), lower.tail = F))) / (1 - x))
+        (sum(sapply(1:ko, function(i) dnbinom(x = i, size = r, prob = q) * (shape / rate) * plnorm(q = vark, meanlog = shape * i + 1, sdlog = sqrt(rate), lower.tail = F))) / (1 - k))
     }
 }
 #### Bin Composée ####
@@ -637,19 +638,19 @@ VaR_BINComp <- function(k, ko = 300, n, q, shape, rate, distr_severity = "Gamma"
 }
 
 
-TVaR_BINComp <- function(x, shape, rate, n, q, vark, ko, distr_severity = "Gamma"){
+TVaR_BINComp <- function(k, shape, rate, n, q, vark, ko, distr_severity = "Gamma"){
     
     if (vark == 0)
     {
-        E_BINComp(n = n, q = q, shape = shape, rate = rate, distr_severity = distr_severity) / (1 - x)
+        E_BINComp(n = n, q = q, shape = shape, rate = rate, distr_severity = distr_severity) / (1 - k)
     }
     else if (distr_severity == "Gamma")
     {
-        (sum(sapply(1:ko, function(i) dbinom(x = i, size = n, prob = q) * (shape * i / rate) * pgamma(q = vark, shape = shape * i + 1, rate = rate, lower.tail = F))) / (1 - x))
+        (sum(sapply(1:ko, function(i) dbinom(x = i, size = n, prob = q) * (shape * i / rate) * pgamma(q = vark, shape = shape * i + 1, rate = rate, lower.tail = F))) / (1 - k))
     }
-    else
+    else if (distr_severity == "Lognormale")
     {
-        (sum(sapply(1:ko, function(i) dbinom(x = i, size = n, prob = q) * (shape * i / rate) * plnorm(q = vark, meanlog = shape * i + 1, sdlog = sqrt(rate), lower.tail = F))) / (1 - x))
+        (sum(sapply(1:ko, function(i) dbinom(x = i, size = n, prob = q) * (shape * i / rate) * plnorm(q = vark, meanlog = shape * i + 1, sdlog = sqrt(rate), lower.tail = F))) / (1 - k))
     }
 }
 
