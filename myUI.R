@@ -139,6 +139,7 @@ myUI <- shinyUI({
                     ),
                     menuItem(
                         "Outils",
+                        icon = icon("wrench"),
                         menuSubItem("Excès-Moyen", tabName = "excess_mean")
                     ),
                     menuItem(
@@ -240,19 +241,9 @@ myUI <- shinyUI({
                         br(),
                         "Le site inclut une 'calculatrice' de plusieurs fonctions, mesures de risques, moments, etc. pour plusieurs distributions discrètes, continues et composées.",
                         br(),
+                        "Également en développement est un onglet d'outils qui pour l'instant contient l'ébauche d'une graphique de fonctions d'excès-moyen pour plusieurs distributions.",
+                        br(),
                         "Également, on peut accéder à un wiki qui contient davantage d'information sur les diverses distributions. Entre autres, il contient les formules pour les fonctions de densité, répartition, mesures de risques, etc.",
-                        align = "left"
-                    ),
-                    accordionItem(
-                        id = 2,
-                        title = "Remerciements",
-                        color = "info",
-                        collapsed = F,
-                        "Ce projet est crée grâce à l'enseignement des professeurs de l'école d'actuariat de l'Université Laval et les notes de ses cours. Particulièrement, aux professeurs des cours de probabilités Étienne Marceau et Hélène Cossette et des cours d'informatique Vincent Goulet.",
-                        br(),
-                        "Un gros merci à tous ceux qui nous ont donné des suggestions, commentaires, avis, etc. sans qui ce projet ne serait pas proche de ce qu'il l'est aujourd'hui.",
-                        br(),
-                        "Un gros merci à ceux ayant fourni des résumés de cours, des notes et des explications pour aider à compléter le wiki. Particulièrement, un gros merci à Jean-Christophe Langlois.",
                         align = "left"
                     ),
                     accordionItem(
@@ -262,6 +253,18 @@ myUI <- shinyUI({
                         collapsed = F,
                         "Ce projet de calculatrice est encore en développement et le sera sûrement pour toujours. Si vous êtes intéressés à y contribuer, contacter-nous afin qu'on puisse collaborer!",
                         align = "left"),
+                    accordionItem(
+                        id = 2,
+                        title = "Remerciements",
+                        color = "info",
+                        collapsed = F,
+                        "Ce projet est crée grâce à l'enseignement des professeurs de l'école d'actuariat de l'Université Laval et les notes de ses cours. Particulièrement, aux professeurs des cours de probabilités Étienne Marceau et Hélène Cossette et des cours d'informatique Vincent Goulet.",
+                        br(),
+                        "Un gros merci à tous ceux qui nous ont donné des suggestions, commentaires, avis, etc. sans qui ce projet ne serait pas proche de ce qu'il l'est aujourd'hui.",
+                        br(),
+                        "Un gros merci à ceux ayant fourni des résumés de cours, des notes et des explications pour aider à faire le wiki. Particulièrement, un gros merci à Jean-Christophe Langlois.",
+                        align = "left"
+                    ),
                     accordionItem(
                         id = 3,
                         title = "Liens",

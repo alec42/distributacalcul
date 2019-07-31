@@ -3,10 +3,42 @@ myserver <- function(input, output, session)
     shapeEXCESS_MEAN <- reactive({input$shapeEXCESS_MEAN})
     rateEXCESS_MEAN <- reactive({input$rateEXCESS_MEAN})
     
-    output$gammaEXCESS_MEAN <- renderUI({withMathJax(sprintf("$$e_X(d) = %s$$", 
-                                                     muNORM()))
-    })
+    # output$gammaEXCESS_MEAN <- renderUI({withMathJax(sprintf("$$e_X(d) = \\frac{%s}{%s}\\frac{\\bar{H}(d; %s + 1, %s)}{\\bar{H}(d; %s, %s)} - d$$", 
+    #                                                          shapeEXCESS_MEAN(),
+    #                                                          rateEXCESS_MEAN(),
+    #                                                          shapeEXCESS_MEAN(),
+    #                                                          rateEXCESS_MEAN(),
+    #                                                          shapeEXCESS_MEAN(),
+    #                                                          rateEXCESS_MEAN()
+    # ))
+    # })
     
+    output$gammaEXCESS_MEAN <- renderUI({withMathJax(sprintf("$$\\Gamma(\\alpha = %s, \\beta = %s)$$", 
+                                                             shapeEXCESS_MEAN(),
+                                                             rateEXCESS_MEAN()
+    ))
+    })
+    output$paretoEXCESS_MEAN <- renderUI({withMathJax(sprintf("$$\\text{Pa}(\\alpha = %s, \\lambda = %s)$$", 
+                                                             shapeEXCESS_MEAN(),
+                                                             rateEXCESS_MEAN()
+    ))
+    })
+    output$normEXCESS_MEAN <- renderUI({withMathJax(sprintf("$$\\mathcal{N}(\\mu = %s, \\sigma = %s)$$", 
+                                                             shapeEXCESS_MEAN(),
+                                                             rateEXCESS_MEAN()
+    ))
+    })
+    # output$lnormEXCESS_MEAN <- renderUI({withMathJax(sprintf("$$\\mathcal{LN}(\\mu = %s, \\sigma = %s)$$", 
+    #                                                         shapeEXCESS_MEAN(),
+    #                                                         rateEXCESS_MEAN()
+    # ))
+    # })
+    
+    output$weibullEXCESS_MEAN <- renderUI({withMathJax(sprintf("$$\\text{Wei}(\\tau = %s, \\beta= %s)$$", 
+                                                             shapeEXCESS_MEAN(),
+                                                             rateEXCESS_MEAN()
+    ))
+    })
     
     output$plotEXCESS_MEAN <- renderPlot({  
         
@@ -16,10 +48,16 @@ myserver <- function(input, output, session)
         y1 <- Mexcess_gamma(d = x, a = shapeEXCESS_MEAN(), b = rateEXCESS_MEAN())
         y2 <- Mexcess_pareto(d = x, alph = shapeEXCESS_MEAN(), lam = rateEXCESS_MEAN())
         y3 <- Mexcess_norm(d = x, mu = shapeEXCESS_MEAN(), sig = rateEXCESS_MEAN())
+        # y4 <- Mexcess_lnorm(d = x, mu = shapeEXCESS_MEAN(), sig = rateEXCESS_MEAN())
+        y5 <- Mexcess_weibull(d = x, tau = shapeEXCESS_MEAN(), beta = rateEXCESS_MEAN())
         ggplot(data.frame(x, y1, y2, y3), aes(x)) +          
             geom_line(aes(y=y1), colour="red") +  
             geom_line(aes(y=y2), colour="green") +
-            geom_line(aes(y=y3), colour="blue")
+            geom_line(aes(y=y3), colour="blue") + 
+            # geom_line(aes(y=y4), colour="orange")
+            geom_line(aes(y=y5), colour="purple") 
+        
+        
         
         # lines(year,chartData[[1]],col="aquamarine4",lwd=3)
         # lines(year[2:12],na.omit(chartData[[2]]),col="firebrick3",lwd=3)
@@ -33,6 +71,8 @@ myserver <- function(input, output, session)
     }
     # ,height = 500, width = 600
     )
+    
+    output$descriptionEXCESS_MEAN <- renderText({"Embauche d'outil pour observer la fonction d'excès-moyen pour plusieurs distributions. À travailler après que je comprends mieux la Lognormale et Weibull."})
     
     
 #### Loi Normale Serveur ####

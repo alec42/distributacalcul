@@ -25,8 +25,15 @@ tab_excess_mean <- tabItem(tabName = "excess_mean",
                                        width = NULL,
                                        closable = F,
                                        uiOutput("gammaEXCESS_MEAN"),
+                                       tags$head(tags$style("#gammaEXCESS_MEAN{color: red}")),
                                        uiOutput("paretoEXCESS_MEAN"),
-                                       uiOutput("normXCESS_MEAN"),
+                                       tags$head(tags$style("#paretoEXCESS_MEAN{color: green}")),
+                                       uiOutput("normEXCESS_MEAN"),
+                                       tags$head(tags$style("#normEXCESS_MEAN{color: blue}")),
+                                       # uiOutput("lnormEXCESS_MEAN"),
+                                       # tags$head(tags$style("#lnormEXCESS_MEAN{color: orange}"))
+                                       uiOutput("weibullEXCESS_MEAN"),
+                                       tags$head(tags$style("#weibullEXCESS_MEAN{color: purple}"))
                                    ),
                                    align = "center"
                                ),
@@ -42,8 +49,19 @@ tab_excess_mean <- tabItem(tabName = "excess_mean",
                                    )
                                )
                                
+                           ),
+                           fluidRow(
+                               boxPlus(
+                                   title = "Description",
+                                   status = "primary",
+                                   solidHeader = T,
+                                   width = NULL,
+                                   closable = F,
+                                   collapsible = T,
+                                   collapsed = T,
+                                   textOutput("descriptionEXCESS_MEAN")
+                               )
                            )
-                           
                            )
 
 #### Loi Normale UI ----
