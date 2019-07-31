@@ -72,7 +72,7 @@ myserver <- function(input, output, session)
     # ,height = 500, width = 600
     )
     
-    output$descriptionEXCESS_MEAN <- renderText({"Embauche d'outil pour observer la fonction d'excès-moyen pour plusieurs distributions. À travailler après que je comprends mieux la Lognormale et Weibull."})
+    output$descriptionEXCESS_MEAN <- renderText({"Ébauche d'outil pour observer la fonction d'excès-moyen pour plusieurs distributions. À travailler après que je comprends mieux les distributions Lognormale et Weibull."})
     
     
 #### Loi Normale Serveur ####
