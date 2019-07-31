@@ -58,7 +58,7 @@ tab_excess_mean <- tabItem(tabName = "excess_mean",
                                    width = NULL,
                                    closable = F,
                                    collapsible = T,
-                                   collapsed = T,
+                                   collapsed = F,
                                    textOutput("descriptionEXCESS_MEAN")
                                )
                            )
