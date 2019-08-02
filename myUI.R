@@ -140,7 +140,10 @@ myUI <- shinyUI({
                     menuItem(
                         "Outils",
                         icon = icon("wrench"),
-                        menuSubItem("Excès-Moyen", tabName = "excess_mean")
+                        menuSubItem("Excès-Moyen", tabName = "excess_mean"),
+                        menuSubItem("Test d'hypothèse T", href = "https://casertamarco.shinyapps.io/power/"),
+                        menuSubItem("Tests statistiques", tabName = "stat_tests")
+                        
                     ),
                     menuItem(
                         "À propos",
@@ -196,9 +199,14 @@ myUI <- shinyUI({
                 tab_BNCOMP_UI,
                 tab_PCOMP_UI,
                 tab_BINCOMP_UI,
+                
+                ## Outils
+                
+                tab_excess_mean,
+                stat_tests,
             
             ## À propos ----
-                tab_excess_mean,
+                
                 tabItem(
                     tabName = "about",
                     h2("Nous contacter "),

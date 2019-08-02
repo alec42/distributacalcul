@@ -1,3 +1,52 @@
+stat_tests <- tabItem(tabName = "stat_tests",
+                      
+                      fluidRow(
+                          titlePanel("Tests statistiques"),
+                          # withMathJax(),
+                          align = "center"
+                      ),
+                      fluidRow(
+                          # withMathJax(),
+                          column(
+                              width = 8,
+                              boxPlus(
+                                  withMathJax(),
+                                  title = "$$\\mathcal{H}_0$$",
+                                  status = "primary",
+                                  solidHeader = T,
+                                  width = NULL,
+                                  closable = F,
+                                  selectInput("paramESTIM_STATTOOL", "Variable à estimer", list("$$\\mu$$", "$$\\sigma^2$$", "$$p$$", "$$\\theta$$")),
+                                  selectInput("borneSTIM_STATTOOL", "", list("$$\\ge$$" = "GE", "$$\\gt$$" = "GT", "$$\\le$$" = "LE", "$$\\lt$$" = "LT","$$\\ne$$" = "NE", "$$=$$" = "E"), selected = "LE"),
+                                  numericInput("valueESTIM_STATTOOL", "$$a$$", value = 0, min = 0, step = 1)
+                                  
+                              ),
+                              boxPlus(
+                                  title = "Hypothèses",
+                                  status = "primary",
+                                  solidHeader = T,
+                                  width = NULL,
+                                  closable = F
+                              )
+                              # ,align = "center"
+                          ),
+                          column(
+                              width = 4,
+                              boxPlus(
+                                  title = "Hypothèses",
+                                  withMathJax(),
+                                  status = "primary",
+                                  solidHeader = T,
+                                  width = NULL,
+                                  closable = F,
+                                  # p("$$\\sigma^2$$ est"),
+                                  checkboxGroupInput("variancehypothesisESTIM_STATTOOL", label = "$$\\sigma^2$$ est", choices = list("connu", "inconnu")),
+                                  selectInput("distributionESTIM_STATTOOL", label = "$$X_1$$", choices = list("$$\\sim N(\\mu, \\sigma^2)$$" = "NORM", "$$\\sim$$ loi avec $$E[X_1] = \\mu$$ et $$V(X)$$ inconnue" = "PARAM"))
+                              )
+                          )
+                      )
+)
+
 tab_excess_mean <- tabItem(tabName = "excess_mean",
                            
                            fluidRow(
