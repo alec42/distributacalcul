@@ -200,17 +200,7 @@ myserver <- function(input, output, session)
       aes(x)) +
         stat_function(fun = qnorm,
                       args = list(mean = muNORM(),
-                                  sd = sqrt(sigma2NORM()))) +
-        ylab("f(x)") +        # Ne marche pas encore je suis en phase de test.
-        theme_classic() +
-        stat_function(
-          fun = qnorm,
-          args = list(mean = muNORM(), sd = sqrt(sigma2NORM())),
-          xlim = c(input$kNORM, 1),
-          geom = "area",
-          fill = "#50CB86",
-          alpha = 0.7
-        )
+                                  sd = sqrt(sigma2NORM()))) + theme_classic()
     })
     
     
@@ -585,9 +575,56 @@ myserver <- function(input, output, session)
         })
         
         
-        # output$FxPARETO 
+        output$FxPARETO <- renderPlotly({
+            ggplot(data = data.frame(x = c(
+                0, 3 * lambdaPARETO())
+            ),
+            aes(x)) +
+                stat_function(fun = dpareto,
+                              args = list(shape = alphaPARETO(), 
+                                          scale = lambdaPARETO())) +
+                ylab("f(x)") +
+                theme_classic() +
+                stat_function(
+                    fun = dpareto,
+                    args = list(shape = alphaPARETO(), 
+                                scale = lambdaPARETO()),
+                xlim = c(0, input$xPARETO),
+                    geom = "area",
+                    fill = "red",
+                    alpha = 0.7
+                )
+        })
         
-        # output$SxPARETO
+        output$SxPARETO <- renderPlotly({
+            ggplot(data = data.frame(x = c(
+                0, 3 * lambdaPARETO())
+            ),
+            aes(x)) +
+                stat_function(fun = dpareto,
+                              args = list(shape = alphaPARETO(), 
+                                          scale = lambdaPARETO())) +
+                ylab("f(x)") +
+                theme_classic() +
+                stat_function(
+                    fun = dpareto,
+                    args = list(shape = alphaPARETO(), 
+                                scale = lambdaPARETO()),
+                    xlim = c(input$xPARETO, 3 * lambdaPARETO()),
+                    geom = "area",
+                    fill = "red",
+                    alpha = 0.7
+                )
+        })
+        
+        
+        output$QxPARETO <- renderPlotly({
+            ggplot(data = data.frame(x = c(0,1)),
+                   aes(x)) +
+                stat_function(fun = qpareto,
+                              args = list(shape = alphaPARETO(), 
+                                          scale = lambdaPARETO())) + theme_classic()
+        })
         
         
         
@@ -743,10 +780,62 @@ myserver <- function(input, output, session)
         })
         
         
-        # output$FxBURR 
+        output$FxBURR <- renderPlotly({
+            ggplot(data = data.frame(x = c(
+                0, 5 * tauBURR())
+            ),
+            aes(x)) +
+                stat_function(fun = dburr,
+                              args = list(shape1 = alphaBURR(), 
+                                          shape2 = tauBURR(),
+                                          scale = lambdaBURR())) +
+                ylab("f(x)") +
+                theme_classic() +
+                stat_function(
+                    fun = dburr,
+                    args = list(shape1 = alphaBURR(), 
+                                shape2 = tauBURR(),
+                                scale = lambdaBURR()),
+                    xlim = c(0, input$xBURR),
+                    geom = "area",
+                    fill = "red",
+                    alpha = 0.7
+                )
+        })
         
-        # output$SxBURR
-      
+        output$SxBURR <- renderPlotly({
+            ggplot(data = data.frame(x = c(
+                0, 5 * tauBURR())
+            ),
+            aes(x)) +
+                stat_function(fun = dburr,
+                              args = list(shape1 = alphaBURR(), 
+                                          shape2 = tauBURR(),
+                                          scale = lambdaBURR())) +
+                ylab("f(x)") +
+                theme_classic() +
+                stat_function(
+                    fun = dburr,
+                    args = list(shape1 = alphaBURR(), 
+                                shape2 = tauBURR(),
+                                scale = lambdaBURR()),
+                    xlim = c(input$xBURR, 5 * tauBURR()),
+                    geom = "area",
+                    fill = "red",
+                    alpha = 0.7
+                )
+        })
+        
+        output$QxBURR <- renderPlotly({
+            ggplot(data = data.frame(x = c(0,1)),
+                   aes(x)) +
+                stat_function(fun = qburr,
+                              args = list(shape1 = alphaBURR(), 
+                                          shape2 = tauBURR(),
+                                          scale = lambdaBURR())) + theme_classic()
+        })
+        
+        
 #### Loi Weibull Serveur ####
         
         betaWEIBULL <- reactive({input$betaWEIBULL})
@@ -878,9 +967,57 @@ myserver <- function(input, output, session)
                                                              ExcesMoyWEIBULL()))
         })
         
-        # output$FxWEIBULL 
+        output$FxWEIBULL <- renderPlotly({
+            ggplot(data = data.frame(x = c(
+                0, 2 * betaWEIBULL())
+            ),
+            aes(x)) +
+                stat_function(fun = dweibull,
+                              args = list(shape = tauWEIBULL(),
+                                          scale = betaWEIBULL())) +
+                ylab("f(x)") +
+                theme_classic() +
+                stat_function(
+                    fun = dweibull,
+                    args = list(shape = tauWEIBULL(),
+                                scale = betaWEIBULL()),
+                    xlim = c(0, input$xWEIBULL),
+                    geom = "area",
+                    fill = "red",
+                    alpha = 0.7
+                )
+        })
         
-        # output$SxWEIBULL
+        output$SxWEIBULL <- renderPlotly({
+            ggplot(data = data.frame(x = c(
+                0, 2 * betaWEIBULL())
+            ),
+            aes(x)) +
+                stat_function(fun = dweibull,
+                              args = list(shape = tauWEIBULL(),
+                                          scale = betaWEIBULL())) +
+                ylab("f(x)") +
+                theme_classic() +
+                stat_function(
+                    fun = dweibull,
+                    args = list(shape = tauWEIBULL(),
+                                scale = betaWEIBULL()),
+                    xlim = c(input$xWEIBULL, 2 * betaWEIBULL()),
+                    geom = "area",
+                    fill = "red",
+                    alpha = 0.7
+                )
+        })
+        
+        output$QxWEIBULL <- renderPlotly({
+            ggplot(data = data.frame(x = c(0,1)),
+                   aes(x)) +
+                stat_function(fun = qweibull,
+                              args = list(shape = tauWEIBULL(),
+                                          scale = betaWEIBULL())) + theme_classic()
+        })
+        
+        
         
 #### Loi Lognormale Serveur ####
         
@@ -1013,9 +1150,54 @@ myserver <- function(input, output, session)
                                                              ExcesMoyLNORM()))
         })
         
-        # output$FxLNORM
+        output$FxLNORM <- renderPlotly({
+          ggplot(data = data.frame(x = c(
+            0,
+            muLNORM() + 4 * sqrt(sigma2LNORM())
+          )),
+          aes(x)) +
+            stat_function(fun = dlnorm,
+                          args = list(mean = muLNORM(),
+                                      sd = sqrt(sigma2LNORM()))) +
+            ylab("f(x)") +
+            theme_classic() +
+            stat_function(
+              fun = dlnorm,
+              args = list(mean = muLNORM(), sd = sqrt(sigma2LNORM())),
+              xlim = c(0, input$xLNORM),
+              geom = "area",
+              fill = "red",
+              alpha = 0.7
+            )
+        })
         
-        # output$SxLNORM
+        output$SxLNORM <- renderPlotly({
+          ggplot(data = data.frame(x = c(
+            0, muLNORM() + 4 * sqrt(sigma2LNORM())
+          )),
+          aes(x)) +
+            stat_function(fun = dlnorm,
+                          args = list(mean = muLNORM(),
+                                      sd = sqrt(sigma2LNORM()))) +
+            ylab("f(x)") +
+            theme_classic() +
+            stat_function(
+              fun = dlnorm,
+              args = list(mean = muLNORM(), sd = sqrt(sigma2LNORM())),
+              xlim = c(input$xLNORM, muLNORM() + 4 * sqrt(sigma2LNORM())),
+              geom = "area",
+              fill = "red",
+              alpha = 0.7
+            )
+        })
+        
+        output$QxLNORM <- renderPlotly({
+          ggplot(data = data.frame(x = c(0,1)),
+                 aes(x)) +
+            stat_function(fun = qlnorm,
+                          args = list(mean = muLNORM(),
+                                      sd = sqrt(sigma2LNORM()))) + theme_classic()
+        })
         
         
         
@@ -1145,10 +1327,53 @@ myserver <- function(input, output, session)
                                                                ExcesMoyBETA()))
         })
         
+        output$FxBETA <- renderPlotly({
+            ggplot(data = data.frame(x = c(0,1)),
+            aes(x)) +
+                stat_function(fun = dbeta,
+                              args = list(shape1 = alphaBETA(), 
+                                          shape2 = betaBETA())) +
+                ylab("f(x)") +
+                theme_classic() +
+                stat_function(
+                    fun = dbeta,
+                    args = list(shape1 = alphaBETA(), 
+                                shape2 = betaBETA()),
+                    xlim = c(0, input$xBETA),
+                    geom = "area",
+                    fill = "red",
+                    alpha = 0.7
+                )
+        })
         
-        # output$FxBETA 
+        output$SxBETA <- renderPlotly({
+            ggplot(data = data.frame(x = c(0,1)),
+                   aes(x)) +
+                stat_function(fun = dbeta,
+                              args = list(shape1 = alphaBETA(), 
+                                          shape2 = betaBETA())) +
+                ylab("f(x)") +
+                theme_classic() +
+                stat_function(
+                    fun = dbeta,
+                    args = list(shape1 = alphaBETA(), 
+                                shape2 = betaBETA()),
+                    xlim = c(input$xBETA,1),
+                    geom = "area",
+                    fill = "red",
+                    alpha = 0.7
+                )
+        })
         
-        # output$SxBETA
+        
+        output$QxBETA <- renderPlotly({
+            ggplot(data = data.frame(x = c(0,1)),
+                   aes(x)) +
+                stat_function(fun = qbeta,
+                              args = list(shape1 = alphaBETA(), 
+                                          shape2 = betaBETA())) + theme_classic()
+        })
+        
         
         
 #### Loi Erlang Serveur ####
@@ -1291,10 +1516,53 @@ myserver <- function(input, output, session)
                                                                 ExcesMoyERLANG()))
         })
         
+        output$FxERLANG <- renderPlotly({
+            ggplot(data = data.frame(x = c(0, 2 * nERLANG() * betaERLANG())),
+                   aes(x)) +
+                stat_function(fun = derlang,
+                              args = list(n = nERLANG(),
+                                          b = betaERLANG())) +
+                ylab("f(x)") +
+                theme_classic() +
+                stat_function(
+                    fun = derlang,
+                    args = list(n = nERLANG(),
+                                b = betaERLANG()),                    
+                    xlim = c(0, input$xERLANG),
+                    geom = "area",
+                    fill = "red",
+                    alpha = 0.7
+                )
+        })
         
-        # output$FxERLANG 
+        output$SxERLANG <- renderPlotly({
+            ggplot(data = data.frame(x = c(0, 2 * nERLANG() * betaERLANG())),
+                   aes(x)) +
+                stat_function(fun = derlang,
+                              args = list(n = nERLANG(),
+                                          b = betaERLANG())) +
+                ylab("f(x)") +
+                theme_classic() +
+                stat_function(
+                    fun = derlang,
+                    args = list(n = nERLANG(),
+                                b = betaERLANG()),                    
+                    xlim = c(input$xERLANG, 2 * nERLANG() * betaERLANG()),
+                    geom = "area",
+                    fill = "red",
+                    alpha = 0.7
+                )
+        })        
         
-        # output$SxERLANG
+        output$QxERLANG <- renderPlotly({
+            ggplot(data = data.frame(x = c(0,1)),
+                   aes(x)) +
+                stat_function(fun = qerlang,
+                              args = list(n = nERLANG(),
+                                          b = betaERLANG())) + theme_classic()
+        })
+        
+        
         
 #### Loi Log-logistique Serveur ####
         
@@ -1428,11 +1696,55 @@ myserver <- function(input, output, session)
         })
         
         
-        # output$FxLOGLOGIS 
+        output$FxLOGLOGIS <- renderPlotly({
+            ggplot(data = data.frame(x = c(0, 1)),
+                   aes(x)) +
+                stat_function(fun = dllogis,
+                              args = list(shape = lambdaLOGLOGIS(), 
+                                          rate = tauLOGLOGIS())) +
+                ylab("f(x)") +
+                theme_classic() +
+                stat_function(
+                    fun = dllogis,
+                    args = list(shape = lambdaLOGLOGIS(), 
+                                rate = tauLOGLOGIS()),                    
+                    xlim = c(0, input$xERLANG),
+                    geom = "area",
+                    fill = "red",
+                    alpha = 0.7
+                )
+        })
         
-        # output$SxLOGLOGIS
+        output$SxLOGLOGIS <- renderPlotly({
+            ggplot(data = data.frame(x = c(0, 1)),
+                   aes(x)) +
+                stat_function(fun = dllogis,
+                              args = list(shape = lambdaLOGLOGIS(), 
+                                          rate = tauLOGLOGIS())) +
+                ylab("f(x)") +
+                theme_classic() +
+                stat_function(
+                    fun = dllogis,
+                    args = list(shape = lambdaLOGLOGIS(), 
+                                rate = tauLOGLOGIS()),                    
+                    xlim = c(input$xERLANG, 1),
+                    geom = "area",
+                    fill = "red",
+                    alpha = 0.7
+                )
+        })
         
-#### Loi Weibull Serveur ####
+        output$QxLOGLOGIS <- renderPlotly({
+            ggplot(data = data.frame(x = c(0,1)),
+                   aes(x)) +
+                stat_function(fun = qllogis,
+                              args = list(shape = lambdaLOGLOGIS(), 
+                                          rate = tauLOGLOGIS())) + theme_classic()
+        })
+        
+        
+        
+#### Loi inverse gaussienne Serveur ####
         
         betaIG <- reactive({input$betaIG})
         
@@ -1573,11 +1885,54 @@ myserver <- function(input, output, session)
         #                                                         ExcesMoyIG()))
         # })
         
-        # output$FxIG 
+        output$FxIG <- renderPlotly({
+            ggplot(data = data.frame(x = c(0, 1.5 * muIG() + 0.5 *betaIG())),
+                   aes(x)) +
+                stat_function(fun = d_IG,
+                              args = list(mu = muIG(),
+                                          beta = betaIG())) +
+                ylab("f(x)") +
+                theme_classic() +
+                stat_function(
+                    fun = d_IG,
+                    args = list(mu = muIG(),
+                                beta = betaIG()),                    
+                    xlim = c(0, input$xERLANG),
+                    geom = "area",
+                    fill = "red",
+                    alpha = 0.7
+                )
+        })
         
-        # output$SxIG
+        output$SxIG <- renderPlotly({
+            ggplot(data = data.frame(x = c(0, 1.5 * muIG() + 0.5 *betaIG())),
+                   aes(x)) +
+                stat_function(fun = d_IG,
+                              args = list(mu = muIG(),
+                                          beta = betaIG())) +
+                ylab("f(x)") +
+                theme_classic() +
+                stat_function(
+                    fun = d_IG,
+                    args = list(mu = muIG(),
+                                beta = betaIG()),                    
+                    xlim = c(input$xERLANG, 1.5 * muIG() + 0.5 *betaIG()),
+                    geom = "area",
+                    fill = "red",
+                    alpha = 0.7
+                )
+        })        
+    
+#            output$QxIG <- renderPlotly({
+#           ggplot(data = data.frame(x = c(0,1)),
+ #                  aes(x)) +
+  #              stat_function(fun = q_IG,                  --- ajouter la fonction q_IG---
+   #                           args = list(mu = muIG(),
+    #                                      beta = betaIG())) + theme_classic()
+     #   })
         
-#### Loi Uniforme Discrète Serveur ####
+        
+#### Loi Uniforme Continue Serveur ####
         
         aUNIC <- reactive({input$aUNIC})
         bUNIC <- reactive({input$bUNIC})
@@ -1672,6 +2027,56 @@ myserver <- function(input, output, session)
         #                                                     input$dUNIC,
         #                                                     ExcesMoyUNIC()
         # ))})
+        
+        
+        
+        output$FxUNIC <- renderPlotly({
+            ggplot(data = data.frame(x = c(
+                aUNIC(), bUNIC())
+            ),
+            aes(x)) +
+                stat_function(fun = dunif,
+                              args = list(min = aUNIC(), max = bUNIC())) +
+                ylab("f(x)") +
+                theme_classic() +
+                stat_function(
+                    fun = dunif,
+                    args = list(min = aUNIC(), max = bUNIC()),
+                    xlim = c(aUNIC(), input$xUNIC),
+                    geom = "area",
+                    fill = "red",
+                    alpha = 0.7
+                )
+        })
+        
+        output$SxUNIC <- renderPlotly({
+            ggplot(data = data.frame(x = c(
+                aUNIC(), bUNIC())
+            ),
+            aes(x)) +
+                stat_function(fun = dunif,
+                              args = list(min = aUNIC(), max = bUNIC())) +
+                ylab("f(x)") +
+                theme_classic() +
+                stat_function(
+                    fun = dunif,
+                    args = list(min = aUNIC(), max = bUNIC()),
+                    xlim = c(input$xUNIC, bUNIC()),
+                    geom = "area",
+                    fill = "red",
+                    alpha = 0.7
+                )
+        })        
+        
+        output$QxUNIC <- renderPlotly({
+            ggplot(data = data.frame(x = c(0,1)),
+                   aes(x)) +
+                stat_function(fun = qunif,
+                              args = list(min = aUNIC(), max = bUNIC())) + theme_classic()
+        })
+        
+        
+        
         
 #### Loi Binomiale Serveur ####
         nBIN <- reactive({input$nBIN})

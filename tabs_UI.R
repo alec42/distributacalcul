@@ -95,7 +95,7 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
                 ### Moments Normale  ----
                 column(
                     width = 3,
-                    # tags$style(" * {font-size:40000px}"), # grosseur du tezte
+                    # tags$style(" * {font-size:40000px}"), # grosseur du texte
                     box(
                         title = "Moments",
                         width = NULL,
@@ -244,7 +244,7 @@ tab_LNORM_UI <- tabItem(tabName = "Lognormale",
                                        solidHeader = TRUE,
                                        # tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
                                        status = "danger", # pour couleur de la boite, diff couleur pour statut
-                                       numericInput('xLNORM', '$$x$$', value = 0),
+                                       numericInput('xLNORM', '$$x$$', value = 0.5, min = 0),
                                        uiOutput("densityLNORM"),
 
                                        tabBox(
@@ -277,7 +277,8 @@ tab_LNORM_UI <- tabItem(tabName = "Lognormale",
                                        # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
                                        numericInput('kLNORM', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                        uiOutput("VaRLNORM"),
-                                       uiOutput("TVaRLNORM")
+                                       uiOutput("TVaRLNORM"),
+                                       plotlyOutput("QxLNORM")
                                    ),
                                    align = "center"
                                )
@@ -475,7 +476,7 @@ tab_PARETO_UI <- tabItem(tabName = "Pareto",
                                        solidHeader = TRUE,
                                        # tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
                                        status = "danger", # pour couleur de la boite, diff couleur pour statut
-                                       numericInput('xPARETO', '$$x$$', value = 0, min = 0),
+                                       numericInput('xPARETO', '$$x$$', value = 0.5, min = 0),
                                        uiOutput("densityPARETO"),
 
                                        tabBox(
@@ -508,7 +509,8 @@ tab_PARETO_UI <- tabItem(tabName = "Pareto",
                                        # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
                                        numericInput('kPARETO', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                        uiOutput("VaRPARETO"),
-                                       uiOutput("TVaRPARETO")
+                                       uiOutput("TVaRPARETO"),
+                                       plotlyOutput("QxPARETO")
                                    ),
                                    align = "center"
                                )
@@ -585,7 +587,7 @@ tab_BURR_UI <- tabItem(tabName = "Burr",
                                          solidHeader = TRUE,
                                          # tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
                                          status = "danger", # pour couleur de la boite, diff couleur pour statut
-                                         numericInput('xBURR', '$$x$$', value = 0, min = 0, step = 1),
+                                         numericInput('xBURR', '$$x$$', value = 0.5, min = 0, step = 1),
                                          uiOutput("densityBURR"),
 
                                          tabBox(
@@ -618,7 +620,8 @@ tab_BURR_UI <- tabItem(tabName = "Burr",
                                          # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
                                          numericInput('kBURR', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                          uiOutput("VaRBURR"),
-                                         uiOutput("TVaRBURR")
+                                         uiOutput("TVaRBURR"),
+                                         plotlyOutput("QxBURR")
                                      ),
                                      align = "center"
                                  )
@@ -695,7 +698,7 @@ tab_WEIBULL_UI <- tabItem(tabName = "Weibull",
                                          solidHeader = TRUE,
                                          # tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
                                          status = "danger", # pour couleur de la boite, diff couleur pour statut
-                                         numericInput('xWEIBULL', '$$x$$', value = 0, min = 0),
+                                         numericInput('xWEIBULL', '$$x$$', value = 0.5, min = 0),
                                          uiOutput("densityWEIBULL"),
 
                                          tabBox(
@@ -728,7 +731,8 @@ tab_WEIBULL_UI <- tabItem(tabName = "Weibull",
                                          # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
                                          numericInput('kWEIBULL', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                          uiOutput("VaRWEIBULL"),
-                                         uiOutput("TVaRWEIBULL")
+                                         uiOutput("TVaRWEIBULL"),
+                                         plotlyOutput("QxWEIBULL")
                                      ),
                                      align = "center"
                                  )
@@ -837,8 +841,11 @@ tab_IG_UI <- tabItem(tabName = "IG",
                                           status = "success",
                                           # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
                                           numericInput('kIG', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
-                                          uiOutput("VaRIG"),
-                                          uiOutput("TVaRIG")
+                                          uiOutput("VaRIG")
+                                          #,
+                                          #uiOutput("TVaRIG") -- ne fonctionne pas, à revoir --
+                                          #,
+                                          #plotlyOutput("QxIG")  --ajouter la fonction q_IG avant de le mettre.--
                                       ),
                                       align = "center"
                                   )
@@ -862,8 +869,8 @@ tab_UNIC_UI <- tabItem(tabName = "UniformeC",
                                       status = "primary",
                                       solidHeader = T,
                                       width = NULL,
-                                      numericInput('aUNIC', '$$a$$', value = 1, min = 0, step = 1),
-                                      numericInput('bUNIC', '$$b$$', value = 2, min = 0, step = 1)
+                                      numericInput('aUNIC', '$$a$$', value = 0, min = 0, step = 1),
+                                      numericInput('bUNIC', '$$b$$', value = 1, min = 0, step = 1)
                                   ),
                                   align = "center"
                            ),
@@ -898,20 +905,18 @@ tab_UNIC_UI <- tabItem(tabName = "UniformeC",
                                       solidHeader = TRUE,
                                       tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
                                       status = "danger", # pour couleur de la boite, diff couleur pour statut
-                                      numericInput('xUNIC', '$$x$$', min = 0, value = 0, step = 1),
+                                      numericInput('xUNIC', '$$x$$', min = 0, value = 0.5, step = 1),
                                       uiOutput("densityUNIC"),
                                       
                                       tabBox(
                                           width = NULL,
                                           tabPanel("Répartition",
-                                                   uiOutput("repartUNIC")
-                                                   # ,
-                                                   # plotlyOutput("FxUNIC")
+                                                   uiOutput("repartUNIC"),
+                                                   plotlyOutput("FxUNIC")
                                           ),
                                           tabPanel("Survie",
-                                                   uiOutput("survieUNIC")
-                                                   # ,
-                                                   # plotlyOutput("SxBETA")
+                                                   uiOutput("survieUNIC"),
+                                                   plotlyOutput("SxUNIC")
                                           )
                                           
                                       )
@@ -929,8 +934,9 @@ tab_UNIC_UI <- tabItem(tabName = "UniformeC",
                                       closable = F,
                                       tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
                                       numericInput('kUNIC', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
-                                      uiOutput("VaRUNIC")
+                                      uiOutput("VaRUNIC"),
                                       # ,uiOutput("TVaRUNIC")
+                                      plotlyOutput("QxUNIC")
                                       ),
 
                                   align = "center"
@@ -1038,7 +1044,9 @@ tab_BETA_UI <- tabItem(tabName = "Beta",
                                         # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
                                         numericInput('kBETA', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                         uiOutput("VaRBETA"),
-                                        uiOutput("TVaRBETA")
+                                        uiOutput("TVaRBETA"),
+                                        plotlyOutput("QxBETA")
+                                        
                                     ),
                                     align = "center"
                                 )
@@ -1121,18 +1129,18 @@ tab_ERLANG_UI <- tabItem(tabName = "Erlang",
                                        solidHeader = TRUE,
                                        # tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
                                        status = "danger", # pour couleur de la boite, diff couleur pour statut
-                                       numericInput('xERLANG', '$$x$$', value = 0, min = 0, step = 1),
+                                       numericInput('xERLANG', '$$x$$', value = 0.5, min = 0, step = 1),
                                        uiOutput("densityERLANG"),
 
                                        tabBox(
                                            width = NULL,
                                            tabPanel("Répartition",
                                                     uiOutput("repartERLANG")
-                                                    # ,plotlyOutput("FxERLANG")
+                                                    ,plotlyOutput("FxERLANG")
                                            ),
                                            tabPanel("Survie",
                                                     uiOutput("survieERLANG")
-                                                    # ,plotlyOutput("SxERLANG")
+                                                    ,plotlyOutput("SxERLANG")
                                            )
 
                                        )
@@ -1154,7 +1162,8 @@ tab_ERLANG_UI <- tabItem(tabName = "Erlang",
                                #         # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
                                #         numericInput('kERLANG', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                #         uiOutput("VaRERLANG"),
-                               #         uiOutput("TVaRERLANG")
+                               #         uiOutput("TVaRERLANG"),
+                               #         plotlyOutput("QxERLANG")
                                #     ),
                                #     align = "center"
                                # )
@@ -1267,7 +1276,9 @@ tab_LOGLOGIS_UI <- tabItem(tabName = "LOGLOGIS",
                                        # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
                                        numericInput('kLOGLOGIS', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                        uiOutput("VaRLOGLOGIS"),
-                                       uiOutput("TVaRLOGLOGIS")
+                                       uiOutput("TVaRLOGLOGIS"),
+                                       plotlyOutput("QxLOGLOGIS")
+                                       
                                    ),
                                    align = "center"
                                )
