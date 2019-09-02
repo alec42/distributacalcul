@@ -140,7 +140,10 @@ myUI <- shinyUI({
                     menuItem(
                         "Outils",
                         icon = icon("wrench"),
-                        menuSubItem("Excès-Moyen", tabName = "excess_mean")
+                        menuSubItem("Excès-Moyen", tabName = "excess_mean"),
+                        menuSubItem("Test d'hypothèse T", href = "https://casertamarco.shinyapps.io/power/"),
+                        menuSubItem("Tests statistiques", tabName = "stat_tests")
+                        
                     ),
                     menuItem(
                         "À propos",
@@ -196,9 +199,14 @@ myUI <- shinyUI({
                 tab_BNCOMP_UI,
                 tab_PCOMP_UI,
                 tab_BINCOMP_UI,
+                
+                ## Outils
+                
+                tab_excess_mean,
+                stat_tests,
             
             ## À propos ----
-                tab_excess_mean,
+                
                 tabItem(
                     tabName = "about",
                     h2("Nous contacter "),
@@ -222,6 +230,17 @@ myUI <- shinyUI({
                             title = "Marc-André Devost",
                             subtitle = "marc-andre.devost.1@ulaval.ca"
                         )
+                    ),
+                    box(
+                        title = "Remerciements",
+                        status = "info",
+                        collapsed = F,
+                        "Ce projet est crée grâce à l'enseignement des professeurs de l'école d'actuariat de l'Université Laval et les notes de ses cours. Particulièrement, aux professeurs des cours de probabilités Étienne Marceau et Hélène Cossette et des cours d'informatique Vincent Goulet.",
+                        br(),
+                        "Un gros merci à tous ceux qui nous ont donné des suggestions, commentaires, avis, etc. sans qui ce projet ne serait pas proche de ce qu'il l'est aujourd'hui.",
+                        br(),
+                        "Un gros merci à ceux ayant fourni des résumés de cours, des notes et des explications pour aider à faire le wiki. Particulièrement, un gros merci à Jean-Christophe Langlois.",
+                        align = "left"
                     )
                 ),
             tabItem(
@@ -252,19 +271,8 @@ myUI <- shinyUI({
                         color = "warning",
                         collapsed = F,
                         "Ce projet de calculatrice est encore en développement et le sera sûrement pour toujours. Si vous êtes intéressés à y contribuer, contacter-nous afin qu'on puisse collaborer!",
-                        align = "left"),
-                    accordionItem(
-                        id = 2,
-                        title = "Remerciements",
-                        color = "info",
-                        collapsed = F,
-                        "Ce projet est crée grâce à l'enseignement des professeurs de l'école d'actuariat de l'Université Laval et les notes de ses cours. Particulièrement, aux professeurs des cours de probabilités Étienne Marceau et Hélène Cossette et des cours d'informatique Vincent Goulet.",
-                        br(),
-                        "Un gros merci à tous ceux qui nous ont donné des suggestions, commentaires, avis, etc. sans qui ce projet ne serait pas proche de ce qu'il l'est aujourd'hui.",
-                        br(),
-                        "Un gros merci à ceux ayant fourni des résumés de cours, des notes et des explications pour aider à faire le wiki. Particulièrement, un gros merci à Jean-Christophe Langlois.",
-                        align = "left"
-                    ),
+                        align = "left")
+                    ,
                     accordionItem(
                         id = 3,
                         title = "Liens",

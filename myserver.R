@@ -1,5 +1,13 @@
 myserver <- function(input, output, session) 
 {
+    #### Serveur outil de tests statistiques ####
+    
+    valueESTIM_STATTOOL <- reactive({input$valueESTIM_STATTOOL})
+    
+    
+    
+    #### Serveur outil de la fonction d'excès-moyen ####
+    
     shapeEXCESS_MEAN <- reactive({input$shapeEXCESS_MEAN})
     rateEXCESS_MEAN <- reactive({input$rateEXCESS_MEAN})
     
