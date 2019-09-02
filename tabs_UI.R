@@ -1,7 +1,7 @@
 stat_tests <- tabItem(tabName = "stat_tests",
                       
                       fluidRow(
-                          titlePanel("Tests statistiques"),
+                          titlePanel("Tests statistiques _(à venir)_"),
                           # withMathJax(),
                           align = "center"
                       ),
