@@ -461,7 +461,7 @@ tab_GAMMA_UI <- tabItem(
 tab_PARETO_UI <- tabItem(tabName = "Pareto",
                        fluidPage(
                            useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
-                           titlePanel("Loi Pareto"),
+                           titlePanel(tags$a("Loi Pareto", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Pareto")),
                            # withMathJax(),
                            helpText("\\(X \\sim\\mathcal{Pareto} \\ (\\alpha, \\lambda)\\)"),
                            align = "center"
@@ -571,7 +571,7 @@ tab_PARETO_UI <- tabItem(tabName = "Pareto",
 tab_BURR_UI <- tabItem(tabName = "Burr",
                          fluidPage(
                              useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
-                             titlePanel("Loi Burr"),
+                             titlePanel(tags$a("Loi Burr", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Burr")),
                              # withMathJax(),
                              helpText("\\(X \\sim\\mathcal{Burr} \\ (\\alpha, \\lambda, \\tau)\\)"),
                              align = "center"
@@ -682,7 +682,7 @@ tab_BURR_UI <- tabItem(tabName = "Burr",
 tab_WEIBULL_UI <- tabItem(tabName = "Weibull",
                          fluidPage(
                              useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
-                             titlePanel("Loi Weibull"),
+                             titlePanel(tags$a("Loi Weibull", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Weibull")),
                              # withMathJax(),
                              helpText("\\(X \\sim\\mathcal{Weibull} \\ (\\tau, \\beta)\\)"),
                              align = "center"
@@ -793,7 +793,7 @@ tab_WEIBULL_UI <- tabItem(tabName = "Weibull",
 tab_IG_UI <- tabItem(tabName = "IG",
                           fluidPage(
                               useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
-                              titlePanel("Loi Inverse Gaussienne"),
+                              titlePanel(tags$a("Loi Inverse Gaussienne", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Inverse-Gaussienne")),
                               # withMathJax(),
                               helpText("\\(X \\sim\\mathcal{IG} \\ (\\mu, \\beta)\\)"),
                               align = "center"
@@ -997,7 +997,7 @@ tab_UNIC_UI <- tabItem(tabName = "UniformeC",
 tab_BETA_UI <- tabItem(tabName = "Beta",
                         fluidRow(
                             useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
-                            titlePanel("Beta"),
+                            titlePanel(tags$a("Loi Bêta", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Beta")),
                             # withMathJax(),
                             helpText("\\(X \\sim\\mathcal{Beta} \\ (\\alpha, \\beta)\\)"),
                             align = "center"
@@ -1107,7 +1107,7 @@ tab_BETA_UI <- tabItem(tabName = "Beta",
 tab_ERLANG_UI <- tabItem(tabName = "Erlang",
                          fluidPage(
                              useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
-                             titlePanel("Loi Erlang"),
+                             titlePanel(tags$a("Loi Erlang", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Erlang")),
                              # withMathJax(),
                              helpText("\\(X \\sim\\mathcal{Erlang} \\ (n, \\beta)\\)"),
                              align = "center"
@@ -1224,7 +1224,7 @@ tab_ERLANG_UI <- tabItem(tabName = "Erlang",
 tab_LOGLOGIS_UI <- tabItem(tabName = "LOGLOGIS",
                        fluidPage(
                            useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
-                           titlePanel("Loi Log-logistique"),
+                           titlePanel(tags$a("Loi log-logistique", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Log-Logistique")),
                            # withMathJax(),
                            helpText("\\(X \\sim\\mathcal{LL} \\ (\\lambda, \\tau)\\)"),
                            align = "center"
@@ -1434,7 +1434,7 @@ tab_BN_UI <- tabItem(
 
     fluidPage(
         tags$style("#loi_BN {font-size:30px;}"),
-        textOutput("loi_BN"),
+        uiOutput("loi_BN"),
         withMathJax(),
         textOutput("distr_BN"),
         radioGroupButtons(
@@ -1554,7 +1554,7 @@ tab_BN_UI <- tabItem(
 #### Loi Poisson UI ####
 tab_POI_UI <- tabItem(tabName = "Poisson",
                       fluidPage(
-                          titlePanel("Loi Poisson"),
+                          titlePanel(tags$a("Loi de Poisson", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-de-Poisson")),
                           withMathJax(),
                           helpText("\\(X \\sim\\mathcal{Poisson} \\ (\\lambda)\\)"),
                           align = "center"
@@ -1643,7 +1643,7 @@ tab_POI_UI <- tabItem(tabName = "Poisson",
 #### Loi Hypergéométrique UI ####
 tab_HG_UI <- tabItem(tabName = "HG",
                       fluidPage(
-                          titlePanel("Loi Hypergéométrique"),
+                          titlePanel(tags$a("Loi Hypergéométrique", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Hypergeometrique")),
                           withMathJax(),
                           helpText("\\(X \\sim\\mathcal{HyperGéo} \\ (N, n, m)\\)"),
                           align = "center"
@@ -1735,7 +1735,7 @@ tab_HG_UI <- tabItem(tabName = "HG",
 #### Loi Logarithmique UI ####
 tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                      fluidPage(
-                         titlePanel("Loi Logarithmique"),
+                         titlePanel(tags$a("Loi Logarithmique", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Logarithmique")),
                          withMathJax(),
                          helpText("\\(X \\sim\\mathcal{Logarithmique} \\ (\\gamma)\\)"),
                          align = "center"

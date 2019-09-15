@@ -24,3 +24,4 @@ qFgenTest <- function(x, kappa)
     else
         optimize(qFgen, c(0, 30000))$minimum
 }
+qFgen(10)

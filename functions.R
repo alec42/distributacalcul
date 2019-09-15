@@ -425,56 +425,17 @@ SL_IG <- function(d, mu, beta = dispersion * mu^2, dispersion = beta / mu^2)
                   sqrt(1 / (beta * d)))
 }
 
+Mexcess_IG(5, 2, 2, 2)
+
+
 
 # Doesn't work right now
-# Mexcess_IG <- function(x, d, mu, beta = dispersion * mu^2, dispersion = beta / mu^2)
-# {
-#     (
-#         (mu - d) * (
-#             (1 - qnorm(p = 
-#                            (
-#                                (d - mu) * sqrt(1 / (beta * d))
-#                            )
-#                       )
-#             )
-#         )
-#     ) / 
-#         (1 - (qnorm(p = 
-#                         (
-#                             (sqrt(1 / (beta * x)) * (d - mu))
-#                         )
-#                     ) +
-#               exp(2 * mu / beta) *
-#               qnorm(p = 
-#                         (
-#                             (- sqrt(1 / (beta * x)) * (d + mu))
-#                         )
-#                     )
-#               )
-#         ) +
-#     (
-#         (mu + d) * 
-#             exp(2 * mu / beta) *
-#             qnorm(p = 
-#                       (
-#                           (-sqrt(1 / (beta * x)) * (d + mu))
-#                       )
-#                   )
-#     ) /
-#         (1 - (qnorm(p = 
-#                         (
-#                             (sqrt(1 / (beta * x)) * (d - mu))
-#                         )
-#                    ) +
-#              exp(2 * mu / beta) *
-#              qnorm(p = 
-#                       (
-#                           (- sqrt(1 / (beta * x)) * (d + mu))
-#                       )
-#                  )
-#             )
-#         )
-# }
+Mexcess_IG <- function(x, d, mu, beta = dispersion * mu^2, dispersion = beta / mu^2)
+{
+    ((mu - d) * (1 - pnorm((d - mu) * sqrt(1 / (beta * d)))) + (d + mu) * exp((2 * mu) / beta) * pnorm(-(d + mu) * sqrt(1 / (beta * d))))/ (1 - (pnorm(sqrt(1/(beta * x)) * (d - mu)) + exp((2 * mu) / beta) * pnorm(-sqrt(1/(beta * x)) * (d + mu))))
+}
+
+
 
 Elim_IG <- function(d, mu, beta = dispersion * mu^2, dispersion = beta / mu^2)
 {
