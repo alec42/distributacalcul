@@ -142,7 +142,8 @@ myUI <- shinyUI({
                         icon = icon("wrench"),
                         menuSubItem("Excès-Moyen", tabName = "excess_mean"),
                         menuSubItem("Test d'hypothèse T", href = "https://casertamarco.shinyapps.io/power/"),
-                        menuSubItem("Tests statistiques", tabName = "stat_tests")
+                        menuSubItem("Tests statistiques", tabName = "stat_tests"),
+                        menuSubItem("Copules", tabName = "copulas_tool")
                         
                     ),
                     menuItem(
@@ -203,7 +204,8 @@ myUI <- shinyUI({
                 ## Outils
                 
                 tab_excess_mean,
-                stat_tests,
+                tab_stat_tests,
+                tab_copulas_tool,
             
             ## À propos ----
                 
