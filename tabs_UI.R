@@ -1460,7 +1460,15 @@ tab_BN_UI <- tabItem(
                 uiOutput("changingrBN"),
                 uiOutput("changingqBN"),
                 # numericInput('qBN', '$$q$$', value = 0.5, min = 0, max = 1, step = 0.05)), align = "center"
-
+                
+                switchInput(labelWidth = "10px",handleWidth = "400px",
+                            inputId = "definitionBN",
+                            onLabel = 'essais',
+                            offLabel = "erreur", 
+                            size = "large",
+                            value = T
+                ),
+                
                 switchInput(labelWidth = "10px",handleWidth = "400px",
                     inputId = "distrchoiceqBN",
                     onLabel = 'q',
@@ -1477,7 +1485,9 @@ tab_BN_UI <- tabItem(
                 width = NULL,
                 helpText("Lien entre les paramétrisations
                          $$\\beta = \\frac{1 - q}{q}$$
-                         $$q = \\frac{1}{1 + \\beta}$$"),
+                         $$q = \\frac{1}{1 + \\beta}$$",
+                         "Si on défini la binomiale négative (ou géométrique) comme étant le nombre d'échecs avant un r-ème éssai alors son support commence à 0 (on peut avoir r succès avec aucun échec.",
+                         "Cependant, si on la défini comme étant le nombre d'essais pour un r-ème succès, alors forcément son support doit débuter à r car on ne peut pas avoir moins que r essais pour r succès."),
                 align = "center"
             ),
             align = "center"
@@ -1492,6 +1502,17 @@ tab_BN_UI <- tabItem(
                 title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
                 uiOutput("meanBN"),
                 uiOutput("varBN")),
+            box(
+                title = "Essais vs erreurs",
+                status = "primary",
+                solidHeader = T,
+                collapsed = T,
+                collapsible = T,
+                width = NULL,
+                helpText("Si on défini la binomiale négative (ou géométrique) comme étant le nombre d'échecs avant un r-ème succès alors son support commence à 0 (on peut avoir r succès avec aucun échec).",
+                         "Cependant, si on la défini comme étant le nombre d'essais pour un r-ème succès, alors forcément son support doit débuter à r car on ne peut pas avoir moins que r essais pour r succès."),
+                align = "left"
+            ),
             align = "center"
             # ,
                # box(
@@ -1511,7 +1532,8 @@ tab_BN_UI <- tabItem(
                box(
                    title = "Fonctions", width = NULL, solidHeader = TRUE,
                    status = "danger", # pour couleur de la boite, diff couleur pour statut
-                   numericInput('xBN', '$$x$$', min = 0, value = 0, step = 1),
+                   uiOutput("changingxBN"),
+                   # numericInput('xBN', '$$x$$', min = 0, value = 0, step = 1),
                    uiOutput("densityBN"),
                    tabBox(
                        width = NULL,
@@ -1655,9 +1677,11 @@ tab_HG_UI <- tabItem(tabName = "HG",
                                      status = "primary",
                                      solidHeader = T,
                                      width = NULL,
-                                     numericInput('grosNHG', '$$N$$', value = 3, min = 0, step = 1),
-                                     numericInput('petitNHG', '$$n$$', value = 2, min = 0, step = 1),
-                                     numericInput('mHG', '$$m$$', value = 1, min = 0, step = 1)
+                                     numericInput('grosNHG', '$$N$$', value = 4, min = 0, step = 1),
+                                     uiOutput("changingpetitNHG"),
+                                     # numericInput('petitNHG', '$$n$$', value = 2, min = 0, step = 1),
+                                     uiOutput("changingmHG")
+                                     # numericInput('mHG', '$$m$$', value = 1, min = 0, step = 1)
                                  ),
                                  align = "center"
                           ),
@@ -1692,7 +1716,8 @@ tab_HG_UI <- tabItem(tabName = "HG",
                                      solidHeader = TRUE,
                                      tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
                                      status = "danger", # pour couleur de la boite, diff couleur pour statut
-                                     numericInput('xHG', '$$x$$', min = 0, value = 0, step = 1),
+                                     uiOutput("changingxHG"),
+                                     # numericInput('xHG', '$$x$$', min = 0, value = 0, step = 1),
                                      uiOutput("densityHG"),
 
                                      tabBox(
