@@ -4,8 +4,6 @@ myserver <- function(input, output, session)
     
     valueESTIM_STATTOOL <- reactive({input$valueESTIM_STATTOOL})
     
-    
-    
 #### Serveur outil de la fonction d'excès-moyen ####
     
     shapeEXCESS_MEAN <- reactive({input$shapeEXCESS_MEAN})
@@ -199,9 +197,11 @@ myserver <- function(input, output, session)
       aes(x)) +
         stat_function(fun = qnorm,
                       args = list(mean = muNORM(),
-                                  sd = sqrt(sigma2NORM()))) + 
-            theme_classic() 
-            # + geom_quantile()
+                                  sd = sqrt(sigma2NORM()))
+                      ) + 
+            theme_classic()  
+            # +geom_vline(aes(VaRNORM()))
+            # geom_vline(xintercept = as.numeric(levels(VaRNORM()))[VaRNORM()])
     })
     
     
