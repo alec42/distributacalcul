@@ -2220,9 +2220,36 @@ myserver <- function(input, output, session)
     
     petitNHG <- reactive({input$petitNHG})
     
-    mHG <- reactive({input$mHG})
+    mHG <- reactive({input$petitNHG})
     
     xHG <- reactive({input$xHG})
+
+    
+    output$changingpetitNHG <- renderUI({
+        numericInput('petitNHG', 
+                     '$$n$$', 
+                     value = (grosNHG() - mHG()), 
+                     min = 0, 
+                     max = (grosNHG() - 1),
+                     step = 1)
+    })
+    
+    output$changingmHG <- renderUI({
+        numericInput('mHG', 
+                     '$$m$$', 
+                     value = 2, 
+                     min = 0, 
+                     max = grosNHG(),
+                     step = 1)
+    })
+    
+    output$changingxHG <- renderUI({
+        numericInput('xHG', '$$x$$',
+                     min = 0, 
+                     value = 0, 
+                     max = min(petitNHG(), mHG()),
+                     step = 1)
+    })
     
     kHG <- reactive({input$kHG})
     
@@ -2381,13 +2408,17 @@ myserver <- function(input, output, session)
     
     dBN <- reactive({input$dBN})
     
-    qBN <- reactive({
-        if (input$distrchoiceqBN == T) {
-            input$qBN
-        } else {
-            (1 / (1 + input$qBN))
-        }
-    })
+    qBN <- reactive({input$qBN})
+    
+    definitionBN <- reactive({input$definitionBN})
+    
+    # definitionBN <- reactive({
+    #     if (input$definitionBN == "essais") {
+    #         F
+    #     } else {
+    #         T
+    #     }
+    # })
     
     output$changingqBN <- renderUI({
         numericInput('qBN', label = '$$q$$', value = 0.5, min = 0, step = 0.1)
@@ -2397,17 +2428,42 @@ myserver <- function(input, output, session)
         numericInput('rBN', label = '$$r$$', value = 1, min = 0, step = 1)
     })
     
+    output$changingxBN <- renderUI({
+        numericInput('xBN', '$$x$$', min = 0, 
+                     value = {if (definitionBN() == T) {
+                         rBN()
+                     } else {
+                         0
+                     }}, 
+                     step = 1)
+    })
+    
     ## Ici on crée un gros observeEvent qui va modifier les paramètres de la gamma/exponentielle/khi-carrée selon les 2 radio buttons:
     ## x: selection de distribution
     ## y: selection de si c'est fréquence ou échelle
     observeEvent(
     {
         input$distrchoiceqBN
+        input$definitionBN
         input$distrchoiceBNFAM 
     },
     {
         x <- input$distrchoiceBNFAM
         y <- input$distrchoiceqBN
+        z <- input$definitionBN
+
+        updateNumericInput(session, "xBN",
+                           min =
+                               if (z == T)
+                               {
+                                   rBN()
+                               }
+                           else
+                           {
+                               0
+                           }
+        )
+        
         
         updateNumericInput(session, "rBN",
                            value =
@@ -2420,6 +2476,7 @@ myserver <- function(input, output, session)
                                rBN = 2
                            }
         )
+        
         updateNumericInput(session,
                            "qBN",
                            label = {
@@ -2460,15 +2517,15 @@ myserver <- function(input, output, session)
     })
     
     
-    meanBN <- reactive({rBN() * (1 - qBN())/qBN()})
+    meanBN <- reactive({E_negbinom(rBN(), qBN(), nb_tries = definitionBN())})
     
-    varBN <- reactive({rBN() * (1 - qBN())/(qBN()^2)})   
+    varBN <- reactive({V_negbinom(rBN(), qBN(), nb_tries = definitionBN())})
     
-    densityBN <- reactive({format(dnbinom(xBN(), rBN(), qBN()), nsmall = 6)})
+    densityBN <- reactive({format(d_negbinom(xBN(), rBN(), qBN(), nb_tries = definitionBN()), nsmall = 6)})
+        
+    repartBN <- reactive({format(p_negbinom(xBN(), rBN(), qBN(), nb_tries = definitionBN()), nsmall = 6)})
     
-    repartBN <- reactive({format(pnbinom(xBN(), rBN(), qBN()), nsmall = 6)})
-    
-    survieBN <- reactive({format(pnbinom(xBN(), rBN(), qBN(), lower.tail = F), nsmall = 6)})
+    survieBN <- reactive({format(p_negbinom(xBN(), rBN(), qBN(), nb_tries = definitionBN(), lower.tail = F), nsmall = 6)})
     
     
     output$meanBN <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
