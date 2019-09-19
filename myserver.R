@@ -3,8 +3,154 @@ myserver <- function(input, output, session)
 {
 
 #### Serveur outil de tests statistiques ####
-    
     valueESTIM_STATTOOL <- reactive({input$valueESTIM_STATTOOL})
+    testESTIM_STATTOOL <- reactive({input$testESTIM_STATTOOL}) 
+    nsizeESTIM_STATTOOL <- reactive({input$nsizeESTIM_STATTOOL})
+    
+    ## pour renderer le choix de borne avec KaTex
+    updateSelectizeInput(
+        session,
+        inputId = "borneSTIM_STATTOOL",
+        choices = setNames(list("GE", "GT", "LE", "LT", "NE", "E"), 
+                           list("\\\\\\ge", "\\\\\\gt", "\\\\\\le", "\\\\\\lt", "\\\\\\not =", "=")),
+        options = list(render = I("
+                                  {
+                                  item:   function(item, escape) { 
+                                  var html = katex.renderToString(item.label);
+                                  return '<div>' + html + '</div>'; 
+                                  },
+                                  option: function(item, escape) { 
+                                  var html = katex.renderToString(item.label);
+                                  return '<div>' + html + '</div>'; 
+                                  }
+                                  }
+                                  "))
+        
+        )
+    ## pour renderer le choix de paramètre avec KaTex
+    updateSelectizeInput(
+        session,
+        inputId = "paramESTIM_STATTOOL",
+        choices = setNames(list("mu", "sigma", "p", "theta"), list("\\\\\\mu", "\\\\\\sigma^2", "p", "\\\\\\theta")),
+        options = list(render = I("
+    {
+                                  item:   function(item, escape) { 
+                                  var html = katex.renderToString(item.label);
+                                  return '<div>' + html + '</div>'; 
+                                  },
+                                  option: function(item, escape) { 
+                                  var html = katex.renderToString(item.label);
+                                  return '<div>' + html + '</div>'; 
+                                  }
+}
+"))
+        
+    )
+    
+    output$seuil_H0_ESTIM_STATTOOL <- renderUI({
+        if(testESTIM_STATTOOL() == "UMP")
+        {
+            withMathJax("$$Z_{\\text{obs}} \\geq z_{\\alpha}$$")
+        }
+        else if(testESTIM_STATTOOL() == "Test T")
+        {
+            withMathJax("$$T_{\\text{n, obs}} \\geq t_{(n - 1), \\ \\alpha}$$")
+        }
+        else if(testESTIM_STATTOOL() == "Central limite")
+        {
+            withMathJax("$$Z_{\\text{obs}} \\geq z_{\\alpha}$$")
+        }
+        else if(testESTIM_STATTOOL() == "Wald")
+        {
+            withMathJax("$$| \\phi_{\\text{obs}} | \\geq z_{\\alpha / 2}$$")
+        }
+        else if(testESTIM_STATTOOL() == "Sur une proportion")
+        {
+            withMathJax("$$| Z_{\\text{obs}} | \\geq z_{\\alpha / 2}$$")
+        }
+        else if(testESTIM_STATTOOL() == "Sur la variance")
+        {
+            withMathJax("$$ W_{n, \\text{obs}} \\geq \\chi^2_{\\alpha, \\ (n - 1)}$$")
+        }
+        else if(testESTIM_STATTOOL() == "Rapport de vraisemblance")
+        {
+            withMathJax("$$ W_{\\text{obs}} \\geq \\chi^2_{(p - r), \\alpha}$$")
+        }
+        else if(testESTIM_STATTOOL() == "Khi-carré de Pearson")
+        {
+            withMathJax("$$X^2_{\\text{obs}} \\geq \\chi^2_{(k - s), \\alpha}$$")
+        }
+    })
+    
+    output$distr_H0_ESTIM_STATTOOL <- renderUI({
+        if(testESTIM_STATTOOL() == "UMP")
+        {
+            withMathJax("$$Z \\sim \\text{N}(0, 1)$$")
+        }
+        else if(testESTIM_STATTOOL() == "Test T")
+        {
+            withMathJax("$$T_n \\sim t_{(n - 1)}$$")
+        }
+        else if(testESTIM_STATTOOL() == "Central limite")
+        {
+            withMathJax("$$\\approx \\text{N}(0, 1)$$")
+        }
+        else if(testESTIM_STATTOOL() == "Wald")
+        {
+            withMathJax("$$\\approx \\text{N}(0, 1)$$")
+        }
+        else if(testESTIM_STATTOOL() == "Sur une proportion")
+        {
+            withMathJax("$$\\approx \\text{N}(0, 1)$$")
+        }
+        else if(testESTIM_STATTOOL() == "Sur la variance")
+        {
+            withMathJax("$$W_n \\sim \\chi^2_{(n - 1)}$$")
+        }
+        else if(testESTIM_STATTOOL() == "Rapport de vraisemblance")
+        {
+            withMathJax("$$\\approx \\chi^2_{(p - r)}$$")
+        }
+        else if(testESTIM_STATTOOL() == "Khi-carré de Pearson")
+        {
+            withMathJax("$$\\approx \\chi^2_{(k - s)}$$")
+        }
+    })
+    
+    output$distr_ESTIM_STATTOOL <- renderUI({
+        if(testESTIM_STATTOOL() == "UMP")
+        {
+            withMathJax("$$X_1 \\sim \\text{N}(\\mu, \\sigma^2)$$")
+        }
+        else if(testESTIM_STATTOOL() == "Test T")
+        {
+            withMathJax("$$X_1 \\sim \\text{N}(\\mu, \\sigma^2)$$")
+        }
+        else if(testESTIM_STATTOOL() == "Central limite")
+        {
+            withMathJax("$$X_1 \\sim \\text{ loi avec } E[X_1] = \\mu \\\ \\text{ et } V(X) \\text{ inconnue}$$")
+        }
+        else if(testESTIM_STATTOOL() == "Wald")
+        {
+            withMathJax("$$X_1 \\text{ à une densité } f( \\ \\dot \\ ; \\theta)$$")
+        }
+        else if(testESTIM_STATTOOL() == "Sur une proportion")
+        {
+            withMathJax("$$X_1 \\sim \\text{Bernoulli}(p)$$")
+        }
+        else if(testESTIM_STATTOOL() == "Sur la variance")
+        {
+            withMathJax("$$X_1 \\sim \\text{N}(\\mu, \\sigma^2)$$")
+        }
+        else if(testESTIM_STATTOOL() == "Rapport de vraisemblance")
+        {
+            withMathJax("$$X_1 \\text{ à une densité } f( \\ . \\ ; \\theta) \\text{ où } \\theta \\text{ a une dimension } p$$")
+        }
+        else if(testESTIM_STATTOOL() == "Khi-carré de Pearson")
+        {
+            withMathJax("Tableau de fréquence avec k cellules")
+        }
+    })
     
 #### Serveur outil de copules ####
     
@@ -143,6 +289,52 @@ myserver <- function(input, output, session)
     
     ExcesMoyNORM <- reactive({Mexcess_norm(d = input$dNORM, muNORM(), sqrt(sigma2NORM()))})
     
+    
+    plot_choice_NORM_SERVER <- reactive({
+        if(input$plot_choice_NORM == "Densité")
+            dnorm
+        else
+            pnorm
+    })
+    
+    plot_color_NORM_SERVER <- reactive({
+        if(input$xlim_NORM == T)
+            "Dark Green"
+        else
+            "Royal Blue"
+    })
+    
+    xlim_NORM_SERVER <- reactive({
+        if(input$xlim_NORM == T)
+            c(muNORM() - 4 * sqrt(sigma2NORM()), input$xNORM)
+        else
+            c(input$xNORM, muNORM() + 4 * sqrt(sigma2NORM()))
+    })
+    
+    repartsurvieNORM_LATEX <- reactive({
+        if(input$xlim_NORM == T)
+        {
+            "F_{X}"
+        }
+        else
+        {
+            "S_{X}"
+        }
+    })
+    
+    repartsurvieNORM <- reactive({
+        if(input$xlim_NORM == T)
+        {
+            format(pnorm(input$xNORM, muNORM(), sigma2NORM()), nsmall = 6, scientific = F)
+        }
+        else
+        {
+            format(pnorm(input$xNORM, muNORM(), sigma2NORM(), lower.tail = F), nsmall = 6, scientific = F)
+        }
+        
+    })
+    
+    
     output$meanNORM <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
                                                      muNORM()))
         })
@@ -155,15 +347,12 @@ myserver <- function(input, output, session)
                                                         input$xNORM,
                                                         densityNORM()))
         })
-    output$repartNORM <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$",
-                                                       input$xNORM,
-                                                       repartNORM()))
-        })
     
-    output$survieNORM <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
-                                                       input$xNORM,
-                                                       survieNORM()))
-        })
+    output$repartsurvieNORM <- renderUI({withMathJax(sprintf("$$%s(%s) = %s$$", 
+                                                              repartsurvieNORM_LATEX(),
+                                                              input$xNORM,
+                                                              repartsurvieNORM()
+    ))})
     
     output$VaRNORM <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
                                                     input$kNORM,
@@ -195,58 +384,44 @@ myserver <- function(input, output, session)
                                                          ExcesMoyNORM()))
         })
     
-    output$FxNORM <- renderPlotly({
-        ggplot(data = data.frame(x = c(
-            muNORM() - 4 * sqrt(sigma2NORM()),
-            muNORM() + 4 * sqrt(sigma2NORM())
-        )),
-        aes(x)) +
+    output$QxNORM <- renderPlotly({
+        ggplot(data = data.frame(x = c(muNORM() - 4 * sqrt(sigma2NORM()),
+                                       muNORM() + 4 * sqrt(sigma2NORM())
+                                       )
+                                 ),
+        aes(x)) + 
             stat_function(fun = dnorm,
-                          args = list(mean = muNORM(),
-                                      sd = sqrt(sigma2NORM()))) +
-            ylab("f(x)") +
+                          args = list(muNORM(), sigma2NORM())) + 
+            ylab("f(x)") + 
             theme_classic() +
             stat_function(
                 fun = dnorm,
-                args = list(mean = muNORM(), sd = sqrt(sigma2NORM())),
-                xlim = c(muNORM() - 4 * sqrt(sigma2NORM()), input$xNORM),
+                args = list(muNORM(), sigma2NORM()),
+                xlim = c(VaRNORM(), muNORM() + 4 * sqrt(sigma2NORM())),
                 geom = "area",
                 fill = "red",
                 alpha = 0.7
             )
     })
     
-    output$SxNORM <- renderPlotly({
-        ggplot(data = data.frame(x = c(
-            muNORM() - 4 * sqrt(sigma2NORM()),
-            muNORM() + 4 * sqrt(sigma2NORM())
-        )),
-        aes(x)) +
-            stat_function(fun = dnorm,
-                          args = list(mean = muNORM(),
-                                      sd = sqrt(sigma2NORM()))) +
-            ylab("f(x)") +
+    output$FxNORM <- renderPlotly({
+        ggplot(data = data.frame(x = c(muNORM() - 4 * sqrt(sigma2NORM()),
+                                       muNORM() + 4 * sqrt(sigma2NORM())
+                                       )
+                                 ),
+               aes(x)) + 
+            stat_function(fun = plot_choice_NORM_SERVER(),
+                          args = list(muNORM(), sigma2NORM())) + 
+            ylab("f(x)") + 
             theme_classic() +
             stat_function(
-                fun = dnorm,
-                args = list(mean = muNORM(), sd = sqrt(sigma2NORM())),
-                xlim = c(muNORM() + 4 * sqrt(sigma2NORM()), input$xNORM),
+                fun = plot_choice_NORM_SERVER(),
+                args = list(muNORM(), sigma2NORM()),
+                xlim = xlim_NORM_SERVER(),
                 geom = "area",
-                fill = "red",
+                fill = plot_color_NORM_SERVER(),
                 alpha = 0.7
             )
-    })
-      
-    output$QxNORM <- renderPlotly({
-      ggplot(data = data.frame(x = c(0,1)),
-      aes(x)) +
-        stat_function(fun = qnorm,
-                      args = list(mean = muNORM(),
-                                  sd = sqrt(sigma2NORM()))
-                      ) + 
-            theme_classic()  
-            # +geom_vline(aes(VaRNORM()))
-            # geom_vline(xintercept = as.numeric(levels(VaRNORM()))[VaRNORM()])
     })
     
     
@@ -258,6 +433,28 @@ myserver <- function(input, output, session)
     
     xGAMMA <- reactive({input$xGAMMA})
     
+    plot_choice_GAMMA_SERVER <- reactive({
+        if(input$plot_choice_GAMMA == "Densité")
+            dgamma
+        else
+            pgamma
+    })
+    
+    plot_color_GAMMA_SERVER <- reactive({
+        if(input$xlim_GAMMA == T)
+            "Dark Green"
+        else
+            "Royal Blue"
+    })
+    
+    xlim_GAMMA_SERVER <- reactive({
+        if(input$xlim_GAMMA == T)
+            c(0, xGAMMA())
+        else
+            c(xGAMMA(), VaR_gamma(kappa = 0.999999, alphaGAMMA(), betaGAMMA()))
+    })
+    
+    
         betaGAMMA <- reactive({
             if (input$distrchoiceGAMMA == T) {
                 input$betaGAMMA
@@ -265,6 +462,7 @@ myserver <- function(input, output, session)
                 1 / input$betaGAMMA
             }
         })
+        
         
         alphaGAMMA <- reactive({
             if (input$distrchoiceEXPOFAM == "Khi carré")
@@ -332,6 +530,7 @@ myserver <- function(input, output, session)
                 show("betaGAMMA")
                 show("distrchoiceGAMMA")
             }
+            
             updateNumericInput(session, "alphaGAMMA",
                                value =
                                    if (x == "Exponentielle")
@@ -361,10 +560,30 @@ myserver <- function(input, output, session)
         
         
         densityGAMMA <- reactive({format(dgamma(xGAMMA(), alphaGAMMA(), betaGAMMA()),scientific = F,  nsmall = 6)})
+
+        repartsurvieGAMMA_LATEX <- reactive({
+            if(input$xlim_GAMMA == T)
+            {
+                "F_{X}"
+            }
+            else
+            {
+                "S_{X}"
+            }
+        })
         
-        repartGAMMA <- reactive({format(pgamma(xGAMMA(), alphaGAMMA(), betaGAMMA()), nsmall = 6, scientific = F)})
+        repartsurvieGAMMA <- reactive({
+            if(input$xlim_GAMMA == T)
+            {
+                format(pgamma(xGAMMA(), alphaGAMMA(), betaGAMMA()), nsmall = 6, scientific = F)
+            }
+            else
+            {
+                format(pgamma(xGAMMA(), alphaGAMMA(), betaGAMMA(), lower.tail = F), nsmall = 6, scientific = F)
+            }
+            
+            })
         
-        survieGAMMA <- reactive({format(pgamma(xGAMMA(), alphaGAMMA(), betaGAMMA(), lower.tail = F), nsmall = 6, scientific = F)})
         
         VaRGAMMA <- reactive({format(VaR_gamma(kGAMMA(), alphaGAMMA(), betaGAMMA()), nsmall = 6)})
         
@@ -413,16 +632,12 @@ myserver <- function(input, output, session)
                                                              xGAMMA(),
                                                              densityGAMMA()
         ))})
-        output$repartGAMMA <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$", 
-                                                            xGAMMA(),
-                                                            repartGAMMA()
+        
+        output$repartsurvieGAMMA <- renderUI({withMathJax(sprintf("$$%s(%s) = %s$$", 
+                                                                  repartsurvieGAMMA_LATEX(),
+                                                                  xGAMMA(),
+                                                                  repartsurvieGAMMA()
         ))})
-        
-        output$survieGAMMA <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
-                                                           xGAMMA(),
-                                                           survieGAMMA()))
-        })
-        
         
         output$VaRGAMMA <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$", 
                                                          kGAMMA(),
@@ -452,29 +667,9 @@ myserver <- function(input, output, session)
                                                               ExcesMoyGAMMA()
         ))})
         
-        output$FxGAMMA <- renderPlotly({
-            ggplot(data = data.frame(x = c(0, meanGAMMA() + 3 * sqrt(varianceGAMMA()))),
-            aes(x)) + 
-                stat_function(fun = dgamma,
-                              args = list(alphaGAMMA(), 
-                                          betaGAMMA())) + 
-                ylab("f(x)") + 
-                theme_classic() +
-                stat_function(
-                    fun = dgamma,
-                    args = list(alphaGAMMA(), betaGAMMA()),
-                    xlim = c(0, xGAMMA()),
-                    geom = "area",
-                    fill = "red",
-                    alpha = 0.7
-                )
-        })
-        
-        output$SxGAMMA <- renderPlotly({
-            ggplot(data = data.frame(x = c(0,
-                                           meanGAMMA() +
-                                               3 *
-                                               sqrt(varianceGAMMA()))
+        output$QxGAMMA <- renderPlotly({
+            ggplot(data = data.frame(x = c(0, VaR_gamma(kappa = 0.999999, alphaGAMMA(), betaGAMMA()) 
+            )
             ),
             aes(x)) + 
                 stat_function(fun = dgamma,
@@ -485,11 +680,30 @@ myserver <- function(input, output, session)
                 stat_function(
                     fun = dgamma,
                     args = list(alphaGAMMA(), betaGAMMA()),
+                    xlim = c(VaRGAMMA(), VaR_gamma(kappa = 0.999999, alphaGAMMA(), betaGAMMA())),
                     geom = "area",
                     fill = "red",
                     alpha = 0.7
                 )
         })
+        
+        output$FxGAMMA <- renderPlotly({
+            ggplot(data = data.frame(x = c(0, VaR_gamma(kappa = 0.999999, alphaGAMMA(), betaGAMMA()))),
+            aes(x)) + 
+                stat_function(fun = plot_choice_GAMMA_SERVER(),
+                              args = list(alphaGAMMA(), betaGAMMA())) + 
+                ylab("f(x)") + 
+                theme_classic() +
+                stat_function(
+                    fun = plot_choice_GAMMA_SERVER(),
+                    args = list(alphaGAMMA(), betaGAMMA()),
+                    xlim = xlim_GAMMA_SERVER(),
+                    geom = "area",
+                    fill = plot_color_GAMMA_SERVER(),
+                    alpha = 0.7
+                )
+        })
+        
 #### Loi Pareto Serveur ####
         
         alphaPARETO <- reactive({input$alphaPARETO})
@@ -1081,28 +1295,59 @@ myserver <- function(input, output, session)
         
         dLNORM <- reactive({input$dLNORM})
         
+        plot_choice_LNORM_SERVER <- reactive({
+            if(input$plot_choice_LNORM == "Densité")
+                dlnorm
+            else
+                plnorm
+        })
+        
+        plot_color_LNORM_SERVER <- reactive({
+            if(xLNORM() == T)
+                "Dark Green"
+            else
+                "Royal Blue"
+        })
+        
+        xlim_LNORM_SERVER <- reactive({
+            if(input$xlim_LNORM == T)
+                c(0, xLNORM())
+            else
+                c(xLNORM(), muLNORM() + 4 * sqrt(sigma2LNORM()))
+        })
+        
+        repartsurvieLNORM_LATEX <- reactive({
+            if(input$xlim_LNORM == T)
+            {
+                "F_{X}"
+            }
+            else
+            {
+                "S_{X}"
+            }
+        })
+        
+        repartsurvieLNORM <- reactive({
+            if(input$xlim_LNORM == T)
+            {
+                format(plnorm(q = xLNORM(), muLNORM(), sdlog = sqrt(sigma2LNORM())), nsmall = 6, scientific = F)
+            }
+            else
+            {
+                format(plnorm(q = xLNORM(), muLNORM(), sqrt(sigma2LNORM()), lower.tail = F), nsmall = 6, scientific = F)
+            }
+            
+        })
+        
         densityLNORM <- reactive({format(dlnorm(xLNORM(), 
                                                 muLNORM(), 
                                                 sqrt(sigma2LNORM())), 
                                          nsmall = 6)
             })
         
-        repartLNORM <- reactive({format(plnorm(xLNORM(), 
-                                               muLNORM(), 
-                                               sqrt(sigma2LNORM())), 
-                                        nsmall = 6)
-            })
-        
-        survieLNORM <- reactive({format(plnorm(xLNORM(), 
-                                               muLNORM(), 
-                                               sqrt(sigma2LNORM()), 
-                                               lower.tail = F), 
-                                        nsmall = 6)
-            })
-        
-        VaRLNORM <- reactive({format(VaR_lnorm(kLNORM(), 
-                                               muLNORM(), 
-                                               sqrt(sigma2LNORM())), 
+        VaRLNORM <- reactive({format(VaR_lnorm(kappa = kLNORM(), 
+                                               mu = muLNORM(), 
+                                               sig = sqrt(sigma2LNORM())), 
                                      nsmall = 6)
             })
         
@@ -1166,6 +1411,13 @@ myserver <- function(input, output, session)
                                                             xLNORM(),
                                                             densityLNORM()))
         })
+        
+        output$repartsurvieLNORM <- renderUI({withMathJax(sprintf("$$%s(%s) = %s$$", 
+                                                                  repartsurvieLNORM_LATEX(),
+                                                                  xLNORM(),
+                                                                  repartsurvieLNORM()
+        ))})
+        
         output$repartLNORM <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$",
                                                            xLNORM(),
                                                            repartLNORM()))
@@ -1206,55 +1458,95 @@ myserver <- function(input, output, session)
                                                              ExcesMoyLNORM()))
         })
         
-        output$FxLNORM <- renderPlotly({
-          ggplot(data = data.frame(x = c(
-            0,
-            muLNORM() + 4 * sqrt(sigma2LNORM())
-          )),
-          aes(x)) +
-            stat_function(fun = dlnorm,
-                          args = list(mean = muLNORM(),
-                                      sd = sqrt(sigma2LNORM()))) +
-            ylab("f(x)") +
-            theme_classic() +
-            stat_function(
-              fun = dlnorm,
-              args = list(mean = muLNORM(), sd = sqrt(sigma2LNORM())),
-              xlim = c(0, xLNORM()),
-              geom = "area",
-              fill = "red",
-              alpha = 0.7
-            )
-        })
-        
-        output$SxLNORM <- renderPlotly({
-          ggplot(data = data.frame(x = c(
-            0, muLNORM() + 4 * sqrt(sigma2LNORM())
-          )),
-          aes(x)) +
-            stat_function(fun = dlnorm,
-                          args = list(mean = muLNORM(),
-                                      sd = sqrt(sigma2LNORM()))) +
-            ylab("f(x)") +
-            theme_classic() +
-            stat_function(
-              fun = dlnorm,
-              args = list(mean = muLNORM(), sd = sqrt(sigma2LNORM())),
-              xlim = c(xLNORM(), muLNORM() + 4 * sqrt(sigma2LNORM())),
-              geom = "area",
-              fill = "red",
-              alpha = 0.7
-            )
-        })
-        
         output$QxLNORM <- renderPlotly({
-          ggplot(data = data.frame(x = c(0,1)),
-                 aes(x)) +
-            stat_function(fun = qlnorm,
-                          args = list(mean = muLNORM(),
-                                      sd = sqrt(sigma2LNORM()))) + theme_classic()
+            ggplot(data = data.frame(x = c(0,
+                                           muLNORM() + 4 * sqrt(sigma2LNORM())
+            )
+            ),
+            aes(x)) + 
+                stat_function(fun = dlnorm,
+                              args = list(meanlog = muLNORM(), sdlog = sqrt(sigma2LNORM()))) + 
+                ylab("f(x)") + 
+                theme_classic() +
+                stat_function(
+                    fun = dlnorm,
+                    args = list(meanlog = muLNORM(), sdlog = sqrt(sigma2LNORM())),
+                    xlim = c(VaRLNORM(), muLNORM() + 4 * sqrt(sigma2LNORM())),
+                    geom = "area",
+                    fill = "red",
+                    alpha = 0.7
+                )
         })
         
+        output$FxLNORM <- renderPlotly({
+            ggplot(data = data.frame(x = c(0,
+                                           muLNORM() + 4 * sqrt(sigma2LNORM())
+            )
+            ),
+            aes(x)) + 
+                stat_function(fun = plot_choice_LNORM_SERVER(),
+                              args = list(meanlog = muLNORM(), sdlog = sqrt(sigma2LNORM()))) + 
+                ylab("f(x)") + 
+                theme_classic() +
+                stat_function(
+                    fun = plot_choice_LNORM_SERVER(),
+                    args = list(meanlog = muLNORM(), sdlog = sqrt(sigma2LNORM())),
+                    xlim = xlim_LNORM_SERVER(),
+                    geom = "area",
+                    fill = plot_color_LNORM_SERVER(),
+                    alpha = 0.7
+                )
+        })
+        
+        # output$FxLNORM <- renderPlotly({
+        #   ggplot(data = data.frame(x = c(
+        #     0,
+        #     muLNORM() + 4 * sqrt(sigma2LNORM())
+        #   )),
+        #   aes(x)) +
+        #     stat_function(fun = dlnorm,
+        #                   args = list(mean = muLNORM(),
+        #                               sd = sqrt(sigma2LNORM()))) +
+        #     ylab("f(x)") +
+        #     theme_classic() +
+        #     stat_function(
+        #       fun = dlnorm,
+        #       args = list(mean = muLNORM(), sd = sqrt(sigma2LNORM())),
+        #       xlim = c(0, xLNORM()),
+        #       geom = "area",
+        #       fill = "red",
+        #       alpha = 0.7
+        #     )
+        # })
+        # 
+        # output$SxLNORM <- renderPlotly({
+        #   ggplot(data = data.frame(x = c(
+        #     0, muLNORM() + 4 * sqrt(sigma2LNORM())
+        #   )),
+        #   aes(x)) +
+        #     stat_function(fun = dlnorm,
+        #                   args = list(mean = muLNORM(),
+        #                               sd = sqrt(sigma2LNORM()))) +
+        #     ylab("f(x)") +
+        #     theme_classic() +
+        #     stat_function(
+        #       fun = dlnorm,
+        #       args = list(mean = muLNORM(), sd = sqrt(sigma2LNORM())),
+        #       xlim = c(xLNORM(), muLNORM() + 4 * sqrt(sigma2LNORM())),
+        #       geom = "area",
+        #       fill = "red",
+        #       alpha = 0.7
+        #     )
+        # })
+        # 
+        # output$QxLNORM <- renderPlotly({
+        #   ggplot(data = data.frame(x = c(0,1)),
+        #          aes(x)) +
+        #     stat_function(fun = qlnorm,
+        #                   args = list(mean = muLNORM(),
+        #                               sd = sqrt(sigma2LNORM()))) + theme_classic()
+        # })
+        # 
         
         
 #### Loi Beta Serveur ####
@@ -2686,6 +2978,13 @@ myserver <- function(input, output, session)
         
     })
     
+    # Crée ce input avec UI pour le cacher dans le cas d'une lognormale
+    output$koBNCOMPUI <- renderUI({
+        if (input$severityBNCOMP == "Gamma") {
+            numericInput('koBNCOMP', label = withMathJax('$$k_{0}$$'), value = 300, step = 100, min = 0, max = 1)
+        }
+    })
+    
     ## Ici on crée un gros observeEvent qui va modifier les paramètres de la BNCOMP/exponentielle/khi-carrée selon les 2 radio buttons:
     ## x: selection de distribution
     ## y: selection de si c'est fréquence ou échelle
@@ -2723,6 +3022,17 @@ myserver <- function(input, output, session)
                                    '$$\\beta$$'
                                }
                            })
+        # Cacher la fonction de répartition si lognormale
+        if(x == "Lognormale")
+        {
+            hideElement("Repartition-box-BNCOMP")
+            hideElement("Quantile-box-BNCOMP")
+        }
+        else if(x == "Gamma")
+        {
+            showElement("Repartition-box-BNCOMP")
+            showElement("Quantile-box-BNCOMP")
+        }
         
         # rend le paramètre impossible à modifier pour l'utilisateur
         if (x == "Lognormale")
@@ -2909,6 +3219,13 @@ myserver <- function(input, output, session)
         
     })
     
+    # Crée ce input avec UI pour le cacher dans le cas d'une lognormale
+    output$koPCOMPUI <- renderUI({
+        if (input$severityBINCOMP == "Gamma") {
+            numericInput('koPCOMP', label = withMathJax('$$k_{0}$$'), value = 200, step = 100, min = 0, max = 1)
+        }
+    })
+    
     ## Ici on crée un gros observeEvent qui va modifier les paramètres de la PCOMP/exponentielle/khi-carrée selon les 2 radio buttons:
     ## x: selection de distribution
     ## y: selection de si c'est fréquence ou échelle
@@ -2946,6 +3263,18 @@ myserver <- function(input, output, session)
                                    '$$\\beta$$'
                                }
                            })
+        
+        # Cacher la fonction de répartition si lognormale
+        if(x == "Lognormale")
+        {
+            hideElement("Repartition-box-PCOMP")
+            hideElement("Quantile-box-PCOMP")
+        }
+        else if(x == "Gamma")
+        {
+            showElement("Repartition-box-PCOMP")
+            showElement("Quantile-box-PCOMP")
+        }
         
         # rend le paramètre impossible à modifier pour l'utilisateur
         if (x == "Lognormale")
@@ -3100,6 +3429,7 @@ myserver <- function(input, output, session)
     
     shapeBINCOMP <- reactive({input$shapeBINCOMP})
     
+    # Crée le paramètres d'échelle et de forme avec UI pour changer le label selon la distribution
     output$rateBINCOMPUI <- renderUI({
         if (input$distrchoiceEXPOFAM == "Gamma") {
             numericInput('rateBINCOMP', '$$\\beta$$', value = 1, min = 0)
@@ -3115,6 +3445,13 @@ myserver <- function(input, output, session)
             numericInput('shapeBINCOMP', '$$\\mu$$', value = 2, min = 0)
         }
         
+    })
+    
+    # Créer ce input avec UI pour le cacher dans le cas d'une lognormale
+    output$koBINCOMPUI <- renderUI({
+        if (input$severityBINCOMP == "Gamma") {
+            numericInput('koBINCOMP', label = withMathJax('$$k_{0}$$'), value = 300, step = 100, min = 0, max = 1)
+        }
     })
     
     ## Ici on crée un gros observeEvent qui va modifier les paramètres de la BINCOMP/exponentielle/khi-carrée selon les 2 radio buttons:
@@ -3135,6 +3472,17 @@ myserver <- function(input, output, session)
                                {
                                    y = T
                                })
+        
+        if(x == "Lognormale")
+        {
+            hideElement("Repartition-box-BINCOMP")
+            hideElement("Quantile-box-BINCOMP")
+        }
+        else if(x == "Gamma")
+        {
+            showElement("Repartition-box-BINCOMP")
+            showElement("Quantile-box-BINCOMP")
+        }
         
         # modification du beta
         updateNumericInput(session,
@@ -3160,7 +3508,7 @@ myserver <- function(input, output, session)
         {
             hide("distrchoiceGAMMA")
         }
-        else
+        else if (x == "Gamma")
         {
             show("distrchoiceGAMMA")
         }
