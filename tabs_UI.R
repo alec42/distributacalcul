@@ -290,7 +290,7 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
             {
                 ### Paramètres Normale ----
                 column(
-                    width = 2,
+                    width = 4,
                     boxPlus(
                         title = "Paramètres",
                         status = "primary",
@@ -299,41 +299,24 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
                         numericInput('muNORM', withMathJax('$$\\mu$$'), value = 0),
                         numericInput('sigmaNORM', '$$\\sigma^2$$', value = 1)
                     ),
-                    align = "center"
-                )
-            },
-
-            {
-                ### Moments Normale  ----
-                column(
-                    width = 3,
-                    # tags$style(" * {font-size:40000px}"), # grosseur du texte
                     box(
                         title = "Moments",
                         width = NULL,
                         solidHeader = TRUE,
                         status = "warning",
                         uiOutput("meanNORM"),
-                        uiOutput("varNORM")
-                    ),
-
-                    box(
-                        title = "Autres Moments",
-                        width = NULL,
-                        solidHeader = TRUE,
-                        status = "warning",
+                        uiOutput("varNORM"),
                         numericInput('dNORM', withMathJax('$$d$$'), value = 0, width = "20px"),
                         # radioButtons('equalityNORM', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
                         uiOutput("EspTronqNORM"),
                         uiOutput("EspLimNORM"),
                         uiOutput("StopLossNORM"),
-                        uiOutput("ExcesMoyNORM")#,
-                        # align = "center"
+                        uiOutput("ExcesMoyNORM")
                     ),
                     align = "center"
                 )
             },
-
+            
             {
                 ### Fonctions Normale ----
                 column(
@@ -372,7 +355,7 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
             {
                 ### Mesures de risque Normale  ----
                 column(
-                    width = 3,
+                    width = 4,
                     boxPlus(
                         title = "Mesure de risques",
                         width = NULL,
