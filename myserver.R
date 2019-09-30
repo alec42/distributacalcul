@@ -522,13 +522,13 @@ myserver <- function(input, output, session)
             # rend le paramètre impossible à modifier pour l'utilisateur
             if (x == "Khi carré")
             {
-                hide("betaGAMMA")
-                hide("distrchoiceGAMMA")
+                shinyjs::hide("betaGAMMA")
+                shinyjs::hide("distrchoiceGAMMA")
             }
             else
             {
-                show("betaGAMMA")
-                show("distrchoiceGAMMA")
+                shinyjs::show("betaGAMMA")
+                shinyjs::show("distrchoiceGAMMA")
             }
             
             updateNumericInput(session, "alphaGAMMA",
@@ -553,9 +553,9 @@ myserver <- function(input, output, session)
             )
             # rend le paramètre impossible à modifier pour l'utilisateur
             if (x == "Exponentielle")
-                hide("alphaGAMMA")
-            else
-                show("alphaGAMMA")
+                shinyjs::hide("alphaGAMMA")
+            else if( x == "Gamma")
+                shinyjs::show("alphaGAMMA")
         })
         
         
@@ -937,7 +937,7 @@ myserver <- function(input, output, session)
         
         
         TVaRBURR <- reactive({format(TVaR_burr(kappa = kBURR(),
-                                               VaRBURR_a(),
+                                               vark = VaRBURR_a(),
                                                alphaBURR(),
                                                lambdaBURR(),
                                                tauBURR()), 
@@ -1313,7 +1313,7 @@ myserver <- function(input, output, session)
             if(input$xlim_LNORM == T)
                 c(0, xLNORM())
             else
-                c(xLNORM(), muLNORM() + 4 * sqrt(sigma2LNORM()))
+                c(xLNORM(), VaR_lnorm(kappa = 0.99, muLNORM(), sqrt(sigma2LNORM())))
         })
         
         repartsurvieLNORM_LATEX <- reactive({
@@ -1338,6 +1338,19 @@ myserver <- function(input, output, session)
             }
             
         })
+        
+        # output$range_LNORM_FX_UI <- renderUI({
+        #     sliderInput(inputId = 'range_LNORM_FX',
+        #                 label = 'Range',
+        #                 min = 0,
+        #                 max = VaR_lnorm(kappa = 0.99, muLNORM(), sqrt(sigma2LNORM())),
+        #                 value = c(0, VaR_lnorm(kappa = 0.99, muLNORM(), sqrt(sigma2LNORM()))),
+        #                 dragRange = T,
+        #                 width = "100%"
+        #     )
+        # })
+        
+        # range_LNORM_FX <- reactive({seq(from = input$range_LNORM_FX[1], to = input$range_LNORM_FX[2])})
         
         densityLNORM <- reactive({format(dlnorm(xLNORM(), 
                                                 muLNORM(), 
@@ -1460,7 +1473,7 @@ myserver <- function(input, output, session)
         
         output$QxLNORM <- renderPlotly({
             ggplot(data = data.frame(x = c(0,
-                                           muLNORM() + 4 * sqrt(sigma2LNORM())
+                                          VaR_lnorm(kappa = 0.99, muLNORM(), sqrt(sigma2LNORM()))
             )
             ),
             aes(x)) + 
@@ -1471,7 +1484,7 @@ myserver <- function(input, output, session)
                 stat_function(
                     fun = dlnorm,
                     args = list(meanlog = muLNORM(), sdlog = sqrt(sigma2LNORM())),
-                    xlim = c(VaRLNORM(), muLNORM() + 4 * sqrt(sigma2LNORM())),
+                    xlim = c(VaRLNORM(), VaR_lnorm(kappa = 0.99, muLNORM(), sqrt(sigma2LNORM()))),
                     geom = "area",
                     fill = "red",
                     alpha = 0.7
@@ -1480,7 +1493,7 @@ myserver <- function(input, output, session)
         
         output$FxLNORM <- renderPlotly({
             ggplot(data = data.frame(x = c(0,
-                                           muLNORM() + 4 * sqrt(sigma2LNORM())
+                                           VaR_lnorm(kappa = 0.99, muLNORM(), sqrt(sigma2LNORM()))
             )
             ),
             aes(x)) + 
@@ -1497,57 +1510,6 @@ myserver <- function(input, output, session)
                     alpha = 0.7
                 )
         })
-        
-        # output$FxLNORM <- renderPlotly({
-        #   ggplot(data = data.frame(x = c(
-        #     0,
-        #     muLNORM() + 4 * sqrt(sigma2LNORM())
-        #   )),
-        #   aes(x)) +
-        #     stat_function(fun = dlnorm,
-        #                   args = list(mean = muLNORM(),
-        #                               sd = sqrt(sigma2LNORM()))) +
-        #     ylab("f(x)") +
-        #     theme_classic() +
-        #     stat_function(
-        #       fun = dlnorm,
-        #       args = list(mean = muLNORM(), sd = sqrt(sigma2LNORM())),
-        #       xlim = c(0, xLNORM()),
-        #       geom = "area",
-        #       fill = "red",
-        #       alpha = 0.7
-        #     )
-        # })
-        # 
-        # output$SxLNORM <- renderPlotly({
-        #   ggplot(data = data.frame(x = c(
-        #     0, muLNORM() + 4 * sqrt(sigma2LNORM())
-        #   )),
-        #   aes(x)) +
-        #     stat_function(fun = dlnorm,
-        #                   args = list(mean = muLNORM(),
-        #                               sd = sqrt(sigma2LNORM()))) +
-        #     ylab("f(x)") +
-        #     theme_classic() +
-        #     stat_function(
-        #       fun = dlnorm,
-        #       args = list(mean = muLNORM(), sd = sqrt(sigma2LNORM())),
-        #       xlim = c(xLNORM(), muLNORM() + 4 * sqrt(sigma2LNORM())),
-        #       geom = "area",
-        #       fill = "red",
-        #       alpha = 0.7
-        #     )
-        # })
-        # 
-        # output$QxLNORM <- renderPlotly({
-        #   ggplot(data = data.frame(x = c(0,1)),
-        #          aes(x)) +
-        #     stat_function(fun = qlnorm,
-        #                   args = list(mean = muLNORM(),
-        #                               sd = sqrt(sigma2LNORM()))) + theme_classic()
-        # })
-        # 
-        
         
 #### Loi Beta Serveur ####
         
@@ -1577,13 +1539,13 @@ myserver <- function(input, output, session)
                                              lower.tail = F), 
                                          nsmall = 6)})
         
-        VaRBETA <- reactive({format(VaR_beta(kappa = kBETA(),
+        VaRBETA <- reactive({format(VaR_beta(k = kBETA(),
                                              alphaBETA(), 
                                              betaBETA()), 
                                       nsmall = 6)
         })
         
-        TVaRBETA <- reactive({format(TVaR_beta(kappa = kBETA(), 
+        TVaRBETA <- reactive({format(TVaR_beta(k = kBETA(), 
                                                alphaBETA(), 
                                                betaBETA()), 
                                        nsmall = 6)
@@ -2085,27 +2047,27 @@ myserver <- function(input, output, session)
         
         muIG <- reactive({input$muIG})
         
-        dIG <- reactive({input$dIG})
+        dIG_param <- reactive({input$dIG})
         
         kIG <- reactive({input$kIG})
         
         xIG <- reactive({input$xIG})
         
-        densityIG <- reactive({format(d_IG(x = xIG(), 
-                                           muIG(),
-                                           betaIG()), 
+        densityIG <- reactive({format(dIG(x = xIG(), 
+                                           mu = muIG(),
+                                           beta = betaIG()), 
                                       nsmall = 6)
         })
         
-        repartIG <- reactive({format(p_IG(q = xIG(), 
-                                          muIG(),
-                                          betaIG()), 
+        repartIG <- reactive({format(pIG(q = xIG(), 
+                                          mu = muIG(),
+                                          beta = betaIG()), 
                                      nsmall = 6)
         })
         
-        survieIG <- reactive({format(p_IG(q = xIG(), 
-                                         muIG(),
-                                         betaIG(),
+        survieIG <- reactive({format(pIG(q = xIG(), 
+                                         mu = muIG(),
+                                         beta = betaIG(),
                                          lower.tail = F), 
                                      nsmall = 6)
         })
@@ -2128,22 +2090,22 @@ myserver <- function(input, output, session)
                                    nsmall = 6)
         })
         
-        EspTronqIG <- reactive({Etronq_IG(d = dIG(),
+        EspTronqIG <- reactive({Etronq_IG(d = dIG_param(),
                                           betaIG(),
                                           muIG())
         })
         
-        StopLossIG <- reactive({SL_IG(d = dIG(),
+        StopLossIG <- reactive({SL_IG(d = dIG_param(),
                                       betaIG(),
                                       muIG())
         })
         
-        EspLimIG <- reactive({Elim_IG(d = dIG(),
+        EspLimIG <- reactive({Elim_IG(d = dIG_param(),
                                       betaIG(),
                                       muIG())
         })
         
-        # ExcesMoyIG <- reactive({Mexcess_IG(d = dIG(),
+        # ExcesMoyIG <- reactive({Mexcess_IG(d = dIG_param(),
         #                                    betaIG(),
         #                                    muIG())
         # })
@@ -2190,35 +2152,35 @@ myserver <- function(input, output, session)
         })
         
         output$EspTronqIG <- renderUI({withMathJax(sprintf("$$E[X \\times 1_{\\{X \\leqslant %s\\}}] = %.4f$$",
-                                                                dIG(),
+                                                                dIG_param(),
                                                                 EspTronqIG()))
         })
         
         output$StopLossIG <- renderUI({withMathJax(sprintf("$$ \\pi_{%s}(X) = %.4f$$",
-                                                                dIG(),
+                                                                dIG_param(),
                                                                 StopLossIG()))
         })
         
         output$EspLimIG <- renderUI({withMathJax(sprintf("$$E[\\text{min}(X;{%s})] = %.4f$$",
-                                                              dIG(),
+                                                              dIG_param(),
                                                               EspLimIG()))
         })
         
         # output$ExcesMoyIG <- renderUI({withMathJax(sprintf("$$e_{%s}(X) = %.4f$$",
-        #                                                         dIG(),
+        #                                                         dIG_param(),
         #                                                         ExcesMoyIG()))
         # })
         
         output$FxIG <- renderPlotly({
             ggplot(data = data.frame(x = c(0, 1.5 * muIG() + 0.5 *betaIG())),
                    aes(x)) +
-                stat_function(fun = d_IG,
+                stat_function(fun = dIG,
                               args = list(muIG(),
                                           betaIG())) +
                 ylab("f(x)") +
                 theme_classic() +
                 stat_function(
-                    fun = d_IG,
+                    fun = dIG,
                     args = list(muIG(),
                                 betaIG()),                    
                     xlim = c(0, xERLANG()),
@@ -2231,13 +2193,13 @@ myserver <- function(input, output, session)
         output$SxIG <- renderPlotly({
             ggplot(data = data.frame(x = c(0, 1.5 * muIG() + 0.5 *betaIG())),
                    aes(x)) +
-                stat_function(fun = d_IG,
+                stat_function(fun = dIG,
                               args = list(muIG(),
                                           betaIG())) +
                 ylab("f(x)") +
                 theme_classic() +
                 stat_function(
-                    fun = d_IG,
+                    fun = dIG,
                     args = list(muIG(),
                                 betaIG()),                    
                     xlim = c(xERLANG(), 1.5 * muIG() + 0.5 *betaIG()),
@@ -2392,9 +2354,46 @@ myserver <- function(input, output, session)
         
         
 #### Loi Binomiale Serveur ####
+        
         nBIN <- reactive({input$nBIN})
         
         pBIN <- reactive({input$pBIN})
+        
+        xBIN <- reactive({input$xBIN})
+        
+        kBIN <- reactive({input$kBIN})
+        
+        plot_choice_BIN_SERVER <- reactive({
+            if(input$plot_choice_BIN == "Densité")
+                dbinom
+            else
+                pbinom
+        })
+        
+        plot_color_BIN_SERVER <- reactive({
+            if(input$xlim_BIN == T)
+                "Dark Green"
+            else
+                "Royal Blue"
+        })
+        # 
+        # xlim_BIN_SERVER <- reactive({
+        #     if(input$xlim_BIN == T)
+        #         c(0, xBIN())
+        #     else
+        #         c(xBIN(), nBIN())
+        # })
+        
+        repartsurvieBIN_LATEX <- reactive({
+            if(input$xlim_BIN == T)
+            {
+                "F_{X}"
+            }
+            else
+            {
+                "S_{X}"
+            }
+        })
         
         observeEvent(
             {
@@ -2417,13 +2416,12 @@ myserver <- function(input, output, session)
                 
                 # rend le paramètre impossible à modifier pour l'utilisateur
                 if (x == "Bernoulli")
-                    hide("nBIN")
+                    shinyjs::hide("nBIN")
                 else
-                    show("nBIN")
+                    shinyjs::show("nBIN")
                 
             }
         )
-        
         
         output$loi_BIN <- renderUI({
             if(input$distrchoiceBINFAM == "Bernoulli")
@@ -2441,25 +2439,33 @@ myserver <- function(input, output, session)
                 "\\(X \\sim\\text{Binomiale} \\ (n, p)\\)"
         })
         
+        repartsurvieBIN <- reactive({
+            if(input$xlim_BIN == T)
+            {
+                format(pbinom(xBIN(), nBIN(), pBIN()), nsmall = 6, scientific = F)
+            }
+            else
+            {
+                format(pbinom(xBIN(), nBIN(), pBIN(), lower.tail = F), nsmall = 6, scientific = F)
+            }
+            
+        })
+        
         meanBIN <- reactive({nBIN() * pBIN()})
         
         varBIN <- reactive({nBIN() * pBIN() * (1 - pBIN())})   
         
         densityBIN <- reactive({format(dbinom(input$xBIN, nBIN(), pBIN()), nsmall = 6)})
         
-        repartBIN <- reactive({format(pbinom(input$xBIN, nBIN(), pBIN()), nsmall = 6)})
-        
-        survieBIN <- reactive({format(pbinom(input$xBIN, nBIN(), pBIN(), lower.tail = F), nsmall = 6)})
-        
-        VaRBIN <- reactive({format(VaR_binom(input$kBIN,
-                                          nBIN(),
-                                          pBIN()),
+        VaRBIN <- reactive({format(VaR_binom(kappa = kBIN(),
+                                             nBIN(),
+                                             pBIN()),
                                    nsmall = 6)
             })
         
-        TVaRBIN <- reactive({format(TVaR_binom(input$kBIN,
-                                               n = nBIN(),
-                                               p = pBIN()),
+        TVaRBIN <- reactive({format(TVaR_binom(kappa = kBIN(),
+                                               nBIN(),
+                                               pBIN()),
                                     nsmall = 6)
             })
         
@@ -2475,15 +2481,12 @@ myserver <- function(input, output, session)
                                                            input$xBIN,
                                                            densityBIN()
         ))})
-        output$repartBIN <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$", 
-                                                          input$xBIN,
-                                                          repartBIN()
+        
+        output$repartsurvieBIN <- renderUI({withMathJax(sprintf("$$%s(%s) = %s$$", 
+                                                                repartsurvieBIN_LATEX(),
+                                                                xBIN(),
+                                                                repartsurvieBIN()
         ))})
-
-        output$survieBIN <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
-                                                            input$xBIN,
-                                                            survieBIN()))
-        })
         
         output$VaRBIN <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
                                                        input$kBIN,
@@ -2494,13 +2497,58 @@ myserver <- function(input, output, session)
                                                         TVaRBIN()
         ))})
         
-        output$FxBIN <- renderPlotly({ggplot(data.frame(x = 0:nBIN(), y = dbinom(0:nBIN(), nBIN(), pBIN())), aes(x = x, y = y)) + geom_bar(stat = "identity", col = "red", fill ="red", alpha = 0.7, width = 0.3) + theme_classic() + ylab("P(X=x")
-            
+        output$FxBIN <- renderPlotly({
+            ggplot(data.frame(x = 0:nBIN(),
+                              y = dbinom(0:nBIN(), nBIN(), pBIN())
+                              ),
+                   aes(x, y)
+                   ) +
+                geom_bar(stat = "identity",
+                         col = "red",
+                         fill ="red",
+                         alpha = 0.7,
+                         width = 0.3) +
+                geom_bar(aes(x = xBIN(),
+                             y = dbinom(x = xBIN(), nBIN(), pBIN())
+                             ),
+                         stat = "identity", 
+                         alpha = 0.7,
+                         inherit.aes = F,
+                         width = 0.3,
+                         fill = "blue") + 
+                theme_classic() +
+                ylab("P(X=x")
+
         })
         
+        # output$FxBIN <- renderPlotly({
+        #     ggplot(data = data.frame(x = c(0,
+        #                                    nBIN()
+        #     )
+        #     ),
+        #     aes(x)) + 
+        #         stat_function(fun = plot_choice_BIN_SERVER(),
+        #                       args = list(nBIN(), pBIN())) + 
+        #         ylab("Pr(X = x)") + 
+        #         theme_classic() +
+        #         stat_function(
+        #             fun = plot_choice_BIN_SERVER(),
+        #             args = list(nBIN(), pBIN()),
+        #             xlim = xlim_BIN_SERVER(),
+        #             geom = "area",
+        #             fill = plot_color_BIN_SERVER(),
+        #             alpha = 0.7
+        #         )
+        # })
         # Reactive slider
-        observeEvent(nBIN(),{updateSliderInput(session = session, inputId = "xBIN", max = nBIN())
-        })
+        observeEvent(nBIN(),
+                     {
+                         updateSliderInput(session = session, 
+                                           inputId = "xBIN",
+                                           max = nBIN()
+                         )
+                     }
+        )
     
 #### Loi Poisson Serveur ####
         
@@ -2565,7 +2613,7 @@ myserver <- function(input, output, session)
     output$changingpetitNHG <- renderUI({
         numericInput('petitNHG', 
                      '$$n$$', 
-                     value = (grosNHG() - mHG()), 
+                     value = 2, 
                      min = 0, 
                      max = (grosNHG() - 1),
                      step = 1)
@@ -2830,9 +2878,9 @@ myserver <- function(input, output, session)
         
         # rend le paramètre impossible à modifier pour l'utilisateur
         if (x == "Géometrique")
-            hide("rBN")
+            shinyjs::hide("rBN")
         else
-            show("rBN")
+            shinyjs::show("rBN")
         
     })
     
@@ -2907,15 +2955,15 @@ myserver <- function(input, output, session)
                nsmall = 6)
     })
     
-    densityUNID <- reactive({format(d_unifD(x = xUNID(), aUNID(), bUNID()),
+    densityUNID <- reactive({format(dunifD(x = xUNID(), aUNID(), bUNID()),
                                     nsmall = 6)
     })
     
-    repartUNID <- reactive({format(p_unifD(q = xUNID(), aUNID(), bUNID()), 
+    repartUNID <- reactive({format(punifD(k = xUNID(), aUNID(), bUNID()), 
                                    nsmall = 6)
     })
     
-    survieUNID <- reactive({format(1 - p_unifD(q = xUNID(), aUNID(), bUNID()), 
+    survieUNID <- reactive({format(1 - punifD(k = xUNID(), aUNID(), bUNID()), 
                                    nsmall = 6)
     })
     
@@ -3037,11 +3085,11 @@ myserver <- function(input, output, session)
         # rend le paramètre impossible à modifier pour l'utilisateur
         if (x == "Lognormale")
         {
-            hide("distrchoiceGAMMA")
+            shinyjs::hide("distrchoiceGAMMA")
         }
         else
         {
-            show("distrchoiceGAMMA")
+            shinyjs::show("distrchoiceGAMMA")
         }
         
         updateNumericInput(session, "shapeBNCOMP",
@@ -3060,7 +3108,7 @@ myserver <- function(input, output, session)
     
     # densityBNCOMP <- reactive({format(dBNCOMP(input$xBNCOMP, shapeBNCOMP(), rateBNCOMP()),scientific = F,  nsmall = 6)})
     
-    repartBNCOMP <- reactive({format(p_BNComp(x = xBNCOMP(), 
+    repartBNCOMP <- reactive({format(p_BNCOMP(x = xBNCOMP(), 
                                               r = rBNCOMP(),
                                               q = qBNCOMP(),
                                               shapeBNCOMP(), 
@@ -3070,7 +3118,7 @@ myserver <- function(input, output, session)
                                      nsmall = 6, scientific = F)
     })
     
-    survieBNCOMP <- reactive({format(1 - p_BNComp(x = xBNCOMP(), 
+    survieBNCOMP <- reactive({format(1 - p_BNCOMP(x = xBNCOMP(), 
                                                   r = rBNCOMP(),
                                                   q = qBNCOMP(),
                                                   ko = koBNCOMP(),
@@ -3080,7 +3128,7 @@ myserver <- function(input, output, session)
                                                   ), 
                                      nsmall = 6, scientific = F)})
 
-    VaRBNCOMP <- reactive({format(VaR_BNComp(kappa = kBNCOMP(), 
+    VaRBNCOMP <- reactive({format(VaR_BNCOMP(kappa = kBNCOMP(), 
                                              ko = koBNCOMP(),
                                              q     = qBNCOMP(),
                                              r     = rBNCOMP(),
@@ -3088,7 +3136,7 @@ myserver <- function(input, output, session)
                                              rateBNCOMP()
     ), nsmall = 6)})
     
-    varkBNCOMP <- reactive({VaR_BNComp(kappa = kBNCOMP(), 
+    varkBNCOMP <- reactive({VaR_BNCOMP(kappa = kBNCOMP(), 
                                        ko = koBNCOMP(),
                                        r     = rBNCOMP(),
                                        q     = qBNCOMP(),
@@ -3096,7 +3144,7 @@ myserver <- function(input, output, session)
                                        rateBNCOMP()
                                        )})
     
-    TVaRBNCOMP <- reactive({format(TVaR_BNComp(kappa     = kBNCOMP(),
+    TVaRBNCOMP <- reactive({format(TVaR_BNCOMP(kappa     = kBNCOMP(),
                                                r     = rBNCOMP(),
                                                q     = qBNCOMP(),
                                                vark  = varkBNCOMP(),
@@ -3108,7 +3156,7 @@ myserver <- function(input, output, session)
                                    nsmall = 6)
     })
     
-    meanBNCOMP <- reactive({format(E_BNComp(shapeBNCOMP(), 
+    meanBNCOMP <- reactive({format(E_BNCOMP(shapeBNCOMP(), 
                                             rateBNCOMP(),
                                             r     = rBNCOMP(),
                                             q     = qBNCOMP(),
@@ -3118,7 +3166,7 @@ myserver <- function(input, output, session)
     scientific = F)
     })
     
-    varianceBNCOMP <- reactive({format(V_BNComp(shapeBNCOMP(), 
+    varianceBNCOMP <- reactive({format(V_BNCOMP(shapeBNCOMP(), 
                                                 rateBNCOMP(),
                                                 r     = rBNCOMP(),
                                                 q     = qBNCOMP(),
@@ -3279,11 +3327,11 @@ myserver <- function(input, output, session)
         # rend le paramètre impossible à modifier pour l'utilisateur
         if (x == "Lognormale")
         {
-            hide("distrchoiceGAMMA")
+            shinyjs::hide("distrchoiceGAMMA")
         }
         else
         {
-            show("distrchoiceGAMMA")
+            shinyjs::show("distrchoiceGAMMA")
         }
         
         updateNumericInput(session, "shapePCOMP",
@@ -3302,7 +3350,7 @@ myserver <- function(input, output, session)
     
     # densityPCOMP <- reactive({format(dPCOMP(input$xPCOMP, shapePCOMP(), ratePCOMP()),scientific = F,  nsmall = 6)})
     
-    repartPCOMP <- reactive({format(p_Pcomp(x = xPCOMP(), 
+    repartPCOMP <- reactive({format(p_PCOMP(x = xPCOMP(), 
                                             lambdaPCOMP(),
                                             shapePCOMP(), 
                                             ratePCOMP(),
@@ -3311,7 +3359,7 @@ myserver <- function(input, output, session)
                                     nsmall = 6, scientific = F)
     })
     
-    surviePCOMP <- reactive({format(1 - p_Pcomp(x = xPCOMP(), 
+    surviePCOMP <- reactive({format(1 - p_PCOMP(x = xPCOMP(), 
                                             lambdaPCOMP(),
                                             shapePCOMP(), 
                                             ratePCOMP(),
@@ -3320,21 +3368,21 @@ myserver <- function(input, output, session)
                                     nsmall = 6, scientific = F)
         })
     
-    VaRPCOMP <- reactive({format(VaR_PComp(kappa = kPCOMP(), 
+    VaRPCOMP <- reactive({format(VaR_PCOMP(kappa = kPCOMP(), 
                                            lambdaPCOMP(),
                                            shapePCOMP(), 
                                            ratePCOMP(),
                                            ko = koPCOMP()
     ), nsmall = 6)})
     
-    varkPCOMP <- reactive({VaR_PComp(kappa = kPCOMP(), 
+    varkPCOMP <- reactive({VaR_PCOMP(kappa = kPCOMP(), 
                                      lambdaPCOMP(),
                                      shapePCOMP(), 
                                      ratePCOMP(),
                                      ko = koPCOMP()
     )})
     
-    TVaRPCOMP <- reactive({format(TVaR_PComp(kappa = kPCOMP(),
+    TVaRPCOMP <- reactive({format(TVaR_PCOMP(kappa = kPCOMP(),
                                              lambdaPCOMP(),
                                              shapePCOMP(), 
                                              ratePCOMP(),
@@ -3410,7 +3458,8 @@ myserver <- function(input, output, session)
                                                        kPCOMP(),
                                                        TVaRPCOMP()
     ))})
-#### Loi Binomiale Composée Serveur ####
+
+    #### Loi Binomiale Composée Serveur ####
     
     
     xBINCOMP <- reactive({input$xBINCOMP})
@@ -3506,11 +3555,11 @@ myserver <- function(input, output, session)
         # rend le paramètre impossible à modifier pour l'utilisateur
         if (x == "Lognormale")
         {
-            hide("distrchoiceGAMMA")
+            shinyjs::hide("distrchoiceGAMMA")
         }
         else if (x == "Gamma")
         {
-            show("distrchoiceGAMMA")
+            shinyjs::show("distrchoiceGAMMA")
         }
         
         updateNumericInput(session, "shapeBINCOMP",
@@ -3529,7 +3578,7 @@ myserver <- function(input, output, session)
     
     # densityBINCOMP <- reactive({format(dBINCOMP(input$xBINCOMP, shapeBINCOMP(), rateBINCOMP()),scientific = F,  nsmall = 6)})
     
-    repartBINCOMP <- reactive({format(p_BINComp(x = xBINCOMP(), 
+    repartBINCOMP <- reactive({format(p_BINCOMP(x = xBINCOMP(), 
                                               n = nBINCOMP(),
                                               q = qBINCOMP(),
                                               shapeBINCOMP(), 
@@ -3539,7 +3588,7 @@ myserver <- function(input, output, session)
                                      nsmall = 6, scientific = F)
     })
     
-    survieBINCOMP <- reactive({format(1 - p_BINComp(x = xBINCOMP(), 
+    survieBINCOMP <- reactive({format(1 - p_BINCOMP(x = xBINCOMP(), 
                                                   n = nBINCOMP(),
                                                   q = qBINCOMP(),
                                                   shapeBINCOMP(), 
@@ -3547,7 +3596,7 @@ myserver <- function(input, output, session)
                                                   ko = koBINCOMP(),
                                                   distr_severity = input$severityBINCOMP), nsmall = 6, scientific = F)})
     
-    VaRBINCOMP <- reactive({format(VaR_BINComp(k = kBINCOMP(), 
+    VaRBINCOMP <- reactive({format(VaR_BINCOMP(k = kBINCOMP(), 
                                              n     = nBINCOMP(),
                                              q     = qBINCOMP(),
                                              shapeBINCOMP(), 
@@ -3555,7 +3604,7 @@ myserver <- function(input, output, session)
                                              ko = koBINCOMP()
     ), nsmall = 6)})
     
-    varkBINCOMP <- reactive({VaR_BINComp(k = kBINCOMP(), 
+    varkBINCOMP <- reactive({VaR_BINCOMP(k = kBINCOMP(), 
                                        n     = nBINCOMP(),
                                        q     = qBINCOMP(),
                                        rateBINCOMP(),
@@ -3563,7 +3612,7 @@ myserver <- function(input, output, session)
                                        ko = koBINCOMP()
     )})
     
-    TVaRBINCOMP <- reactive({format(TVaR_BINComp(k    = kBINCOMP(),
+    TVaRBINCOMP <- reactive({format(TVaR_BINCOMP(k    = kBINCOMP(),
                                                n     = nBINCOMP(),
                                                q     = qBINCOMP(),
                                                shapeBINCOMP(), 
@@ -3575,7 +3624,7 @@ myserver <- function(input, output, session)
     nsmall = 6)
     })
     
-    meanBINCOMP <- reactive({format(E_BINComp(
+    meanBINCOMP <- reactive({format(E_BINCOMP(
                                             n     = nBINCOMP(),
                                             q     = qBINCOMP(),
                                             shapeBINCOMP(), 
@@ -3586,7 +3635,7 @@ myserver <- function(input, output, session)
     scientific = F)
     })
     
-    varianceBINCOMP <- reactive({format(V_BINComp(
+    varianceBINCOMP <- reactive({format(V_BINCOMP(
                                                 n     = nBINCOMP(),
                                                 q     = qBINCOMP(),
                                                 shapeBINCOMP(), 
