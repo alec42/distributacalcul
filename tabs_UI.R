@@ -669,18 +669,23 @@ tab_PARETO_UI <- tabItem(tabName = "Pareto",
                                        numericInput('xPARETO', '$$x$$', value = 0.5, min = 0),
                                        uiOutput("densityPARETO"),
 
-                                       tabBox(
-                                           width = NULL,
-                                           tabPanel("Répartition",
-                                                    uiOutput("repartPARETO"),
-                                                    plotlyOutput("FxPARETO")
-                                           ),
-                                           tabPanel("Survie",
-                                                    uiOutput("surviePARETO"),
-                                                    plotlyOutput("SxPARETO")
-                                           )
-
-                                       )
+                                       switchInput(
+                                           inputId = "xlim_PARETO",
+                                           onStatus = "success",
+                                           onLabel = "Répartition",
+                                           offStatus = "info",
+                                           offLabel = "Survie",
+                                           value = T,
+                                           labelWidth = "10px"
+                                       ),
+                                       uiOutput("repartsurviePARETO"),
+                                       p("Graphique"),
+                                       radioGroupButtons(inputId = "plot_choice_PARETO", 
+                                                         choices = c("Densité", 
+                                                                     "Cumulative"),
+                                                         selected = "Densité",
+                                                         justified = TRUE),
+                                       plotlyOutput("FxPARETO")
                                    ),
                                    align = "center"
                                )
@@ -700,6 +705,11 @@ tab_PARETO_UI <- tabItem(tabName = "Pareto",
                                        numericInput('kPARETO', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                        uiOutput("VaRPARETO"),
                                        uiOutput("TVaRPARETO"),
+                                       radioGroupButtons(inputId = "plot_choice_PARETO_QX", 
+                                                         choices = c("Densité", 
+                                                                     "Cumulative"),
+                                                         selected = "Cumulative",
+                                                         justified = TRUE),
                                        plotlyOutput("QxPARETO")
                                    ),
                                    align = "center"
@@ -766,18 +776,23 @@ tab_BURR_UI <- tabItem(tabName = "Burr",
                                          numericInput('xBURR', '$$x$$', value = 0.5, min = 0, step = 1),
                                          uiOutput("densityBURR"),
 
-                                         tabBox(
-                                             width = NULL,
-                                             tabPanel("Répartition",
-                                                      uiOutput("repartBURR"),
-                                                      plotlyOutput("FxBURR")
-                                             ),
-                                             tabPanel("Survie",
-                                                      uiOutput("survieBURR"),
-                                                      plotlyOutput("SxBURR")
-                                             )
-
-                                         )
+                                         switchInput(
+                                             inputId = "xlim_BURR",
+                                             onStatus = "success",
+                                             onLabel = "Répartition",
+                                             offStatus = "info",
+                                             offLabel = "Survie",
+                                             value = T,
+                                             labelWidth = "10px"
+                                         ),
+                                         uiOutput("repartsurvieBURR"),
+                                         p("Graphique"),
+                                         radioGroupButtons(inputId = "plot_choice_BURR", 
+                                                           choices = c("Densité", 
+                                                                       "Cumulative"),
+                                                           selected = "Densité",
+                                                           justified = TRUE),
+                                         plotlyOutput("FxBURR")
                                      ),
                                      align = "center"
                                  )
@@ -797,6 +812,11 @@ tab_BURR_UI <- tabItem(tabName = "Burr",
                                          numericInput('kBURR', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                          uiOutput("VaRBURR"),
                                          uiOutput("TVaRBURR"),
+                                         radioGroupButtons(inputId = "plot_choice_BURR_QX", 
+                                                           choices = c("Densité", 
+                                                                       "Cumulative"),
+                                                           selected = "Cumulative",
+                                                           justified = TRUE),
                                          plotlyOutput("QxBURR")
                                      ),
                                      align = "center"
@@ -861,19 +881,24 @@ tab_WEIBULL_UI <- tabItem(tabName = "Weibull",
                                          status = "danger", # pour couleur de la boite, diff couleur pour statut
                                          numericInput('xWEIBULL', '$$x$$', value = 0.5, min = 0),
                                          uiOutput("densityWEIBULL"),
-
-                                         tabBox(
-                                             width = NULL,
-                                             tabPanel("Répartition",
-                                                      uiOutput("repartWEIBULL"),
-                                                      plotlyOutput("FxWEIBULL")
-                                             ),
-                                             tabPanel("Survie",
-                                                      uiOutput("survieWEIBULL"),
-                                                      plotlyOutput("SxWEIBULL")
-                                             )
-
-                                         )
+                                         
+                                         switchInput(
+                                             inputId = "xlim_WEIBULL",
+                                             onStatus = "success",
+                                             onLabel = "Répartition",
+                                             offStatus = "info",
+                                             offLabel = "Survie",
+                                             value = T,
+                                             labelWidth = "10px"
+                                         ),
+                                         uiOutput("repartsurvieWEIBULL"),
+                                         p("Graphique"),
+                                         radioGroupButtons(inputId = "plot_choice_WEIBULL", 
+                                                           choices = c("Densité", 
+                                                                       "Cumulative"),
+                                                           selected = "Densité",
+                                                           justified = TRUE),
+                                         plotlyOutput("FxWEIBULL")
                                      ),
                                      align = "center"
                                  )
@@ -893,6 +918,11 @@ tab_WEIBULL_UI <- tabItem(tabName = "Weibull",
                                          numericInput('kWEIBULL', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                          uiOutput("VaRWEIBULL"),
                                          uiOutput("TVaRWEIBULL"),
+                                         radioGroupButtons(inputId = "plot_choice_WEIBULL_QX", 
+                                                           choices = c("Densité", 
+                                                                       "Cumulative"),
+                                                           selected = "Cumulative",
+                                                           justified = TRUE),
                                          plotlyOutput("QxWEIBULL")
                                      ),
                                      align = "center"
@@ -1043,21 +1073,27 @@ tab_UNIC_UI <- tabItem(tabName = "UniformeC",
                                       solidHeader = TRUE,
                                       tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
                                       status = "danger", # pour couleur de la boite, diff couleur pour statut
-                                      numericInput('xUNIC', '$$x$$', min = 0, value = 0.5, step = 1),
+                                      uiOutput("xUNIC_SERVER"),
                                       uiOutput("densityUNIC"),
                                       
-                                      tabBox(
-                                          width = NULL,
-                                          tabPanel("Répartition",
-                                                   uiOutput("repartUNIC"),
-                                                   plotlyOutput("FxUNIC")
-                                          ),
-                                          tabPanel("Survie",
-                                                   uiOutput("survieUNIC"),
-                                                   plotlyOutput("SxUNIC")
-                                          )
-                                          
-                                      )
+                                      switchInput(
+                                          inputId = "xlim_UNIC",
+                                          onStatus = "success",
+                                          onLabel = "Répartition",
+                                          offStatus = "info",
+                                          offLabel = "Survie",
+                                          value = T,
+                                          labelWidth = "10px"
+                                      ),
+                                      uiOutput("repartsurvieUNIC"),
+                                      p("Graphique"),
+                                      radioGroupButtons(inputId = "plot_choice_UNIC", 
+                                                        choices = c("Densité", 
+                                                                    "Cumulative"),
+                                                        selected = "Densité",
+                                                        justified = TRUE),
+                                      plotlyOutput("FxUNIC")
+                                      
                                   ),
                                   align = "center"
                                   
@@ -1074,6 +1110,11 @@ tab_UNIC_UI <- tabItem(tabName = "UniformeC",
                                       numericInput('kUNIC', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                       uiOutput("VaRUNIC"),
                                       # ,uiOutput("TVaRUNIC")
+                                      radioGroupButtons(inputId = "plot_choice_UNIC_QX", 
+                                                        choices = c("Densité", 
+                                                                    "Cumulative"),
+                                                        selected = "Cumulative",
+                                                        justified = TRUE),
                                       plotlyOutput("QxUNIC")
                                       ),
 
@@ -1138,18 +1179,23 @@ tab_BETA_UI <- tabItem(tabName = "Beta",
                                         numericInput('xBETA', '$$x$$', value = 0.5, min = 0, max = 1, step = .1),
                                         uiOutput("densityBETA"),
 
-                                        tabBox(
-                                            width = NULL,
-                                            tabPanel("Répartition",
-                                                     uiOutput("repartBETA"),
-                                                     plotlyOutput("FxBETA")
-                                            ),
-                                            tabPanel("Survie",
-                                                     uiOutput("survieBETA"),
-                                                     plotlyOutput("SxBETA")
-                                            )
-
-                                        )
+                                        switchInput(
+                                            inputId = "xlim_BETA",
+                                            onStatus = "success",
+                                            onLabel = "Répartition",
+                                            offStatus = "info",
+                                            offLabel = "Survie",
+                                            value = T,
+                                            labelWidth = "10px"
+                                        ),
+                                        uiOutput("repartsurvieBETA"),
+                                        p("Graphique"),
+                                        radioGroupButtons(inputId = "plot_choice_BETA", 
+                                                          choices = c("Densité", 
+                                                                      "Cumulative"),
+                                                          selected = "Densité",
+                                                          justified = TRUE),
+                                        plotlyOutput("FxBETA")
                                     ),
                                     align = "center"
                                 )
@@ -1169,6 +1215,11 @@ tab_BETA_UI <- tabItem(tabName = "Beta",
                                         numericInput('kBETA', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                         uiOutput("VaRBETA"),
                                         uiOutput("TVaRBETA"),
+                                        radioGroupButtons(inputId = "plot_choice_BETA_QX", 
+                                                          choices = c("Densité", 
+                                                                      "Cumulative"),
+                                                          selected = "Cumulative",
+                                                          justified = TRUE),
                                         plotlyOutput("QxBETA")
                                         
                                     ),
@@ -1242,27 +1293,32 @@ tab_ERLANG_UI <- tabItem(tabName = "Erlang",
                                        numericInput('xERLANG', '$$x$$', value = 0.5, min = 0, step = 1),
                                        uiOutput("densityERLANG"),
 
-                                       tabBox(
-                                           width = NULL,
-                                           tabPanel("Répartition",
-                                                    uiOutput("repartERLANG")
-                                                    ,plotlyOutput("FxERLANG")
-                                           ),
-                                           tabPanel("Survie",
-                                                    uiOutput("survieERLANG")
-                                                    ,plotlyOutput("SxERLANG")
-                                           )
-
-                                       )
+                                       switchInput(
+                                           inputId = "xlim_ERLANG",
+                                           onStatus = "success",
+                                           onLabel = "Répartition",
+                                           offStatus = "info",
+                                           offLabel = "Survie",
+                                           value = T,
+                                           labelWidth = "10px"
+                                       ),
+                                       uiOutput("repartsurvieERLANG"),
+                                       p("Graphique"),
+                                       # radioGroupButtons(inputId = "plot_choice_ERLANG",
+                                       #                   choices = c("Densité",
+                                       #                               "Cumulative"),
+                                       #                   selected = "Densité",
+                                       #                   justified = TRUE),
+                                       plotlyOutput("FxERLANG")
                                    ),
                                    align = "center"
                                )
                            },
 
                            {
-                               ### Mesures de risque ERLANG  ----
+                               ## Mesures de risque ERLANG  ----
                                # column(
-                               #     width = 3,
+                               #     width = 4,
                                #     boxPlus(
                                #         title = "Mesure de risques",
                                #         width = NULL,
@@ -1273,6 +1329,11 @@ tab_ERLANG_UI <- tabItem(tabName = "Erlang",
                                #         numericInput('kERLANG', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                #         uiOutput("VaRERLANG"),
                                #         uiOutput("TVaRERLANG"),
+                               #         radioGroupButtons(inputId = "plot_choice_ERLANG_QX",
+                               #                           choices = c("Densité",
+                               #                                       "Cumulative"),
+                               #                           selected = "Cumulative",
+                               #                           justified = TRUE),
                                #         plotlyOutput("QxERLANG")
                                #     ),
                                #     align = "center"

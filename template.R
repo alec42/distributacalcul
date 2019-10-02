@@ -1,10 +1,10 @@
 #### UI ####
-### Fonctions BIN ----
+### Fonctions ERLANG ----
 # ...
-uiOutput("densityBIN"),
+uiOutput("densityERLANG"),
 
 switchInput(
-    inputId = "xlim_BIN",
+    inputId = "xlim_ERLANG",
     onStatus = "success",
     onLabel = "Répartition",
     offStatus = "info",
@@ -12,45 +12,58 @@ switchInput(
     value = T,
     labelWidth = "10px"
 ),
-uiOutput("repartsurvieBIN"),
+uiOutput("repartsurvieERLANG"),
 p("Graphique"),
-radioGroupButtons(inputId = "plot_choice_BIN", 
+radioGroupButtons(inputId = "plot_choice_ERLANG", 
                   choices = c("Densité", 
                               "Cumulative"),
                   selected = "Densité",
                   justified = TRUE),
-plotlyOutput("FxBIN")
+plotlyOutput("FxERLANG")
 
-### Mesures de risque BIN  ----
+### Mesures de risque ERLANG  ----
 # ...
-uiOutput("TVaRBIN"),
-plotlyOutput("QxBIN")
+uiOutput("TVaRERLANG"),
+radioGroupButtons(inputId = "plot_choice_ERLANG_QX", 
+                  choices = c("Densité", 
+                              "Cumulative"),
+                  selected = "Cumulative",
+                  justified = TRUE),
+plotlyOutput("QxERLANG")
 
 #### Server ####
 
-plot_choice_BIN_SERVER <- reactive({
-    if(input$plot_choice_BIN == "Densité")
-        dBIN
+plot_choice_ERLANG_SERVER <- reactive({
+    if(input$plot_choice_ERLANG == "Densité")
+        derlang
     else
-        pBIN
+        perlang
 })
 
-plot_color_BIN_SERVER <- reactive({
-    if(input$xlim_BIN == T)
+plot_choice_ERLANG_QX_SERVER <- reactive({
+    if(input$plot_choice_ERLANG_QX == "Densité")
+        derlang
+    else
+        perlang
+})
+
+
+plot_color_ERLANG_SERVER <- reactive({
+    if(input$xlim_ERLANG == T)
         "Dark Green"
     else
         "Royal Blue"
 })
 
-xlim_BIN_SERVER <- reactive({
-    if(input$xlim_BIN == T)
-        c(muNORM() - 4 * sqrt(sigma2NORM()), input$xNORM)
+xlim_ERLANG_SERVER <- reactive({
+    if(input$xlim_ERLANG == T)
+        c(0, xERLANG())
     else
-        c(input$xNORM, muNORM() + 4 * sqrt(sigma2NORM()))
+        c(xERLANG(), 1)
 })
 
-repartsurvieBIN_LATEX <- reactive({
-    if(input$xlim_BIN == T)
+repartsurvieERLANG_LATEX <- reactive({
+    if(input$xlim_ERLANG == T)
     {
         "F_{X}"
     }
@@ -60,64 +73,73 @@ repartsurvieBIN_LATEX <- reactive({
     }
 })
 
-repartsurvieBIN <- reactive({
-    if(input$xlim_BIN == T)
+repartsurvieERLANG <- reactive({
+    if(input$xlim_ERLANG == T)
     {
-        format(pnorm(input$xNORM, muNORM(), sigma2NORM()), nsmall = 6, scientific = F)
+        format(perlang(x = xERLANG(), 
+                       n = nERLANG(), 
+                       b = bERLANG()
+                       ), 
+               nsmall = 6)
     }
     else
     {
-        format(pnorm(input$xNORM, muNORM(), sigma2NORM(), lower.tail = F), nsmall = 6, scientific = F)
+        format(perlang(x = xERLANG(), 
+                       n = nERLANG(), 
+                       b = bERLANG(),
+                       lower.tail = F), 
+               nsmall = 6)
     }
     
 })
 
 # ...
 
-output$repartsurvieBIN <- renderUI({withMathJax(sprintf("$$%s(%s) = %s$$", 
-                                                         repartsurvieBIN_LATEX(),
-                                                         input$xBIN,
-                                                         repartsurvieBIN()
+output$repartsurvieERLANG <- renderUI({withMathJax(sprintf("$$%s(%s) = %s$$", 
+                                                            repartsurvieERLANG_LATEX(),
+                                                            xERLANG(),
+                                                            repartsurvieERLANG()
 ))})
 
 # ...
 
-output$QxBIN <- renderPlotly({
-    ggplot(data = data.frame(x = c(muNORM() - 4 * sqrt(sigma2NORM()),
-                                   muNORM() + 4 * sqrt(sigma2NORM())
-    )
+output$QxERLANG <- renderPlotly({
+    ggplot(data = data.frame(x = c(0, 2 * nERLANG() * betaERLANG())
     ),
     aes(x)) + 
-        stat_function(fun = dBIN,
-                      args = list(muNORM(), sigma2NORM())) + 
+        stat_function(fun = plot_choice_ERLANG_QX_SERVER(),
+                      args = list(nERLANG(),
+                                  betaERLANG())) +
         ylab("f(x)") + 
         theme_classic() +
         stat_function(
-            fun = dBIN,
-            args = list(muNORM(), sigma2NORM()),
-            xlim = c(VaRNORM(), muNORM() + 4 * sqrt(sigma2NORM())),
+            fun = plot_choice_ERLANG_QX_SERVER(),
+            args = list(nERLANG(),
+                        betaERLANG()),                    
+            xlim = c(VaRERLANG(), 
+                     2 * nERLANG() * betaERLANG()),
             geom = "area",
             fill = "red",
             alpha = 0.7
         )
 })
 
-output$FxBIN <- renderPlotly({
-    ggplot(data = data.frame(x = c(muNORM() - 4 * sqrt(sigma2NORM()),
-                                   muNORM() + 4 * sqrt(sigma2NORM())
-    )
+output$FxERLANG <- renderPlotly({
+    ggplot(data = data.frame(x = c(0, 2 * nERLANG() * betaERLANG())
     ),
     aes(x)) + 
-        stat_function(fun = plot_choice__SERVER(),
-                      args = list(muNORM(), sigma2NORM())) + 
+        stat_function(fun = plot_choice_ERLANG_SERVER(),
+                      args = list(nERLANG(),
+                                  betaERLANG())) +
         ylab("f(x)") + 
         theme_classic() +
         stat_function(
-            fun = plot_choice__SERVER(),
-            args = list(muNORM(), sigma2NORM()),
-            xlim = xlim__SERVER(),
+            fun = plot_choice_ERLANG_SERVER(),
+            args = list(nERLANG(),
+                        betaERLANG()),                    
+            xlim = xlim_ERLANG_SERVER(),
             geom = "area",
-            fill = plot_color__SERVER(),
+            fill = plot_color_ERLANG_SERVER(),
             alpha = 0.7
         )
 })

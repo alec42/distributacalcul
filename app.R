@@ -12,7 +12,7 @@
     library(tvarPackage)
     # devtools::install_github("alec42/Distributacalcul_package")
     library(Distributacalcul)
-
+    
     library(copula)
     library(dplyr)
     
