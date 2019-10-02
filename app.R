@@ -9,9 +9,10 @@
     library(plotly)
     library(shinyWidgets)
     library(shinyjs)
+    library(Distributacalcul)
     library(tvarPackage)
     # devtools::install_github("alec42/Distributacalcul_package")
-    library(Distributacalcul)
+    # devtools::install_github("gabrielcrepeault/tvarPackage")
     
     library(copula)
     library(dplyr)
