@@ -1,8 +1,199 @@
+
 myserver <- function(input, output, session) 
 {
+
 #### Serveur outil de tests statistiques ####
-    
     valueESTIM_STATTOOL <- reactive({input$valueESTIM_STATTOOL})
+    testESTIM_STATTOOL <- reactive({input$testESTIM_STATTOOL}) 
+    nsizeESTIM_STATTOOL <- reactive({input$nsizeESTIM_STATTOOL})
+    
+    ## pour renderer le choix de borne avec KaTex
+    updateSelectizeInput(
+        session,
+        inputId = "borneSTIM_STATTOOL",
+        choices = setNames(list("GE", "GT", "LE", "LT", "NE", "E"), 
+                           list("\\\\\\ge", "\\\\\\gt", "\\\\\\le", "\\\\\\lt", "\\\\\\not =", "=")),
+        options = list(render = I("
+                                  {
+                                  item:   function(item, escape) { 
+                                  var html = katex.renderToString(item.label);
+                                  return '<div>' + html + '</div>'; 
+                                  },
+                                  option: function(item, escape) { 
+                                  var html = katex.renderToString(item.label);
+                                  return '<div>' + html + '</div>'; 
+                                  }
+                                  }
+                                  "))
+        
+        )
+    ## pour renderer le choix de paramètre avec KaTex
+    updateSelectizeInput(
+        session,
+        inputId = "paramESTIM_STATTOOL",
+        choices = setNames(list("mu", "sigma", "p", "theta"), list("\\\\\\mu", "\\\\\\sigma^2", "p", "\\\\\\theta")),
+        options = list(render = I("
+    {
+                                  item:   function(item, escape) { 
+                                  var html = katex.renderToString(item.label);
+                                  return '<div>' + html + '</div>'; 
+                                  },
+                                  option: function(item, escape) { 
+                                  var html = katex.renderToString(item.label);
+                                  return '<div>' + html + '</div>'; 
+                                  }
+}
+"))
+        
+    )
+    
+    output$seuil_H0_ESTIM_STATTOOL <- renderUI({
+        if(testESTIM_STATTOOL() == "UMP")
+        {
+            withMathJax("$$Z_{\\text{obs}} \\geq z_{\\alpha}$$")
+        }
+        else if(testESTIM_STATTOOL() == "Test T")
+        {
+            withMathJax("$$T_{\\text{n, obs}} \\geq t_{(n - 1), \\ \\alpha}$$")
+        }
+        else if(testESTIM_STATTOOL() == "Central limite")
+        {
+            withMathJax("$$Z_{\\text{obs}} \\geq z_{\\alpha}$$")
+        }
+        else if(testESTIM_STATTOOL() == "Wald")
+        {
+            withMathJax("$$| \\phi_{\\text{obs}} | \\geq z_{\\alpha / 2}$$")
+        }
+        else if(testESTIM_STATTOOL() == "Sur une proportion")
+        {
+            withMathJax("$$| Z_{\\text{obs}} | \\geq z_{\\alpha / 2}$$")
+        }
+        else if(testESTIM_STATTOOL() == "Sur la variance")
+        {
+            withMathJax("$$ W_{n, \\text{obs}} \\geq \\chi^2_{\\alpha, \\ (n - 1)}$$")
+        }
+        else if(testESTIM_STATTOOL() == "Rapport de vraisemblance")
+        {
+            withMathJax("$$ W_{\\text{obs}} \\geq \\chi^2_{(p - r), \\alpha}$$")
+        }
+        else if(testESTIM_STATTOOL() == "Khi-carré de Pearson")
+        {
+            withMathJax("$$X^2_{\\text{obs}} \\geq \\chi^2_{(k - s), \\alpha}$$")
+        }
+    })
+    
+    output$distr_H0_ESTIM_STATTOOL <- renderUI({
+        if(testESTIM_STATTOOL() == "UMP")
+        {
+            withMathJax("$$Z \\sim \\text{N}(0, 1)$$")
+        }
+        else if(testESTIM_STATTOOL() == "Test T")
+        {
+            withMathJax("$$T_n \\sim t_{(n - 1)}$$")
+        }
+        else if(testESTIM_STATTOOL() == "Central limite")
+        {
+            withMathJax("$$\\approx \\text{N}(0, 1)$$")
+        }
+        else if(testESTIM_STATTOOL() == "Wald")
+        {
+            withMathJax("$$\\approx \\text{N}(0, 1)$$")
+        }
+        else if(testESTIM_STATTOOL() == "Sur une proportion")
+        {
+            withMathJax("$$\\approx \\text{N}(0, 1)$$")
+        }
+        else if(testESTIM_STATTOOL() == "Sur la variance")
+        {
+            withMathJax("$$W_n \\sim \\chi^2_{(n - 1)}$$")
+        }
+        else if(testESTIM_STATTOOL() == "Rapport de vraisemblance")
+        {
+            withMathJax("$$\\approx \\chi^2_{(p - r)}$$")
+        }
+        else if(testESTIM_STATTOOL() == "Khi-carré de Pearson")
+        {
+            withMathJax("$$\\approx \\chi^2_{(k - s)}$$")
+        }
+    })
+    
+    output$distr_ESTIM_STATTOOL <- renderUI({
+        if(testESTIM_STATTOOL() == "UMP")
+        {
+            withMathJax("$$X_1 \\sim \\text{N}(\\mu, \\sigma^2)$$")
+        }
+        else if(testESTIM_STATTOOL() == "Test T")
+        {
+            withMathJax("$$X_1 \\sim \\text{N}(\\mu, \\sigma^2)$$")
+        }
+        else if(testESTIM_STATTOOL() == "Central limite")
+        {
+            withMathJax("$$X_1 \\sim \\text{ loi avec } E[X_1] = \\mu \\\ \\text{ et } V(X) \\text{ inconnue}$$")
+        }
+        else if(testESTIM_STATTOOL() == "Wald")
+        {
+            withMathJax("$$X_1 \\text{ à une densité } f( \\ \\dot \\ ; \\theta)$$")
+        }
+        else if(testESTIM_STATTOOL() == "Sur une proportion")
+        {
+            withMathJax("$$X_1 \\sim \\text{Bernoulli}(p)$$")
+        }
+        else if(testESTIM_STATTOOL() == "Sur la variance")
+        {
+            withMathJax("$$X_1 \\sim \\text{N}(\\mu, \\sigma^2)$$")
+        }
+        else if(testESTIM_STATTOOL() == "Rapport de vraisemblance")
+        {
+            withMathJax("$$X_1 \\text{ à une densité } f( \\ . \\ ; \\theta) \\text{ où } \\theta \\text{ a une dimension } p$$")
+        }
+        else if(testESTIM_STATTOOL() == "Khi-carré de Pearson")
+        {
+            withMathJax("Tableau de fréquence avec k cellules")
+        }
+    })
+    
+#### Serveur outil de copules ####
+    
+    output$caption <- renderText({
+        if (input$name == "Student") {
+            "Fonctionne pas"
+        } else {
+            ""
+        }
+    })
+    
+    
+    output$copulaPlot <- renderPlotly({
+        if (length(input$name) == 0) {
+            print("Please select copula type")
+        } else {
+            
+            if (input$name == "EFGM") {
+                current_dcopula <- dEFGM
+            } else if (input$name == "Clayton") {
+                current_dcopula <- dClayton
+            } else if(input$name == "AMH") {
+                current_dcopula <- dAMH
+            } else if(input$name == "Frank") {
+                current_dcopula <- dFrank
+            } else if(input$name == "Gumbel") {
+                current_dcopula <- dGumbel
+            } else if(input$name == "Normal") {
+                current_dcopula <- dNormal
+            } else if(input$name == "Student") {
+                current_dcopula <- dStudent
+            }
+            
+            x.seq <- seq(0, 1, 0.01)
+            
+            densityMatrix <- outer(x.seq, x.seq, FUN = "current_dcopula", kendallTau = input$kendallTau)
+            axz <- list(
+                nticks = 10,
+                range = c(min(densityMatrix, 0), max(densityMatrix))
+            )
+            plot_ly(z =~densityMatrix) %>% add_surface() %>% layout(scene = list(zaxis=axz))
+        }
+    })
     
 #### Serveur outil de la fonction d'excès-moyen ####
     
@@ -80,12 +271,6 @@ myserver <- function(input, output, session)
         
     densityNORM <- reactive({format(dnorm(input$xNORM, muNORM(), sqrt(sigma2NORM())), nsmall = 6)})
         
-    repartNORM <- reactive({format(pnorm(input$xNORM, muNORM(), sqrt(sigma2NORM())), nsmall = 6)})
-        
-    survieNORM <- reactive({format(pnorm(input$xNORM, muNORM(), sqrt(sigma2NORM()), lower.tail = F),
-                                   nsmall = 6)
-    })
-        
     VaRNORM <- reactive({format(VaR_norm(input$kNORM, muNORM(), sqrt(sigma2NORM())), nsmall = 6)})
         
     TVaRNORM <- reactive({format(TVaR_norm(input$kNORM, muNORM(), sqrt(sigma2NORM())), nsmall = 6)})
@@ -97,6 +282,58 @@ myserver <- function(input, output, session)
     EspLimNORM <- reactive({Elim_norm(d = input$dNORM, muNORM(), sqrt(sigma2NORM()))})
     
     ExcesMoyNORM <- reactive({Mexcess_norm(d = input$dNORM, muNORM(), sqrt(sigma2NORM()))})
+    
+    plot_choice_NORM_QX_SERVER <- reactive({
+        if(input$plot_choice_NORM_QX == "Densité")
+            dnorm
+        else
+            pnorm
+    })
+    
+    plot_choice_NORM_SERVER <- reactive({
+        if(input$plot_choice_NORM == "Densité")
+            dnorm
+        else
+            pnorm
+    })
+    
+    plot_color_NORM_SERVER <- reactive({
+        if(input$xlim_NORM == T)
+            "Dark Green"
+        else
+            "Royal Blue"
+    })
+    
+    xlim_NORM_SERVER <- reactive({
+        if(input$xlim_NORM == T)
+            c(muNORM() - 4 * sqrt(sigma2NORM()), input$xNORM)
+        else
+            c(input$xNORM, muNORM() + 4 * sqrt(sigma2NORM()))
+    })
+    
+    repartsurvieNORM_LATEX <- reactive({
+        if(input$xlim_NORM == T)
+        {
+            "F_{X}"
+        }
+        else
+        {
+            "S_{X}"
+        }
+    })
+    
+    repartsurvieNORM <- reactive({
+        if(input$xlim_NORM == T)
+        {
+            format(pnorm(input$xNORM, muNORM(), sqrt(sigma2NORM())), nsmall = 6, scientific = F)
+        }
+        else
+        {
+            format(pnorm(input$xNORM, muNORM(), sqrt(sigma2NORM()), lower.tail = F), nsmall = 6, scientific = F)
+        }
+        
+    })
+    
     
     output$meanNORM <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
                                                      muNORM()))
@@ -110,15 +347,12 @@ myserver <- function(input, output, session)
                                                         input$xNORM,
                                                         densityNORM()))
         })
-    output$repartNORM <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$",
-                                                       input$xNORM,
-                                                       repartNORM()))
-        })
     
-    output$survieNORM <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
-                                                       input$xNORM,
-                                                       survieNORM()))
-        })
+    output$repartsurvieNORM <- renderUI({withMathJax(sprintf("$$%s(%s) = %s$$", 
+                                                              repartsurvieNORM_LATEX(),
+                                                              input$xNORM,
+                                                              repartsurvieNORM()
+    ))})
     
     output$VaRNORM <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
                                                     input$kNORM,
@@ -150,58 +384,44 @@ myserver <- function(input, output, session)
                                                          ExcesMoyNORM()))
         })
     
-    output$FxNORM <- renderPlotly({
-        ggplot(data = data.frame(x = c(
-            muNORM() - 4 * sqrt(sigma2NORM()),
-            muNORM() + 4 * sqrt(sigma2NORM())
-        )),
-        aes(x)) +
-            stat_function(fun = dnorm,
-                          args = list(mean = muNORM(),
-                                      sd = sqrt(sigma2NORM()))) +
-            ylab("f(x)") +
+    output$QxNORM <- renderPlotly({
+        ggplot(data = data.frame(x = c(muNORM() - 4 * sqrt(sigma2NORM()),
+                                       muNORM() + 4 * sqrt(sigma2NORM())
+                                       )
+                                 ),
+        aes(x)) + 
+            stat_function(fun = plot_choice_NORM_QX_SERVER(),
+                          args = list(muNORM(), sqrt(sigma2NORM()))) + 
+            ylab("f(x)") + 
             theme_classic() +
             stat_function(
-                fun = dnorm,
-                args = list(mean = muNORM(), sd = sqrt(sigma2NORM())),
-                xlim = c(muNORM() - 4 * sqrt(sigma2NORM()), input$xNORM),
+                fun = plot_choice_NORM_QX_SERVER(),
+                args = list(muNORM(), sqrt(sigma2NORM())),
+                xlim = c(VaRNORM(), muNORM() + 4 * sqrt(sigma2NORM())),
                 geom = "area",
                 fill = "red",
                 alpha = 0.7
             )
     })
     
-    output$SxNORM <- renderPlotly({
-        ggplot(data = data.frame(x = c(
-            muNORM() - 4 * sqrt(sigma2NORM()),
-            muNORM() + 4 * sqrt(sigma2NORM())
-        )),
-        aes(x)) +
-            stat_function(fun = dnorm,
-                          args = list(mean = muNORM(),
-                                      sd = sqrt(sigma2NORM()))) +
-            ylab("f(x)") +
+    output$FxNORM <- renderPlotly({
+        ggplot(data = data.frame(x = c(muNORM() - 4 * sqrt(sigma2NORM()),
+                                       muNORM() + 4 * sqrt(sigma2NORM())
+                                       )
+                                 ),
+               aes(x)) + 
+            stat_function(fun = plot_choice_NORM_SERVER(),
+                          args = list(muNORM(), sqrt(sigma2NORM()))) + 
+            ylab("f(x)") + 
             theme_classic() +
             stat_function(
-                fun = dnorm,
-                args = list(mean = muNORM(), sd = sqrt(sigma2NORM())),
-                xlim = c(muNORM() + 4 * sqrt(sigma2NORM()), input$xNORM),
+                fun = plot_choice_NORM_SERVER(),
+                args = list(muNORM(), sqrt(sigma2NORM())),
+                xlim = xlim_NORM_SERVER(),
                 geom = "area",
-                fill = "red",
+                fill = plot_color_NORM_SERVER(),
                 alpha = 0.7
             )
-    })
-      
-    output$QxNORM <- renderPlotly({
-      ggplot(data = data.frame(x = c(0,1)),
-      aes(x)) +
-        stat_function(fun = qnorm,
-                      args = list(mean = muNORM(),
-                                  sd = sqrt(sigma2NORM()))
-                      ) + 
-            theme_classic()  
-            # +geom_vline(aes(VaRNORM()))
-            # geom_vline(xintercept = as.numeric(levels(VaRNORM()))[VaRNORM()])
     })
     
     
@@ -213,6 +433,35 @@ myserver <- function(input, output, session)
     
     xGAMMA <- reactive({input$xGAMMA})
     
+    plot_choice_GAMMA_QX_SERVER <- reactive({
+        if(input$plot_choice_GAMMA_QX == "Densité")
+            dgamma
+        else
+            pgamma
+    })
+    
+    plot_choice_GAMMA_SERVER <- reactive({
+        if(input$plot_choice_GAMMA == "Densité")
+            dgamma
+        else
+            pgamma
+    })
+    
+    plot_color_GAMMA_SERVER <- reactive({
+        if(input$xlim_GAMMA == T)
+            "Dark Green"
+        else
+            "Royal Blue"
+    })
+    
+    xlim_GAMMA_SERVER <- reactive({
+        if(input$xlim_GAMMA == T)
+            c(0, xGAMMA())
+        else
+            c(xGAMMA(), VaR_gamma(kappa = 0.999999, alphaGAMMA(), betaGAMMA()))
+    })
+    
+    
         betaGAMMA <- reactive({
             if (input$distrchoiceGAMMA == T) {
                 input$betaGAMMA
@@ -220,6 +469,7 @@ myserver <- function(input, output, session)
                 1 / input$betaGAMMA
             }
         })
+        
         
         alphaGAMMA <- reactive({
             if (input$distrchoiceEXPOFAM == "Khi carré")
@@ -279,14 +529,15 @@ myserver <- function(input, output, session)
             # rend le paramètre impossible à modifier pour l'utilisateur
             if (x == "Khi carré")
             {
-                hide("betaGAMMA")
-                hide("distrchoiceGAMMA")
+                shinyjs::hide("betaGAMMA")
+                shinyjs::hide("distrchoiceGAMMA")
             }
             else
             {
-                show("betaGAMMA")
-                show("distrchoiceGAMMA")
+                shinyjs::show("betaGAMMA")
+                shinyjs::show("distrchoiceGAMMA")
             }
+            
             updateNumericInput(session, "alphaGAMMA",
                                value =
                                    if (x == "Exponentielle")
@@ -309,17 +560,37 @@ myserver <- function(input, output, session)
             )
             # rend le paramètre impossible à modifier pour l'utilisateur
             if (x == "Exponentielle")
-                hide("alphaGAMMA")
-            else
-                show("alphaGAMMA")
+                shinyjs::hide("alphaGAMMA")
+            else if( x == "Gamma")
+                shinyjs::show("alphaGAMMA")
         })
         
         
         densityGAMMA <- reactive({format(dgamma(xGAMMA(), alphaGAMMA(), betaGAMMA()),scientific = F,  nsmall = 6)})
+
+        repartsurvieGAMMA_LATEX <- reactive({
+            if(input$xlim_GAMMA == T)
+            {
+                "F_{X}"
+            }
+            else
+            {
+                "S_{X}"
+            }
+        })
         
-        repartGAMMA <- reactive({format(pgamma(xGAMMA(), alphaGAMMA(), betaGAMMA()), nsmall = 6, scientific = F)})
+        repartsurvieGAMMA <- reactive({
+            if(input$xlim_GAMMA == T)
+            {
+                format(pgamma(xGAMMA(), alphaGAMMA(), betaGAMMA()), nsmall = 6, scientific = F)
+            }
+            else
+            {
+                format(pgamma(xGAMMA(), alphaGAMMA(), betaGAMMA(), lower.tail = F), nsmall = 6, scientific = F)
+            }
+            
+            })
         
-        survieGAMMA <- reactive({format(pgamma(xGAMMA(), alphaGAMMA(), betaGAMMA(), lower.tail = F), nsmall = 6, scientific = F)})
         
         VaRGAMMA <- reactive({format(VaR_gamma(kGAMMA(), alphaGAMMA(), betaGAMMA()), nsmall = 6)})
         
@@ -368,16 +639,12 @@ myserver <- function(input, output, session)
                                                              xGAMMA(),
                                                              densityGAMMA()
         ))})
-        output$repartGAMMA <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$", 
-                                                            xGAMMA(),
-                                                            repartGAMMA()
+        
+        output$repartsurvieGAMMA <- renderUI({withMathJax(sprintf("$$%s(%s) = %s$$", 
+                                                                  repartsurvieGAMMA_LATEX(),
+                                                                  xGAMMA(),
+                                                                  repartsurvieGAMMA()
         ))})
-        
-        output$survieGAMMA <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
-                                                           xGAMMA(),
-                                                           survieGAMMA()))
-        })
-        
         
         output$VaRGAMMA <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$", 
                                                          kGAMMA(),
@@ -407,49 +674,50 @@ myserver <- function(input, output, session)
                                                               ExcesMoyGAMMA()
         ))})
         
-        output$FxGAMMA <- renderPlotly({
-            ggplot(data = data.frame(x = c(0, meanGAMMA() + 3 * sqrt(varianceGAMMA()))),
+        output$QxGAMMA <- renderPlotly({
+            ggplot(data = data.frame(x = c(0, VaR_gamma(kappa = 0.999999, alphaGAMMA(), betaGAMMA()) 
+            )
+            ),
             aes(x)) + 
-                stat_function(fun = dgamma,
+                stat_function(fun = plot_choice_GAMMA_QX_SERVER(),
                               args = list(alphaGAMMA(), 
                                           betaGAMMA())) + 
                 ylab("f(x)") + 
                 theme_classic() +
                 stat_function(
-                    fun = dgamma,
+                    fun = plot_choice_GAMMA_QX_SERVER(),
                     args = list(alphaGAMMA(), betaGAMMA()),
-                    xlim = c(0, xGAMMA()),
+                    xlim = c(VaRGAMMA(), VaR_gamma(kappa = 0.999999, alphaGAMMA(), betaGAMMA())),
                     geom = "area",
                     fill = "red",
                     alpha = 0.7
                 )
         })
         
-        output$SxGAMMA <- renderPlotly({
-            ggplot(data = data.frame(x = c(0,
-                                           meanGAMMA() +
-                                               3 *
-                                               sqrt(varianceGAMMA()))
-            ),
+        output$FxGAMMA <- renderPlotly({
+            ggplot(data = data.frame(x = c(0, VaR_gamma(kappa = 0.999999, alphaGAMMA(), betaGAMMA()))),
             aes(x)) + 
-                stat_function(fun = dgamma,
-                              args = list(alphaGAMMA(), 
-                                          betaGAMMA())) + 
+                stat_function(fun = plot_choice_GAMMA_SERVER(),
+                              args = list(alphaGAMMA(), betaGAMMA())) + 
                 ylab("f(x)") + 
                 theme_classic() +
                 stat_function(
-                    fun = dgamma,
+                    fun = plot_choice_GAMMA_SERVER(),
                     args = list(alphaGAMMA(), betaGAMMA()),
+                    xlim = xlim_GAMMA_SERVER(),
                     geom = "area",
-                    fill = "red",
+                    fill = plot_color_GAMMA_SERVER(),
                     alpha = 0.7
                 )
         })
+        
 #### Loi Pareto Serveur ####
         
         alphaPARETO <- reactive({input$alphaPARETO})
         
         lambdaPARETO <- reactive({input$lambdaPARETO})
+        
+        xPARETO <- reactive({input$xPARETO})
         
         densityPARETO <- reactive({format(dpareto(x = input$xPARETO, 
                                                  alphaPARETO(), 
@@ -495,16 +763,68 @@ myserver <- function(input, output, session)
             })
         
         kthmomentPARETO <- reactive({
-            if(alphaPARETO() > input$dPARETO)
-                kthmoment_pareto1(k = input$dPARETO, 
-                                  alphaPARETO(), 
-                                  lambdaPARETO())
-            else
-                kthmoment_pareto2(k = input$dPARETO, 
+                kthmoment_pareto(k = input$dPARETO, 
                                   alphaPARETO(), 
                                   lambdaPARETO())
         })
         
+        plot_choice_PARETO_SERVER <- reactive({
+            if(input$plot_choice_PARETO == "Densité")
+                dpareto
+            else
+                ppareto
+        })
+        
+        plot_choice_PARETO_QX_SERVER <- reactive({
+            if(input$plot_choice_PARETO_QX == "Densité")
+                dpareto
+            else
+                ppareto
+        })
+        
+        plot_color_PARETO_SERVER <- reactive({
+            if(input$xlim_PARETO == T)
+                "Dark Green"
+            else
+                "Royal Blue"
+        })
+        
+        xlim_PARETO_SERVER <- reactive({
+            if(input$xlim_PARETO == T)
+                c(0, xPARETO())
+            else
+                c(xPARETO(), 3 * lambdaPARETO())
+        })
+        
+        repartsurviePARETO_LATEX <- reactive({
+            if(input$xlim_PARETO == T)
+            {
+                "F_{X}"
+            }
+            else
+            {
+                "S_{X}"
+            }
+        })
+        
+        repartsurviePARETO <- reactive({
+            if(input$xlim_PARETO == T)
+            {
+                format(ppareto(q = xPARETO(), 
+                               alphaPARETO(),
+                               lambdaPARETO()), 
+                       nsmall = 6)
+            }
+            else
+            {
+                format(ppareto(q = xPARETO(), 
+                               alphaPARETO(),
+                               lambdaPARETO(),
+                               lower.tail = F), 
+                       nsmall = 6)
+            }
+            
+        })
         
         
         meanPARETO <- reactive({E_pareto(alphaPARETO(), 
@@ -532,15 +852,23 @@ myserver <- function(input, output, session)
                                                             input$xPARETO,
                                                             densityPARETO()))
         })
-        output$repartPARETO <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$",
-                                                           input$xPARETO,
-                                                           repartPARETO()))
-        })
         
-        output$surviePARETO <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
-                                                           input$xPARETO,
-                                                           surviePARETO()))
-        })
+        
+        output$repartsurviePARETO <- renderUI({withMathJax(sprintf("$$%s(%s) = %s$$", 
+                                                                   repartsurviePARETO_LATEX(),
+                                                                   xPARETO(),
+                                                                   repartsurviePARETO()
+        ))})
+        
+        # output$repartPARETO <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$",
+        #                                                    input$xPARETO,
+        #                                                    repartPARETO()))
+        # })
+        # 
+        # output$surviePARETO <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
+        #                                                    input$xPARETO,
+        #                                                    surviePARETO()))
+        # })
         
         output$VaRPARETO <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
                                                         input$kPARETO,
@@ -577,59 +905,52 @@ myserver <- function(input, output, session)
                                                                kthmomentPARETO()))
         })
         
+        output$QxPARETO <- renderPlotly({
+            ggplot(data = data.frame(x = c(0,
+                                           3 * lambdaPARETO()
+            )
+            ),
+            aes(x)) + 
+                stat_function(fun = plot_choice_PARETO_QX_SERVER(),
+                              args = list(alphaPARETO(),
+                                          lambdaPARETO())) +
+                ylab("f(x)") + 
+                theme_classic() +
+                stat_function(
+                    fun = plot_choice_PARETO_QX_SERVER(),
+                    args = list(alphaPARETO(),
+                                lambdaPARETO()),
+                    xlim = c(VaRPARETO(), 
+                             3 * lambdaPARETO()),
+                    geom = "area",
+                    fill = "red",
+                    alpha = 0.7
+                )
+        })
         
         output$FxPARETO <- renderPlotly({
-            ggplot(data = data.frame(x = c(0, 3 * lambdaPARETO())),
-            aes(x)) +
-                stat_function(fun = dpareto,
-                              args = list(alphaPARETO(), 
-                                          lambdaPARETO())) +
-                ylab("f(x)") +
-                theme_classic() +
-                stat_function(
-                    fun = dpareto,
-                    args = list(alphaPARETO(), 
-                                lambdaPARETO()),
-                xlim = c(0, input$xPARETO),
-                    geom = "area",
-                    fill = "red",
-                    alpha = 0.7
-                )
-        })
-        
-        output$SxPARETO <- renderPlotly({
-            ggplot(data = data.frame(x = c(
-                0, 3 * lambdaPARETO())
+            ggplot(data = data.frame(x = c(0,
+                                           3 * lambdaPARETO()
+            )
             ),
-            aes(x)) +
-                stat_function(fun = dpareto,
-                              args = list(alphaPARETO(), 
+            aes(x)) + 
+                stat_function(fun = plot_choice_PARETO_SERVER(),
+                              args = list(alphaPARETO(),
                                           lambdaPARETO())) +
-                ylab("f(x)") +
+                ylab("f(x)") + 
                 theme_classic() +
                 stat_function(
-                    fun = dpareto,
-                    args = list(alphaPARETO(), 
+                    fun = plot_choice_PARETO_SERVER(),
+                    args = list(alphaPARETO(),
                                 lambdaPARETO()),
-                    xlim = c(input$xPARETO, 3 * lambdaPARETO()),
+                    xlim = xlim_PARETO_SERVER(),
                     geom = "area",
-                    fill = "red",
+                    fill = plot_color_PARETO_SERVER(),
                     alpha = 0.7
                 )
         })
         
         
-        output$QxPARETO <- renderPlotly({
-            ggplot(data = data.frame(x = c(0,1)),
-                   aes(x)) +
-                stat_function(fun = qpareto,
-                              args = list(alphaPARETO(), 
-                                          lambdaPARETO())) + theme_classic()
-        })
-        
-        
-        
-    
 #### Loi Burr Serveur ####
         
         alphaBURR <- reactive({input$alphaBURR})
@@ -644,24 +965,86 @@ myserver <- function(input, output, session)
         
         xBURR <- reactive({input$xBURR})
         
+        plot_choice_BURR_SERVER <- reactive({
+            if(input$plot_choice_BURR == "Densité")
+                dburr
+            else
+                pburr
+        })
+        
+        plot_choice_BURR_QX_SERVER <- reactive({
+            if(input$plot_choice_BURR_QX == "Densité")
+                dburr
+            else
+                pburr
+        })
+        
+        
+        plot_color_BURR_SERVER <- reactive({
+            if(input$xlim_BURR == T)
+                "Dark Green"
+            else
+                "Royal Blue"
+        })
+        
+        xlim_BURR_SERVER <- reactive({
+            if(input$xlim_BURR == T)
+                c(0, xBURR())
+            else
+                c(xBURR(), 5 * tauBURR())
+        })
+        
+        repartsurvieBURR_LATEX <- reactive({
+            if(input$xlim_BURR == T)
+            {
+                "F_{X}"
+            }
+            else
+            {
+                "S_{X}"
+            }
+        })
+        
+        repartsurvieBURR <- reactive({
+            if(input$xlim_BURR == T)
+            {
+                format(pburr(q = xBURR(), 
+                             alphaBURR(), 
+                             tauBURR(),
+                             lambdaBURR()), 
+                       nsmall = 6)
+            }
+            else
+            {
+                format(pburr(q = xBURR(), 
+                             alphaBURR(), 
+                             tauBURR(),
+                             lambdaBURR(),
+                             lower.tail = F), 
+                       nsmall = 6)
+            }
+            
+        })
+        
+        
         densityBURR <- reactive({format(dburr(x = xBURR(), 
                                               alphaBURR(), 
                                               tauBURR(),
                                               lambdaBURR()), 
                                           nsmall = 6)})
         
-        repartBURR <- reactive({format(pburr(q = xBURR(), 
-                                             alphaBURR(), 
-                                             tauBURR(),
-                                             lambdaBURR()), 
-                                         nsmall = 6)})
-        
-        survieBURR <- reactive({format(pburr(q = xBURR(), 
-                                             alphaBURR(), 
-                                             tauBURR(),
-                                             lambdaBURR(),
-                                             lower.tail = F), 
-                                         nsmall = 6)})
+        # repartBURR <- reactive({format(pburr(q = xBURR(), 
+        #                                      alphaBURR(), 
+        #                                      tauBURR(),
+        #                                      lambdaBURR()), 
+        #                                  nsmall = 6)})
+        # 
+        # survieBURR <- reactive({format(pburr(q = xBURR(), 
+        #                                      alphaBURR(), 
+        #                                      tauBURR(),
+        #                                      lambdaBURR(),
+        #                                      lower.tail = F), 
+        #                                  nsmall = 6)})
         
         VaRBURR <- reactive({format(VaR_burr(kappa = kBURR(),
                                              alphaBURR(),
@@ -678,7 +1061,7 @@ myserver <- function(input, output, session)
         
         
         TVaRBURR <- reactive({format(TVaR_burr(kappa = kBURR(),
-                                               VaRBURR_a(),
+                                               vark = VaRBURR_a(),
                                                alphaBURR(),
                                                lambdaBURR(),
                                                tauBURR()), 
@@ -737,15 +1120,22 @@ myserver <- function(input, output, session)
                                                               xBURR(),
                                                               densityBURR()))
         })
-        output$repartBURR <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$",
-                                                             xBURR(),
-                                                             repartBURR()))
-        })
         
-        output$survieBURR <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
-                                                             xBURR(),
-                                                             survieBURR()))
-        })
+        output$repartsurvieBURR <- renderUI({withMathJax(sprintf("$$%s(%s) = %s$$", 
+                                                                 repartsurvieBURR_LATEX(),
+                                                                 xBURR(),
+                                                                 repartsurvieBURR()
+        ))})
+        
+        # output$repartBURR <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$",
+        #                                                      xBURR(),
+        #                                                      repartBURR()))
+        # })
+        # 
+        # output$survieBURR <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
+        #                                                      xBURR(),
+        #                                                      survieBURR()))
+        # })
         
         output$VaRBURR <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
                                                           kBURR(),
@@ -782,61 +1172,110 @@ myserver <- function(input, output, session)
                                                              ExcesMoyBURR()))
         })
         
+        output$QxBURR <- renderPlotly({
+            ggplot(data = data.frame(x = c(0,
+                                           5 * tauBURR()
+            )
+            ),
+            aes(x)) + 
+                stat_function(fun = plot_choice_BURR_QX_SERVER(),
+                              args = list(alphaBURR(), 
+                                          tauBURR(),
+                                          lambdaBURR())) +
+                ylab("f(x)") + 
+                theme_classic() +
+                stat_function(
+                    fun = plot_choice_BURR_QX_SERVER(),
+                    args = list(alphaBURR(), 
+                                tauBURR(),
+                                lambdaBURR()),
+                    xlim = c(VaRBURR(), 
+                             5 * tauBURR()),
+                    geom = "area",
+                    fill = "red",
+                    alpha = 0.7
+                )
+        })
         
         output$FxBURR <- renderPlotly({
-            ggplot(data = data.frame(x = c(
-                0, 5 * tauBURR())
+            ggplot(data = data.frame(x = c(0,
+                                           5 * tauBURR()
+            )
             ),
-            aes(x)) +
-                stat_function(fun = dburr,
+            aes(x)) + 
+                stat_function(fun = plot_choice_BURR_SERVER(),
                               args = list(alphaBURR(), 
                                           tauBURR(),
                                           lambdaBURR())) +
-                ylab("f(x)") +
+                ylab("f(x)") + 
                 theme_classic() +
                 stat_function(
-                    fun = dburr,
+                    fun = plot_choice_BURR_SERVER(),
                     args = list(alphaBURR(), 
                                 tauBURR(),
                                 lambdaBURR()),
-                    xlim = c(0, xBURR()),
+                    xlim = xlim_BURR_SERVER(),
                     geom = "area",
-                    fill = "red",
+                    fill = plot_color_BURR_SERVER(),
                     alpha = 0.7
                 )
         })
         
-        output$SxBURR <- renderPlotly({
-            ggplot(data = data.frame(x = c(
-                0, 5 * tauBURR())
-            ),
-            aes(x)) +
-                stat_function(fun = dburr,
-                              args = list(alphaBURR(), 
-                                          tauBURR(),
-                                          lambdaBURR())) +
-                ylab("f(x)") +
-                theme_classic() +
-                stat_function(
-                    fun = dburr,
-                    args = list(alphaBURR(), 
-                                tauBURR(),
-                                lambdaBURR()),
-                    xlim = c(xBURR(), 5 * tauBURR()),
-                    geom = "area",
-                    fill = "red",
-                    alpha = 0.7
-                )
-        })
         
-        output$QxBURR <- renderPlotly({
-            ggplot(data = data.frame(x = c(0,1)),
-                   aes(x)) +
-                stat_function(fun = qburr,
-                              args = list(alphaBURR(), 
-                                          tauBURR(),
-                                          lambdaBURR())) + theme_classic()
-        })
+        # output$FxBURR <- renderPlotly({
+        #     ggplot(data = data.frame(x = c(
+        #         0, 5 * tauBURR())
+        #     ),
+        #     aes(x)) +
+        #         stat_function(fun = dburr,
+        #                       args = list(alphaBURR(), 
+        #                                   tauBURR(),
+        #                                   lambdaBURR())) +
+        #         ylab("f(x)") +
+        #         theme_classic() +
+        #         stat_function(
+        #             fun = dburr,
+        #             args = list(alphaBURR(), 
+        #                         tauBURR(),
+        #                         lambdaBURR()),
+        #             xlim = c(0, xBURR()),
+        #             geom = "area",
+        #             fill = "red",
+        #             alpha = 0.7
+        #         )
+        # })
+        # 
+        # output$SxBURR <- renderPlotly({
+        #     ggplot(data = data.frame(x = c(
+        #         0, 5 * tauBURR())
+        #     ),
+        #     aes(x)) +
+        #         stat_function(fun = dburr,
+        #                       args = list(alphaBURR(), 
+        #                                   tauBURR(),
+        #                                   lambdaBURR())) +
+        #         ylab("f(x)") +
+        #         theme_classic() +
+        #         stat_function(
+        #             fun = dburr,
+        #             args = list(alphaBURR(), 
+        #                         tauBURR(),
+        #                         lambdaBURR()),
+        #             xlim = c(xBURR(), 5 * tauBURR()),
+        #             geom = "area",
+        #             fill = "red",
+        #             alpha = 0.7
+        #         )
+        # })
+        # 
+        # output$QxBURR <- renderPlotly({
+        #     ggplot(data = data.frame(x = c(0,1)),
+        #            aes(x)) +
+        #         stat_function(fun = qburr,
+        #                       args = list(alphaBURR(), 
+        #                                   tauBURR(),
+        #                                   lambdaBURR())) + theme_classic()
+        # })
         
         
 #### Loi Weibull Serveur ####
@@ -850,6 +1289,64 @@ myserver <- function(input, output, session)
         kWEIBULL <- reactive({input$kWEIBULL})
         
         xWEIBULL <- reactive({input$xWEIBULL})
+        
+        plot_choice_WEIBULL_SERVER <- reactive({
+            if(input$plot_choice_WEIBULL == "Densité")
+                dweibull
+            else
+                pweibull
+        })
+        
+        plot_choice_WEIBULL_QX_SERVER <- reactive({
+            if(input$plot_choice_WEIBULL_QX == "Densité")
+                dweibull
+            else
+                pweibull
+        })
+        
+        plot_color_WEIBULL_SERVER <- reactive({
+            if(input$xlim_WEIBULL == T)
+                "Dark Green"
+            else
+                "Royal Blue"
+        })
+        
+        xlim_WEIBULL_SERVER <- reactive({
+            if(input$xlim_WEIBULL == T)
+                c(0, xWEIBULL())
+            else
+                c(xWEIBULL(), 2 * betaWEIBULL())
+        })
+        
+        repartsurvieWEIBULL_LATEX <- reactive({
+            if(input$xlim_WEIBULL == T)
+            {
+                "F_{X}"
+            }
+            else
+            {
+                "S_{X}"
+            }
+        })
+        
+        repartsurvieWEIBULL <- reactive({
+            if(input$xlim_WEIBULL == T)
+            {
+                format(pweibull(q = xWEIBULL(), 
+                                tauWEIBULL(),
+                                betaWEIBULL()), 
+                       nsmall = 6)
+            }
+            else
+            {
+                format(pweibull(q = xWEIBULL(), 
+                                tauWEIBULL(),
+                                betaWEIBULL(),
+                                lower.tail = F), 
+                       nsmall = 6)
+            }
+            
+        })
         
         densityWEIBULL <- reactive({format(dweibull(x = xWEIBULL(), 
                                                     tauWEIBULL(),
@@ -932,15 +1429,23 @@ myserver <- function(input, output, session)
                                                             xWEIBULL(),
                                                             densityWEIBULL()))
         })
-        output$repartWEIBULL <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$",
-                                                           xWEIBULL(),
-                                                           repartWEIBULL()))
-        })
         
-        output$survieWEIBULL <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
-                                                           xWEIBULL(),
-                                                           survieWEIBULL()))
-        })
+        output$repartsurvieWEIBULL <- renderUI({withMathJax(sprintf("$$%s(%s) = %s$$", 
+                                                                    repartsurvieWEIBULL_LATEX(),
+                                                                    xWEIBULL(),
+                                                                    repartsurvieWEIBULL()
+        ))})
+        
+        
+        # output$repartWEIBULL <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$",
+        #                                                    xWEIBULL(),
+        #                                                    repartWEIBULL()))
+        # })
+        # 
+        # output$survieWEIBULL <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
+        #                                                    xWEIBULL(),
+        #                                                    survieWEIBULL()))
+        # })
         
         output$VaRWEIBULL <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
                                                         kWEIBULL(),
@@ -972,57 +1477,50 @@ myserver <- function(input, output, session)
                                                              ExcesMoyWEIBULL()))
         })
         
-        output$FxWEIBULL <- renderPlotly({
-            ggplot(data = data.frame(x = c(
-                0, 2 * betaWEIBULL())
-            ),
-            aes(x)) +
-                stat_function(fun = dweibull,
-                              args = list(tauWEIBULL(),
-                                          betaWEIBULL())) +
-                ylab("f(x)") +
-                theme_classic() +
-                stat_function(
-                    fun = dweibull,
-                    args = list(tauWEIBULL(),
-                                betaWEIBULL()),
-                    xlim = c(0, xWEIBULL()),
-                    geom = "area",
-                    fill = "red",
-                    alpha = 0.7
-                )
-        })
-        
-        output$SxWEIBULL <- renderPlotly({
-            ggplot(data = data.frame(x = c(
-                0, 2 * betaWEIBULL())
-            ),
-            aes(x)) +
-                stat_function(fun = dweibull,
-                              args = list(tauWEIBULL(),
-                                          betaWEIBULL())) +
-                ylab("f(x)") +
-                theme_classic() +
-                stat_function(
-                    fun = dweibull,
-                    args = list(tauWEIBULL(),
-                                betaWEIBULL()),
-                    xlim = c(xWEIBULL(), 2 * betaWEIBULL()),
-                    geom = "area",
-                    fill = "red",
-                    alpha = 0.7
-                )
-        })
-        
         output$QxWEIBULL <- renderPlotly({
-            ggplot(data = data.frame(x = c(0,1)),
-                   aes(x)) +
-                stat_function(fun = qweibull,
+            ggplot(data = data.frame(x = c(0,
+                                           max(2 * betaWEIBULL(), VaR_weibull(0.9999, tauWEIBULL(), betaWEIBULL()))
+            )
+            ),
+            aes(x)) + 
+                stat_function(fun = plot_choice_WEIBULL_QX_SERVER(),
                               args = list(tauWEIBULL(),
-                                          betaWEIBULL())) + theme_classic()
+                                          betaWEIBULL())) +
+                ylab("f(x)") + 
+                theme_classic() +
+                stat_function(
+                    fun = plot_choice_WEIBULL_QX_SERVER(),
+                    args = list(tauWEIBULL(),
+                                betaWEIBULL()),
+                    xlim = c(VaRWEIBULL(), 
+                             max(2 * betaWEIBULL(), VaR_weibull(0.9999, tauWEIBULL(), betaWEIBULL()))),
+                    geom = "area",
+                    fill = "red",
+                    alpha = 0.7
+                )
         })
         
-        
+        output$FxWEIBULL <- renderPlotly({
+            ggplot(data = data.frame(x = c(0,
+                                           2 * betaWEIBULL()
+            )
+            ),
+            aes(x)) + 
+                stat_function(fun = plot_choice_WEIBULL_SERVER(),
+                              args = list(tauWEIBULL(),
+                                          betaWEIBULL())) +
+                ylab("f(x)") + 
+                theme_classic() +
+                stat_function(
+                    fun = plot_choice_WEIBULL_SERVER(),
+                    args = list(tauWEIBULL(),
+                                betaWEIBULL()),
+                    xlim = xlim_WEIBULL_SERVER(),
+                    geom = "area",
+                    fill = plot_color_WEIBULL_SERVER(),
+                    alpha = 0.7
+                )
+        })
         
 #### Loi Lognormale Serveur ####
         
@@ -1036,28 +1534,79 @@ myserver <- function(input, output, session)
         
         dLNORM <- reactive({input$dLNORM})
         
+        plot_choice_LNORM_QX_SERVER <- reactive({
+            if(input$plot_choice_LNORM_QX == "Densité")
+                dlnorm
+            else
+                plnorm
+        })
+        
+        plot_choice_LNORM_SERVER <- reactive({
+            if(input$plot_choice_LNORM == "Densité")
+                dlnorm
+            else
+                plnorm
+        })
+        
+        plot_color_LNORM_SERVER <- reactive({
+            if(xLNORM() == T)
+                "Dark Green"
+            else
+                "Royal Blue"
+        })
+        
+        xlim_LNORM_SERVER <- reactive({
+            if(input$xlim_LNORM == T)
+                c(0, xLNORM())
+            else
+                c(xLNORM(), VaR_lnorm(kappa = 0.99, muLNORM(), sqrt(sigma2LNORM())))
+        })
+        
+        repartsurvieLNORM_LATEX <- reactive({
+            if(input$xlim_LNORM == T)
+            {
+                "F_{X}"
+            }
+            else
+            {
+                "S_{X}"
+            }
+        })
+        
+        repartsurvieLNORM <- reactive({
+            if(input$xlim_LNORM == T)
+            {
+                format(plnorm(q = xLNORM(), muLNORM(), sdlog = sqrt(sigma2LNORM())), nsmall = 6, scientific = F)
+            }
+            else
+            {
+                format(plnorm(q = xLNORM(), muLNORM(), sqrt(sigma2LNORM()), lower.tail = F), nsmall = 6, scientific = F)
+            }
+            
+        })
+        
+        # output$range_LNORM_FX_UI <- renderUI({
+        #     sliderInput(inputId = 'range_LNORM_FX',
+        #                 label = 'Range',
+        #                 min = 0,
+        #                 max = VaR_lnorm(kappa = 0.99, muLNORM(), sqrt(sigma2LNORM())),
+        #                 value = c(0, VaR_lnorm(kappa = 0.99, muLNORM(), sqrt(sigma2LNORM()))),
+        #                 dragRange = T,
+        #                 width = "100%"
+        #     )
+        # })
+        
+        # range_LNORM_FX <- reactive({seq(from = input$range_LNORM_FX[1], to = input$range_LNORM_FX[2])})
+        
         densityLNORM <- reactive({format(dlnorm(xLNORM(), 
                                                 muLNORM(), 
                                                 sqrt(sigma2LNORM())), 
                                          nsmall = 6)
             })
         
-        repartLNORM <- reactive({format(plnorm(xLNORM(), 
-                                               muLNORM(), 
-                                               sqrt(sigma2LNORM())), 
-                                        nsmall = 6)
-            })
-        
-        survieLNORM <- reactive({format(plnorm(xLNORM(), 
-                                               muLNORM(), 
-                                               sqrt(sigma2LNORM()), 
-                                               lower.tail = F), 
-                                        nsmall = 6)
-            })
-        
-        VaRLNORM <- reactive({format(VaR_lnorm(kLNORM(), 
-                                               muLNORM(), 
-                                               sqrt(sigma2LNORM())), 
+        VaRLNORM <- reactive({format(VaR_lnorm(kappa = kLNORM(), 
+                                               mu = muLNORM(), 
+                                               sig = sqrt(sigma2LNORM())), 
                                      nsmall = 6)
             })
         
@@ -1121,6 +1670,13 @@ myserver <- function(input, output, session)
                                                             xLNORM(),
                                                             densityLNORM()))
         })
+        
+        output$repartsurvieLNORM <- renderUI({withMathJax(sprintf("$$%s(%s) = %s$$", 
+                                                                  repartsurvieLNORM_LATEX(),
+                                                                  xLNORM(),
+                                                                  repartsurvieLNORM()
+        ))})
+        
         output$repartLNORM <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$",
                                                            xLNORM(),
                                                            repartLNORM()))
@@ -1161,56 +1717,45 @@ myserver <- function(input, output, session)
                                                              ExcesMoyLNORM()))
         })
         
-        output$FxLNORM <- renderPlotly({
-          ggplot(data = data.frame(x = c(
-            0,
-            muLNORM() + 4 * sqrt(sigma2LNORM())
-          )),
-          aes(x)) +
-            stat_function(fun = dlnorm,
-                          args = list(mean = muLNORM(),
-                                      sd = sqrt(sigma2LNORM()))) +
-            ylab("f(x)") +
-            theme_classic() +
-            stat_function(
-              fun = dlnorm,
-              args = list(mean = muLNORM(), sd = sqrt(sigma2LNORM())),
-              xlim = c(0, xLNORM()),
-              geom = "area",
-              fill = "red",
-              alpha = 0.7
-            )
-        })
-        
-        output$SxLNORM <- renderPlotly({
-          ggplot(data = data.frame(x = c(
-            0, muLNORM() + 4 * sqrt(sigma2LNORM())
-          )),
-          aes(x)) +
-            stat_function(fun = dlnorm,
-                          args = list(mean = muLNORM(),
-                                      sd = sqrt(sigma2LNORM()))) +
-            ylab("f(x)") +
-            theme_classic() +
-            stat_function(
-              fun = dlnorm,
-              args = list(mean = muLNORM(), sd = sqrt(sigma2LNORM())),
-              xlim = c(xLNORM(), muLNORM() + 4 * sqrt(sigma2LNORM())),
-              geom = "area",
-              fill = "red",
-              alpha = 0.7
-            )
-        })
-        
         output$QxLNORM <- renderPlotly({
-          ggplot(data = data.frame(x = c(0,1)),
-                 aes(x)) +
-            stat_function(fun = qlnorm,
-                          args = list(mean = muLNORM(),
-                                      sd = sqrt(sigma2LNORM()))) + theme_classic()
+            ggplot(data = data.frame(x = c(0,
+                                          VaR_lnorm(kappa = 0.99, muLNORM(), sqrt(sigma2LNORM()))
+            )
+            ),
+            aes(x)) + 
+                stat_function(fun = plot_choice_LNORM_QX_SERVER(),
+                              args = list(meanlog = muLNORM(), sdlog = sqrt(sigma2LNORM()))) + 
+                ylab("f(x)") + 
+                theme_classic() +
+                stat_function(
+                    fun = plot_choice_LNORM_QX_SERVER(),
+                    args = list(meanlog = muLNORM(), sdlog = sqrt(sigma2LNORM())),
+                    xlim = c(VaRLNORM(), VaR_lnorm(kappa = 0.99, muLNORM(), sqrt(sigma2LNORM()))),
+                    geom = "area",
+                    fill = "red",
+                    alpha = 0.7
+                )
         })
         
-        
+        output$FxLNORM <- renderPlotly({
+            ggplot(data = data.frame(x = c(0,
+                                           VaR_lnorm(kappa = 0.99, muLNORM(), sqrt(sigma2LNORM()))
+            )
+            ),
+            aes(x)) + 
+                stat_function(fun = plot_choice_LNORM_SERVER(),
+                              args = list(meanlog = muLNORM(), sdlog = sqrt(sigma2LNORM()))) + 
+                ylab("f(x)") + 
+                theme_classic() +
+                stat_function(
+                    fun = plot_choice_LNORM_SERVER(),
+                    args = list(meanlog = muLNORM(), sdlog = sqrt(sigma2LNORM())),
+                    xlim = xlim_LNORM_SERVER(),
+                    geom = "area",
+                    fill = plot_color_LNORM_SERVER(),
+                    alpha = 0.7
+                )
+        })
         
 #### Loi Beta Serveur ####
         
@@ -1224,29 +1769,88 @@ myserver <- function(input, output, session)
         
         dBETA <- reactive({input$dBETA})
         
+        plot_choice_BETA_SERVER <- reactive({
+            if(input$plot_choice_BETA == "Densité")
+                dbeta
+            else
+                pbeta
+        })
+        
+        plot_choice_BETA_QX_SERVER <- reactive({
+            if(input$plot_choice_BETA_QX == "Densité")
+                dbeta
+            else
+                pbeta
+        })
+        
+        
+        plot_color_BETA_SERVER <- reactive({
+            if(input$xlim_BETA == T)
+                "Dark Green"
+            else
+                "Royal Blue"
+        })
+        
+        xlim_BETA_SERVER <- reactive({
+            if(input$xlim_BETA == T)
+                c(0, xBETA())
+            else
+                c(xBETA(), 1)
+        })
+        
+        repartsurvieBETA_LATEX <- reactive({
+            if(input$xlim_BETA == T)
+            {
+                "F_{X}"
+            }
+            else
+            {
+                "S_{X}"
+            }
+        })
+        
         densityBETA <- reactive({format(dbeta(x = xBETA(), 
                                                   alphaBETA(), 
                                                   betaBETA()), 
                                           nsmall = 6)})
         
-        repartBETA <- reactive({format(pbeta(q = xBETA(), 
-                                                 alphaBETA(), 
-                                                 betaBETA()), 
-                                         nsmall = 6)})
+        repartsurvieBETA <- reactive({
+            if(input$xlim_BETA == T)
+            {
+                format(pbeta(q = xBETA(), 
+                             alphaBETA(), 
+                             betaBETA()), 
+                       nsmall = 6)
+            }
+            else
+            {
+                format(pbeta(q = xBETA(), 
+                             alphaBETA(), 
+                             betaBETA(),
+                             lower.tail = F), 
+                       nsmall = 6)
+            }
+            
+        })
         
-        survieBETA <- reactive({format(pbeta(q = xBETA(), 
-                                             alphaBETA(), 
-                                             betaBETA(),
-                                             lower.tail = F), 
-                                         nsmall = 6)})
+        # repartBETA <- reactive({format(pbeta(q = xBETA(), 
+        #                                          alphaBETA(), 
+        #                                          betaBETA()), 
+        #                                  nsmall = 6)})
+        # 
+        # survieBETA <- reactive({format(pbeta(q = xBETA(), 
+        #                                      alphaBETA(), 
+        #                                      betaBETA(),
+        #                                      lower.tail = F), 
+        #                                  nsmall = 6)})
         
-        VaRBETA <- reactive({format(VaR_beta(kappa = kBETA(),
+        VaRBETA <- reactive({format(VaR_beta(k = kBETA(),
                                              alphaBETA(), 
                                              betaBETA()), 
                                       nsmall = 6)
         })
         
-        TVaRBETA <- reactive({format(TVaR_beta(kappa = kBETA(), 
+        TVaRBETA <- reactive({format(TVaR_beta(k = kBETA(), 
                                                alphaBETA(), 
                                                betaBETA()), 
                                        nsmall = 6)
@@ -1304,15 +1908,22 @@ myserver <- function(input, output, session)
                                                               xBETA(),
                                                               densityBETA()))
         })
-        output$repartBETA <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$",
-                                                             xBETA(),
-                                                             repartBETA()))
-        })
         
-        output$survieBETA <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
-                                                             xBETA(),
-                                                             survieBETA()))
-        })
+        output$repartsurvieBETA <- renderUI({withMathJax(sprintf("$$%s(%s) = %s$$", 
+                                                                 repartsurvieBETA_LATEX(),
+                                                                 xBETA(),
+                                                                 repartsurvieBETA()
+        ))})
+        
+        # output$repartBETA <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$",
+        #                                                      xBETA(),
+        #                                                      repartBETA()))
+        # })
+        # 
+        # output$survieBETA <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
+        #                                                      xBETA(),
+        #                                                      survieBETA()))
+        # })
         
         output$VaRBETA <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
                                                           kBETA(),
@@ -1344,52 +1955,93 @@ myserver <- function(input, output, session)
                                                                ExcesMoyBETA()))
         })
         
-        output$FxBETA <- renderPlotly({
-            ggplot(data = data.frame(x = c(0,1)),
-            aes(x)) +
-                stat_function(fun = dbeta,
-                              args = list(alphaBETA(), 
-                                          betaBETA())) +
-                ylab("f(x)") +
-                theme_classic() +
-                stat_function(
-                    fun = dbeta,
-                    args = list(alphaBETA(), 
-                                betaBETA()),
-                    xlim = c(0, xBETA()),
-                    geom = "area",
-                    fill = "red",
-                    alpha = 0.7
-                )
-        })
-        
-        output$SxBETA <- renderPlotly({
-            ggplot(data = data.frame(x = c(0,1)),
-                   aes(x)) +
-                stat_function(fun = dbeta,
-                              args = list(alphaBETA(), 
-                                          betaBETA())) +
-                ylab("f(x)") +
-                theme_classic() +
-                stat_function(
-                    fun = dbeta,
-                    args = list(alphaBETA(), 
-                                betaBETA()),
-                    xlim = c(xBETA(),1),
-                    geom = "area",
-                    fill = "red",
-                    alpha = 0.7
-                )
-        })
-        
-        
         output$QxBETA <- renderPlotly({
-            ggplot(data = data.frame(x = c(0,1)),
-                   aes(x)) +
-                stat_function(fun = qbeta,
+            ggplot(data = data.frame(x = c(0, 1)
+            ),
+            aes(x)) + 
+                stat_function(fun = plot_choice_BETA_QX_SERVER(),
                               args = list(alphaBETA(), 
-                                          betaBETA())) + theme_classic()
+                                          betaBETA())) +
+                ylab("f(x)") + 
+                theme_classic() +
+                stat_function(
+                    fun = plot_choice_BETA_QX_SERVER(),
+                    args = list(alphaBETA(), 
+                                betaBETA()),
+                    xlim = c(VaRBETA(), 1),
+                    geom = "area",
+                    fill = "red",
+                    alpha = 0.7
+                )
         })
+        
+        output$FxBETA <- renderPlotly({
+            ggplot(data = data.frame(x = c(0, 1)
+            ),
+            aes(x)) + 
+                stat_function(fun = plot_choice_BETA_SERVER(),
+                              args = list(alphaBETA(), 
+                                          betaBETA())) +
+                ylab("f(x)") + 
+                theme_classic() +
+                stat_function(
+                    fun = plot_choice_BETA_SERVER(),
+                    args = list(alphaBETA(), 
+                                betaBETA()),
+                    xlim = xlim_BETA_SERVER(),
+                    geom = "area",
+                    fill = plot_color_BETA_SERVER(),
+                    alpha = 0.7
+                )
+        })
+        
+        
+        # output$FxBETA <- renderPlotly({
+        #     ggplot(data = data.frame(x = c(0,1)),
+        #     aes(x)) +
+        #         stat_function(fun = dbeta,
+        #                       args = list(alphaBETA(), 
+        #                                   betaBETA())) +
+        #         ylab("f(x)") +
+        #         theme_classic() +
+        #         stat_function(
+        #             fun = dbeta,
+        #             args = list(alphaBETA(), 
+        #                         betaBETA()),
+        #             xlim = c(0, xBETA()),
+        #             geom = "area",
+        #             fill = "red",
+        #             alpha = 0.7
+        #         )
+        # })
+        # 
+        # output$SxBETA <- renderPlotly({
+        #     ggplot(data = data.frame(x = c(0,1)),
+        #            aes(x)) +
+        #         stat_function(fun = dbeta,
+        #                       args = list(alphaBETA(), 
+        #                                   betaBETA())) +
+        #         ylab("f(x)") +
+        #         theme_classic() +
+        #         stat_function(
+        #             fun = dbeta,
+        #             args = list(alphaBETA(), 
+        #                         betaBETA()),
+        #             xlim = c(xBETA(),1),
+        #             geom = "area",
+        #             fill = "red",
+        #             alpha = 0.7
+        #         )
+        # })
+        # 
+        # 
+        # output$QxBETA <- renderPlotly({
+        #     ggplot(data = data.frame(x = c(0,1)),
+        #            aes(x)) +
+        #         stat_function(fun = qbeta,
+        #                       args = list(alphaBETA(), 
+        #                                   betaBETA())) + theme_classic()
+        # })
         
         
         
@@ -1405,30 +2057,89 @@ myserver <- function(input, output, session)
         
         xERLANG <- reactive({input$xERLANG})
         
+        # plot_choice_ERLANG_SERVER <- reactive({
+        #     if(input$plot_choice_ERLANG == "Densité")
+        #         derlang
+        #     else
+        #         perlang
+        # })
+        
+        # plot_choice_ERLANG_QX_SERVER <- reactive({
+        #     if(input$plot_choice_ERLANG_QX == "Densité")
+        #         derlang
+        #     else
+        #         perlang
+        # })
+        
+        
+        plot_color_ERLANG_SERVER <- reactive({
+            if(input$xlim_ERLANG == T)
+                "Dark Green"
+            else
+                "Royal Blue"
+        })
+        
+        xlim_ERLANG_SERVER <- reactive({
+            if(input$xlim_ERLANG == T)
+                c(0, xERLANG())
+            else
+                c(xERLANG(), 2 * nERLANG() * betaERLANG())
+        })
+        
+        repartsurvieERLANG_LATEX <- reactive({
+            if(input$xlim_ERLANG == T)
+            {
+                "F_{X}"
+            }
+            else
+            {
+                "S_{X}"
+            }
+        })
+        
+        repartsurvieERLANG <- reactive({
+            if(input$xlim_ERLANG == T)
+            {
+                format(perlang(x = xERLANG(), 
+                               n = nERLANG(), 
+                               b = betaERLANG()), 
+                       nsmall = 6)
+            }
+            else
+            {
+                format(perlang(x = xERLANG(), 
+                               n = nERLANG(), 
+                               b = betaERLANG(),
+                               lower.tail = F), 
+                       nsmall = 6)
+            }
+            
+        })
+        
         densityERLANG <- reactive({format(derlang(x = xERLANG(),
                                                   nERLANG(),
                                                   betaERLANG()), 
                                         nsmall = 6)})
         
-        repartERLANG <- reactive({format(perlang(x = xERLANG(),
-                                                 nERLANG(),
-                                                 betaERLANG()), 
-                                       nsmall = 6)})
-        
-        survieERLANG <- reactive({format(perlang(x = xERLANG(),
-                                                 nERLANG(),
-                                                 betaERLANG(),
-                                                 lower.tail = F), 
-                                       nsmall = 6)})
-        
-        # TVaRERLANG <- reactive({format(TVaR_ERLANG(kappa = input$kERLANG,
+        # repartERLANG <- reactive({format(perlang(x = xERLANG(),
+        #                                          nERLANG(),
+        #                                          betaERLANG()), 
+        #                                nsmall = 6)})
+        # 
+        # survieERLANG <- reactive({format(perlang(x = xERLANG(),
+        #                                          nERLANG(),
+        #                                          betaERLANG(),
+        #                                          lower.tail = F), 
+        #                                nsmall = 6)})
+        # 
+        # TVaRERLANG <- reactive({format(TVaR_erlang(kappa = input$kERLANG,
         #                                        VaRERLANG_a(),
         #                                        nERLANG(),
         #                                        betaERLANG(),
-        #                                        tauERLANG()), 
+        #                                        tauERLANG()),
         #                              nsmall = 6)
         # })
-        
+
         EspTronqERLANG <- reactive({Etronq_erlang(d = dERLANG(),
                                                   nERLANG(),
                                                   betaERLANG())
@@ -1474,15 +2185,22 @@ myserver <- function(input, output, session)
                                                               xERLANG(),
                                                               densityERLANG()))
         })
-        output$repartERLANG <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$",
-                                                             xERLANG(),
-                                                             repartERLANG()))
-        })
         
-        output$survieERLANG <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
-                                                             xERLANG(),
-                                                             survieERLANG()))
-        })
+        output$repartsurvieERLANG <- renderUI({withMathJax(sprintf("$$%s(%s) = %s$$", 
+                                                                   repartsurvieERLANG_LATEX(),
+                                                                   xERLANG(),
+                                                                   repartsurvieERLANG()
+        ))})
+        
+        # output$repartERLANG <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$",
+        #                                                      xERLANG(),
+        #                                                      repartERLANG()))
+        # })
+        # 
+        # output$survieERLANG <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
+        #                                                      xERLANG(),
+        #                                                      survieERLANG()))
+        # })
         
         # output$TVaRERLANG <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$",
         #                                                  kERLANG(),
@@ -1514,52 +2232,96 @@ myserver <- function(input, output, session)
                                                                 ExcesMoyERLANG()))
         })
         
+        # output$QxERLANG <- renderPlotly({
+        #     ggplot(data = data.frame(x = c(0, 2 * nERLANG() * betaERLANG())
+        #     ),
+        #     aes(x)) + 
+        #         stat_function(fun = plot_choice_ERLANG_QX_SERVER(),
+        #                       args = list(nERLANG(),
+        #                                   betaERLANG())) +
+        #         ylab("f(x)") + 
+        #         theme_classic() +
+        #         stat_function(
+        #             fun = plot_choice_ERLANG_QX_SERVER(),
+        #             args = list(nERLANG(),
+        #                         betaERLANG()),                    
+        #             xlim = c(varERLANG(), 
+        #                      2 * nERLANG() * betaERLANG()),
+        #             geom = "area",
+        #             fill = "red",
+        #             alpha = 0.7
+        #         )
+        # })
+        
         output$FxERLANG <- renderPlotly({
-            ggplot(data = data.frame(x = c(0, 2 * nERLANG() * betaERLANG())),
-                   aes(x)) +
-                stat_function(fun = derlang,
-                              args = list(nERLANG(),
-                                          betaERLANG())) +
-                ylab("f(x)") +
+            ggplot(data = data.frame(x = c(0, 2 * nERLANG() * betaERLANG())
+            ),
+            aes(x)) + 
+                stat_function(
+                    # fun = plot_choice_ERLANG_SERVER(),
+                    fun = derlang,
+                              args = list(n = nERLANG(),
+                                          b = betaERLANG())) +
+                ylab("f(x)") + 
                 theme_classic() +
                 stat_function(
+                    # fun = plot_choice_ERLANG_SERVER(),
                     fun = derlang,
-                    args = list(nERLANG(),
-                                betaERLANG()),                    
-                    xlim = c(0, xERLANG()),
+                    args = list(n = nERLANG(),
+                                b = betaERLANG()),                    
+                    xlim = xlim_ERLANG_SERVER(),
                     geom = "area",
-                    fill = "red",
+                    fill = plot_color_ERLANG_SERVER(),
                     alpha = 0.7
                 )
         })
         
-        output$SxERLANG <- renderPlotly({
-            ggplot(data = data.frame(x = c(0, 2 * nERLANG() * betaERLANG())),
-                   aes(x)) +
-                stat_function(fun = derlang,
-                              args = list(nERLANG(),
-                                          betaERLANG())) +
-                ylab("f(x)") +
-                theme_classic() +
-                stat_function(
-                    fun = derlang,
-                    args = list(nERLANG(),
-                                betaERLANG()),                    
-                    xlim = c(xERLANG(), 2 * nERLANG() * betaERLANG()),
-                    geom = "area",
-                    fill = "red",
-                    alpha = 0.7
-                )
-        })        
-        
-        output$QxERLANG <- renderPlotly({
-            ggplot(data = data.frame(x = c(0,1)),
-                   aes(x)) +
-                stat_function(fun = qerlang,
-                              args = list(nERLANG(),
-                                          betaERLANG())) + theme_classic()
-        })
-        
+        # output$FxERLANG <- renderPlotly({
+        #     ggplot(data = data.frame(x = c(0, 2 * nERLANG() * betaERLANG())),
+        #            aes(x)) +
+        #         stat_function(fun = derlang,
+        #                       args = list(nERLANG(),
+        #                                   betaERLANG())) +
+        #         ylab("f(x)") +
+        #         theme_classic() +
+        #         stat_function(
+        #             fun = derlang,
+        #             args = list(nERLANG(),
+        #                         betaERLANG()),                    
+        #             xlim = c(0, xERLANG()),
+        #             geom = "area",
+        #             fill = "red",
+        #             alpha = 0.7
+        #         )
+        # })
+        # 
+        # output$SxERLANG <- renderPlotly({
+        #     ggplot(data = data.frame(x = c(0, 2 * nERLANG() * betaERLANG())),
+        #            aes(x)) +
+        #         stat_function(fun = derlang,
+        #                       args = list(nERLANG(),
+        #                                   betaERLANG())) +
+        #         ylab("f(x)") +
+        #         theme_classic() +
+        #         stat_function(
+        #             fun = derlang,
+        #             args = list(nERLANG(),
+        #                         betaERLANG()),                    
+        #             xlim = c(xERLANG(), 2 * nERLANG() * betaERLANG()),
+        #             geom = "area",
+        #             fill = "red",
+        #             alpha = 0.7
+        #         )
+        # })        
+        # 
+        # output$QxERLANG <- renderPlotly({
+        #     ggplot(data = data.frame(x = c(0,1)),
+        #            aes(x)) +
+        #         stat_function(fun = qerlang,
+        #                       args = list(nERLANG(),
+        #                                   betaERLANG())) + theme_classic()
+        # })
+        # 
         
         
 #### Loi Log-logistique Serveur ####
@@ -1574,22 +2336,72 @@ myserver <- function(input, output, session)
         
         xLOGLOGIS <- reactive({input$xLOGLOGIS})
         
+        plot_choice_LOGLOGIS_SERVER <- reactive({
+            if(input$plot_choice_LOGLOGIS == "Densité")
+                dllogis
+            else
+                pllogis
+        })
+        
+        plot_choice_LOGLOGIS_QX_SERVER <- reactive({
+            if(input$plot_choice_LOGLOGIS_QX == "Densité")
+                dllogis
+            else
+                pllogis
+        })
+        
+        
+        plot_color_LOGLOGIS_SERVER <- reactive({
+            if(input$xlim_LOGLOGIS == T)
+                "Dark Green"
+            else
+                "Royal Blue"
+        })
+        
+        xlim_LOGLOGIS_SERVER <- reactive({
+            if(input$xlim_LOGLOGIS == T)
+                c(0, xLOGLOGIS())
+            else
+                c(xLOGLOGIS(), VaR_llogis(kappa = 0.999, lam = lambdaLOGLOGIS(), tau = tauLOGLOGIS()))
+        })
+        
+        repartsurvieLOGLOGIS_LATEX <- reactive({
+            if(input$xlim_LOGLOGIS == T)
+            {
+                "F_{X}"
+            }
+            else
+            {
+                "S_{X}"
+            }
+        })
+        
+        repartsurvieLOGLOGIS <- reactive({
+            if(input$xlim_LOGLOGIS == T)
+            {
+                format(pllogis(q = xLOGLOGIS(), 
+                               shape = tauLOGLOGIS(),
+                               scale = lambdaLOGLOGIS()
+                ), 
+                nsmall = 6)
+            }
+            else
+            {
+                format(pllogis(q = xLOGLOGIS(), 
+                               shape = tauLOGLOGIS(),
+                               scale = lambdaLOGLOGIS(),
+                               lower.tail = F), 
+                       nsmall = 6)
+            }
+            
+        })
+        
         densityLOGLOGIS <- reactive({format(dllogis(x = xLOGLOGIS(), 
-                                                    lambdaLOGLOGIS(), 
-                                                    tauLOGLOGIS()), 
+                                                    shape = tauLOGLOGIS(),
+                                                    scale = lambdaLOGLOGIS()
+                                                    ), 
                                             nsmall = 6)})
-        
-        repartLOGLOGIS <- reactive({format(pllogis(q = xLOGLOGIS(), 
-                                                   lambdaLOGLOGIS(), 
-                                                   tauLOGLOGIS()), 
-                                           nsmall = 6)})
-        
-        survieLOGLOGIS <- reactive({format(pllogis(q = xLOGLOGIS(), 
-                                                   lambdaLOGLOGIS(), 
-                                                   tauLOGLOGIS(),
-                                                   lower.tail = F), 
-                                           nsmall = 6)})
-        
+       
         VaRLOGLOGIS <- reactive({format(VaR_llogis(kappa = kLOGLOGIS(), 
                                                    lambdaLOGLOGIS(), 
                                                    tauLOGLOGIS()), 
@@ -1597,14 +2409,16 @@ myserver <- function(input, output, session)
         })
         
         TVaRLOGLOGIS <- reactive({format(TVaR_llogis(kappa = kLOGLOGIS(),
-                                                     lambdaLOGLOGIS(),
-                                                     tauLOGLOGIS()), 
+                                                     lam = lambdaLOGLOGIS(),
+                                                     tau = tauLOGLOGIS()
+                                                     ), 
                                          nsmall = 6)
         })
         
         EspTronqLOGLOGIS <- reactive({Etronq_llogis(d = dLOGLOGIS(),
-                                                    lambdaLOGLOGIS(),
-                                                    tauLOGLOGIS())
+                                                    lam = lambdaLOGLOGIS(),
+                                                    tau = tauLOGLOGIS()
+                                                    )
         })
         
         StopLossLOGLOGIS <- reactive({SL_llogis(d = dLOGLOGIS(),
@@ -1648,15 +2462,12 @@ myserver <- function(input, output, session)
                                                                 xLOGLOGIS(),
                                                                 densityLOGLOGIS()))
         })
-        output$repartLOGLOGIS <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$",
-                                                               xLOGLOGIS(),
-                                                               repartLOGLOGIS()))
-        })
         
-        output$survieLOGLOGIS <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
-                                                               xLOGLOGIS(),
-                                                               survieLOGLOGIS()))
-        })
+        output$repartsurvieLOGLOGIS <- renderUI({withMathJax(sprintf("$$%s(%s) = %s$$", 
+                                                                     repartsurvieLOGLOGIS_LATEX(),
+                                                                     xLOGLOGIS(),
+                                                                     repartsurvieLOGLOGIS()
+        ))})
         
         output$VaRLOGLOGIS <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
                                                             kLOGLOGIS(),
@@ -1693,54 +2504,46 @@ myserver <- function(input, output, session)
                                                                   kthmomentLOGLOGIS()))
         })
         
+        output$QxLOGLOGIS <- renderPlotly({
+            ggplot(data = data.frame(x = c(0, VaR_llogis(kappa = 0.999, lam = lambdaLOGLOGIS(), tau = tauLOGLOGIS()))
+            ),
+            aes(x)) + 
+                stat_function(fun = plot_choice_LOGLOGIS_QX_SERVER(),
+                              args = list(shape = tauLOGLOGIS(), 
+                                          scale = lambdaLOGLOGIS())) +
+                ylab("f(x)") + 
+                theme_classic() +
+                stat_function(
+                    fun = plot_choice_LOGLOGIS_QX_SERVER(),
+                    args = list(shape = tauLOGLOGIS(), 
+                                scale = lambdaLOGLOGIS()),
+                    xlim = c(VaRLOGLOGIS(), 
+                             VaR_llogis(kappa = 0.999, lam = lambdaLOGLOGIS(), tau = tauLOGLOGIS())),
+                    geom = "area",
+                    fill = "red",
+                    alpha = 0.7
+                )
+        })
         
         output$FxLOGLOGIS <- renderPlotly({
-            ggplot(data = data.frame(x = c(0, 1)),
-                   aes(x)) +
-                stat_function(fun = dllogis,
-                              args = list(lambdaLOGLOGIS(), 
-                                          tauLOGLOGIS())) +
-                ylab("f(x)") +
+            ggplot(data = data.frame(x = c(0, VaR_llogis(kappa = 0.999, lam = lambdaLOGLOGIS(), tau = tauLOGLOGIS()))
+            ),
+            aes(x)) + 
+                stat_function(fun = plot_choice_LOGLOGIS_SERVER(),
+                              args = list(shape = tauLOGLOGIS(), 
+                                          scale = lambdaLOGLOGIS())) +
+                ylab("f(x)") + 
                 theme_classic() +
                 stat_function(
-                    fun = dllogis,
-                    args = list(lambdaLOGLOGIS(), 
-                                tauLOGLOGIS()),                    
-                    xlim = c(0, xERLANG()),
+                    fun = plot_choice_LOGLOGIS_SERVER(),
+                    args = list(shape = tauLOGLOGIS(), 
+                                scale = lambdaLOGLOGIS()),                    
+                    xlim = xlim_LOGLOGIS_SERVER(),
                     geom = "area",
-                    fill = "red",
+                    fill = plot_color_LOGLOGIS_SERVER(),
                     alpha = 0.7
                 )
         })
-        
-        output$SxLOGLOGIS <- renderPlotly({
-            ggplot(data = data.frame(x = c(0, 1)),
-                   aes(x)) +
-                stat_function(fun = dllogis,
-                              args = list(lambdaLOGLOGIS(), 
-                                          tauLOGLOGIS())) +
-                ylab("f(x)") +
-                theme_classic() +
-                stat_function(
-                    fun = dllogis,
-                    args = list(lambdaLOGLOGIS(), 
-                                tauLOGLOGIS()),                    
-                    xlim = c(xERLANG(), 1),
-                    geom = "area",
-                    fill = "red",
-                    alpha = 0.7
-                )
-        })
-        
-        output$QxLOGLOGIS <- renderPlotly({
-            ggplot(data = data.frame(x = c(0,1)),
-                   aes(x)) +
-                stat_function(fun = qllogis,
-                              args = list(lambdaLOGLOGIS(), 
-                                          tauLOGLOGIS())) + theme_classic()
-        })
-        
-        
         
 #### Loi inverse gaussienne Serveur ####
         
@@ -1748,30 +2551,91 @@ myserver <- function(input, output, session)
         
         muIG <- reactive({input$muIG})
         
-        dIG <- reactive({input$dIG})
+        dIG_param <- reactive({input$dIG})
         
         kIG <- reactive({input$kIG})
         
         xIG <- reactive({input$xIG})
         
-        densityIG <- reactive({format(d_IG(x = xIG(), 
-                                           muIG(),
-                                           betaIG()), 
+        plot_choice_IG_SERVER <- reactive({
+            if(input$plot_choice_IG == "Densité")
+                dIG
+            else
+                pIG
+        })
+        
+        plot_choice_IG_QX_SERVER <- reactive({
+            if(input$plot_choice_IG_QX == "Densité")
+                dIG
+            else
+                pIG
+        })
+        
+        
+        plot_color_IG_SERVER <- reactive({
+            if(input$xlim_IG == T)
+                "Dark Green"
+            else
+                "Royal Blue"
+        })
+        
+        xlim_IG_SERVER <- reactive({
+            if(input$xlim_IG == T)
+                c(0, xIG())
+            else
+                c(xIG(), VaR_IG(kappa = 0.999, mu = muIG(), beta = betaIG()))
+            # 1.5 * muIG() + 0.5 *betaIG()
+        })
+        
+        repartsurvieIG_LATEX <- reactive({
+            if(input$xlim_IG == T)
+            {
+                "F_{X}"
+            }
+            else
+            {
+                "S_{X}"
+            }
+        })
+        
+        repartsurvieIG <- reactive({
+            if(input$xlim_IG == T)
+            {
+                format(pIG(q = xIG(), 
+                           muIG(),
+                           betaIG()
+                ), 
+                nsmall = 6)
+            }
+            else
+            {
+                format(pIG(q = xIG(), 
+                           muIG(),
+                           betaIG(),
+                           lower.tail = F), 
+                       nsmall = 6)
+            }
+            
+        })
+        
+        densityIG <- reactive({format(dIG(x = xIG(), 
+                                           mu = muIG(),
+                                           beta = betaIG()), 
                                       nsmall = 6)
         })
         
-        repartIG <- reactive({format(p_IG(q = xIG(), 
-                                          muIG(),
-                                          betaIG()), 
-                                     nsmall = 6)
-        })
-        
-        survieIG <- reactive({format(p_IG(q = xIG(), 
-                                         muIG(),
-                                         betaIG(),
-                                         lower.tail = F), 
-                                     nsmall = 6)
-        })
+        # repartIG <- reactive({format(pIG(q = xIG(), 
+        #                                   mu = muIG(),
+        #                                   beta = betaIG()), 
+        #                              nsmall = 6)
+        # })
+        # 
+        # survieIG <- reactive({format(pIG(q = xIG(), 
+        #                                  mu = muIG(),
+        #                                  beta = betaIG(),
+        #                                  lower.tail = F), 
+        #                              nsmall = 6)
+        # })
         
         VaRIG <- reactive({format(VaR_IG(kappa = kIG(),
                                          muIG(), 
@@ -1791,22 +2655,22 @@ myserver <- function(input, output, session)
                                    nsmall = 6)
         })
         
-        EspTronqIG <- reactive({Etronq_IG(d = dIG(),
+        EspTronqIG <- reactive({Etronq_IG(d = dIG_param(),
                                           betaIG(),
                                           muIG())
         })
         
-        StopLossIG <- reactive({SL_IG(d = dIG(),
+        StopLossIG <- reactive({SL_IG(d = dIG_param(),
                                       betaIG(),
                                       muIG())
         })
         
-        EspLimIG <- reactive({Elim_IG(d = dIG(),
+        EspLimIG <- reactive({Elim_IG(d = dIG_param(),
                                       betaIG(),
                                       muIG())
         })
         
-        # ExcesMoyIG <- reactive({Mexcess_IG(d = dIG(),
+        # ExcesMoyIG <- reactive({Mexcess_IG(d = dIG_param(),
         #                                    betaIG(),
         #                                    muIG())
         # })
@@ -1832,15 +2696,22 @@ myserver <- function(input, output, session)
                                                                xIG(),
                                                                densityIG()))
         })
-        output$repartIG <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$",
-                                                              xIG(),
-                                                              repartIG()))
-        })
         
-        output$survieIG <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
-                                                              xIG(),
-                                                              survieIG()))
-        })
+        output$repartsurvieIG <- renderUI({withMathJax(sprintf("$$%s(%s) = %s$$", 
+                                                               repartsurvieIG_LATEX(),
+                                                               xIG(),
+                                                               repartsurvieIG()
+        ))})
+        
+        # output$repartIG <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$",
+        #                                                       xIG(),
+        #                                                       repartIG()))
+        # })
+        # 
+        # output$survieIG <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
+        #                                                       xIG(),
+        #                                                       survieIG()))
+        # })
         
         output$VaRIG <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
                                                            kIG(),
@@ -1853,62 +2724,103 @@ myserver <- function(input, output, session)
         })
         
         output$EspTronqIG <- renderUI({withMathJax(sprintf("$$E[X \\times 1_{\\{X \\leqslant %s\\}}] = %.4f$$",
-                                                                dIG(),
+                                                                dIG_param(),
                                                                 EspTronqIG()))
         })
         
         output$StopLossIG <- renderUI({withMathJax(sprintf("$$ \\pi_{%s}(X) = %.4f$$",
-                                                                dIG(),
+                                                                dIG_param(),
                                                                 StopLossIG()))
         })
         
         output$EspLimIG <- renderUI({withMathJax(sprintf("$$E[\\text{min}(X;{%s})] = %.4f$$",
-                                                              dIG(),
+                                                              dIG_param(),
                                                               EspLimIG()))
         })
         
         # output$ExcesMoyIG <- renderUI({withMathJax(sprintf("$$e_{%s}(X) = %.4f$$",
-        #                                                         dIG(),
+        #                                                         dIG_param(),
         #                                                         ExcesMoyIG()))
         # })
         
-        output$FxIG <- renderPlotly({
-            ggplot(data = data.frame(x = c(0, 1.5 * muIG() + 0.5 *betaIG())),
-                   aes(x)) +
-                stat_function(fun = d_IG,
+        output$QxIG <- renderPlotly({
+            ggplot(data = data.frame(x = c(0, VaR_IG(kappa = 0.999, mu = muIG(), beta = betaIG()))
+            ),
+            aes(x)) + 
+                stat_function(fun = plot_choice_IG_QX_SERVER(),
                               args = list(muIG(),
                                           betaIG())) +
-                ylab("f(x)") +
+                ylab("f(x)") + 
                 theme_classic() +
                 stat_function(
-                    fun = d_IG,
+                    fun = plot_choice_IG_QX_SERVER(),
                     args = list(muIG(),
                                 betaIG()),                    
-                    xlim = c(0, xERLANG()),
+                    xlim = c(VaRIG(), 
+                             VaR_IG(kappa = 0.999, mu = muIG(), beta = betaIG())),
                     geom = "area",
                     fill = "red",
                     alpha = 0.7
                 )
         })
         
-        output$SxIG <- renderPlotly({
-            ggplot(data = data.frame(x = c(0, 1.5 * muIG() + 0.5 *betaIG())),
-                   aes(x)) +
-                stat_function(fun = d_IG,
+        output$FxIG <- renderPlotly({
+            ggplot(data = data.frame(x = c(0, VaR_IG(kappa = 0.999, mu = muIG(), beta = betaIG()))
+            ),
+            aes(x)) + 
+                stat_function(fun = plot_choice_IG_SERVER(),
                               args = list(muIG(),
                                           betaIG())) +
-                ylab("f(x)") +
+                ylab("f(x)") + 
                 theme_classic() +
                 stat_function(
-                    fun = d_IG,
+                    fun = plot_choice_IG_SERVER(),
                     args = list(muIG(),
                                 betaIG()),                    
-                    xlim = c(xERLANG(), 1.5 * muIG() + 0.5 *betaIG()),
+                    xlim = xlim_IG_SERVER(),
                     geom = "area",
-                    fill = "red",
+                    fill = plot_color_IG_SERVER(),
                     alpha = 0.7
                 )
-        })        
+        })
+        
+        # output$FxIG <- renderPlotly({
+        #     ggplot(data = data.frame(x = c(0, 1.5 * muIG() + 0.5 *betaIG())),
+        #            aes(x)) +
+        #         stat_function(fun = dIG,
+        #                       args = list(muIG(),
+        #                                   betaIG())) +
+        #         ylab("f(x)") +
+        #         theme_classic() +
+        #         stat_function(
+        #             fun = dIG,
+        #             args = list(muIG(),
+        #                         betaIG()),                    
+        #             xlim = c(0, xERLANG()),
+        #             geom = "area",
+        #             fill = "red",
+        #             alpha = 0.7
+        #         )
+        # })
+        # 
+        # output$SxIG <- renderPlotly({
+        #     ggplot(data = data.frame(x = c(0, 1.5 * muIG() + 0.5 *betaIG())),
+        #            aes(x)) +
+        #         stat_function(fun = dIG,
+        #                       args = list(muIG(),
+        #                                   betaIG())) +
+        #         ylab("f(x)") +
+        #         theme_classic() +
+        #         stat_function(
+        #             fun = dIG,
+        #             args = list(muIG(),
+        #                         betaIG()),                    
+        #             xlim = c(xERLANG(), 1.5 * muIG() + 0.5 *betaIG()),
+        #             geom = "area",
+        #             fill = "red",
+        #             alpha = 0.7
+        #         )
+        # })        
     
 #            output$QxIG <- renderPlotly({
 #           ggplot(data = data.frame(x = c(0,1)),
@@ -1931,6 +2843,69 @@ myserver <- function(input, output, session)
         
         dUNIC <- reactive({input$dUNIC})
         
+        output$xUNIC_SERVER <- renderUI({
+            numericInput('xUNIC', '$$x$$', min = aUNIC(), value = 0.5, max = bUNIC(), step = 1)
+        })
+        
+        
+        plot_choice_UNIC_SERVER <- reactive({
+            if(input$plot_choice_UNIC == "Densité")
+                dunif
+            else
+                punif
+        })
+        
+        plot_choice_UNIC_QX_SERVER <- reactive({
+            if(input$plot_choice_UNIC_QX == "Densité")
+                dunif
+            else
+                punif
+        })
+        
+        
+        plot_color_UNIC_SERVER <- reactive({
+            if(input$xlim_UNIC == T)
+                "Dark Green"
+            else
+                "Royal Blue"
+        })
+        
+        xlim_UNIC_SERVER <- reactive({
+            if(input$xlim_UNIC == T)
+                c(aUNIC(), min(xUNIC(), bUNIC()))
+            else
+                c(xUNIC(), bUNIC())
+        })
+        
+        repartsurvieUNIC_LATEX <- reactive({
+            if(input$xlim_UNIC == T)
+            {
+                "F_{X}"
+            }
+            else
+            {
+                "S_{X}"
+            }
+        })
+        
+        repartsurvieUNIC <- reactive({
+            if(input$xlim_UNIC == T)
+            {
+                format(punif(q = xUNIC(), 
+                             min = aUNIC(), 
+                             max = bUNIC()), 
+                       nsmall = 6)
+            }
+            else
+            {
+                format(1 - punif(q = xUNIC(), 
+                                 min = aUNIC(),
+                                 max = bUNIC()), 
+                       nsmall = 6)
+            }
+            
+        })
+        
         
         meanUNIC <- reactive({E_unif(aUNIC(), bUNIC())
         })
@@ -1942,14 +2917,6 @@ myserver <- function(input, output, session)
         
         densityUNIC <- reactive({format(dunif(x = xUNIC(), min = aUNIC(), max = bUNIC()),
                                         nsmall = 6)
-        })
-        
-        repartUNIC <- reactive({format(punif(q = xUNIC(), min = aUNIC(), max = bUNIC()), 
-                                       nsmall = 6)
-        })
-        
-        survieUNIC <- reactive({format(1 - punif(q = xUNIC(), min = aUNIC(), max = bUNIC()), 
-                                       nsmall = 6)
         })
         
         VaRUNIC <- reactive({format(VaR_unif(kappa = kUNIC(), aUNIC(), bUNIC()),
@@ -1969,15 +2936,11 @@ myserver <- function(input, output, session)
                                                             densityUNIC()
         ))})
         
-        output$repartUNIC <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$", 
-                                                           xUNIC(),
-                                                           repartUNIC()
+        output$repartsurvieUNIC <- renderUI({withMathJax(sprintf("$$%s(%s) = %s$$", 
+                                                                 repartsurvieUNIC_LATEX(),
+                                                                 xUNIC(),
+                                                                 repartsurvieUNIC()
         ))})
-        
-        output$survieUNIC <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
-                                                           xUNIC(),
-                                                           survieUNIC()))
-        })
         
         output$VaRUNIC <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
                                                        kUNIC(),
@@ -2004,60 +2967,136 @@ myserver <- function(input, output, session)
         #                                                     ExcesMoyUNIC()
         # ))})
         
-        
+        output$QxUNIC <- renderPlotly({
+            ggplot(data = data.frame(x = c(aUNIC(),
+                                           bUNIC()
+            )
+            ),
+            aes(x)) + 
+                stat_function(fun = plot_choice_UNIC_QX_SERVER(),
+                              args = list(min = aUNIC(), max = bUNIC())) +
+                ylab("f(x)") + 
+                theme_classic() +
+                stat_function(
+                    fun = plot_choice_UNIC_QX_SERVER(),
+                    args = list(min = aUNIC(), max = bUNIC()),
+                    xlim = c(VaRUNIC(), 
+                             bUNIC()),
+                    geom = "area",
+                    fill = "red",
+                    alpha = 0.7
+                )
+        })
         
         output$FxUNIC <- renderPlotly({
-            ggplot(data = data.frame(x = c(
-                aUNIC(), bUNIC())
+            ggplot(data = data.frame(x = c(aUNIC(),
+                                           bUNIC()
+            )
             ),
-            aes(x)) +
-                stat_function(fun = dunif,
+            aes(x)) + 
+                stat_function(fun = plot_choice_UNIC_SERVER(),
                               args = list(min = aUNIC(), max = bUNIC())) +
-                ylab("f(x)") +
+                ylab("f(x)") + 
                 theme_classic() +
                 stat_function(
-                    fun = dunif,
+                    fun = plot_choice_UNIC_SERVER(),
                     args = list(min = aUNIC(), max = bUNIC()),
-                    xlim = c(aUNIC(), xUNIC()),
+                    xlim = xlim_UNIC_SERVER(),
                     geom = "area",
-                    fill = "red",
+                    fill = plot_color_UNIC_SERVER(),
                     alpha = 0.7
                 )
         })
-        
-        output$SxUNIC <- renderPlotly({
-            ggplot(data = data.frame(x = c(
-                aUNIC(), bUNIC())
-            ),
-            aes(x)) +
-                stat_function(fun = dunif,
-                              args = list(min = aUNIC(), max = bUNIC())) +
-                ylab("f(x)") +
-                theme_classic() +
-                stat_function(
-                    fun = dunif,
-                    args = list(min = aUNIC(), max = bUNIC()),
-                    xlim = c(xUNIC(), bUNIC()),
-                    geom = "area",
-                    fill = "red",
-                    alpha = 0.7
-                )
-        })        
-        
-        output$QxUNIC <- renderPlotly({
-            ggplot(data = data.frame(x = c(0,1)),
-                   aes(x)) +
-                stat_function(fun = qunif,
-                              args = list(min = aUNIC(), max = bUNIC())) + theme_classic()
-        })
-        
-        
+        # 
+        # output$FxUNIC <- renderPlotly({
+        #     ggplot(data = data.frame(x = c(
+        #         aUNIC(), bUNIC())
+        #     ),
+        #     aes(x)) +
+        #         stat_function(fun = dunif,
+        #                       args = list(min = aUNIC(), max = bUNIC())) +
+        #         ylab("f(x)") +
+        #         theme_classic() +
+        #         stat_function(
+        #             fun = dunif,
+        #             args = list(min = aUNIC(), max = bUNIC()),
+        #             xlim = c(aUNIC(), xUNIC()),
+        #             geom = "area",
+        #             fill = "red",
+        #             alpha = 0.7
+        #         )
+        # })
+        # 
+        # output$SxUNIC <- renderPlotly({
+        #     ggplot(data = data.frame(x = c(
+        #         aUNIC(), bUNIC())
+        #     ),
+        #     aes(x)) +
+        #         stat_function(fun = dunif,
+        #                       args = list(min = aUNIC(), max = bUNIC())) +
+        #         ylab("f(x)") +
+        #         theme_classic() +
+        #         stat_function(
+        #             fun = dunif,
+        #             args = list(min = aUNIC(), max = bUNIC()),
+        #             xlim = c(xUNIC(), bUNIC()),
+        #             geom = "area",
+        #             fill = "red",
+        #             alpha = 0.7
+        #         )
+        # })        
+        # 
+        # output$QxUNIC <- renderPlotly({
+        #     ggplot(data = data.frame(x = c(0,1)),
+        #            aes(x)) +
+        #         stat_function(fun = qunif,
+        #                       args = list(min = aUNIC(), max = bUNIC())) + theme_classic()
+        # })
+        # 
+        # 
         
         
 #### Loi Binomiale Serveur ####
+        
         nBIN <- reactive({input$nBIN})
         
         pBIN <- reactive({input$pBIN})
+        
+        xBIN <- reactive({input$xBIN})
+        
+        kBIN <- reactive({input$kBIN})
+        
+        plot_choice_BIN_SERVER <- reactive({
+            if(input$plot_choice_BIN == "Densité")
+                dbinom
+            else
+                pbinom
+        })
+        
+        plot_color_BIN_SERVER <- reactive({
+            if(input$xlim_BIN == T)
+                "Dark Green"
+            else
+                "Royal Blue"
+        })
+        # 
+        # xlim_BIN_SERVER <- reactive({
+        #     if(input$xlim_BIN == T)
+        #         c(0, xBIN())
+        #     else
+        #         c(xBIN(), nBIN())
+        # })
+        
+        repartsurvieBIN_LATEX <- reactive({
+            if(input$xlim_BIN == T)
+            {
+                "F_{X}"
+            }
+            else
+            {
+                "S_{X}"
+            }
+        })
         
         observeEvent(
             {
@@ -2080,13 +3119,12 @@ myserver <- function(input, output, session)
                 
                 # rend le paramètre impossible à modifier pour l'utilisateur
                 if (x == "Bernoulli")
-                    hide("nBIN")
+                    shinyjs::hide("nBIN")
                 else
-                    show("nBIN")
+                    shinyjs::show("nBIN")
                 
             }
         )
-        
         
         output$loi_BIN <- renderUI({
             if(input$distrchoiceBINFAM == "Bernoulli")
@@ -2104,25 +3142,33 @@ myserver <- function(input, output, session)
                 "\\(X \\sim\\text{Binomiale} \\ (n, p)\\)"
         })
         
+        repartsurvieBIN <- reactive({
+            if(input$xlim_BIN == T)
+            {
+                format(pbinom(xBIN(), nBIN(), pBIN()), nsmall = 6, scientific = F)
+            }
+            else
+            {
+                format(pbinom(xBIN(), nBIN(), pBIN(), lower.tail = F), nsmall = 6, scientific = F)
+            }
+            
+        })
+        
         meanBIN <- reactive({nBIN() * pBIN()})
         
         varBIN <- reactive({nBIN() * pBIN() * (1 - pBIN())})   
         
         densityBIN <- reactive({format(dbinom(input$xBIN, nBIN(), pBIN()), nsmall = 6)})
         
-        repartBIN <- reactive({format(pbinom(input$xBIN, nBIN(), pBIN()), nsmall = 6)})
-        
-        survieBIN <- reactive({format(pbinom(input$xBIN, nBIN(), pBIN(), lower.tail = F), nsmall = 6)})
-        
-        VaRBIN <- reactive({format(VaR_binom(input$kBIN,
-                                          nBIN(),
-                                          pBIN()),
+        VaRBIN <- reactive({format(VaR_binom(kappa = kBIN(),
+                                             nBIN(),
+                                             pBIN()),
                                    nsmall = 6)
             })
         
-        TVaRBIN <- reactive({format(TVaR_binom(input$kBIN,
-                                               n = nBIN(),
-                                               p = pBIN()),
+        TVaRBIN <- reactive({format(TVaR_binom(kappa = kBIN(),
+                                               nBIN(),
+                                               pBIN()),
                                     nsmall = 6)
             })
         
@@ -2138,15 +3184,12 @@ myserver <- function(input, output, session)
                                                            input$xBIN,
                                                            densityBIN()
         ))})
-        output$repartBIN <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$", 
-                                                          input$xBIN,
-                                                          repartBIN()
+        
+        output$repartsurvieBIN <- renderUI({withMathJax(sprintf("$$%s(%s) = %s$$", 
+                                                                repartsurvieBIN_LATEX(),
+                                                                xBIN(),
+                                                                repartsurvieBIN()
         ))})
-
-        output$survieBIN <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
-                                                            input$xBIN,
-                                                            survieBIN()))
-        })
         
         output$VaRBIN <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
                                                        input$kBIN,
@@ -2157,13 +3200,58 @@ myserver <- function(input, output, session)
                                                         TVaRBIN()
         ))})
         
-        output$FxBIN <- renderPlotly({ggplot(data.frame(x = 0:nBIN(), y = dbinom(0:nBIN(), nBIN(), pBIN())), aes(x = x, y = y)) + geom_bar(stat = "identity", col = "red", fill ="red", alpha = 0.7, width = 0.3) + theme_classic() + ylab("P(X=x")
-            
+        output$FxBIN <- renderPlotly({
+            ggplot(data.frame(x = 0:nBIN(),
+                              y = dbinom(0:nBIN(), size = nBIN(), prob = pBIN())
+                              ),
+                   aes(x, y)
+                   ) +
+                geom_bar(stat = "identity",
+                         col = "red",
+                         fill ="red",
+                         alpha = 0.7,
+                         width = 0.3) +
+                # geom_bar(aes(x = xBIN(),
+                #              y = dbinom(x, size = nBIN(), prob = pBIN())
+                #              ),
+                #          stat = "identity", 
+                #          alpha = 0.7,
+                #          # inherit.aes = F,
+                #          width = 0.3,
+                #          fill = "blue") + 
+                theme_classic() +
+                ylab("P(X=x")
+
         })
         
+        # output$FxBIN <- renderPlotly({
+        #     ggplot(data = data.frame(x = c(0,
+        #                                    nBIN()
+        #     )
+        #     ),
+        #     aes(x)) + 
+        #         stat_function(fun = plot_choice_BIN_SERVER(),
+        #                       args = list(nBIN(), pBIN())) + 
+        #         ylab("Pr(X = x)") + 
+        #         theme_classic() +
+        #         stat_function(
+        #             fun = plot_choice_BIN_SERVER(),
+        #             args = list(nBIN(), pBIN()),
+        #             xlim = xlim_BIN_SERVER(),
+        #             geom = "area",
+        #             fill = plot_color_BIN_SERVER(),
+        #             alpha = 0.7
+        #         )
+        # })
         # Reactive slider
-        observeEvent(nBIN(),{updateSliderInput(session = session, inputId = "xBIN", max = nBIN())
-        })
+        observeEvent(nBIN(),
+                     {
+                         updateSliderInput(session = session, 
+                                           inputId = "xBIN",
+                                           max = nBIN()
+                         )
+                     }
+        )
     
 #### Loi Poisson Serveur ####
         
@@ -2228,7 +3316,7 @@ myserver <- function(input, output, session)
     output$changingpetitNHG <- renderUI({
         numericInput('petitNHG', 
                      '$$n$$', 
-                     value = (grosNHG() - mHG()), 
+                     value = 2, 
                      min = 0, 
                      max = (grosNHG() - 1),
                      step = 1)
@@ -2493,9 +3581,9 @@ myserver <- function(input, output, session)
         
         # rend le paramètre impossible à modifier pour l'utilisateur
         if (x == "Géometrique")
-            hide("rBN")
+            shinyjs::hide("rBN")
         else
-            show("rBN")
+            shinyjs::show("rBN")
         
     })
     
@@ -2570,15 +3658,15 @@ myserver <- function(input, output, session)
                nsmall = 6)
     })
     
-    densityUNID <- reactive({format(d_unifD(x = xUNID(), aUNID(), bUNID()),
+    densityUNID <- reactive({format(dunifD(x = xUNID(), aUNID(), bUNID()),
                                     nsmall = 6)
     })
     
-    repartUNID <- reactive({format(p_unifD(q = xUNID(), aUNID(), bUNID()), 
+    repartUNID <- reactive({format(punifD(k = xUNID(), aUNID(), bUNID()), 
                                    nsmall = 6)
     })
     
-    survieUNID <- reactive({format(1 - p_unifD(q = xUNID(), aUNID(), bUNID()), 
+    survieUNID <- reactive({format(1 - punifD(k = xUNID(), aUNID(), bUNID()), 
                                    nsmall = 6)
     })
     
@@ -2641,6 +3729,13 @@ myserver <- function(input, output, session)
         
     })
     
+    # Crée ce input avec UI pour le cacher dans le cas d'une lognormale
+    output$koBNCOMPUI <- renderUI({
+        if (input$severityBNCOMP == "Gamma") {
+            numericInput('koBNCOMP', label = withMathJax('$$k_{0}$$'), value = 300, step = 100, min = 0, max = 1)
+        }
+    })
+    
     ## Ici on crée un gros observeEvent qui va modifier les paramètres de la BNCOMP/exponentielle/khi-carrée selon les 2 radio buttons:
     ## x: selection de distribution
     ## y: selection de si c'est fréquence ou échelle
@@ -2678,15 +3773,26 @@ myserver <- function(input, output, session)
                                    '$$\\beta$$'
                                }
                            })
+        # Cacher la fonction de répartition si lognormale
+        if(x == "Lognormale")
+        {
+            hideElement("Repartition-box-BNCOMP")
+            hideElement("Quantile-box-BNCOMP")
+        }
+        else if(x == "Gamma")
+        {
+            showElement("Repartition-box-BNCOMP")
+            showElement("Quantile-box-BNCOMP")
+        }
         
         # rend le paramètre impossible à modifier pour l'utilisateur
         if (x == "Lognormale")
         {
-            hide("distrchoiceGAMMA")
+            shinyjs::hide("distrchoiceGAMMA")
         }
         else
         {
-            show("distrchoiceGAMMA")
+            shinyjs::show("distrchoiceGAMMA")
         }
         
         updateNumericInput(session, "shapeBNCOMP",
@@ -2705,7 +3811,7 @@ myserver <- function(input, output, session)
     
     # densityBNCOMP <- reactive({format(dBNCOMP(input$xBNCOMP, shapeBNCOMP(), rateBNCOMP()),scientific = F,  nsmall = 6)})
     
-    repartBNCOMP <- reactive({format(p_BNComp(x = xBNCOMP(), 
+    repartBNCOMP <- reactive({format(p_BNCOMP(x = xBNCOMP(), 
                                               r = rBNCOMP(),
                                               q = qBNCOMP(),
                                               shapeBNCOMP(), 
@@ -2715,7 +3821,7 @@ myserver <- function(input, output, session)
                                      nsmall = 6, scientific = F)
     })
     
-    survieBNCOMP <- reactive({format(1 - p_BNComp(x = xBNCOMP(), 
+    survieBNCOMP <- reactive({format(1 - p_BNCOMP(x = xBNCOMP(), 
                                                   r = rBNCOMP(),
                                                   q = qBNCOMP(),
                                                   ko = koBNCOMP(),
@@ -2725,7 +3831,7 @@ myserver <- function(input, output, session)
                                                   ), 
                                      nsmall = 6, scientific = F)})
 
-    VaRBNCOMP <- reactive({format(VaR_BNComp(kappa = kBNCOMP(), 
+    VaRBNCOMP <- reactive({format(VaR_BNCOMP(kappa = kBNCOMP(), 
                                              ko = koBNCOMP(),
                                              q     = qBNCOMP(),
                                              r     = rBNCOMP(),
@@ -2733,7 +3839,7 @@ myserver <- function(input, output, session)
                                              rateBNCOMP()
     ), nsmall = 6)})
     
-    varkBNCOMP <- reactive({VaR_BNComp(kappa = kBNCOMP(), 
+    varkBNCOMP <- reactive({VaR_BNCOMP(kappa = kBNCOMP(), 
                                        ko = koBNCOMP(),
                                        r     = rBNCOMP(),
                                        q     = qBNCOMP(),
@@ -2741,7 +3847,7 @@ myserver <- function(input, output, session)
                                        rateBNCOMP()
                                        )})
     
-    TVaRBNCOMP <- reactive({format(TVaR_BNComp(kappa     = kBNCOMP(),
+    TVaRBNCOMP <- reactive({format(TVaR_BNCOMP(kappa     = kBNCOMP(),
                                                r     = rBNCOMP(),
                                                q     = qBNCOMP(),
                                                vark  = varkBNCOMP(),
@@ -2753,7 +3859,7 @@ myserver <- function(input, output, session)
                                    nsmall = 6)
     })
     
-    meanBNCOMP <- reactive({format(E_BNComp(shapeBNCOMP(), 
+    meanBNCOMP <- reactive({format(E_BNCOMP(shapeBNCOMP(), 
                                             rateBNCOMP(),
                                             r     = rBNCOMP(),
                                             q     = qBNCOMP(),
@@ -2763,7 +3869,7 @@ myserver <- function(input, output, session)
     scientific = F)
     })
     
-    varianceBNCOMP <- reactive({format(V_BNComp(shapeBNCOMP(), 
+    varianceBNCOMP <- reactive({format(V_BNCOMP(shapeBNCOMP(), 
                                                 rateBNCOMP(),
                                                 r     = rBNCOMP(),
                                                 q     = qBNCOMP(),
@@ -2864,6 +3970,13 @@ myserver <- function(input, output, session)
         
     })
     
+    # Crée ce input avec UI pour le cacher dans le cas d'une lognormale
+    output$koPCOMPUI <- renderUI({
+        if (input$severityBINCOMP == "Gamma") {
+            numericInput('koPCOMP', label = withMathJax('$$k_{0}$$'), value = 200, step = 100, min = 0, max = 1)
+        }
+    })
+    
     ## Ici on crée un gros observeEvent qui va modifier les paramètres de la PCOMP/exponentielle/khi-carrée selon les 2 radio buttons:
     ## x: selection de distribution
     ## y: selection de si c'est fréquence ou échelle
@@ -2902,14 +4015,26 @@ myserver <- function(input, output, session)
                                }
                            })
         
+        # Cacher la fonction de répartition si lognormale
+        if(x == "Lognormale")
+        {
+            hideElement("Repartition-box-PCOMP")
+            hideElement("Quantile-box-PCOMP")
+        }
+        else if(x == "Gamma")
+        {
+            showElement("Repartition-box-PCOMP")
+            showElement("Quantile-box-PCOMP")
+        }
+        
         # rend le paramètre impossible à modifier pour l'utilisateur
         if (x == "Lognormale")
         {
-            hide("distrchoiceGAMMA")
+            shinyjs::hide("distrchoiceGAMMA")
         }
         else
         {
-            show("distrchoiceGAMMA")
+            shinyjs::show("distrchoiceGAMMA")
         }
         
         updateNumericInput(session, "shapePCOMP",
@@ -2928,7 +4053,7 @@ myserver <- function(input, output, session)
     
     # densityPCOMP <- reactive({format(dPCOMP(input$xPCOMP, shapePCOMP(), ratePCOMP()),scientific = F,  nsmall = 6)})
     
-    repartPCOMP <- reactive({format(p_Pcomp(x = xPCOMP(), 
+    repartPCOMP <- reactive({format(p_PCOMP(x = xPCOMP(), 
                                             lambdaPCOMP(),
                                             shapePCOMP(), 
                                             ratePCOMP(),
@@ -2937,7 +4062,7 @@ myserver <- function(input, output, session)
                                     nsmall = 6, scientific = F)
     })
     
-    surviePCOMP <- reactive({format(1 - p_Pcomp(x = xPCOMP(), 
+    surviePCOMP <- reactive({format(1 - p_PCOMP(x = xPCOMP(), 
                                             lambdaPCOMP(),
                                             shapePCOMP(), 
                                             ratePCOMP(),
@@ -2946,21 +4071,21 @@ myserver <- function(input, output, session)
                                     nsmall = 6, scientific = F)
         })
     
-    VaRPCOMP <- reactive({format(VaR_PComp(kappa = kPCOMP(), 
+    VaRPCOMP <- reactive({format(VaR_PCOMP(kappa = kPCOMP(), 
                                            lambdaPCOMP(),
                                            shapePCOMP(), 
                                            ratePCOMP(),
                                            ko = koPCOMP()
     ), nsmall = 6)})
     
-    varkPCOMP <- reactive({VaR_PComp(kappa = kPCOMP(), 
+    varkPCOMP <- reactive({VaR_PCOMP(kappa = kPCOMP(), 
                                      lambdaPCOMP(),
                                      shapePCOMP(), 
                                      ratePCOMP(),
                                      ko = koPCOMP()
     )})
     
-    TVaRPCOMP <- reactive({format(TVaR_PComp(kappa = kPCOMP(),
+    TVaRPCOMP <- reactive({format(TVaR_PCOMP(kappa = kPCOMP(),
                                              lambdaPCOMP(),
                                              shapePCOMP(), 
                                              ratePCOMP(),
@@ -3036,7 +4161,8 @@ myserver <- function(input, output, session)
                                                        kPCOMP(),
                                                        TVaRPCOMP()
     ))})
-#### Loi Binomiale Composée Serveur ####
+
+    #### Loi Binomiale Composée Serveur ####
     
     
     xBINCOMP <- reactive({input$xBINCOMP})
@@ -3055,6 +4181,7 @@ myserver <- function(input, output, session)
     
     shapeBINCOMP <- reactive({input$shapeBINCOMP})
     
+    # Crée le paramètres d'échelle et de forme avec UI pour changer le label selon la distribution
     output$rateBINCOMPUI <- renderUI({
         if (input$distrchoiceEXPOFAM == "Gamma") {
             numericInput('rateBINCOMP', '$$\\beta$$', value = 1, min = 0)
@@ -3070,6 +4197,13 @@ myserver <- function(input, output, session)
             numericInput('shapeBINCOMP', '$$\\mu$$', value = 2, min = 0)
         }
         
+    })
+    
+    # Créer ce input avec UI pour le cacher dans le cas d'une lognormale
+    output$koBINCOMPUI <- renderUI({
+        if (input$severityBINCOMP == "Gamma") {
+            numericInput('koBINCOMP', label = withMathJax('$$k_{0}$$'), value = 300, step = 100, min = 0, max = 1)
+        }
     })
     
     ## Ici on crée un gros observeEvent qui va modifier les paramètres de la BINCOMP/exponentielle/khi-carrée selon les 2 radio buttons:
@@ -3090,6 +4224,17 @@ myserver <- function(input, output, session)
                                {
                                    y = T
                                })
+        
+        if(x == "Lognormale")
+        {
+            hideElement("Repartition-box-BINCOMP")
+            hideElement("Quantile-box-BINCOMP")
+        }
+        else if(x == "Gamma")
+        {
+            showElement("Repartition-box-BINCOMP")
+            showElement("Quantile-box-BINCOMP")
+        }
         
         # modification du beta
         updateNumericInput(session,
@@ -3113,11 +4258,11 @@ myserver <- function(input, output, session)
         # rend le paramètre impossible à modifier pour l'utilisateur
         if (x == "Lognormale")
         {
-            hide("distrchoiceGAMMA")
+            shinyjs::hide("distrchoiceGAMMA")
         }
-        else
+        else if (x == "Gamma")
         {
-            show("distrchoiceGAMMA")
+            shinyjs::show("distrchoiceGAMMA")
         }
         
         updateNumericInput(session, "shapeBINCOMP",
@@ -3136,7 +4281,7 @@ myserver <- function(input, output, session)
     
     # densityBINCOMP <- reactive({format(dBINCOMP(input$xBINCOMP, shapeBINCOMP(), rateBINCOMP()),scientific = F,  nsmall = 6)})
     
-    repartBINCOMP <- reactive({format(p_BINComp(x = xBINCOMP(), 
+    repartBINCOMP <- reactive({format(p_BINCOMP(x = xBINCOMP(), 
                                               n = nBINCOMP(),
                                               q = qBINCOMP(),
                                               shapeBINCOMP(), 
@@ -3146,7 +4291,7 @@ myserver <- function(input, output, session)
                                      nsmall = 6, scientific = F)
     })
     
-    survieBINCOMP <- reactive({format(1 - p_BINComp(x = xBINCOMP(), 
+    survieBINCOMP <- reactive({format(1 - p_BINCOMP(x = xBINCOMP(), 
                                                   n = nBINCOMP(),
                                                   q = qBINCOMP(),
                                                   shapeBINCOMP(), 
@@ -3154,7 +4299,7 @@ myserver <- function(input, output, session)
                                                   ko = koBINCOMP(),
                                                   distr_severity = input$severityBINCOMP), nsmall = 6, scientific = F)})
     
-    VaRBINCOMP <- reactive({format(VaR_BINComp(k = kBINCOMP(), 
+    VaRBINCOMP <- reactive({format(VaR_BINCOMP(kappa = kBINCOMP(), 
                                              n     = nBINCOMP(),
                                              q     = qBINCOMP(),
                                              shapeBINCOMP(), 
@@ -3162,7 +4307,7 @@ myserver <- function(input, output, session)
                                              ko = koBINCOMP()
     ), nsmall = 6)})
     
-    varkBINCOMP <- reactive({VaR_BINComp(k = kBINCOMP(), 
+    varkBINCOMP <- reactive({VaR_BINCOMP(kappa = kBINCOMP(), 
                                        n     = nBINCOMP(),
                                        q     = qBINCOMP(),
                                        rateBINCOMP(),
@@ -3170,7 +4315,7 @@ myserver <- function(input, output, session)
                                        ko = koBINCOMP()
     )})
     
-    TVaRBINCOMP <- reactive({format(TVaR_BINComp(k    = kBINCOMP(),
+    TVaRBINCOMP <- reactive({format(TVaR_BINCOMP(kappa    = kBINCOMP(),
                                                n     = nBINCOMP(),
                                                q     = qBINCOMP(),
                                                shapeBINCOMP(), 
@@ -3182,7 +4327,7 @@ myserver <- function(input, output, session)
     nsmall = 6)
     })
     
-    meanBINCOMP <- reactive({format(E_BINComp(
+    meanBINCOMP <- reactive({format(E_BINCOMP(
                                             n     = nBINCOMP(),
                                             q     = qBINCOMP(),
                                             shapeBINCOMP(), 
@@ -3193,7 +4338,7 @@ myserver <- function(input, output, session)
     scientific = F)
     })
     
-    varianceBINCOMP <- reactive({format(V_BINComp(
+    varianceBINCOMP <- reactive({format(V_BINCOMP(
                                                 n     = nBINCOMP(),
                                                 q     = qBINCOMP(),
                                                 shapeBINCOMP(), 
@@ -3214,7 +4359,6 @@ myserver <- function(input, output, session)
         else if (input$distrchoiceEXPOFAM == "Lognormale")
             "Lognormale"
     })
-    
     
     output$distr_BINCOMP <- renderText({
         if(input$severityBINCOMP == "Gamma")

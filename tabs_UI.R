@@ -1,12 +1,131 @@
-stat_tests <- tabItem(tabName = "stat_tests",
+#### Copules ####
+
+copulaTypes <- c("EFGM", "AMH", "Clayton", "Frank", "Gumbel", "Normal", "Student")
+
+dEFGM <- function(u1, u2, kendallTau) {
+    param <- 9 * kendallTau / 2
+    1 + param * (1 - 2 * u1) * (1 - 2 * u2)
+}
+
+dClayton <- function(u1, u2, kendallTau) {
+    param <- 2 * (1 / kendallTau - 1) ^ -1
+    (1 + param) / (u1 * u2) ^ (param + 1) * (u1 ^ -param + u2 ^ -param - 1) ^ (-2 - 1 / param)
+}
+
+dAMH <- function(u1, u2, kendallTau) {
+    MinimizeTauAMH <- function(param) {
+        abs( kendallTau - (1 - 2 * ( (1 - param) ^ 2 * log(1 - param) + param) / (3 * param ^ 2)))
+    }
+    param <- optimize(MinimizeTauAMH, c(-1, 1))$minimum
+    (1 - param + 2 * param * u1 * u2 / (1 - param * (1 - u1) * (1 - u2))) / (1 - param * (1 - u1) * (1 - u2)) ^ 2
+}
+
+dFrank <- function(u1, u2, kendallTau) {
+    MinimizeTauFrank <- function(param) {
+        if(param == 0) {
+            10000
+        } else {
+            abs( kendallTau - (1 + 4 / param * (debye1(param) - 1)))
+        }
+    }
+    param <- optimize(MinimizeTauFrank, c(-100, 100))$minimum
+    param * exp(- param * (u1 + u2)) * (1 - exp(-param)) /
+        (exp(-param * (u1 + u2)) - exp(-param * u1) - exp(-param * u2) + exp(-param)) ^ 2
+}
+
+pGumbel <- function(u1, u2, param) {
+    exp(- ((-(log(u1))) ^ param + (-(log(u2))) ^ param) ^ (1 / param))
+}
+
+dGumbel <- function(u1, u2, kendallTau) {
+    param <- (1 - kendallTau) ^ -1
+    pGumbel(u1, u2, param) * ((-log(u1)) ^ (param - 1) * (-log(u2)) ^ (param - 1)) / (u1 * u2) *
+        ((-log(u1)) ^ param + (-log(u2)) ^ param) ^ (1 / param - 2) * 
+        (param - 1 + ((-log(u1)) ^ param + (-log(u2)) ^ param) ^ (1 / param))
+}
+
+dNormal <- function(u1, u2, kendallTau) {
+    param <- sin(kendallTau * pi / 2)
+    1 / sqrt(1 - param ^ 2) * exp(- ( qnorm(u1) ^ 2 - 2 * param * qnorm(u1) * qnorm(u2) + qnorm(u2) ^ 2) / (2 * (1 - param ^ 2))) *
+        exp((qnorm(u1) ^ 2 + qnorm(u2) ^ 2) / 2)
+}
+
+dStudent <- function(u1, u2, kendallTau, v = 6) {
+    MinimizeTauStudent <- function(current_param) {
+        abs(kendallTau - tau(tCopula(dim = 2, param = current_param)))
+    }
+    param <- optimize(MinimizeTauStudent, c(-1, 1))$minimum
+    densite <- param ^ (-0.5) * (gamma((v + 2) / 2 * gamma(v / 2))) / (gamma((v + 1) / 2)) ^ 2 *
+        (1 + (qt(u1, df = v) ^ 2 - 2 * param * qt(u1, df = v) * qt(u2, df = v) + qt(u2, df = v) ^ 2) / (v * (1 - param ^ 2))) ^((v + 2) / 2) *
+        (1 + qt(u1, df = v) / v) ^ ((v + 2) / 2) * (1 + qt(u2, df = v) / v) ^ ((v + 2) / 2)
+    pmax(pmin(densite, 1000), -1000)
+}
+
+#### Copules fin ####
+
+tab_copulas_tool <- tabItem(tabName = "copulas_tool",
+                        fluidPage(
+                        fluidRow(
+                            titlePanel("Copula density function"),
+                            align = "center"
+                        ),
+                          fluidRow(
+                            column(width = 4,
+                            # sidebarPanel(
+                                # h3("Title"),
+                            # boxPlus(
+                            wellPanel(
+                                withMathJax(),
+                                title = "Paramètre",
+                                status = "primary",
+                                solidHeader = T,
+                                width = NULL,
+                                closable = F,
+                                p("Choice of copula"),
+                            pickerInput(
+                                inputId = "name",
+                                # label = "Choice of copula", 
+                                choices = copulaTypes,
+                                width = "100%",
+                                options = list(maxItems = 1, placeholder = 'Select a copula'),
+                                selected = "EFGM"
+                            ),
+                            p("Copula parameter"),
+                            # tags$style(type="text/css", ".irs {max-width: 200px;}"),
+                            sliderInput('kendallTau',label = NULL,
+                                        # 'Copula parameter',
+                                        width = "100%",
+                                        min = -1, max = 1, value = 0, step = 0.01)
+
+                            )
+                            # )
+                            ),
+                            # mainPanel(
+                            column(width = 8,
+                                   boxPlus(
+                                       withMathJax(),
+                                       title = "Graphique",
+                                       status = "primary",
+                                       solidHeader = T,
+                                       width = NULL,
+                                       closable = F,
+                                textOutput("caption"), 
+                                plotlyOutput("copulaPlot"))
+                            )
+                            
+                            # )
+                            ))
+                        )
+
+tab_stat_tests <- tabItem(tabName = "stat_tests",
                       
                       fluidRow(
                           titlePanel("Tests statistiques _(à venir)_"),
-                          # withMathJax(),
+                          withMathJax(),
                           align = "center"
                       ),
                       fluidRow(
-                          # withMathJax(),
+                          withMathJax(),
                           column(
                               width = 8,
                               boxPlus(
@@ -16,10 +135,40 @@ stat_tests <- tabItem(tabName = "stat_tests",
                                   solidHeader = T,
                                   width = NULL,
                                   closable = F,
-                                  selectInput("paramESTIM_STATTOOL", "Variable à estimer", list("$$\\mu$$", "$$\\sigma^2$$", "$$p$$", "$$\\theta$$")),
-                                  selectInput("borneSTIM_STATTOOL", "", list("$$\\ge$$" = "GE", "$$\\gt$$" = "GT", "$$\\le$$" = "LE", "$$\\lt$$" = "LT","$$\\ne$$" = "NE", "$$=$$" = "E"), selected = "LE"),
-                                  numericInput("valueESTIM_STATTOOL", "$$a$$", value = 0, min = 0, step = 1)
-                                  
+                                  p("Variable à estimer"),
+                                  # shinyWidgetsGallery()
+                                  fluidRow(
+                                      withMathJax(),
+                                      align = "center",
+                                      column(width = 3,
+                                  splitLayout(
+                                      # cellWidths = c("15%", "15%"),
+                                      tags$head(tags$style(HTML(".shiny-split-layout > div {overflow: visible;}"))),
+                                      ## pour renderer les choix en latex
+                                      tags$head(
+                                          tags$link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.css", integrity="sha384-9tPv11A+glH/on/wEu99NVwDPwkMQESOocs/ZGXPoIiLE8MU/qkqUcZ3zzL+6DuH", crossorigin="anonymous"),
+                                          tags$script(src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.js", integrity="sha384-U8Vrjwb8fuHMt6ewaCy8uqeUXv4oitYACKdB0VziCerzt011iQ/0TqlSlv8MReCm", crossorigin="anonymous")
+                                      ),
+                                      ## faut utiliser un selectize pour la compatibilité avec KaTex
+                                      selectizeInput(
+                                          "paramESTIM_STATTOOL",
+                                          "",
+                                          choices = NULL
+                                      ),
+                                      selectizeInput(
+                                          "borneSTIM_STATTOOL", 
+                                          "", 
+                                          choices = NULL)
+                                  )
+                                  ),
+                              column(width = 5,
+                                  p("$$\\mathcal{H}_0$$"),
+                                  numericInput("valueESTIM_STATTOOL", "a ", value = 0, min = 0, step = 1)
+                                  )),
+                                  p("$$\\text{Distribution sous }\\mathcal{H}_0$$"),
+                                  uiOutput("distr_H0_ESTIM_STATTOOL"),
+                                  p("$$\\text{Région critique au seuil }\\alpha$$"),
+                                  uiOutput("seuil_H0_ESTIM_STATTOOL")
                               ),
                               boxPlus(
                                   title = "Hypothèses",
@@ -33,15 +182,33 @@ stat_tests <- tabItem(tabName = "stat_tests",
                           column(
                               width = 4,
                               boxPlus(
-                                  title = "Hypothèses",
-                                  withMathJax(),
-                                  status = "primary",
+                                  title = "Postulats",
+                                      withMathJax(),
+                                  status = "danger",
                                   solidHeader = T,
                                   width = NULL,
                                   closable = F,
                                   # p("$$\\sigma^2$$ est"),
-                                  checkboxGroupInput("variancehypothesisESTIM_STATTOOL", label = "$$\\sigma^2$$ est", choices = list("connu", "inconnu")),
-                                  selectInput("distributionESTIM_STATTOOL", label = "$$X_1$$", choices = list("$$\\sim N(\\mu, \\sigma^2)$$" = "NORM", "$$\\sim$$ loi avec $$E[X_1] = \\mu$$ et $$V(X)$$ inconnue" = "PARAM"))
+                                  # prettyRadioButtons("variancehypothesisESTIM_STATTOOL",  label = "$$\\sigma^2$$", choices = list("connu", "inconnu"), fill = T, status = "danger"),
+                                  
+                                  radioGroupButtons(direction = "horizontal", 
+                                                       inputId = "variancehypothesisESTIM_STATTOOL",  
+                                                       label = "$$\\sigma^2$$", 
+                                                       choices = list("connu", "inconnu"),
+                                                       justified = T,
+                                                       status = "danger"),
+                                  radioGroupButtons(inputId = "nsizeESTIM_STATTOOL",  
+                                                    direction = "horizontal", 
+                                                    label = "$$n$$", 
+                                                    choices = list("grand", "petit"), 
+                                                    justified = T,
+                                                    status = "danger"),
+                                  selectInput(
+                                      "testESTIM_STATTOOL",
+                                      "",
+                                      choices = c("UMP", "Test T", "Central limite", "Wald", "Sur une proportion", "Sur la variance", "Rapport de vraisemblance", "Khi-carré de Pearson")
+                                  ),
+                                  uiOutput("distr_ESTIM_STATTOOL")
                               )
                           )
                       )
@@ -127,7 +294,7 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
             {
                 ### Paramètres Normale ----
                 column(
-                    width = 2,
+                    width = 3,
                     boxPlus(
                         title = "Paramètres",
                         status = "primary",
@@ -136,45 +303,28 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
                         numericInput('muNORM', withMathJax('$$\\mu$$'), value = 0),
                         numericInput('sigmaNORM', '$$\\sigma^2$$', value = 1)
                     ),
-                    align = "center"
-                )
-            },
-
-            {
-                ### Moments Normale  ----
-                column(
-                    width = 3,
-                    # tags$style(" * {font-size:40000px}"), # grosseur du texte
                     box(
                         title = "Moments",
                         width = NULL,
                         solidHeader = TRUE,
                         status = "warning",
                         uiOutput("meanNORM"),
-                        uiOutput("varNORM")
-                    ),
-
-                    box(
-                        title = "Autres Moments",
-                        width = NULL,
-                        solidHeader = TRUE,
-                        status = "warning",
+                        uiOutput("varNORM"),
                         numericInput('dNORM', withMathJax('$$d$$'), value = 0, width = "20px"),
                         # radioButtons('equalityNORM', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
                         uiOutput("EspTronqNORM"),
                         uiOutput("EspLimNORM"),
                         uiOutput("StopLossNORM"),
-                        uiOutput("ExcesMoyNORM")#,
-                        # align = "center"
+                        uiOutput("ExcesMoyNORM")
                     ),
                     align = "center"
                 )
             },
-
+            
             {
                 ### Fonctions Normale ----
                 column(
-                    width = 4,
+                    width = 5,
                     box(
                         title = "Fonctions",
                         width = NULL,
@@ -183,19 +333,24 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
                         status = "danger", # pour couleur de la boite, diff couleur pour statut
                         numericInput('xNORM', '$$x$$', value = 0),
                         uiOutput("densityNORM"),
-
-                    tabBox(
-                        width = NULL,
-                        tabPanel("Répartition",
-                            uiOutput("repartNORM"),
-                            plotlyOutput("FxNORM")
+                        
+                        switchInput(
+                            inputId = "xlim_NORM",
+                            onStatus = "success",
+                            onLabel = "Répartition",
+                            offStatus = "info",
+                            offLabel = "Survie",
+                            value = T,
+                            labelWidth = "10px"
                         ),
-                        tabPanel("Survie",
-                            uiOutput("survieNORM"),
-                            plotlyOutput("SxNORM")
-                        )
-
-                    )
+                        uiOutput("repartsurvieNORM"),
+                        p("Graphique"),
+                        radioGroupButtons(inputId = "plot_choice_NORM", 
+                                          choices = c("Densité", 
+                                                      "Cumulative"),
+                                          selected = "Densité",
+                                          justified = TRUE),
+                        plotlyOutput("FxNORM")
                     ),
                     align = "center"
                 )
@@ -204,7 +359,7 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
             {
                 ### Mesures de risque Normale  ----
                 column(
-                    width = 3,
+                    width = 4,
                     boxPlus(
                         title = "Mesure de risques",
                         width = NULL,
@@ -215,6 +370,11 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
                         numericInput('kNORM', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                         uiOutput("VaRNORM"),
                         uiOutput("TVaRNORM"),
+                        radioGroupButtons(inputId = "plot_choice_NORM_QX", 
+                                          choices = c("Densité", 
+                                                      "Cumulative"),
+                                          selected = "Cumulative",
+                                          justified = TRUE),
                         plotlyOutput("QxNORM")
                     ),
                     align = "center"
@@ -228,9 +388,7 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
 tab_LNORM_UI <- tabItem(tabName = "Lognormale",
                        fluidRow(
                            useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
-                           # titlePanel("Loi Lognormale"),
                            titlePanel(tags$a("Loi Lognormale",href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Lognormale")),
-                           # withMathJax(),
                            helpText("\\(X \\sim\\mathcal{Lognormale} \\ (\\mu, \\sigma^2)\\)"),
                            align = "center"
                        ),
@@ -238,7 +396,7 @@ tab_LNORM_UI <- tabItem(tabName = "Lognormale",
                            {
                                ### Paramètres LNORMale ----
                                column(
-                                   width = 2,
+                                   width = 3,
                                    boxPlus(
                                        title = "Paramètres",
                                        status = "primary",
@@ -246,30 +404,15 @@ tab_LNORM_UI <- tabItem(tabName = "Lognormale",
                                        width = NULL,closable = F,
                                        numericInput('muLNORM', withMathJax('$$\\mu$$'), value = 0),
                                        numericInput('sigmaLNORM', '$$\\sigma^2$$', value = 1)
+                                       # shinyWidgetsGallery()
                                    ),
-                                   align = "center"
-                               )
-                           },
-
-                           {
-                               ### Moments Lognormale  ----
-                               column(
-                                   width = 3,
-                                   # tags$style(" * {font-size:40000px}"), # grosseur du tezte
                                    box(
                                        title = "Moments",
                                        width = NULL,
                                        solidHeader = TRUE,
                                        status = "warning",
                                        uiOutput("meanLNORM"),
-                                       uiOutput("varLNORM")
-                                   ),
-
-                                   box(
-                                       title = "Autres Moments",
-                                       width = NULL,
-                                       solidHeader = TRUE,
-                                       status = "warning",
+                                       uiOutput("varLNORM"),
                                        numericInput('dLNORM', withMathJax('$$d$$'), value = 1, width = "20px"),
                                        # radioButtons('equalityLNORM', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
                                        uiOutput("EspTronqLNORM"),
@@ -277,7 +420,6 @@ tab_LNORM_UI <- tabItem(tabName = "Lognormale",
                                        uiOutput("StopLossLNORM"),
                                        uiOutput("ExcesMoyLNORM"),
                                        uiOutput("kthmomentLNORM")
-                                       # align = "center"
                                    ),
                                    align = "center"
                                )
@@ -286,28 +428,32 @@ tab_LNORM_UI <- tabItem(tabName = "Lognormale",
                            {
                                ### Fonctions Lognormale ----
                                column(
-                                   width = 4,
+                                   width = 5,
                                    box(
                                        title = "Fonctions",
                                        width = NULL,
                                        solidHeader = TRUE,
-                                       # tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
                                        status = "danger", # pour couleur de la boite, diff couleur pour statut
                                        numericInput('xLNORM', '$$x$$', value = 0.5, min = 0),
                                        uiOutput("densityLNORM"),
-
-                                       tabBox(
-                                           width = NULL,
-                                           tabPanel("Répartition",
-                                                    uiOutput("repartLNORM"),
-                                                    plotlyOutput("FxLNORM")
-                                           ),
-                                           tabPanel("Survie",
-                                                    uiOutput("survieLNORM"),
-                                                    plotlyOutput("SxLNORM")
-                                           )
-
-                                       )
+                                       
+                                       switchInput(
+                                           inputId = "xlim_LNORM",
+                                           onStatus = "success",
+                                           onLabel = "Répartition",
+                                           offStatus = "info",
+                                           offLabel = "Survie",
+                                           value = T,
+                                           labelWidth = "10px"
+                                       ),
+                                       uiOutput("repartsurvieLNORM"),
+                                       p("Graphique"),
+                                       radioGroupButtons(inputId = "plot_choice_LNORM", 
+                                                         choices = c("Densité", 
+                                                                     "Cumulative"),
+                                                         selected = "Densité",
+                                                         justified = TRUE),
+                                       plotlyOutput("FxLNORM")
                                    ),
                                    align = "center"
                                )
@@ -316,7 +462,16 @@ tab_LNORM_UI <- tabItem(tabName = "Lognormale",
                            {
                                ### Mesures de risque Lognormale  ----
                                column(
-                                   width = 3,
+                                   width = 4,
+                                   # dropdownButton(
+                                   #     # tags$h3("Range"),  
+                                   #     uiOutput("range_LNORM_FX_UI"),
+                                   #     circle = TRUE, 
+                                   #     status = "danger",
+                                   #     icon = icon("gear"), 
+                                   #     width = "300px",
+                                   #     tooltip = tooltipOptions(title = "Presser pour modifier domaine !")
+                                   # ),
                                    boxPlus(
                                        title = "Mesure de risques",
                                        width = NULL,
@@ -324,9 +479,15 @@ tab_LNORM_UI <- tabItem(tabName = "Lognormale",
                                        closable = F,
                                        status = "success",
                                        # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
+                                       
                                        numericInput('kLNORM', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                        uiOutput("VaRLNORM"),
                                        uiOutput("TVaRLNORM"),
+                                       radioGroupButtons(inputId = "plot_choice_LNORM_QX", 
+                                                         choices = c("Densité", 
+                                                                     "Cumulative"),
+                                                         selected = "Cumulative",
+                                                         justified = TRUE),
                                        plotlyOutput("QxLNORM")
                                    ),
                                    align = "center"
@@ -349,7 +510,7 @@ tab_GAMMA_UI <- tabItem(
             radioGroupButtons(
                 inputId = "distrchoiceEXPOFAM",
                 label = "",
-                choices = c("Exponentielle", "Gamma", "Khi carré"),
+                choices = c("Gamma", "Exponentielle", "Khi carré"),
                 status = "primary"
             ),
             align = "center"
@@ -377,12 +538,8 @@ tab_GAMMA_UI <- tabItem(
                     ),
                     align = "center"
                 ),
-                align = "center"
-            ),
-
-            #### Moments Gamma ####
-            column(
-                width = 3,
+                
+                #### Moments Gamma ####
                 tags$style(" * {font-size:20px;}"), # grosseur du tezte
                 box(
                     title = "Moments",
@@ -390,15 +547,7 @@ tab_GAMMA_UI <- tabItem(
                     solidHeader = TRUE,
                     status = "warning",
                     uiOutput("meanGAMMA"),
-                    uiOutput("varianceGAMMA")
-                ),
-                align = "center",
-
-                box(
-                    title = "Autres Moments",
-                    width = NULL,
-                    solidHeader = TRUE,
-                    status = "warning",
+                    uiOutput("varianceGAMMA"),
                     numericInput('dGAMMA', withMathJax('$$d$$'), value = 0, width = "20px", min = 0),
                     # radioButtons('equalityGAMMA', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
                     uiOutput("EspTronqGAMMA"),
@@ -412,42 +561,53 @@ tab_GAMMA_UI <- tabItem(
 
             #### Fonctions Gamma ####
             column(
-                width = 3,
+                width = 5,
                 box(
                     title = "Fonctions",
                     width = NULL,
                     solidHeader = TRUE, # grosseur du tezte
                     status = "danger", # couleur de la boite
-                    numericInput('xGAMMA', '$$x$$', value = 10, min = 0),
+                    numericInput('xGAMMA', '$$x$$', value = 4, min = 0),
                     uiOutput("densityGAMMA"),
-                    tabBox(
-                        width = NULL,
-                        tabPanel("Répartition",
-                                 uiOutput("repartGAMMA"),
-                                 plotlyOutput("FxGAMMA")
-                        ),
-                        tabPanel("Survie",
-                                 uiOutput("survieGAMMA"),
-                                 plotlyOutput("SxGAMMA")
-                        )
-
-                    )
+                    switchInput(
+                        inputId = "xlim_GAMMA",
+                        onStatus = "success",
+                        onLabel = "Répartition",
+                        offStatus = "info",
+                        offLabel = "Survie",
+                        value = T,
+                        labelWidth = "10px"
+                    ),
+                    uiOutput("repartsurvieGAMMA"),
+                    p("Graphique"),
+                    radioGroupButtons(inputId = "plot_choice_GAMMA", 
+                                      choices = c("Densité", 
+                                                  "Cumulative"),
+                                      selected = "Densité",
+                                      justified = TRUE),
+                    plotlyOutput("FxGAMMA")
                 ),
                 align = "center"
             ),
 
             #### Mesures de risque Gamma ####
                 column(
-                    width = 3,
+                    width = 4,
                     boxPlus(
                         title = "Mesure de risques",
                         width = NULL,
                         solidHeader = TRUE,
                         closable = F,
                         status = "success", # grosseur du tezte
-                        numericInput('kGAMMA', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
+                        numericInput('kGAMMA', '$$\\kappa$$', value = 0.95, step = 0.005, min = 0, max = 1),
                         uiOutput("VaRGAMMA"),
-                        uiOutput("TVaRGAMMA")
+                        uiOutput("TVaRGAMMA"),
+                        radioGroupButtons(inputId = "plot_choice_GAMMA_QX", 
+                                          choices = c("Densité", 
+                                                      "Cumulative"),
+                                          selected = "Cumulative",
+                                          justified = TRUE),
+                        plotlyOutput("QxGAMMA")
                     ),
                     align = "center"
                 )
@@ -471,7 +631,7 @@ tab_PARETO_UI <- tabItem(tabName = "Pareto",
                            {
                                ### Paramètres Pareto ----
                                column(
-                                   width = 2,
+                                   width = 3,
                                    boxPlus(
                                        title = "Paramètres",
                                        status = "primary",
@@ -480,28 +640,14 @@ tab_PARETO_UI <- tabItem(tabName = "Pareto",
                                        numericInput('alphaPARETO', withMathJax('$$\\alpha$$'), value = 3, min = 0),
                                        numericInput('lambdaPARETO', '$$\\lambda$$', value = 1, min = 0)
                                    ),
-                                   align = "center"
-                               )
-                           },
-
-                           {
                                ### Moments Pareto  ----
-                               column(
-                                   width = 3,
                                    box(
                                        title = "Moments",
                                        width = NULL,
                                        solidHeader = TRUE,
                                        status = "warning",
                                        uiOutput("meanPARETO"),
-                                       uiOutput("varPARETO")
-                                   ),
-
-                                   box(
-                                       title = "Autres Moments",
-                                       width = NULL,
-                                       solidHeader = TRUE,
-                                       status = "warning",
+                                       uiOutput("varPARETO"),
                                        numericInput('dPARETO', withMathJax('$$d$$'), value = 1, width = "20px", min = 0),
                                        # radioButtons('equalityPARETO', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
                                        uiOutput("EspTronqPARETO"),
@@ -518,7 +664,7 @@ tab_PARETO_UI <- tabItem(tabName = "Pareto",
                            {
                                ### Fonctions Pareto ----
                                column(
-                                   width = 4,
+                                   width = 5,
                                    box(
                                        title = "Fonctions",
                                        width = NULL,
@@ -528,18 +674,23 @@ tab_PARETO_UI <- tabItem(tabName = "Pareto",
                                        numericInput('xPARETO', '$$x$$', value = 0.5, min = 0),
                                        uiOutput("densityPARETO"),
 
-                                       tabBox(
-                                           width = NULL,
-                                           tabPanel("Répartition",
-                                                    uiOutput("repartPARETO"),
-                                                    plotlyOutput("FxPARETO")
-                                           ),
-                                           tabPanel("Survie",
-                                                    uiOutput("surviePARETO"),
-                                                    plotlyOutput("SxPARETO")
-                                           )
-
-                                       )
+                                       switchInput(
+                                           inputId = "xlim_PARETO",
+                                           onStatus = "success",
+                                           onLabel = "Répartition",
+                                           offStatus = "info",
+                                           offLabel = "Survie",
+                                           value = T,
+                                           labelWidth = "10px"
+                                       ),
+                                       uiOutput("repartsurviePARETO"),
+                                       p("Graphique"),
+                                       radioGroupButtons(inputId = "plot_choice_PARETO", 
+                                                         choices = c("Densité", 
+                                                                     "Cumulative"),
+                                                         selected = "Densité",
+                                                         justified = TRUE),
+                                       plotlyOutput("FxPARETO")
                                    ),
                                    align = "center"
                                )
@@ -548,7 +699,7 @@ tab_PARETO_UI <- tabItem(tabName = "Pareto",
                            {
                                ### Mesures de risque Pareto  ----
                                column(
-                                   width = 3,
+                                   width = 4,
                                    boxPlus(
                                        title = "Mesure de risques",
                                        width = NULL,
@@ -559,6 +710,11 @@ tab_PARETO_UI <- tabItem(tabName = "Pareto",
                                        numericInput('kPARETO', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                        uiOutput("VaRPARETO"),
                                        uiOutput("TVaRPARETO"),
+                                       radioGroupButtons(inputId = "plot_choice_PARETO_QX", 
+                                                         choices = c("Densité", 
+                                                                     "Cumulative"),
+                                                         selected = "Cumulative",
+                                                         justified = TRUE),
                                        plotlyOutput("QxPARETO")
                                    ),
                                    align = "center"
@@ -581,7 +737,7 @@ tab_BURR_UI <- tabItem(tabName = "Burr",
                              {
                                  ### Paramètres Burr ----
                                  column(
-                                     width = 2,
+                                     width = 3,
                                      boxPlus(
                                          title = "Paramètres",
                                          status = "primary",
@@ -591,37 +747,23 @@ tab_BURR_UI <- tabItem(tabName = "Burr",
                                          numericInput('tauBURR', withMathJax('$$\\tau$$'), value = 1, step = 1, min = 0),
                                          numericInput('lambdaBURR', '$$\\lambda$$', value = 1, step = 1, min = 0)
                                      ),
-                                     align = "center"
-                                 )
-                             },
-
-                             {
                                  ### Moments BURR  ----
-                                 column(
-                                     width = 3,
-                                     box(
-                                         title = "Moments",
-                                         width = NULL,
-                                         solidHeader = TRUE,
-                                         status = "warning",
-                                         uiOutput("meanBURR"),
-                                         uiOutput("varBURR")
-                                     ),
-
-                                     box(
-                                         title = "Autres Moments",
-                                         width = NULL,
-                                         solidHeader = TRUE,
-                                         status = "warning",
-                                         numericInput('dBURR', withMathJax('$$d$$'), value = 0, width = "20px", min = 0, step = 1),
-                                         # radioButtons('equalityBURR', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
-                                         uiOutput("EspTronqBURR"),
-                                         uiOutput("EspLimBURR"),
-                                         uiOutput("StopLossBURR"),
-                                         uiOutput("ExcesMoyBURR"),
-                                         uiOutput("kthmomentBURR")
-                                         # align = "center"
-                                     ),
+                                 box(
+                                     title = "Moments",
+                                     width = NULL,
+                                     solidHeader = TRUE,
+                                     status = "warning",
+                                     uiOutput("meanBURR"),
+                                     uiOutput("varBURR"),
+                                     numericInput('dBURR', withMathJax('$$d$$'), value = 0, width = "20px", min = 0, step = 1),
+                                     # radioButtons('equalityBURR', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
+                                     uiOutput("EspTronqBURR"),
+                                     uiOutput("EspLimBURR"),
+                                     uiOutput("StopLossBURR"),
+                                     uiOutput("ExcesMoyBURR"),
+                                     uiOutput("kthmomentBURR")
+                                     # align = "center"
+                                 ),                                     
                                      align = "center"
                                  )
                              },
@@ -629,7 +771,7 @@ tab_BURR_UI <- tabItem(tabName = "Burr",
                              {
                                  ### Fonctions BURR ----
                                  column(
-                                     width = 4,
+                                     width = 5,
                                      box(
                                          title = "Fonctions",
                                          width = NULL,
@@ -639,18 +781,23 @@ tab_BURR_UI <- tabItem(tabName = "Burr",
                                          numericInput('xBURR', '$$x$$', value = 0.5, min = 0, step = 1),
                                          uiOutput("densityBURR"),
 
-                                         tabBox(
-                                             width = NULL,
-                                             tabPanel("Répartition",
-                                                      uiOutput("repartBURR"),
-                                                      plotlyOutput("FxBURR")
-                                             ),
-                                             tabPanel("Survie",
-                                                      uiOutput("survieBURR"),
-                                                      plotlyOutput("SxBURR")
-                                             )
-
-                                         )
+                                         switchInput(
+                                             inputId = "xlim_BURR",
+                                             onStatus = "success",
+                                             onLabel = "Répartition",
+                                             offStatus = "info",
+                                             offLabel = "Survie",
+                                             value = T,
+                                             labelWidth = "10px"
+                                         ),
+                                         uiOutput("repartsurvieBURR"),
+                                         p("Graphique"),
+                                         radioGroupButtons(inputId = "plot_choice_BURR", 
+                                                           choices = c("Densité", 
+                                                                       "Cumulative"),
+                                                           selected = "Densité",
+                                                           justified = TRUE),
+                                         plotlyOutput("FxBURR")
                                      ),
                                      align = "center"
                                  )
@@ -659,7 +806,7 @@ tab_BURR_UI <- tabItem(tabName = "Burr",
                              {
                                  ### Mesures de risque BURR  ----
                                  column(
-                                     width = 3,
+                                     width = 4,
                                      boxPlus(
                                          title = "Mesure de risques",
                                          width = NULL,
@@ -670,6 +817,11 @@ tab_BURR_UI <- tabItem(tabName = "Burr",
                                          numericInput('kBURR', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                          uiOutput("VaRBURR"),
                                          uiOutput("TVaRBURR"),
+                                         radioGroupButtons(inputId = "plot_choice_BURR_QX", 
+                                                           choices = c("Densité", 
+                                                                       "Cumulative"),
+                                                           selected = "Cumulative",
+                                                           justified = TRUE),
                                          plotlyOutput("QxBURR")
                                      ),
                                      align = "center"
@@ -692,7 +844,7 @@ tab_WEIBULL_UI <- tabItem(tabName = "Weibull",
                              {
                                  ### Paramètres Weibull ----
                                  column(
-                                     width = 2,
+                                     width = 3,
                                      boxPlus(
                                          title = "Paramètres",
                                          status = "primary",
@@ -701,28 +853,14 @@ tab_WEIBULL_UI <- tabItem(tabName = "Weibull",
                                          numericInput('tauWEIBULL', withMathJax('$$\\tau$$'), value = 2, min = 0),
                                          numericInput('betaWEIBULL', '$$\\beta$$', value = 1, min = 0)
                                      ),
-                                     align = "center"
-                                 )
-                             },
-
-                             {
-                                 ### Moments Weibull  ----
-                                 column(
-                                     width = 3,
+                                     ### Moments Weibull  ----
                                      box(
                                          title = "Moments",
                                          width = NULL,
                                          solidHeader = TRUE,
                                          status = "warning",
                                          uiOutput("meanWEIBULL"),
-                                         uiOutput("varianceWEIBULL")
-                                     ),
-
-                                     box(
-                                         title = "Autres Moments",
-                                         width = NULL,
-                                         solidHeader = TRUE,
-                                         status = "warning",
+                                         uiOutput("varianceWEIBULL"),
                                          numericInput('dWEIBULL', withMathJax('$$d$$'), value = 1, width = "20px", min = 0),
                                          # radioButtons('equalityWEIBULL', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
                                          uiOutput("EspTronqWEIBULL"),
@@ -730,7 +868,6 @@ tab_WEIBULL_UI <- tabItem(tabName = "Weibull",
                                          uiOutput("StopLossWEIBULL"),
                                          uiOutput("ExcesMoyWEIBULL"),
                                          uiOutput("kthmomentWEIBULL")
-                                         #,
                                          # align = "center"
                                      ),
                                      align = "center"
@@ -740,7 +877,7 @@ tab_WEIBULL_UI <- tabItem(tabName = "Weibull",
                              {
                                  ### Fonctions Weibull ----
                                  column(
-                                     width = 4,
+                                     width = 5,
                                      box(
                                          title = "Fonctions",
                                          width = NULL,
@@ -749,19 +886,24 @@ tab_WEIBULL_UI <- tabItem(tabName = "Weibull",
                                          status = "danger", # pour couleur de la boite, diff couleur pour statut
                                          numericInput('xWEIBULL', '$$x$$', value = 0.5, min = 0),
                                          uiOutput("densityWEIBULL"),
-
-                                         tabBox(
-                                             width = NULL,
-                                             tabPanel("Répartition",
-                                                      uiOutput("repartWEIBULL"),
-                                                      plotlyOutput("FxWEIBULL")
-                                             ),
-                                             tabPanel("Survie",
-                                                      uiOutput("survieWEIBULL"),
-                                                      plotlyOutput("SxWEIBULL")
-                                             )
-
-                                         )
+                                         
+                                         switchInput(
+                                             inputId = "xlim_WEIBULL",
+                                             onStatus = "success",
+                                             onLabel = "Répartition",
+                                             offStatus = "info",
+                                             offLabel = "Survie",
+                                             value = T,
+                                             labelWidth = "10px"
+                                         ),
+                                         uiOutput("repartsurvieWEIBULL"),
+                                         p("Graphique"),
+                                         radioGroupButtons(inputId = "plot_choice_WEIBULL", 
+                                                           choices = c("Densité", 
+                                                                       "Cumulative"),
+                                                           selected = "Densité",
+                                                           justified = TRUE),
+                                         plotlyOutput("FxWEIBULL")
                                      ),
                                      align = "center"
                                  )
@@ -770,7 +912,7 @@ tab_WEIBULL_UI <- tabItem(tabName = "Weibull",
                              {
                                  ### Mesures de risque Weibull  ----
                                  column(
-                                     width = 3,
+                                     width = 4,
                                      boxPlus(
                                          title = "Mesure de risques",
                                          width = NULL,
@@ -781,6 +923,11 @@ tab_WEIBULL_UI <- tabItem(tabName = "Weibull",
                                          numericInput('kWEIBULL', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                          uiOutput("VaRWEIBULL"),
                                          uiOutput("TVaRWEIBULL"),
+                                         radioGroupButtons(inputId = "plot_choice_WEIBULL_QX", 
+                                                           choices = c("Densité", 
+                                                                       "Cumulative"),
+                                                           selected = "Cumulative",
+                                                           justified = TRUE),
                                          plotlyOutput("QxWEIBULL")
                                      ),
                                      align = "center"
@@ -803,7 +950,7 @@ tab_IG_UI <- tabItem(tabName = "IG",
                               {
                                   ### Paramètres IG ----
                                   column(
-                                      width = 2,
+                                      width = 3,
                                       boxPlus(
                                           title = "Paramètres",
                                           status = "primary",
@@ -812,28 +959,14 @@ tab_IG_UI <- tabItem(tabName = "IG",
                                           numericInput('muIG', withMathJax('$$\\mu$$'), value = 2, min = 0),
                                           numericInput('betaIG', '$$\\beta$$', value = 1, min = 0)
                                       ),
-                                      align = "center"
-                                  )
-                              },
-
-                              {
-                                  ### Moments IG  ----
-                                  column(
-                                      width = 3,
+                                      ### Moments IG  ----
                                       box(
                                           title = "Moments",
                                           width = NULL,
                                           solidHeader = TRUE,
                                           status = "warning",
                                           uiOutput("meanIG"),
-                                          uiOutput("varianceIG")
-                                      ),
-
-                                      box(
-                                          title = "Autres Moments",
-                                          width = NULL,
-                                          solidHeader = TRUE,
-                                          status = "warning",
+                                          uiOutput("varianceIG"),
                                           numericInput('dIG', withMathJax('$$d$$'), value = 1, width = "20px", min = 0),
                                           # radioButtons('equalityIG', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
                                           uiOutput("EspTronqIG"),
@@ -851,7 +984,7 @@ tab_IG_UI <- tabItem(tabName = "IG",
                               {
                                   ### Fonctions IG ----
                                   column(
-                                      width = 4,
+                                      width = 5,
                                       box(
                                           title = "Fonctions",
                                           width = NULL,
@@ -861,18 +994,23 @@ tab_IG_UI <- tabItem(tabName = "IG",
                                           numericInput('xIG', '$$x$$', value = 5, min = 0),
                                           uiOutput("densityIG"),
 
-                                          tabBox(
-                                              width = NULL,
-                                              tabPanel("Répartition",
-                                                       uiOutput("repartIG"),
-                                                       plotlyOutput("FxIG")
-                                              ),
-                                              tabPanel("Survie",
-                                                       uiOutput("survieIG"),
-                                                       plotlyOutput("SxIG")
-                                              )
-
-                                          )
+                                          switchInput(
+                                              inputId = "xlim_IG",
+                                              onStatus = "success",
+                                              onLabel = "Répartition",
+                                              offStatus = "info",
+                                              offLabel = "Survie",
+                                              value = T,
+                                              labelWidth = "10px"
+                                          ),
+                                          uiOutput("repartsurvieIG"),
+                                          p("Graphique"),
+                                          radioGroupButtons(inputId = "plot_choice_IG", 
+                                                            choices = c("Densité", 
+                                                                        "Cumulative"),
+                                                            selected = "Densité",
+                                                            justified = TRUE),
+                                          plotlyOutput("FxIG")
                                       ),
                                       align = "center"
                                   )
@@ -881,7 +1019,7 @@ tab_IG_UI <- tabItem(tabName = "IG",
                               {
                                   ### Mesures de risque IG  ----
                                   column(
-                                      width = 3,
+                                      width = 4,
                                       boxPlus(
                                           title = "Mesure de risques",
                                           width = NULL,
@@ -890,11 +1028,15 @@ tab_IG_UI <- tabItem(tabName = "IG",
                                           status = "success",
                                           # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
                                           numericInput('kIG', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
-                                          uiOutput("VaRIG")
+                                          uiOutput("VaRIG"),
                                           #,
                                           #uiOutput("TVaRIG") -- ne fonctionne pas, à revoir --
-                                          #,
-                                          #plotlyOutput("QxIG")  --ajouter la fonction q_IG avant de le mettre.--
+                                          radioGroupButtons(inputId = "plot_choice_IG_QX", 
+                                                            choices = c("Densité", 
+                                                                        "Cumulative"),
+                                                            selected = "Cumulative",
+                                                            justified = TRUE),
+                                          plotlyOutput("QxIG")
                                       ),
                                       align = "center"
                                   )
@@ -921,60 +1063,57 @@ tab_UNIC_UI <- tabItem(tabName = "UniformeC",
                                       numericInput('aUNIC', '$$a$$', value = 0, min = 0, step = 1),
                                       numericInput('bUNIC', '$$b$$', value = 1, min = 0, step = 1)
                                   ),
-                                  align = "center"
-                           ),
-                           
-                           ## Moments
-                           column(width = 3,
+                                  ## Moments
                                   tags$style(" * {font-size:20px}"), # grosseur du tezte
                                   box(
                                       title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
                                       uiOutput("meanUNIC"),
                                       uiOutput("varUNIC")
+                                      #     ,numericInput('dUNIC', withMathJax('$$d$$'), value = 0, width = "20px"),
+                                      #     # radioButtons('equalityNORM', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
+                                      #     uiOutput("EspTronqUNIC"),
+                                      #     uiOutput("EspLimUNIC"),
+                                      #     uiOutput("StopLossUNIC"),
+                                      #     uiOutput("ExcesMoyUNIC")
                                   ),
                                   align = "center"
-                                  # ,
-                                  
-                                  # box(
-                                  #     title = "Fonctions g", width = NULL, solidHeader = TRUE, status = "warning",
-                                  #     numericInput('dUNIC', withMathJax('$$d$$'), value = 0, width = "20px"),
-                                  #     # radioButtons('equalityNORM', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
-                                  #     uiOutput("EspTronqUNIC"),
-                                  #     uiOutput("EspLimUNIC"),
-                                  #     uiOutput("StopLossUNIC"),
-                                  #     uiOutput("ExcesMoyUNIC"),
-                                  #     align = "center")
                            ),
                            
                            ## Fonctions
-                           column(width = 3,
+                           column(width = 5,
                                   box(
                                       title = "Fonctions",
                                       width = NULL,
                                       solidHeader = TRUE,
                                       tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
                                       status = "danger", # pour couleur de la boite, diff couleur pour statut
-                                      numericInput('xUNIC', '$$x$$', min = 0, value = 0.5, step = 1),
+                                      uiOutput("xUNIC_SERVER"),
                                       uiOutput("densityUNIC"),
                                       
-                                      tabBox(
-                                          width = NULL,
-                                          tabPanel("Répartition",
-                                                   uiOutput("repartUNIC"),
-                                                   plotlyOutput("FxUNIC")
-                                          ),
-                                          tabPanel("Survie",
-                                                   uiOutput("survieUNIC"),
-                                                   plotlyOutput("SxUNIC")
-                                          )
-                                          
-                                      )
+                                      switchInput(
+                                          inputId = "xlim_UNIC",
+                                          onStatus = "success",
+                                          onLabel = "Répartition",
+                                          offStatus = "info",
+                                          offLabel = "Survie",
+                                          value = T,
+                                          labelWidth = "10px"
+                                      ),
+                                      uiOutput("repartsurvieUNIC"),
+                                      p("Graphique"),
+                                      radioGroupButtons(inputId = "plot_choice_UNIC", 
+                                                        choices = c("Densité", 
+                                                                    "Cumulative"),
+                                                        selected = "Densité",
+                                                        justified = TRUE),
+                                      plotlyOutput("FxUNIC")
+                                      
                                   ),
                                   align = "center"
                                   
                            ),
 
-                           column(width = 3,
+                           column(width = 4,
                                   boxPlus(
                                       title = "Mesure de risques",
                                       width = NULL,
@@ -985,6 +1124,11 @@ tab_UNIC_UI <- tabItem(tabName = "UniformeC",
                                       numericInput('kUNIC', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                       uiOutput("VaRUNIC"),
                                       # ,uiOutput("TVaRUNIC")
+                                      radioGroupButtons(inputId = "plot_choice_UNIC_QX", 
+                                                        choices = c("Densité", 
+                                                                    "Cumulative"),
+                                                        selected = "Cumulative",
+                                                        justified = TRUE),
                                       plotlyOutput("QxUNIC")
                                       ),
 
@@ -1006,7 +1150,7 @@ tab_BETA_UI <- tabItem(tabName = "Beta",
                             {
                                 ### Paramètres Beta ----
                                 column(
-                                    width = 2,
+                                    width = 3,
                                     boxPlus(
                                         title = "Paramètres",
                                         status = "primary",
@@ -1015,45 +1159,31 @@ tab_BETA_UI <- tabItem(tabName = "Beta",
                                         numericInput('alphaBETA', withMathJax('$$\\alpha$$'), value = 2, min = 1),
                                         numericInput('betaBETA', '$$\\beta$$', value = 1, min = 1)
                                     ),
-                                    align = "center"
-                                )
-                            },
-
-                            {
                                 ### Moments Beta  ----
-                                column(
-                                    width = 3,
-                                    box(
-                                        title = "Moments",
-                                        width = NULL,
-                                        solidHeader = TRUE,
-                                        status = "warning",
-                                        uiOutput("meanBETA"),
-                                        uiOutput("varianceBETA")
-                                    ),
-
-                                    box(
-                                        title = "Autres Moments",
-                                        width = NULL,
-                                        solidHeader = TRUE,
-                                        status = "warning",
-                                        numericInput('dBETA', withMathJax('$$d$$'), value = .5, width = "20px", min = 0, max = 1, step = .1),
-                                        uiOutput("EspLimBETA"),
-                                        uiOutput("StopLossBETA"),
-                                        uiOutput("ExcesMoyBETA"),
-                                        uiOutput("kthmomentBETA"),
-                                        numericInput('d2BETA', withMathJax('$$d$$'), value = 1, width = "20px"),
-                                        uiOutput("EspTronqBETA")
-                                        # align = "center"
-                                    ),
-                                    align = "center"
+                                box(
+                                    title = "Moments",
+                                    width = NULL,
+                                    solidHeader = TRUE,
+                                    status = "warning",
+                                    uiOutput("meanBETA"),
+                                    uiOutput("varianceBETA"),
+                                    numericInput('dBETA', withMathJax('$$d$$'), value = .5, width = "20px", min = 0, max = 1, step = .1),
+                                    uiOutput("EspLimBETA"),
+                                    uiOutput("StopLossBETA"),
+                                    uiOutput("ExcesMoyBETA"),
+                                    uiOutput("kthmomentBETA"),
+                                    numericInput('d2BETA', withMathJax('$$d$$'), value = 1, width = "20px"),
+                                    uiOutput("EspTronqBETA")
+                                    # align = "center"
+                                ),
+                                align = "center"
                                 )
                             },
 
                             {
                                 ### Fonctions Beta ----
                                 column(
-                                    width = 4,
+                                    width = 5,
                                     box(
                                         title = "Fonctions",
                                         width = NULL,
@@ -1063,18 +1193,23 @@ tab_BETA_UI <- tabItem(tabName = "Beta",
                                         numericInput('xBETA', '$$x$$', value = 0.5, min = 0, max = 1, step = .1),
                                         uiOutput("densityBETA"),
 
-                                        tabBox(
-                                            width = NULL,
-                                            tabPanel("Répartition",
-                                                     uiOutput("repartBETA"),
-                                                     plotlyOutput("FxBETA")
-                                            ),
-                                            tabPanel("Survie",
-                                                     uiOutput("survieBETA"),
-                                                     plotlyOutput("SxBETA")
-                                            )
-
-                                        )
+                                        switchInput(
+                                            inputId = "xlim_BETA",
+                                            onStatus = "success",
+                                            onLabel = "Répartition",
+                                            offStatus = "info",
+                                            offLabel = "Survie",
+                                            value = T,
+                                            labelWidth = "10px"
+                                        ),
+                                        uiOutput("repartsurvieBETA"),
+                                        p("Graphique"),
+                                        radioGroupButtons(inputId = "plot_choice_BETA", 
+                                                          choices = c("Densité", 
+                                                                      "Cumulative"),
+                                                          selected = "Densité",
+                                                          justified = TRUE),
+                                        plotlyOutput("FxBETA")
                                     ),
                                     align = "center"
                                 )
@@ -1083,7 +1218,7 @@ tab_BETA_UI <- tabItem(tabName = "Beta",
                             {
                                 ### Mesures de risque Beta  ----
                                 column(
-                                    width = 3,
+                                    width = 4,
                                     boxPlus(
                                         title = "Mesure de risques",
                                         width = NULL,
@@ -1094,6 +1229,11 @@ tab_BETA_UI <- tabItem(tabName = "Beta",
                                         numericInput('kBETA', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                         uiOutput("VaRBETA"),
                                         uiOutput("TVaRBETA"),
+                                        radioGroupButtons(inputId = "plot_choice_BETA_QX", 
+                                                          choices = c("Densité", 
+                                                                      "Cumulative"),
+                                                          selected = "Cumulative",
+                                                          justified = TRUE),
                                         plotlyOutput("QxBETA")
                                         
                                     ),
@@ -1117,7 +1257,7 @@ tab_ERLANG_UI <- tabItem(tabName = "Erlang",
                            {
                                ### Paramètres ERLANG ----
                                column(
-                                   width = 3,
+                           width = 3,
                                    boxPlus(
                                        title = "Paramètres",
                                        status = "primary",
@@ -1131,28 +1271,14 @@ tab_ERLANG_UI <- tabItem(tabName = "Erlang",
                                                     withMathJax('$$\\beta$$'),
                                                     value = 1, step = 1, min = 0)
                                    ),
-                                   align = "center"
-                               )
-                           },
-
-                           {
-                               ### Moments Erlang  ----
-                               column(
-                                   width = 4,
+                                   ### Moments Erlang  ----
                                    box(
                                        title = "Moments",
                                        width = NULL,
                                        solidHeader = TRUE,
                                        status = "warning",
                                        uiOutput("meanERLANG"),
-                                       uiOutput("varERLANG")
-                                   ),
-
-                                   box(
-                                       title = "Autres Moments",
-                                       width = NULL,
-                                       solidHeader = TRUE,
-                                       status = "warning",
+                                       uiOutput("varERLANG"),
                                        numericInput('dERLANG',
                                                     withMathJax('$$d$$'),
                                                     value = 0, width = "20px", min = 0, step = 1),
@@ -1181,27 +1307,32 @@ tab_ERLANG_UI <- tabItem(tabName = "Erlang",
                                        numericInput('xERLANG', '$$x$$', value = 0.5, min = 0, step = 1),
                                        uiOutput("densityERLANG"),
 
-                                       tabBox(
-                                           width = NULL,
-                                           tabPanel("Répartition",
-                                                    uiOutput("repartERLANG")
-                                                    ,plotlyOutput("FxERLANG")
-                                           ),
-                                           tabPanel("Survie",
-                                                    uiOutput("survieERLANG")
-                                                    ,plotlyOutput("SxERLANG")
-                                           )
-
-                                       )
+                                       switchInput(
+                                           inputId = "xlim_ERLANG",
+                                           onStatus = "success",
+                                           onLabel = "Répartition",
+                                           offStatus = "info",
+                                           offLabel = "Survie",
+                                           value = T,
+                                           labelWidth = "10px"
+                                       ),
+                                       uiOutput("repartsurvieERLANG"),
+                                       p("Graphique"),
+                                       # radioGroupButtons(inputId = "plot_choice_ERLANG",
+                                       #                   choices = c("Densité",
+                                       #                               "Cumulative"),
+                                       #                   selected = "Densité",
+                                       #                   justified = TRUE),
+                                       plotlyOutput("FxERLANG")
                                    ),
                                    align = "center"
                                )
                            },
 
                            {
-                               ### Mesures de risque ERLANG  ----
+                               ## Mesures de risque ERLANG  ----
                                # column(
-                               #     width = 3,
+                               #     width = 4,
                                #     boxPlus(
                                #         title = "Mesure de risques",
                                #         width = NULL,
@@ -1212,6 +1343,11 @@ tab_ERLANG_UI <- tabItem(tabName = "Erlang",
                                #         numericInput('kERLANG', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                #         uiOutput("VaRERLANG"),
                                #         uiOutput("TVaRERLANG"),
+                               #         radioGroupButtons(inputId = "plot_choice_ERLANG_QX",
+                               #                           choices = c("Densité",
+                               #                                       "Cumulative"),
+                               #                           selected = "Cumulative",
+                               #                           justified = TRUE),
                                #         plotlyOutput("QxERLANG")
                                #     ),
                                #     align = "center"
@@ -1234,7 +1370,7 @@ tab_LOGLOGIS_UI <- tabItem(tabName = "LOGLOGIS",
                            {
                                ### Paramètres LOGLOGIS ----
                                column(
-                                   width = 2,
+                                   width = 3,
                                    boxPlus(
                                        title = "Paramètres",
                                        status = "primary",
@@ -1247,28 +1383,14 @@ tab_LOGLOGIS_UI <- tabItem(tabName = "LOGLOGIS",
                                                     '$$\\lambda$$',
                                                     value = 3, step = 1, min = 0)
                                    ),
-                                   align = "center"
-                               )
-                           },
-
-                           {
-                               ### Moments LOGLOGIS  ----
-                               column(
-                                   width = 3,
+                                   ### Moments LOGLOGIS  ----
                                    box(
                                        title = "Moments",
                                        width = NULL,
                                        solidHeader = TRUE,
                                        status = "warning",
                                        uiOutput("meanLOGLOGIS"),
-                                       uiOutput("varLOGLOGIS")
-                                   ),
-
-                                   box(
-                                       title = "Autres Moments",
-                                       width = NULL,
-                                       solidHeader = TRUE,
-                                       status = "warning",
+                                       uiOutput("varLOGLOGIS"),
                                        numericInput('dLOGLOGIS', withMathJax('$$d$$'), value = 0, width = "20px", min = 0, step = 1),
                                        # radioButtons('equalityLOGLOGIS', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
                                        uiOutput("EspTronqLOGLOGIS"),
@@ -1285,28 +1407,33 @@ tab_LOGLOGIS_UI <- tabItem(tabName = "LOGLOGIS",
                            {
                                ### Fonctions LOGLOGIS ----
                                column(
-                                   width = 4,
+                                   width = 5,
                                    box(
                                        title = "Fonctions",
                                        width = NULL,
                                        solidHeader = TRUE,
                                        # tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
                                        status = "danger", # pour couleur de la boite, diff couleur pour statut
-                                       numericInput('xLOGLOGIS', '$$x$$', value = 0, min = 0, step = 1),
+                                       numericInput('xLOGLOGIS', '$$x$$', value = 2, min = 0, step = 1),
                                        uiOutput("densityLOGLOGIS"),
 
-                                       tabBox(
-                                           width = NULL,
-                                           tabPanel("Répartition",
-                                                    uiOutput("repartLOGLOGIS"),
-                                                    plotlyOutput("FxLOGLOGIS")
-                                           ),
-                                           tabPanel("Survie",
-                                                    uiOutput("survieLOGLOGIS"),
-                                                    plotlyOutput("SxLOGLOGIS")
-                                           )
-
-                                       )
+                                       switchInput(
+                                           inputId = "xlim_LOGLOGIS",
+                                           onStatus = "success",
+                                           onLabel = "Répartition",
+                                           offStatus = "info",
+                                           offLabel = "Survie",
+                                           value = T,
+                                           labelWidth = "10px"
+                                       ),
+                                       uiOutput("repartsurvieLOGLOGIS"),
+                                       p("Graphique"),
+                                       radioGroupButtons(inputId = "plot_choice_LOGLOGIS", 
+                                                         choices = c("Densité", 
+                                                                     "Cumulative"),
+                                                         selected = "Densité",
+                                                         justified = TRUE),
+                                       plotlyOutput("FxLOGLOGIS")
                                    ),
                                    align = "center"
                                )
@@ -1315,7 +1442,7 @@ tab_LOGLOGIS_UI <- tabItem(tabName = "LOGLOGIS",
                            {
                                ### Mesures de risque LOGLOGIS  ----
                                column(
-                                   width = 3,
+                                   width = 4,
                                    boxPlus(
                                        title = "Mesure de risques",
                                        width = NULL,
@@ -1326,8 +1453,12 @@ tab_LOGLOGIS_UI <- tabItem(tabName = "LOGLOGIS",
                                        numericInput('kLOGLOGIS', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                        uiOutput("VaRLOGLOGIS"),
                                        uiOutput("TVaRLOGLOGIS"),
+                                       radioGroupButtons(inputId = "plot_choice_LOGLOGIS_QX", 
+                                                         choices = c("Densité", 
+                                                                     "Cumulative"),
+                                                         selected = "Cumulative",
+                                                         justified = TRUE),
                                        plotlyOutput("QxLOGLOGIS")
-                                       
                                    ),
                                    align = "center"
                                )
@@ -1356,53 +1487,58 @@ tab_BIN_UI <- tabItem(tabName = "Binomiale",
              column(width = 3,
                     box(title = "Paramètres", status = "primary", solidHeader = T, width = NULL,
                         numericInput('nBIN', withMathJax('$$n$$'), value = 5, step = 1, min = 0),
-                        numericInput('pBIN', '$$p$$', value = 0.5, min = 0, max = 1, step = 0.05)), align = "center"
-
-             ),
-
-             ## Moments
-             column(width = 3,
-                    tags$style(" * {font-size:20px}"), # grosseur du tezte
+                        numericInput('pBIN', '$$p$$', value = 0.5, min = 0, max = 1, step = 0.05)
+                    ), 
+                    ## Moments
+                    tags$style(" * {font-size:20px}"), # grosseur du texte
                     box(
                         title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
                         uiOutput("meanBIN"),
-                        uiOutput("varBIN")),
+                        uiOutput("varBIN")
+                    ),
                     align = "center"
-                    # ,
-
-                    # box(
-                    #     title = "Fonctions g", width = NULL, solidHeader = TRUE, status = "warning",
-                    #     numericInput('dBIN', withMathJax('$$d$$'), value = 0, width = "20px"),
-                    #     # radioButtons('equalityNORM', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
-                    #     uiOutput("EspTronqBIN"),
-                    #     uiOutput("EspLimBIN"),
-                    #     uiOutput("StopLossBIN"),
-                    #     uiOutput("ExcesMoyBIN"),
-                    #     align = "center")
              ),
-
+             
              ## Fonctions
-             column(width = 3,
+             column(width = 5,
                     box(
                         title = "Fonctions", width = NULL, solidHeader = TRUE,
                         tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
                         status = "danger", # pour couleur de la boite, diff couleur pour statut
                         numericInput('xBIN', '$$x$$', min = 0, max = 5, value = 0, step = 1),
                         uiOutput("densityBIN"),
-                        tabBox(
-                            width = NULL,
-                            tabPanel("Répartition",
-                                     uiOutput("repartBIN")
-                                     # ,
-                                     # plotlyOutput("FxBIN")
-                            ),
-                            tabPanel("Survie",
-                                     uiOutput("survieBIN")
-                                     # ,
-                                     # plotlyOutput("SxBIN")
-                            )
-
-                        )
+                        
+                        switchInput(
+                            inputId = "xlim_BIN",
+                            onStatus = "success",
+                            onLabel = "Répartition",
+                            offStatus = "info",
+                            offLabel = "Survie",
+                            value = T,
+                            labelWidth = "10px"
+                        ),
+                        uiOutput("repartsurvieBIN"),
+                        p("Graphique"),
+                        radioGroupButtons(inputId = "plot_choice_BIN", 
+                                          choices = c("Densité", 
+                                                      "Cumulative"),
+                                          selected = "Densité",
+                                          justified = TRUE),
+                        plotlyOutput("FxBIN")
+                        # tabBox(
+                        #     width = NULL,
+                        #     tabPanel("Répartition",
+                        #              uiOutput("repartBIN")
+                        #              # ,
+                        #              # plotlyOutput("FxBIN")
+                        #     ),
+                        #     tabPanel("Survie",
+                        #              uiOutput("survieBIN")
+                        #              # ,
+                        #              # plotlyOutput("SxBIN")
+                        #     )
+                        # 
+                        # )
                     ),
                     align = "center"
 
@@ -1410,7 +1546,7 @@ tab_BIN_UI <- tabItem(tabName = "Binomiale",
              )
              ,
 
-             column(width = 3,
+             column(width = 4,
                     boxPlus(
                         title = "Mesure de risques",
                         width = NULL,
@@ -1420,7 +1556,9 @@ tab_BIN_UI <- tabItem(tabName = "Binomiale",
                         tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
                         numericInput('kBIN', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                         uiOutput("VaRBIN"),
-                        uiOutput("TVaRBIN")),
+                        uiOutput("TVaRBIN"),
+                        plotlyOutput("QxBIN")
+                    ),
 
                     align = "center"
              )
@@ -1452,14 +1590,26 @@ tab_BN_UI <- tabItem(
         column(
             width = 4,
             box(
+                title = "Plus d'information",
+                status = "primary",
+                solidHeader = T,
+                collapsed = T,
+                collapsible = T,
+                width = NULL,
+                helpText("Lien entre les paramétrisations
+                         $$\\beta = \\frac{1 - q}{q}$$
+                         $$q = \\frac{1}{1 + \\beta}$$",
+                         "Si on défini la binomiale négative (ou géométrique) comme étant le nombre d'échecs avant un r-ème éssai alors son support commence à 0 (on peut avoir r succès avec aucun échec.",
+                         "Cependant, si on la défini comme étant le nombre d'essais pour un r-ème succès, alors forcément son support doit débuter à r car on ne peut pas avoir moins que r essais pour r succès."),
+                align = "center"
+            ),
+            box(
                 title = "Paramètres",
                 status = "primary",
                 solidHeader = T,
                 width = NULL,
-                # numericInput('rBN', withMathJax('$$r$$'), value = 2, step = 1),
                 uiOutput("changingrBN"),
                 uiOutput("changingqBN"),
-                # numericInput('qBN', '$$q$$', value = 0.5, min = 0, max = 1, step = 0.05)), align = "center"
                 
                 switchInput(labelWidth = "10px",handleWidth = "400px",
                             inputId = "definitionBN",
@@ -1476,32 +1626,8 @@ tab_BN_UI <- tabItem(
                     value = T
                 )
             ),
-            box(
-                title = "Plus d'information",
-                status = "primary",
-                solidHeader = T,
-                collapsed = T,
-                collapsible = T,
-                width = NULL,
-                helpText("Lien entre les paramétrisations
-                         $$\\beta = \\frac{1 - q}{q}$$
-                         $$q = \\frac{1}{1 + \\beta}$$",
-                         "Si on défini la binomiale négative (ou géométrique) comme étant le nombre d'échecs avant un r-ème éssai alors son support commence à 0 (on peut avoir r succès avec aucun échec.",
-                         "Cependant, si on la défini comme étant le nombre d'essais pour un r-ème succès, alors forcément son support doit débuter à r car on ne peut pas avoir moins que r essais pour r succès."),
-                align = "center"
-            ),
-            align = "center"
-        ),
-
-
-        #### Moments BN ####
-        column(
-            width = 4,
+            #### Moments BN ####
             tags$style(" * {font-size:20px}"), # grosseur du tezte
-            box(
-                title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
-                uiOutput("meanBN"),
-                uiOutput("varBN")),
             box(
                 title = "Essais vs erreurs",
                 status = "primary",
@@ -1513,22 +1639,16 @@ tab_BN_UI <- tabItem(
                          "Cependant, si on la défini comme étant le nombre d'essais pour un r-ème succès, alors forcément son support doit débuter à r car on ne peut pas avoir moins que r essais pour r succès."),
                 align = "left"
             ),
+            box(
+                title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
+                uiOutput("meanBN"),
+                uiOutput("varBN")
+            ),
             align = "center"
-            # ,
-               # box(
-               #     title = "Autres Moments",
-               #     width = NULL, solidHeader = TRUE, status = "warning",
-               #     numericInput('dBN', withMathJax('$$d$$'), value = 0, width = "20px"),
-               #     # radioButtons('equalityNORM', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
-               #     uiOutput("EspTronqBN"),
-               #     uiOutput("EspLimBN"),
-               #     uiOutput("StopLossBN"),
-               #     uiOutput("ExcesMoyBN"),
-               #     align = "center")
         ),
 
         #### Fonctions BN ####
-        column(width = 4,
+        column(width = 5,
                box(
                    title = "Fonctions", width = NULL, solidHeader = TRUE,
                    status = "danger", # pour couleur de la boite, diff couleur pour statut
@@ -1554,7 +1674,7 @@ tab_BN_UI <- tabItem(
         )
         # ,
         #### Mesures de risque BN ####
-        # column(width = 3,
+        # column(width = 4,
         #        boxPlus(
         #            title = "Mesure de risques",
         #            width = NULL,
@@ -1590,11 +1710,7 @@ tab_POI_UI <- tabItem(tabName = "Poisson",
                                      width = NULL,
                                      numericInput('lamPOI', '$$\\lambda$$', value = 1, min = 0, step = 1)
                                  ),
-                                 align = "center"
-                          ),
-
-                          ## Moments
-                          column(width = 3,
+                                 ## Moments
                                  tags$style(" * {font-size:20px}"), # grosseur du tezte
                                  box(
                                      title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
@@ -1602,21 +1718,10 @@ tab_POI_UI <- tabItem(tabName = "Poisson",
                                      uiOutput("varPOI")
                                  ),
                                  align = "center"
-                                 # ,
-
-                                 # box(
-                                 #     title = "Fonctions g", width = NULL, solidHeader = TRUE, status = "warning",
-                                 #     numericInput('dPOI', withMathJax('$$d$$'), value = 0, width = "20px"),
-                                 #     # radioButtons('equalityNORM', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
-                                 #     uiOutput("EspTronqPOI"),
-                                 #     uiOutput("EspLimPOI"),
-                                 #     uiOutput("StopLossPOI"),
-                                 #     uiOutput("ExcesMoyPOI"),
-                                 #     align = "center")
                           ),
 
                           ## Fonctions
-                          column(width = 3,
+                          column(width = 5,
                                  box(
                                      title = "Fonctions",
                                      width = NULL,
@@ -1645,7 +1750,7 @@ tab_POI_UI <- tabItem(tabName = "Poisson",
 
                           ),
 
-                          column(width = 3,
+                          column(width = 4,
                                  boxPlus(
                                      title = "Mesure de risques",
                                      width = NULL,
@@ -1672,44 +1777,26 @@ tab_HG_UI <- tabItem(tabName = "HG",
                       ),
 
                       fluidRow(
-                          column(width = 4,
+                          column(width = 3,
                                  box(title = "Paramètres",
                                      status = "primary",
                                      solidHeader = T,
                                      width = NULL,
                                      numericInput('grosNHG', '$$N$$', value = 4, min = 0, step = 1),
                                      uiOutput("changingpetitNHG"),
-                                     # numericInput('petitNHG', '$$n$$', value = 2, min = 0, step = 1),
                                      uiOutput("changingmHG")
-                                     # numericInput('mHG', '$$m$$', value = 1, min = 0, step = 1)
                                  ),
-                                 align = "center"
-                          ),
-
-                          ## Moments
-                          column(width = 4,
-                                 tags$style(" * {font-size:20px}"), # grosseur du tezte
+                                 ## Moments
                                  box(
                                      title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
                                      uiOutput("meanHG"),
                                      uiOutput("varHG")
                                  ),
                                  align = "center"
-                                 # ,
-
-                                 # box(
-                                 #     title = "Fonctions g", width = NULL, solidHeader = TRUE, status = "warning",
-                                 #     numericInput('dHG', withMathJax('$$d$$'), value = 0, width = "20px"),
-                                 #     # radioButtons('equalityHG', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
-                                 #     uiOutput("EspTronqHG"),
-                                 #     uiOutput("EspLimHG"),
-                                 #     uiOutput("StopLossHG"),
-                                 #     uiOutput("ExcesMoyHG"),
-                                 #     align = "center")
                           ),
-
+                          
                           ## Fonctions
-                          column(width = 4,
+                          column(width = 5,
                                  box(
                                      title = "Fonctions",
                                      width = NULL,
@@ -1717,7 +1804,6 @@ tab_HG_UI <- tabItem(tabName = "HG",
                                      tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
                                      status = "danger", # pour couleur de la boite, diff couleur pour statut
                                      uiOutput("changingxHG"),
-                                     # numericInput('xHG', '$$x$$', min = 0, value = 0, step = 1),
                                      uiOutput("densityHG"),
 
                                      tabBox(
@@ -1738,22 +1824,7 @@ tab_HG_UI <- tabItem(tabName = "HG",
                                  align = "center"
 
                           )
-                          # ,
-                          #
-                          # column(width = 3,
-                          #        boxPlus(
-                          #            title = "Mesure de risques",
-                          #            width = NULL,
-                          #            solidHeader = TRUE,
-                          #            status = "success",
-                          #            closable = F,
-                          #            tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
-                          #            numericInput('kHG', '$$\\kappa$$', value = 0.99, step = 0.005),
-                          #            uiOutput("VaRHG"),
-                          #            uiOutput("TVaRHG")),
-                          #
-                          #        align = "center"
-                          # )
+
                       )
 )
 
@@ -1776,11 +1847,7 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                                                  '$$\\gamma$$',
                                                  value = .2, min = 0, max = 1, step = .1)
                                 ),
-                                align = "center"
-                         ),
-
-                         ## Moments
-                         column(width = 3,
+                                ## Moments
                                 tags$style(" * {font-size:20px}"), # grosseur du tezte
                                 box(
                                     title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
@@ -1788,21 +1855,10 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                                     uiOutput("varLOGARITHMIQUE")
                                 ),
                                 align = "center"
-                                # ,
-
-                                # box(
-                                #     title = "Fonctions g", width = NULL, solidHeader = TRUE, status = "warning",
-                                #     numericInput('dLOGARITHMIQUE', withMathJax('$$d$$'), value = 0, width = "20px"),
-                                #     # radioButtons('equalityLOGARITHMIQUE', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
-                                #     uiOutput("EspTronqLOGARITHMIQUE"),
-                                #     uiOutput("EspLimLOGARITHMIQUE"),
-                                #     uiOutput("StopLossLOGARITHMIQUE"),
-                                #     uiOutput("ExcesMoyLOGARITHMIQUE"),
-                                #     align = "center")
                          ),
 
                          ## Fonctions
-                         column(width = 3,
+                         column(width = 5,
                                 box(
                                     title = "Fonctions",
                                     width = NULL,
@@ -1832,7 +1888,7 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                          )
                          ,
 
-                         column(width = 3,
+                         column(width = 4,
                                 boxPlus(
                                     title = "Mesure de risques",
                                     width = NULL,
@@ -1869,11 +1925,7 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
                                      numericInput('aUNID', '$$a$$', value = 1, min = 0, step = 1),
                                      numericInput('bUNID', '$$b$$', value = 2, min = 0, step = 1)
                                  ),
-                                 align = "center"
-                          ),
-                          
-                          ## Moments
-                          column(width = 3,
+                                 ## Moments
                                  tags$style(" * {font-size:20px}"), # grosseur du tezte
                                  box(
                                      title = "Moments", width = NULL, solidHeader = TRUE, status = "warning",
@@ -1881,21 +1933,10 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
                                      uiOutput("varUNID")
                                  ),
                                  align = "center"
-                                 # ,
-                                 
-                                 # box(
-                                 #     title = "Fonctions g", width = NULL, solidHeader = TRUE, status = "warning",
-                                 #     numericInput('dUNID', withMathJax('$$d$$'), value = 0, width = "20px"),
-                                 #     # radioButtons('equalityNORM', label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
-                                 #     uiOutput("EspTronqUNID"),
-                                 #     uiOutput("EspLimUNID"),
-                                 #     uiOutput("StopLossUNID"),
-                                 #     uiOutput("ExcesMoyUNID"),
-                                 #     align = "center")
                           ),
                           
                           ## Fonctions
-                          column(width = 3,
+                          column(width = 5,
                                  box(
                                      title = "Fonctions",
                                      width = NULL,
@@ -1923,22 +1964,6 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
                                  align = "center"
                                  
                           )
-                          # ,
-                          # 
-                          # column(width = 3,
-                          #        boxPlus(
-                          #            title = "Mesure de risques",
-                          #            width = NULL,
-                          #            solidHeader = TRUE,
-                          #            status = "success",
-                          #            closable = F,
-                          #            tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
-                          #            numericInput('kUNID', '$$\\kappa$$', value = 0.99, step = 0.005),
-                          #            uiOutput("VaRUNID"),
-                          #            uiOutput("TVaRUNID")),
-                          #        
-                          #        align = "center"
-                          # )
                       )
 )
 
@@ -1956,8 +1981,8 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
             radioGroupButtons(
                 inputId = "severityBNCOMP",
                 label = "",
-                choices = c("Gamma", 
-                            "Lognormale"
+                choices = c("Gamma" 
+                            # ,"Lognormale"
                             ),
                 status = "primary"
             ),
@@ -1987,12 +2012,7 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
                     ),
                     align = "center"
                 ),
-                align = "center"
-            ),
-
-            #### Moments BNCOMP ####
-            column(
-                width = 3,
+                #### Moments BNCOMP ####
                 tags$style(" * {font-size:20px;}"), # grosseur du tezte
                 box(
                     title = "Moments",
@@ -2007,7 +2027,8 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
 
             #### Fonctions BNCOMP ####
             column(
-                width = 3,
+                width = 5,
+                div(id = "Repartition-box-BNCOMP",
                 box(
                     title = "Fonctions",
                     width = NULL,
@@ -2027,13 +2048,15 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
                         )
 
                     )
+                )
                 ),
                 align = "center"
             ),
 
             #### Mesures de risque BNCOMP ####
             column(
-                width = 3,
+                width = 4,
+                div(id = "Quantile-box-BNCOMP",
                 boxPlus(
                     title = "Mesure de risques",
                     width = NULL,
@@ -2043,6 +2066,7 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
                     numericInput('kBNCOMP', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                     uiOutput("VaRBNCOMP"),
                     uiOutput("TVaRBNCOMP")
+                )
                 ),
                 align = "center"
             )
@@ -2064,8 +2088,8 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
             radioGroupButtons(
                 inputId = "severityPCOMP",
                 label = "",
-                choices = c("Gamma", 
-                            "Lognormale"
+                choices = c("Gamma" 
+                            # ,"Lognormale"
                             ),
                 status = "primary"
             ),
@@ -2084,6 +2108,7 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
                     width = NULL,
                     numericInput('lambdaPCOMP', label = withMathJax('$$\\lambda$$'), value = 5, min = 0),
                     numericInput('koPCOMP', label = withMathJax('$$k_{0}$$'), value = 200, step = 100, min = 0, max = 1),
+                    # uiOutput("koPCOMPUI"),
                     uiOutput("shapePCOMPUI"),
                     uiOutput("ratePCOMPUI"),
                     switchInput(
@@ -2094,12 +2119,7 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
                     ),
                     align = "center"
                 ),
-                align = "center"
-            ),
-
-            #### Moments PCOMP ####
-            column(
-                width = 3,
+                #### Moments PCOMP ####
                 tags$style(" * {font-size:20px;}"), # grosseur du texte
                 box(
                     title = "Moments",
@@ -2111,10 +2131,11 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
                 ),
                 align = "center"
             ),
-
+            
             #### Fonctions PCOMP ####
             column(
-                width = 3,
+                width = 5,
+                div(id = "Repartition-box-PCOMP",
                 box(
                     title = "Fonctions",
                     width = NULL,
@@ -2131,13 +2152,15 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
                         )
 
                     )
+                )
                 ),
                 align = "center"
             ),
 
             #### Mesures de risque PCOMP ####
             column(
-                width = 3,
+                width = 4,
+                div(id = "Quantile-box-PCOMP",
                 boxPlus(
                     title = "Mesure de risques",
                     width = NULL,
@@ -2147,6 +2170,7 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
                     numericInput('kPCOMP', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                     uiOutput("VaRPCOMP"),
                     uiOutput("TVaRPCOMP")
+                )
                 ),
                 align = "center"
             )
@@ -2155,7 +2179,7 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
     )
 }
 
-#### Loi Binomiale Négative Composée UI ####
+#### Loi Binomiale Composée UI ####
 {
     
     tab_BINCOMP_UI <- tabItem(
@@ -2169,8 +2193,8 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
             radioGroupButtons(
                 inputId = "severityBINCOMP",
                 label = "",
-                choices = c("Gamma", 
-                            "Lognormale"
+                choices = c("Gamma" 
+                            # ,"Lognormale"
                 ),
                 status = "primary"
             ),
@@ -2189,7 +2213,7 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
                     width = NULL,
                     numericInput('nBINCOMP', label = withMathJax('$$n$$'), value = 5),
                     numericInput('qBINCOMP', label = withMathJax('$$q$$'), min = 0, max = 1, step = .1, value = .5),
-                    numericInput('koBINCOMP', label = withMathJax('$$k_{0}$$'), value = 300, step = 100, min = 0, max = 1),
+                    uiOutput("koBINCOMPUI"),
                     uiOutput("shapeBINCOMPUI"),
                     uiOutput("rateBINCOMPUI"),
                     switchInput(
@@ -2200,12 +2224,7 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
                     ),
                     align = "center"
                 ),
-                align = "center"
-            ),
-            
-            #### Moments BINCOMP ####
-            column(
-                width = 3,
+                #### Moments BINCOMP ####
                 tags$style(" * {font-size:20px;}"), # grosseur du tezte
                 box(
                     title = "Moments",
@@ -2220,25 +2239,27 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
             
             #### Fonctions BINCOMP ####
             column(
-                width = 3,
-                box(
+                width = 5,
+                div(id = "Repartition-box-BINCOMP",
+                    box(
                     title = "Fonctions",
                     width = NULL,
                     solidHeader = TRUE, # grosseur du tezte
                     status = "danger", # couleur de la boite
                     numericInput('xBINCOMP', '$$x$$', value = 10, min = 0),
                     # uiOutput("densityBINCOMP"),
-                    tabBox(
-                        width = NULL,
-                        tabPanel("Répartition",
-                                 uiOutput("repartBINCOMP")
-                                 
+                        tabBox(
+                            width = NULL,
+                            tabPanel("Répartition",
+                                     uiOutput("repartBINCOMP")
+                                     
+                            )
+                            ,tabPanel("Survie",
+                                      uiOutput("survieBINCOMP")
+                                      
+                            )
+                            
                         )
-                        ,tabPanel("Survie",
-                                  uiOutput("survieBINCOMP")
-                                  
-                        )
-                        
                     )
                 ),
                 align = "center"
@@ -2246,16 +2267,18 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
             
             #### Mesures de risque BINCOMP ####
             column(
-                width = 3,
-                boxPlus(
-                    title = "Mesure de risques",
-                    width = NULL,
-                    solidHeader = TRUE,
-                    closable = F,
-                    status = "success", # grosseur du tezte
-                    numericInput('kBINCOMP', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
-                    uiOutput("VanBINCOMP"),
-                    uiOutput("TVanBINCOMP")
+                width = 4,
+                div(id = "Quantile-box-BINCOMP",
+                    boxPlus(
+                        title = "Mesure de risques",
+                        width = NULL,
+                        solidHeader = TRUE,
+                        closable = F,
+                        status = "success", # grosseur du tezte
+                        numericInput('kBINCOMP', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
+                        uiOutput("VaRBINCOMP"),
+                        uiOutput("TVaRBINCOMP")
+                    )
                 ),
                 align = "center"
             )

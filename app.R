@@ -13,9 +13,13 @@
     # devtools::install_github("alec42/Distributacalcul_package")
     library(Distributacalcul)
     
+    library(copula)
+    library(dplyr)
+    
     # library(shinymaterial)
     # library(dashboardthemes)
 } 
+# shinyWidgets::shinyWidgetsGallery()
 source(file = "myUI.R", local = T)
 source(file = "myserver.R")
 # source(file = "functions.R")
@@ -26,3 +30,4 @@ shinyApp(
 )
 
 
+    
