@@ -1,10 +1,10 @@
 #### UI ####
-### Fonctions ERLANG ----
+### Fonctions IG ----
 # ...
-uiOutput("densityERLANG"),
+uiOutput("densityIG"),
 
 switchInput(
-    inputId = "xlim_ERLANG",
+    inputId = "xlim_IG",
     onStatus = "success",
     onLabel = "Répartition",
     offStatus = "info",
@@ -12,58 +12,58 @@ switchInput(
     value = T,
     labelWidth = "10px"
 ),
-uiOutput("repartsurvieERLANG"),
+uiOutput("repartsurvieIG"),
 p("Graphique"),
-radioGroupButtons(inputId = "plot_choice_ERLANG", 
+radioGroupButtons(inputId = "plot_choice_IG", 
                   choices = c("Densité", 
                               "Cumulative"),
                   selected = "Densité",
                   justified = TRUE),
-plotlyOutput("FxERLANG")
+plotlyOutput("FxIG")
 
-### Mesures de risque ERLANG  ----
+### Mesures de risque IG  ----
 # ...
-uiOutput("TVaRERLANG"),
-radioGroupButtons(inputId = "plot_choice_ERLANG_QX", 
+uiOutput("TVaRIG"),
+radioGroupButtons(inputId = "plot_choice_IG_QX", 
                   choices = c("Densité", 
                               "Cumulative"),
                   selected = "Cumulative",
                   justified = TRUE),
-plotlyOutput("QxERLANG")
+plotlyOutput("QxIG")
 
 #### Server ####
 
-plot_choice_ERLANG_SERVER <- reactive({
-    if(input$plot_choice_ERLANG == "Densité")
-        derlang
+plot_choice_IG_SERVER <- reactive({
+    if(input$plot_choice_IG == "Densité")
+        dIG
     else
-        perlang
+        pIG
 })
 
-plot_choice_ERLANG_QX_SERVER <- reactive({
-    if(input$plot_choice_ERLANG_QX == "Densité")
-        derlang
+plot_choice_IG_QX_SERVER <- reactive({
+    if(input$plot_choice_IG_QX == "Densité")
+        dIG
     else
-        perlang
+        pIG
 })
 
 
-plot_color_ERLANG_SERVER <- reactive({
-    if(input$xlim_ERLANG == T)
+plot_color_IG_SERVER <- reactive({
+    if(input$xlim_IG == T)
         "Dark Green"
     else
         "Royal Blue"
 })
 
-xlim_ERLANG_SERVER <- reactive({
-    if(input$xlim_ERLANG == T)
-        c(0, xERLANG())
+xlim_IG_SERVER <- reactive({
+    if(input$xlim_IG == T)
+        c(0, xIG())
     else
-        c(xERLANG(), 1)
+        c(xIG(), VaR_IG(kappa = 0.999, mu = muIG(), beta = betaIG()))
 })
 
-repartsurvieERLANG_LATEX <- reactive({
-    if(input$xlim_ERLANG == T)
+repartsurvieIG_LATEX <- reactive({
+    if(input$xlim_IG == T)
     {
         "F_{X}"
     }
@@ -73,21 +73,21 @@ repartsurvieERLANG_LATEX <- reactive({
     }
 })
 
-repartsurvieERLANG <- reactive({
-    if(input$xlim_ERLANG == T)
+repartsurvieIG <- reactive({
+    if(input$xlim_IG == T)
     {
-        format(perlang(x = xERLANG(), 
-                       n = nERLANG(), 
-                       b = bERLANG()
-                       ), 
-               nsmall = 6)
+        format(pIG(q = xIG(), 
+                   muIG(),
+                   betaIG()
+        ), 
+        nsmall = 6)
     }
     else
     {
-        format(perlang(x = xERLANG(), 
-                       n = nERLANG(), 
-                       b = bERLANG(),
-                       lower.tail = F), 
+        format(pIG(q = xIG(), 
+                   muIG(),
+                   betaIG(),
+                   lower.tail = F), 
                nsmall = 6)
     }
     
@@ -95,51 +95,52 @@ repartsurvieERLANG <- reactive({
 
 # ...
 
-output$repartsurvieERLANG <- renderUI({withMathJax(sprintf("$$%s(%s) = %s$$", 
-                                                            repartsurvieERLANG_LATEX(),
-                                                            xERLANG(),
-                                                            repartsurvieERLANG()
-))})
+output$repartsurvieIG <- renderUI({withMathJax(sprintf("$$%s(%s) = %s$$", 
+                                                       repartsurvieIG_LATEX(),
+                                                       xIG(),
+                                                       repartsurvieIG()
+))
+})
 
 # ...
 
-output$QxERLANG <- renderPlotly({
-    ggplot(data = data.frame(x = c(0, 2 * nERLANG() * betaERLANG())
+output$QxIG <- renderPlotly({
+    ggplot(data = data.frame(x = c(0, VaR_llogis(kappa = 0.999, mu = muIG(), beta = betaIG()))
     ),
     aes(x)) + 
-        stat_function(fun = plot_choice_ERLANG_QX_SERVER(),
-                      args = list(nERLANG(),
-                                  betaERLANG())) +
+        stat_function(fun = plot_choice_IG_QX_SERVER(),
+                      args = list(shape = muIG(), 
+                                  scale = betaIG())) +
         ylab("f(x)") + 
         theme_classic() +
         stat_function(
-            fun = plot_choice_ERLANG_QX_SERVER(),
-            args = list(nERLANG(),
-                        betaERLANG()),                    
-            xlim = c(VaRERLANG(), 
-                     2 * nERLANG() * betaERLANG()),
+            fun = plot_choice_IG_QX_SERVER(),
+            args = list(shape = muIG(), 
+                        scale = betaIG()),                  
+            xlim = c(VaRIG(), 
+                     VaR_llogis(kappa = 0.999, mu = muIG(), beta = betaIG())),
             geom = "area",
             fill = "red",
             alpha = 0.7
         )
 })
 
-output$FxERLANG <- renderPlotly({
-    ggplot(data = data.frame(x = c(0, 2 * nERLANG() * betaERLANG())
+output$FxIG <- renderPlotly({
+    ggplot(data = data.frame(x = c(0, VaR_llogis(kappa = 0.999, mu = muIG(), beta = betaIG()))
     ),
     aes(x)) + 
-        stat_function(fun = plot_choice_ERLANG_SERVER(),
-                      args = list(nERLANG(),
-                                  betaERLANG())) +
+        stat_function(fun = plot_choice_IG_SERVER(),
+                      args = list(shape = muIG(), 
+                                  scale = betaIG())) +
         ylab("f(x)") + 
         theme_classic() +
         stat_function(
-            fun = plot_choice_ERLANG_SERVER(),
-            args = list(nERLANG(),
-                        betaERLANG()),                    
-            xlim = xlim_ERLANG_SERVER(),
+            fun = plot_choice_IG_SERVER(),
+            args = list(shape = muIG(), 
+                        scale = betaIG()),                    
+            xlim = xlim_IG_SERVER(),
             geom = "area",
-            fill = plot_color_ERLANG_SERVER(),
+            fill = plot_color_IG_SERVER(),
             alpha = 0.7
         )
 })

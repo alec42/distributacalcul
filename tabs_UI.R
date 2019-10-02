@@ -1,6 +1,7 @@
 #### Copules ####
 
 copulaTypes <- c("EFGM", "AMH", "Clayton", "Frank", "Gumbel", "Normal", "Student")
+
 dEFGM <- function(u1, u2, kendallTau) {
     param <- 9 * kendallTau / 2
     1 + param * (1 - 2 * u1) * (1 - 2 * u2)
@@ -85,12 +86,15 @@ tab_copulas_tool <- tabItem(tabName = "copulas_tool",
                                 inputId = "name",
                                 # label = "Choice of copula", 
                                 choices = copulaTypes,
+                                width = "100%",
                                 options = list(maxItems = 1, placeholder = 'Select a copula'),
                                 selected = "EFGM"
                             ),
                             p("Copula parameter"),
+                            # tags$style(type="text/css", ".irs {max-width: 200px;}"),
                             sliderInput('kendallTau',label = NULL,
                                         # 'Copula parameter',
+                                        width = "100%",
                                         min = -1, max = 1, value = 0, step = 0.01)
 
                             )
@@ -366,6 +370,11 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
                         numericInput('kNORM', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                         uiOutput("VaRNORM"),
                         uiOutput("TVaRNORM"),
+                        radioGroupButtons(inputId = "plot_choice_NORM_QX", 
+                                          choices = c("Densité", 
+                                                      "Cumulative"),
+                                          selected = "Cumulative",
+                                          justified = TRUE),
                         plotlyOutput("QxNORM")
                     ),
                     align = "center"
@@ -445,20 +454,6 @@ tab_LNORM_UI <- tabItem(tabName = "Lognormale",
                                                          selected = "Densité",
                                                          justified = TRUE),
                                        plotlyOutput("FxLNORM")
-                                       
-
-                                       # tabBox(
-                                       #     width = NULL,
-                                       #     tabPanel("Répartition",
-                                       #              uiOutput("repartLNORM"),
-                                       #              plotlyOutput("FxLNORM")
-                                       #     ),
-                                       #     tabPanel("Survie",
-                                       #              uiOutput("survieLNORM"),
-                                       #              plotlyOutput("SxLNORM")
-                                       #     )
-                                       # 
-                                       # )
                                    ),
                                    align = "center"
                                )
@@ -488,6 +483,11 @@ tab_LNORM_UI <- tabItem(tabName = "Lognormale",
                                        numericInput('kLNORM', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                        uiOutput("VaRLNORM"),
                                        uiOutput("TVaRLNORM"),
+                                       radioGroupButtons(inputId = "plot_choice_LNORM_QX", 
+                                                         choices = c("Densité", 
+                                                                     "Cumulative"),
+                                                         selected = "Cumulative",
+                                                         justified = TRUE),
                                        plotlyOutput("QxLNORM")
                                    ),
                                    align = "center"
@@ -602,6 +602,11 @@ tab_GAMMA_UI <- tabItem(
                         numericInput('kGAMMA', '$$\\kappa$$', value = 0.95, step = 0.005, min = 0, max = 1),
                         uiOutput("VaRGAMMA"),
                         uiOutput("TVaRGAMMA"),
+                        radioGroupButtons(inputId = "plot_choice_GAMMA_QX", 
+                                          choices = c("Densité", 
+                                                      "Cumulative"),
+                                          selected = "Cumulative",
+                                          justified = TRUE),
                         plotlyOutput("QxGAMMA")
                     ),
                     align = "center"
@@ -989,18 +994,23 @@ tab_IG_UI <- tabItem(tabName = "IG",
                                           numericInput('xIG', '$$x$$', value = 5, min = 0),
                                           uiOutput("densityIG"),
 
-                                          tabBox(
-                                              width = NULL,
-                                              tabPanel("Répartition",
-                                                       uiOutput("repartIG"),
-                                                       plotlyOutput("FxIG")
-                                              ),
-                                              tabPanel("Survie",
-                                                       uiOutput("survieIG"),
-                                                       plotlyOutput("SxIG")
-                                              )
-
-                                          )
+                                          switchInput(
+                                              inputId = "xlim_IG",
+                                              onStatus = "success",
+                                              onLabel = "Répartition",
+                                              offStatus = "info",
+                                              offLabel = "Survie",
+                                              value = T,
+                                              labelWidth = "10px"
+                                          ),
+                                          uiOutput("repartsurvieIG"),
+                                          p("Graphique"),
+                                          radioGroupButtons(inputId = "plot_choice_IG", 
+                                                            choices = c("Densité", 
+                                                                        "Cumulative"),
+                                                            selected = "Densité",
+                                                            justified = TRUE),
+                                          plotlyOutput("FxIG")
                                       ),
                                       align = "center"
                                   )
@@ -1018,11 +1028,15 @@ tab_IG_UI <- tabItem(tabName = "IG",
                                           status = "success",
                                           # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
                                           numericInput('kIG', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
-                                          uiOutput("VaRIG")
+                                          uiOutput("VaRIG"),
                                           #,
                                           #uiOutput("TVaRIG") -- ne fonctionne pas, à revoir --
-                                          #,
-                                          #plotlyOutput("QxIG")  --ajouter la fonction q_IG avant de le mettre.--
+                                          radioGroupButtons(inputId = "plot_choice_IG_QX", 
+                                                            choices = c("Densité", 
+                                                                        "Cumulative"),
+                                                            selected = "Cumulative",
+                                                            justified = TRUE),
+                                          plotlyOutput("QxIG")
                                       ),
                                       align = "center"
                                   )
@@ -1400,21 +1414,26 @@ tab_LOGLOGIS_UI <- tabItem(tabName = "LOGLOGIS",
                                        solidHeader = TRUE,
                                        # tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
                                        status = "danger", # pour couleur de la boite, diff couleur pour statut
-                                       numericInput('xLOGLOGIS', '$$x$$', value = 0, min = 0, step = 1),
+                                       numericInput('xLOGLOGIS', '$$x$$', value = 2, min = 0, step = 1),
                                        uiOutput("densityLOGLOGIS"),
 
-                                       tabBox(
-                                           width = NULL,
-                                           tabPanel("Répartition",
-                                                    uiOutput("repartLOGLOGIS"),
-                                                    plotlyOutput("FxLOGLOGIS")
-                                           ),
-                                           tabPanel("Survie",
-                                                    uiOutput("survieLOGLOGIS"),
-                                                    plotlyOutput("SxLOGLOGIS")
-                                           )
-
-                                       )
+                                       switchInput(
+                                           inputId = "xlim_LOGLOGIS",
+                                           onStatus = "success",
+                                           onLabel = "Répartition",
+                                           offStatus = "info",
+                                           offLabel = "Survie",
+                                           value = T,
+                                           labelWidth = "10px"
+                                       ),
+                                       uiOutput("repartsurvieLOGLOGIS"),
+                                       p("Graphique"),
+                                       radioGroupButtons(inputId = "plot_choice_LOGLOGIS", 
+                                                         choices = c("Densité", 
+                                                                     "Cumulative"),
+                                                         selected = "Densité",
+                                                         justified = TRUE),
+                                       plotlyOutput("FxLOGLOGIS")
                                    ),
                                    align = "center"
                                )
@@ -1434,6 +1453,11 @@ tab_LOGLOGIS_UI <- tabItem(tabName = "LOGLOGIS",
                                        numericInput('kLOGLOGIS', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                        uiOutput("VaRLOGLOGIS"),
                                        uiOutput("TVaRLOGLOGIS"),
+                                       radioGroupButtons(inputId = "plot_choice_LOGLOGIS_QX", 
+                                                         choices = c("Densité", 
+                                                                     "Cumulative"),
+                                                         selected = "Cumulative",
+                                                         justified = TRUE),
                                        plotlyOutput("QxLOGLOGIS")
                                    ),
                                    align = "center"
@@ -1957,8 +1981,8 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
             radioGroupButtons(
                 inputId = "severityBNCOMP",
                 label = "",
-                choices = c("Gamma", 
-                            "Lognormale"
+                choices = c("Gamma" 
+                            # ,"Lognormale"
                             ),
                 status = "primary"
             ),
@@ -2064,8 +2088,8 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
             radioGroupButtons(
                 inputId = "severityPCOMP",
                 label = "",
-                choices = c("Gamma", 
-                            "Lognormale"
+                choices = c("Gamma" 
+                            # ,"Lognormale"
                             ),
                 status = "primary"
             ),
@@ -2155,7 +2179,7 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
     )
 }
 
-#### Loi Binomiale Négative Composée UI ####
+#### Loi Binomiale Composée UI ####
 {
     
     tab_BINCOMP_UI <- tabItem(
@@ -2169,8 +2193,8 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
             radioGroupButtons(
                 inputId = "severityBINCOMP",
                 label = "",
-                choices = c("Gamma", 
-                            "Lognormale"
+                choices = c("Gamma" 
+                            # ,"Lognormale"
                 ),
                 status = "primary"
             ),
@@ -2252,8 +2276,8 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
                         closable = F,
                         status = "success", # grosseur du tezte
                         numericInput('kBINCOMP', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
-                        uiOutput("VanBINCOMP"),
-                        uiOutput("TVanBINCOMP")
+                        uiOutput("VaRBINCOMP"),
+                        uiOutput("TVaRBINCOMP")
                     )
                 ),
                 align = "center"
