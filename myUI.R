@@ -140,10 +140,10 @@ myUI <- shinyUI({
                     menuItem(
                         "Outils",
                         icon = icon("wrench"),
-                        menuSubItem("Excès-Moyen", tabName = "excess_mean"),
-                        menuSubItem("Test d'hypothèse T", href = "https://casertamarco.shinyapps.io/power/"),
-                        menuSubItem("Tests statistiques", tabName = "stat_tests"),
-                        menuSubItem("Copules", tabName = "copulas_tool")
+                        menuSubItem("Excès-Moyen", tabName = "excess_mean")
+                        # ,menuSubItem("Test d'hypothèse T", href = "https://casertamarco.shinyapps.io/power/"),
+                        # menuSubItem("Tests statistiques", tabName = "stat_tests"),
+                        # menuSubItem("Copules", tabName = "copulas_tool")
                         
                     ),
                     menuItem(
