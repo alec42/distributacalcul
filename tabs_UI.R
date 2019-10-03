@@ -1614,7 +1614,7 @@ tab_BN_UI <- tabItem(
                 switchInput(labelWidth = "10px",handleWidth = "400px",
                             inputId = "definitionBN",
                             onLabel = 'essais',
-                            offLabel = "erreur", 
+                            offLabel = "échecs", 
                             size = "large",
                             value = T
                 ),
@@ -1655,25 +1655,30 @@ tab_BN_UI <- tabItem(
                    uiOutput("changingxBN"),
                    # numericInput('xBN', '$$x$$', min = 0, value = 0, step = 1),
                    uiOutput("densityBN"),
-                   tabBox(
-                       width = NULL,
-                       tabPanel("Répartition",
-                                uiOutput("repartBN")
-                                # ,
-                                # plotlyOutput("FxBN")
-                       ),
-                       tabPanel("Survie",
-                                uiOutput("survieBN")
-                                # ,
-                                # plotlyOutput("SxBN")
-                       )
+                   
+                   switchInput(
+                       inputId = "xlim_BN",
+                       onStatus = "success",
+                       onLabel = "Répartition",
+                       offStatus = "info",
+                       offLabel = "Survie",
+                       value = T,
+                       labelWidth = "10px"
+                   ),
+                   uiOutput("repartsurvieBN"),
+                   p("Graphique"),
+                   radioGroupButtons(inputId = "plot_choice_BN", 
+                                     choices = c("Densité", 
+                                                 "Cumulative"),
+                                     selected = "Densité",
+                                     justified = TRUE),
+                   plotlyOutput("FxBN")
 
-                   )
                ),
                align = "center"
         )
         # ,
-        #### Mesures de risque BN ####
+        # ### Mesures de risque BN ####
         # column(width = 4,
         #        boxPlus(
         #            title = "Mesure de risques",
@@ -1684,9 +1689,15 @@ tab_BN_UI <- tabItem(
         #            tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
         #            numericInput('kBN', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
         #            uiOutput("VaRBN"),
-        #            uiOutput("TVaRBN")
+        #            uiOutput("TVaRBN"),
+        #            radioGroupButtons(inputId = "plot_choice_BN_QX", 
+        #                              choices = c("Densité", 
+        #                                          "Cumulative"),
+        #                              selected = "Cumulative",
+        #                              justified = TRUE),
+        #            plotlyOutput("QxBN")
         #        ),
-        #        align = "center"
+               # align = "center"
         # )
 
         #### ####
@@ -1731,20 +1742,23 @@ tab_POI_UI <- tabItem(tabName = "Poisson",
                                      numericInput('xPOI', '$$x$$', min = 0, value = 0, step = 1),
                                      uiOutput("densityPOI"),
 
-                                     tabBox(
-                                         width = NULL,
-                                         tabPanel("Répartition",
-                                                  uiOutput("repartPOI")
-                                                  # ,
-                                                  # plotlyOutput("FxPOI")
-                                         ),
-                                         tabPanel("Survie",
-                                                  uiOutput("surviePOI")
-                                                  # ,
-                                                  # plotlyOutput("SxBETA")
-                                         )
-
-                                     )
+                                     switchInput(
+                                         inputId = "xlim_POI",
+                                         onStatus = "success",
+                                         onLabel = "Répartition",
+                                         offStatus = "info",
+                                         offLabel = "Survie",
+                                         value = T,
+                                         labelWidth = "10px"
+                                     ),
+                                     uiOutput("repartsurviePOI"),
+                                     p("Graphique"),
+                                     radioGroupButtons(inputId = "plot_choice_POI", 
+                                                       choices = c("Densité", 
+                                                                   "Cumulative"),
+                                                       selected = "Densité",
+                                                       justified = TRUE),
+                                     plotlyOutput("FxPOI")
                                  ),
                                  align = "center"
 
@@ -1760,7 +1774,14 @@ tab_POI_UI <- tabItem(tabName = "Poisson",
                                      tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du texte
                                      numericInput('kPOI', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                      uiOutput("VaRPOI"),
-                                     uiOutput("TVaRPOI")),
+                                     uiOutput("TVaRPOI")
+                                     # ,radioGroupButtons(inputId = "plot_choice_POI_QX", 
+                                     #                   choices = c("Densité", 
+                                     #                               "Cumulative"),
+                                     #                   selected = "Cumulative",
+                                     #                   justified = TRUE),
+                                     # plotlyOutput("QxPOI")
+                                     ),
 
                                  align = "center"
                           )
@@ -1946,20 +1967,24 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
                                      numericInput('xUNID', '$$x$$', min = 0, value = 0, step = 1),
                                      uiOutput("densityUNID"),
                                      
-                                     tabBox(
-                                         width = NULL,
-                                         tabPanel("Répartition",
-                                                  uiOutput("repartUNID")
-                                                  # ,
-                                                  # plotlyOutput("FxUNID")
-                                         ),
-                                         tabPanel("Survie",
-                                                  uiOutput("survieUNID")
-                                                  # ,
-                                                  # plotlyOutput("SxBETA")
-                                         )
-                                         
-                                     )
+                                     switchInput(
+                                         inputId = "xlim_UNID",
+                                         onStatus = "success",
+                                         onLabel = "Répartition",
+                                         offStatus = "info",
+                                         offLabel = "Survie",
+                                         value = T,
+                                         labelWidth = "10px"
+                                     ),
+                                     uiOutput("repartsurvieUNID"),
+                                     p("Graphique"),
+                                     radioGroupButtons(inputId = "plot_choice_UNID", 
+                                                       choices = c("Densité", 
+                                                                   "Cumulative"),
+                                                       selected = "Densité",
+                                                       justified = TRUE),
+                                     plotlyOutput("FxUNID")
+                                     
                                  ),
                                  align = "center"
                                  

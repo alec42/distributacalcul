@@ -3068,24 +3068,22 @@ myserver <- function(input, output, session)
         
         plot_choice_BIN_SERVER <- reactive({
             if(input$plot_choice_BIN == "Densité")
-                dbinom
+                dbinom(x = 0:nBIN(), size = nBIN(), prob = pBIN())
             else
-                pbinom
+                pbinom(q = 0:nBIN(), size = nBIN(), prob = pBIN())
         })
         
-        plot_color_BIN_SERVER <- reactive({
+        repartsurvieBIN <- reactive({
             if(input$xlim_BIN == T)
-                "Dark Green"
+            {
+                format(pbinom(xBIN(), nBIN(), pBIN()), nsmall = 6, scientific = F)
+            }
             else
-                "Royal Blue"
+            {
+                format(pbinom(xBIN(), nBIN(), pBIN(), lower.tail = F), nsmall = 6, scientific = F)
+            }
+            
         })
-        # 
-        # xlim_BIN_SERVER <- reactive({
-        #     if(input$xlim_BIN == T)
-        #         c(0, xBIN())
-        #     else
-        #         c(xBIN(), nBIN())
-        # })
         
         repartsurvieBIN_LATEX <- reactive({
             if(input$xlim_BIN == T)
@@ -3142,18 +3140,6 @@ myserver <- function(input, output, session)
                 "\\(X \\sim\\text{Binomiale} \\ (n, p)\\)"
         })
         
-        repartsurvieBIN <- reactive({
-            if(input$xlim_BIN == T)
-            {
-                format(pbinom(xBIN(), nBIN(), pBIN()), nsmall = 6, scientific = F)
-            }
-            else
-            {
-                format(pbinom(xBIN(), nBIN(), pBIN(), lower.tail = F), nsmall = 6, scientific = F)
-            }
-            
-        })
-        
         meanBIN <- reactive({nBIN() * pBIN()})
         
         varBIN <- reactive({nBIN() * pBIN() * (1 - pBIN())})   
@@ -3201,48 +3187,25 @@ myserver <- function(input, output, session)
         ))})
         
         output$FxBIN <- renderPlotly({
-            ggplot(data.frame(x = 0:nBIN(),
-                              y = dbinom(0:nBIN(), size = nBIN(), prob = pBIN())
-                              ),
-                   aes(x, y)
-                   ) +
-                geom_bar(stat = "identity",
-                         col = "red",
-                         fill ="red",
-                         alpha = 0.7,
-                         width = 0.3) +
-                # geom_bar(aes(x = xBIN(),
-                #              y = dbinom(x, size = nBIN(), prob = pBIN())
-                #              ),
-                #          stat = "identity", 
-                #          alpha = 0.7,
-                #          # inherit.aes = F,
-                #          width = 0.3,
-                #          fill = "blue") + 
-                theme_classic() +
-                ylab("P(X=x")
-
+        ggplot(
+            data.frame(
+                x = 0:nBIN(),
+                prob = plot_choice_BIN_SERVER(),
+                col_fill = ifelse(0:nBIN() <= xBIN(), "Fx", "Sx")
+            ),
+            aes(x = x, y = prob)
+        ) +
+            geom_bar(
+                stat = "identity",
+                aes(fill = col_fill),
+                alpha = 0.7,
+                width = 0.3
+            ) +
+            guides(fill = F) +
+            theme_classic() +
+            ylab("Pr(X = x)")
         })
         
-        # output$FxBIN <- renderPlotly({
-        #     ggplot(data = data.frame(x = c(0,
-        #                                    nBIN()
-        #     )
-        #     ),
-        #     aes(x)) + 
-        #         stat_function(fun = plot_choice_BIN_SERVER(),
-        #                       args = list(nBIN(), pBIN())) + 
-        #         ylab("Pr(X = x)") + 
-        #         theme_classic() +
-        #         stat_function(
-        #             fun = plot_choice_BIN_SERVER(),
-        #             args = list(nBIN(), pBIN()),
-        #             xlim = xlim_BIN_SERVER(),
-        #             geom = "area",
-        #             fill = plot_color_BIN_SERVER(),
-        #             alpha = 0.7
-        #         )
-        # })
         # Reactive slider
         observeEvent(nBIN(),
                      {
@@ -3265,9 +3228,28 @@ myserver <- function(input, output, session)
     
     densityPOI <- reactive({format(dpois(xPOI(), lamPOI()), nsmall = 6)})
     
-    repartPOI <- reactive({format(ppois(xPOI(), lamPOI()), nsmall = 6)})
+    repartsurviePOI <- reactive({
+        if(input$xlim_POI == T)
+        {
+            format(ppois(xPOI(), lamPOI()), nsmall = 6)
+        }
+        else
+        {
+            format(ppois(xPOI(), lamPOI(), lower.tail = F), nsmall = 6)
+        }
+        
+    })
     
-    surviePOI <- reactive({format(ppois(xPOI(), lamPOI(), lower.tail = F), nsmall = 6)})
+    repartsurviePOI_LATEX <- reactive({
+        if(input$xlim_POI == T)
+        {
+            "F_{X}"
+        }
+        else
+        {
+            "S_{X}"
+        }
+    })
     
     VaRPOI <- reactive({format(qpois(kPOI(),
                                      lamPOI()),
@@ -3286,15 +3268,12 @@ myserver <- function(input, output, session)
                                                        xPOI(),
                                                        densityPOI()
     ))})
-    output$repartPOI <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$", 
-                                                      xPOI(),
-                                                      repartPOI()
-    ))})
     
-    output$surviePOI <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
-                                                      xPOI(),
-                                                      surviePOI()))
-    })
+    output$repartsurviePOI <- renderUI({withMathJax(sprintf("$$%s(%s) = %s$$", 
+                                                            repartsurviePOI_LATEX(),
+                                                            xPOI(),
+                                                            repartsurviePOI()
+    ))})
     
     output$VaRPOI <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
                                                    kPOI(),
@@ -3500,13 +3479,43 @@ myserver <- function(input, output, session)
     
     definitionBN <- reactive({input$definitionBN})
     
-    # definitionBN <- reactive({
-    #     if (input$definitionBN == "essais") {
-    #         F
-    #     } else {
-    #         T
-    #     }
-    # })
+    xlim_BN_SERVER <- reactive({
+        if(definitionBN() == T)
+            c(rBN(), 0:qnbinom(p = 0.99999, size = rBN(), prob = qBN()))
+        else
+            c(0:qnbinom(p = 0.99999, size = rBN(), prob = qBN()))
+    })
+    
+    plot_choice_BN_SERVER <- reactive({
+        if(input$plot_choice_BN == "Densité")
+            d_negbinom(k = xlim_BN_SERVER(), r = rBN(), p = qBN(), nb_tries = definitionBN())
+        else
+            p_negbinom(k = xlim_BN_SERVER(), r = rBN(), p = qBN(), nb_tries = definitionBN())
+        
+    })
+    
+    repartsurvieBN <- reactive({
+        if(input$xlim_BN == T)
+        {
+            format(p_negbinom(k = xBN(), r = rBN(), p = qBN(), nb_tries = definitionBN(), lower.tail = T), nsmall = 6, scientific = F)
+        }
+        else
+        {
+            format(p_negbinom(k = xBN(), r = rBN(), p = qBN(), nb_tries = definitionBN(), lower.tail = F), nsmall = 6, scientific = F)
+        }
+        
+    })
+    
+    repartsurvieBN_LATEX <- reactive({
+        if(input$xlim_BN == T)
+        {
+            "F_{X}"
+        }
+        else
+        {
+            "S_{X}"
+        }
+    })
     
     output$changingqBN <- renderUI({
         numericInput('qBN', label = '$$q$$', value = 0.5, min = 0, step = 0.1)
@@ -3517,12 +3526,24 @@ myserver <- function(input, output, session)
     })
     
     output$changingxBN <- renderUI({
-        numericInput('xBN', '$$x$$', min = 0, 
-                     value = {if (definitionBN() == T) {
-                         rBN()
-                     } else {
-                         0
-                     }}, 
+        numericInput('xBN', '$$x$$', 
+                     # min = 0, 
+                     min = {
+                         if (definitionBN() == T) {
+                             rBN()
+                         } 
+                         else {
+                             0
+                         }
+                     },
+                     value = {
+                         if (definitionBN() == T) {
+                             rBN()
+                         } 
+                         else {
+                             0
+                         }
+                     }, 
                      step = 1)
     })
     
@@ -3595,8 +3616,6 @@ myserver <- function(input, output, session)
             titlePanel(tags$a("Loi Binomiale Négative", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Binomiale-Negative")) 
     })
     
-    
-    
     output$distr_BN <- renderText({
         if(input$distrchoiceBNFAM == "Géometrique")
             "\\(X \\sim\\text{Géometrique} \\ (q)\\)"
@@ -3604,17 +3623,12 @@ myserver <- function(input, output, session)
             "\\(X \\sim\\text{Binomiale Négative} \\ (r, q)\\)"
     })
     
-    
     meanBN <- reactive({E_negbinom(rBN(), qBN(), nb_tries = definitionBN())})
     
     varBN <- reactive({V_negbinom(rBN(), qBN(), nb_tries = definitionBN())})
     
     densityBN <- reactive({format(d_negbinom(xBN(), rBN(), qBN(), nb_tries = definitionBN()), nsmall = 6)})
         
-    repartBN <- reactive({format(p_negbinom(xBN(), rBN(), qBN(), nb_tries = definitionBN()), nsmall = 6)})
-    
-    survieBN <- reactive({format(p_negbinom(xBN(), rBN(), qBN(), nb_tries = definitionBN(), lower.tail = F), nsmall = 6)})
-    
     
     output$meanBN <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
                                                    meanBN()
@@ -3628,14 +3642,31 @@ myserver <- function(input, output, session)
                                                        xBN(),
                                                        densityBN()
     ))})
-    output$repartBN <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$", 
-                                                      xBN(),
-                                                      repartBN()
+    
+    output$repartsurvieBN <- renderUI({withMathJax(sprintf("$$%s(%s) = %s$$", 
+                                                           repartsurvieBN_LATEX(),
+                                                           xBN(),
+                                                           repartsurvieBN()
     ))})
     
-    output$survieBN <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
-                                                      xBN(),
-                                                      survieBN()))
+    output$FxBN <- renderPlotly({
+        ggplot(
+            data.frame(
+                x = xlim_BN_SERVER(),
+                prob = plot_choice_BN_SERVER(),
+                col_fill = ifelse(xlim_BN_SERVER() <= xBN(), "Fx", "Sx")
+            ),
+            aes(x = x, y = prob)
+        ) +
+            geom_bar(
+                stat = "identity",
+                aes(fill = col_fill),
+                alpha = 0.7,
+                width = 0.3
+            ) +
+            guides(fill = F) +
+            theme_classic() +
+            ylab("Pr(X = x)")
     })
     
 #### Loi Uniforme Discrète Serveur ####
@@ -3650,6 +3681,35 @@ myserver <- function(input, output, session)
     
     dUNID <- reactive({input$dUNID})
     
+    repartsurvieUNID <- reactive({
+        if(input$xlim_UNID == T)
+        {
+            format(punifD(k = xUNID(), aUNID(), bUNID()), nsmall = 6)
+        }
+        else
+        {
+            format( 1 - punifD(k = xUNID(), aUNID(), bUNID()), nsmall = 6)
+        }
+        
+    })
+    
+    repartsurvieUNID_LATEX <- reactive({
+        if(input$xlim_UNID == T)
+        {
+            "F_{X}"
+        }
+        else
+        {
+            "S_{X}"
+        }
+    })
+    
+    output$repartsurvieUNID <- renderUI({withMathJax(sprintf("$$%s(%s) = %s$$", 
+                                                           repartsurvieUNID_LATEX(),
+                                                           xUNID(),
+                                                           repartsurvieUNID()
+    ))})
+    
     meanUNID <- reactive({E_unifD(aUNID(), bUNID())
     })
     
@@ -3661,14 +3721,14 @@ myserver <- function(input, output, session)
     densityUNID <- reactive({format(dunifD(x = xUNID(), aUNID(), bUNID()),
                                     nsmall = 6)
     })
-    
-    repartUNID <- reactive({format(punifD(k = xUNID(), aUNID(), bUNID()), 
-                                   nsmall = 6)
-    })
-    
-    survieUNID <- reactive({format(1 - punifD(k = xUNID(), aUNID(), bUNID()), 
-                                   nsmall = 6)
-    })
+    # 
+    # repartUNID <- reactive({format(punifD(k = xUNID(), aUNID(), bUNID()), 
+    #                                nsmall = 6)
+    # })
+    # 
+    # survieUNID <- reactive({format(1 - punifD(k = xUNID(), aUNID(), bUNID()), 
+    #                                nsmall = 6)
+    # })
     
     output$meanUNID <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
                                                     meanUNID()
@@ -3682,16 +3742,16 @@ myserver <- function(input, output, session)
                                                        xUNID(),
                                                        densityUNID()
     ))})
-    
-    output$repartUNID <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$", 
-                                                      xUNID(),
-                                                      repartUNID()
-    ))})
-    
-    output$survieUNID <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
-                                                      xUNID(),
-                                                      survieUNID()))
-    })
+    # 
+    # output$repartUNID <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$", 
+    #                                                   xUNID(),
+    #                                                   repartUNID()
+    # ))})
+    # 
+    # output$survieUNID <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
+    #                                                   xUNID(),
+    #                                                   survieUNID()))
+    # })
 
 #### Loi Binomiale Négative Composée Serveur ####
     
