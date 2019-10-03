@@ -3067,7 +3067,7 @@ myserver <- function(input, output, session)
         kBIN <- reactive({input$kBIN})
         
         plot_choice_BIN_SERVER <- reactive({
-            if(input$plot_choice_BIN == "Densité")
+            if(input$plot_choice_BIN == "Fonction de masse")
                 dbinom(x = 0:nBIN(), size = nBIN(), prob = pBIN())
             else
                 pbinom(q = 0:nBIN(), size = nBIN(), prob = pBIN())
@@ -3487,7 +3487,7 @@ myserver <- function(input, output, session)
     })
     
     plot_choice_BN_SERVER <- reactive({
-        if(input$plot_choice_BN == "Densité")
+        if(input$plot_choice_BN == "Fonction de masse")
             d_negbinom(k = xlim_BN_SERVER(), r = rBN(), p = qBN(), nb_tries = definitionBN())
         else
             p_negbinom(k = xlim_BN_SERVER(), r = rBN(), p = qBN(), nb_tries = definitionBN())
