@@ -3228,6 +3228,13 @@ myserver <- function(input, output, session)
     
     densityPOI <- reactive({format(dpois(xPOI(), lamPOI()), nsmall = 6)})
     
+    plot_choice_POI_SERVER <- reactive({
+        if(input$plot_choice_POI == "Fonction de masse")
+            dpois(x = 0:qpois(p = 0.99999, lambda = lamPOI()), lambda = lamPOI())
+        else
+            ppois(q = 0:qpois(p = 0.99999, lambda = lamPOI()), lambda = lamPOI())
+    })
+    
     repartsurviePOI <- reactive({
         if(input$xlim_POI == T)
         {
@@ -3279,6 +3286,27 @@ myserver <- function(input, output, session)
                                                    kPOI(),
                                                    VaRPOI()
     ))})
+    
+    
+    output$FxPOI <- renderPlotly({
+        ggplot(
+            data.frame(
+                x = 0:qpois(p = 0.99999, lambda = lamPOI()),
+                prob = plot_choice_POI_SERVER(),
+                col_fill = ifelse(0:qpois(p = 0.99999, lambda = lamPOI()) <= xPOI(), "Fx", "Sx")
+            ),
+            aes(x = x, y = prob)
+        ) +
+            geom_bar(
+                stat = "identity",
+                aes(fill = col_fill),
+                alpha = 0.7,
+                width = 0.3
+            ) +
+            guides(fill = F) +
+            theme_classic() +
+            ylab("Pr(X = x)")
+    })
     
     
 #### Loi Hypergéométrique Serveur ####
@@ -3481,7 +3509,7 @@ myserver <- function(input, output, session)
     
     xlim_BN_SERVER <- reactive({
         if(definitionBN() == T)
-            c(rBN(), 0:qnbinom(p = 0.99999, size = rBN(), prob = qBN()))
+            c(rBN():qnbinom(p = 0.99999, size = rBN(), prob = qBN()))
         else
             c(0:qnbinom(p = 0.99999, size = rBN(), prob = qBN()))
     })
@@ -3489,8 +3517,10 @@ myserver <- function(input, output, session)
     plot_choice_BN_SERVER <- reactive({
         if(input$plot_choice_BN == "Fonction de masse")
             d_negbinom(k = xlim_BN_SERVER(), r = rBN(), p = qBN(), nb_tries = definitionBN())
+            # dnbinom(x = xlim_BN_SERVER(), size = rBN(), prob = qBN())
         else
-            p_negbinom(k = xlim_BN_SERVER(), r = rBN(), p = qBN(), nb_tries = definitionBN())
+            pnbinom(q = xlim_BN_SERVER(), size = rBN(), prob = qBN())
+            # p_negbinom(k = xlim_BN_SERVER(), r = rBN(), p = qBN(), nb_tries = definitionBN())
         
     })
     
@@ -3664,6 +3694,7 @@ myserver <- function(input, output, session)
                 alpha = 0.7,
                 width = 0.3
             ) +
+            # ylim(0, NA) +
             guides(fill = F) +
             theme_classic() +
             ylab("Pr(X = x)")

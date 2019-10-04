@@ -1780,7 +1780,7 @@ tab_POI_UI <- tabItem(tabName = "Poisson",
                                      #                               "Fonction de répartition"),
                                      #                   selected = "Fonction de répartition",
                                      #                   justified = TRUE),
-                                     # plotlyOutput("QxPOI")
+                                 # plotlyOutput("QxPOI")
                                      ),
 
                                  align = "center"
