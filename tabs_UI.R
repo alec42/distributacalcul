@@ -1510,7 +1510,7 @@ tab_BIN_UI <- tabItem(tabName = "Binomiale",
                         
                         switchInput(
                             inputId = "xlim_BIN",
-                            onStatus = "success",
+                            onStatus = "danger",
                             onLabel = "Répartition",
                             offStatus = "info",
                             offLabel = "Survie",
@@ -1658,7 +1658,7 @@ tab_BN_UI <- tabItem(
                    
                    switchInput(
                        inputId = "xlim_BN",
-                       onStatus = "success",
+                       onStatus = "danger",
                        onLabel = "Répartition",
                        offStatus = "info",
                        offLabel = "Survie",
@@ -1744,7 +1744,7 @@ tab_POI_UI <- tabItem(tabName = "Poisson",
 
                                      switchInput(
                                          inputId = "xlim_POI",
-                                         onStatus = "success",
+                                         onStatus = "danger",
                                          onLabel = "Répartition",
                                          offStatus = "info",
                                          offLabel = "Survie",
@@ -1826,21 +1826,25 @@ tab_HG_UI <- tabItem(tabName = "HG",
                                      status = "danger", # pour couleur de la boite, diff couleur pour statut
                                      uiOutput("changingxHG"),
                                      uiOutput("densityHG"),
+                                     
+                                     switchInput(
+                                         inputId = "xlim_HG",
+                                         onStatus = "danger",
+                                         onLabel = "Répartition",
+                                         offStatus = "info",
+                                         offLabel = "Survie",
+                                         value = T,
+                                         labelWidth = "10px"
+                                     ),
+                                     uiOutput("repartsurvieHG"),
+                                     p("Graphique"),
+                                     radioGroupButtons(inputId = "plot_choice_HG", 
+                                                       choices = c("Fonction de masse", 
+                                                                   "Fonction de répartition"),
+                                                       selected = "Fonction de masse",
+                                                       justified = TRUE),
+                                     plotlyOutput("FxHG")
 
-                                     tabBox(
-                                         width = NULL,
-                                         tabPanel("Répartition",
-                                                  uiOutput("repartHG")
-                                                  # ,
-                                                  # plotlyOutput("FxHG")
-                                         ),
-                                         tabPanel("Survie",
-                                                  uiOutput("survieHG")
-                                                  # ,
-                                                  # plotlyOutput("SxBETA")
-                                         )
-
-                                     )
                                  ),
                                  align = "center"
 
@@ -1889,20 +1893,24 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                                     numericInput('xLOGARITHMIQUE', '$$x$$', min = 0, value = 0, step = 1),
                                     uiOutput("densityLOGARITHMIQUE"),
 
-                                    tabBox(
-                                        width = NULL,
-                                        tabPanel("Répartition",
-                                                 uiOutput("repartLOGARITHMIQUE")
-                                                 # ,
-                                                 # plotlyOutput("FxLOGARITHMIQUE")
-                                        ),
-                                        tabPanel("Survie",
-                                                 uiOutput("survieLOGARITHMIQUE")
-                                                 # ,
-                                                 # plotlyOutput("SxBETA")
-                                        )
-
-                                    )
+                                    switchInput(
+                                        inputId = "xlim_LOGARITHMIQUE",
+                                        onStatus = "danger",
+                                        onLabel = "Répartition",
+                                        offStatus = "info",
+                                        offLabel = "Survie",
+                                        value = T,
+                                        labelWidth = "10px"
+                                    ),
+                                    uiOutput("repartsurvieLOGARITHMIQUE"),
+                                    p("Graphique"),
+                                    radioGroupButtons(inputId = "plot_choice_LOGARITHMIQUE",
+                                                      choices = c("Fonction de masse",
+                                                                  "Fonction de répartition"),
+                                                      selected = "Fonction de masse",
+                                                      justified = TRUE),
+                                    plotlyOutput("FxLOGARITHMIQUE")
+                                    
                                 ),
                                 align = "center"
 
@@ -1943,8 +1951,14 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
                                      status = "primary",
                                      solidHeader = T,
                                      width = NULL,
-                                     numericInput('aUNID', '$$a$$', value = 1, min = 0, step = 1),
-                                     numericInput('bUNID', '$$b$$', value = 2, min = 0, step = 1)
+                                     uiOutput('changing_aUNID'),
+                                     # uiOutput('changing_bUNID')
+                                     numericInput('bUNID', 
+                                                  '$$b$$', 
+                                                  value = 2, 
+                                                  min = 0,
+                                                  # min = changing_aUNID(),
+                                                  step = 1)
                                  ),
                                  ## Moments
                                  tags$style(" * {font-size:20px}"), # grosseur du tezte
@@ -1964,12 +1978,12 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
                                      solidHeader = TRUE,
                                      tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
                                      status = "danger", # pour couleur de la boite, diff couleur pour statut
-                                     numericInput('xUNID', '$$x$$', min = 0, value = 0, step = 1),
+                                     uiOutput("xUNID_UI"),
                                      uiOutput("densityUNID"),
                                      
                                      switchInput(
                                          inputId = "xlim_UNID",
-                                         onStatus = "success",
+                                         onStatus = "danger",
                                          onLabel = "Répartition",
                                          offStatus = "info",
                                          offLabel = "Survie",

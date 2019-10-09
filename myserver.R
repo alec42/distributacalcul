@@ -32,8 +32,7 @@ myserver <- function(input, output, session)
         session,
         inputId = "paramESTIM_STATTOOL",
         choices = setNames(list("mu", "sigma", "p", "theta"), list("\\\\\\mu", "\\\\\\sigma^2", "p", "\\\\\\theta")),
-        options = list(render = I("
-    {
+        options = list(render = I("{
                                   item:   function(item, escape) { 
                                   var html = katex.renderToString(item.label);
                                   return '<div>' + html + '</div>'; 
@@ -42,8 +41,7 @@ myserver <- function(input, output, session)
                                   var html = katex.renderToString(item.label);
                                   return '<div>' + html + '</div>'; 
                                   }
-}
-"))
+                                  }"))
         
     )
     
@@ -3203,7 +3201,8 @@ myserver <- function(input, output, session)
             ) +
             guides(fill = F) +
             theme_classic() +
-            ylab("Pr(X = x)")
+            ylab("Pr(X = x)")  
+            # +scale_x_discrete(limits = 0:nBIN())
         })
         
         # Reactive slider
@@ -3319,6 +3318,12 @@ myserver <- function(input, output, session)
     
     xHG <- reactive({input$xHG})
 
+    plot_choice_HG_SERVER <- reactive({
+        if(input$plot_choice_HG == "Fonction de masse")
+            dhyper(x = 0:min(petitNHG(), mHG()), m = mHG(), n = grosNHG() - mHG(), k = petitNHG())
+        else
+            phyper(q = 0:min(petitNHG(), mHG()), m = mHG(), n = grosNHG() - mHG(), k = petitNHG())
+    })
     
     output$changingpetitNHG <- renderUI({
         numericInput('petitNHG', 
@@ -3368,24 +3373,38 @@ myserver <- function(input, output, session)
         ), 
         nsmall = 6)
     })
-    
-    repartHG <- reactive({
-        format(phyper(xHG(), 
-                      m = mHG(), 
-                      n = grosNHG() - mHG(), 
-                      k = petitNHG()
-        ), 
-        nsmall = 6)
+    repartsurvieHG <- reactive({
+        if(input$xlim_HG == T)
+        {
+            format(phyper(xHG(), 
+                          m = mHG(), 
+                          n = grosNHG() - mHG(), 
+                          k = petitNHG()
+            ), 
+            nsmall = 6)
+        }
+        else
+        {
+            format(phyper(xHG(), 
+                          m = mHG(), 
+                          n = grosNHG() - mHG(), 
+                          k = petitNHG(),
+                          lower.tail = F 
+            ), 
+            nsmall = 6)
+        }
+        
     })
     
-    survieHG <- reactive({
-        format(phyper(xHG(), 
-                      m = mHG(), 
-                      n = grosNHG() - mHG(), 
-                      k = petitNHG(),
-                      lower.tail = F 
-        ), 
-        nsmall = 6)
+    repartsurvieHG_LATEX <- reactive({
+        if(input$xlim_HG == T)
+        {
+            "F_{X}"
+        }
+        else
+        {
+            "S_{X}"
+        }
     })
     
     VaRHG <- reactive({
@@ -3409,20 +3428,37 @@ myserver <- function(input, output, session)
                                                       xHG(),
                                                       densityHG()
     ))})
-    output$repartHG <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$", 
-                                                     xHG(),
-                                                     repartHG()
-    ))})
-    
-    output$survieHG <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
-                                                     xHG(),
-                                                     survieHG()))
-    })
     
     output$VaRHG <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
                                                   kHG(),
                                                   VaRHG()
     ))})
+    
+    output$repartsurvieHG <- renderUI({withMathJax(sprintf("$$%s(%s) = %s$$",
+                                                           repartsurvieHG_LATEX(),
+                                                           xHG(),
+                                                           repartsurvieHG()
+    ))})
+    
+    output$FxHG <- renderPlotly({
+        ggplot(
+            data.frame(
+                x = 0:min(petitNHG(), mHG()),
+                prob = plot_choice_HG_SERVER(),
+                col_fill = ifelse(0:min(petitNHG(), mHG()) <= xHG(), "Fx", "Sx")
+            ),
+            aes(x = x, y = prob)
+        ) +
+            geom_bar(
+                stat = "identity",
+                aes(fill = col_fill),
+                alpha = 0.7,
+                width = 0.3
+            ) +
+            guides(fill = F) +
+            theme_classic() +
+            ylab("Pr(X = x)")
+    })
     
 #### Loi Logarithmique Serveur ####
     
@@ -3445,18 +3481,33 @@ myserver <- function(input, output, session)
         nsmall = 6)
     })
     
-    repartLOGARITHMIQUE <- reactive({
-        format(plogarithmic(q = xLOGARITHMIQUE(), 
-                            prob = gammaLOGARITHMIQUE()), 
-               nsmall = 6)
+    repartsurvieLOGARITHMIQUE <- reactive({
+        if(input$xlim_LOGARITHMIQUE == T)
+        {
+            format(plogarithmic(q = xLOGARITHMIQUE(), 
+                                prob = gammaLOGARITHMIQUE()), 
+                   nsmall = 6)
+        }
+        else
+        {
+            format(plogarithmic(q = xLOGARITHMIQUE(), 
+                                prob = gammaLOGARITHMIQUE(),
+                                lower.tail = F 
+            ), 
+            nsmall = 6)
+        }
+        
     })
     
-    survieLOGARITHMIQUE <- reactive({
-        format(plogarithmic(q = xLOGARITHMIQUE(), 
-                      prob = gammaLOGARITHMIQUE(),
-                      lower.tail = F 
-        ), 
-        nsmall = 6)
+    repartsurvieLOGARITHMIQUE_LATEX <- reactive({
+        if(input$xlim_LOGARITHMIQUE == T)
+        {
+            "F_{X}"
+        }
+        else
+        {
+            "S_{X}"
+        }
     })
     
     VaRLOGARITHMIQUE <- reactive({
@@ -3478,16 +3529,23 @@ myserver <- function(input, output, session)
                                                                  xLOGARITHMIQUE(),
                                                                  densityLOGARITHMIQUE()
     ))})
-    output$repartLOGARITHMIQUE <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$", 
-                                                                xLOGARITHMIQUE(),
-                                                                repartLOGARITHMIQUE()
+    
+    output$repartsurvieLOGARITHMIQUE <- renderUI({withMathJax(sprintf("$$%s(%s) = %s$$",
+                                                                      repartsurvieLOGARITHMIQUE_LATEX(),
+                                                                      xLOGARITHMIQUE(),
+                                                                      repartsurvieLOGARITHMIQUE()
     ))})
-    
-    output$survieLOGARITHMIQUE <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
-                                                                xLOGARITHMIQUE(),
-                                                                survieLOGARITHMIQUE()))
-    })
-    
+    # 
+    # output$repartLOGARITHMIQUE <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$", 
+    #                                                             xLOGARITHMIQUE(),
+    #                                                             repartLOGARITHMIQUE()
+    # ))})
+    # 
+    # output$survieLOGARITHMIQUE <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
+    #                                                             xLOGARITHMIQUE(),
+    #                                                             survieLOGARITHMIQUE()))
+    # })
+    # 
     output$VaRLOGARITHMIQUE <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
                                                              kLOGARITHMIQUE(),
                                                              VaRLOGARITHMIQUE()
@@ -3702,6 +3760,19 @@ myserver <- function(input, output, session)
     
 #### Loi Uniforme Discrète Serveur ####
     
+    output$changing_aUNID <- renderUI({
+        numericInput('aUNID', 
+                     '$$a$$', 
+                     value = 1, 
+                     min = 0, 
+                     max = bUNID(),
+                     step = 1)
+    })
+    
+    # output$changing_bUNID <- renderUI({
+    #     
+    # })    
+    # 
     aUNID <- reactive({input$aUNID})
     
     bUNID <- reactive({input$bUNID})
@@ -3711,6 +3782,21 @@ myserver <- function(input, output, session)
     kUNID <- reactive({input$kUNID})
     
     dUNID <- reactive({input$dUNID})
+    
+    output$xUNID_UI <- renderUI({
+        numericInput('xUNID', 
+                     '$$x$$', 
+                     min = aUNID(), 
+                     value = 1,
+                     step = 1)
+    })
+    
+    plot_choice_UNID_SERVER <- reactive({
+        if(input$plot_choice_UNID == "Fonction de masse")
+            dunifD(x = aUNID():bUNID(), a = aUNID(), b = bUNID())
+        else
+            punifD(k = aUNID():bUNID(), a = aUNID(), b = bUNID())
+    })
     
     repartsurvieUNID <- reactive({
         if(input$xlim_UNID == T)
@@ -3752,14 +3838,6 @@ myserver <- function(input, output, session)
     densityUNID <- reactive({format(dunifD(x = xUNID(), aUNID(), bUNID()),
                                     nsmall = 6)
     })
-    # 
-    # repartUNID <- reactive({format(punifD(k = xUNID(), aUNID(), bUNID()), 
-    #                                nsmall = 6)
-    # })
-    # 
-    # survieUNID <- reactive({format(1 - punifD(k = xUNID(), aUNID(), bUNID()), 
-    #                                nsmall = 6)
-    # })
     
     output$meanUNID <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
                                                     meanUNID()
@@ -3773,16 +3851,27 @@ myserver <- function(input, output, session)
                                                        xUNID(),
                                                        densityUNID()
     ))})
-    # 
-    # output$repartUNID <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$", 
-    #                                                   xUNID(),
-    #                                                   repartUNID()
-    # ))})
-    # 
-    # output$survieUNID <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
-    #                                                   xUNID(),
-    #                                                   survieUNID()))
-    # })
+    
+    output$FxUNID <- renderPlotly({
+        ggplot(
+            data.frame(
+                x = aUNID():bUNID(),
+                prob = plot_choice_UNID_SERVER(),
+                col_fill = ifelse(aUNID():bUNID() <= xUNID(), "Fx", "Sx")
+            ),
+            aes(x = x, y = prob)
+        ) +
+            geom_bar(
+                stat = "identity",
+                aes(fill = col_fill),
+                alpha = 0.7,
+                width = 0.3
+            ) +
+            guides(fill = F) +
+            theme_classic() +
+            ylab("Pr(X = x)") +
+            scale_x_discrete(limits = seq(from = aUNID(), to = bUNID(), by = 1))
+    })
 
 #### Loi Binomiale Négative Composée Serveur ####
     

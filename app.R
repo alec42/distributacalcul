@@ -8,7 +8,7 @@
     library(rsconnect)
     library(plotly)
     library(shinyWidgets)
-    library(shinyjs)
+    library(shinyjs) 
     # devtools::install_github("alec42/Distributacalcul_package")
     library(Distributacalcul)
     # devtools::install_github("gabrielcrepeault/tvarPackage")
