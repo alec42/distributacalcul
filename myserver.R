@@ -3912,7 +3912,7 @@ myserver <- function(input, output, session)
     # Crée ce input avec UI pour le cacher dans le cas d'une lognormale
     output$koBNCOMPUI <- renderUI({
         if (input$severityBNCOMP == "Gamma") {
-            numericInput('koBNCOMP', label = withMathJax('$$k_{0}$$'), value = 300, step = 100, min = 0, max = 1)
+            numericInput('koBNCOMP', label = withMathJax('$$k_{0}$$'), value = 300, step = 10, min = 0)
         }
     })
     
@@ -3988,52 +3988,104 @@ myserver <- function(input, output, session)
         )
     })
     
-    
     # densityBNCOMP <- reactive({format(dBNCOMP(input$xBNCOMP, shapeBNCOMP(), rateBNCOMP()),scientific = F,  nsmall = 6)})
     
-    repartBNCOMP <- reactive({format(p_BNCOMP(x = xBNCOMP(), 
-                                              r = rBNCOMP(),
-                                              q = qBNCOMP(),
-                                              shapeBNCOMP(), 
-                                              rateBNCOMP(),
-                                              ko = koBNCOMP(),
-                                              distr_severity = input$severityBNCOMP), 
-                                     nsmall = 6, scientific = F)
+    repartsurvieBNCOMP <- reactive({
+        if(input$xlim_BNCOMP == T)
+        {
+            format(p_BNCOMP(x = xBNCOMP(), 
+                            r = rBNCOMP(),
+                            q = qBNCOMP(),
+                            shape = shapeBNCOMP(), 
+                            rate = rateBNCOMP(),
+                            ko = koBNCOMP(),
+                            distr_severity = input$severityBNCOMP), 
+                   nsmall = 6, scientific = F)
+        }
+        else
+        {
+            format(1 - p_BNCOMP(x = xBNCOMP(), 
+                            r = rBNCOMP(),
+                            q = qBNCOMP(),
+                            shape = shapeBNCOMP(), 
+                            rate = rateBNCOMP(),
+                            ko = koBNCOMP(),
+                            distr_severity = input$severityBNCOMP), 
+                   nsmall = 6, scientific = F)
+        }
+        
     })
     
-    survieBNCOMP <- reactive({format(1 - p_BNCOMP(x = xBNCOMP(), 
-                                                  r = rBNCOMP(),
-                                                  q = qBNCOMP(),
-                                                  ko = koBNCOMP(),
-                                                  shapeBNCOMP(), 
-                                                  rateBNCOMP(),
-                                                  distr_severity = input$severityBNCOMP
-                                                  ), 
-                                     nsmall = 6, scientific = F)})
+    repartsurvieBNCOMP_LATEX <- reactive({
+        if(input$xlim_BNCOMP == T)
+        {
+            "F_{X}"
+        }
+        else
+        {
+            "S_{X}"
+        }
+    })
+    
+    BNCOMP_FX_PLOT_RANGE <- reactive({
+        c(0, ceiling(
+            VaR_BNCOMP(
+                kappa = 0.999,
+                shape = shapeBNCOMP(),
+                rate = rateBNCOMP(),
+                r = rBNCOMP(),
+                q = qBNCOMP(),
+                ko = koBNCOMP(),
+                distr_severity = input$severityBNCOMP
+            )
+        )
+        )
+    })
+    
+    BNCOMP_QX_PLOT_RANGE <- reactive({
+        
+            seq(from = 0, 
+                to = 1, 
+                by = .01)
 
+    })
+    
+    xlim_BNCOMP_SERVER <- reactive({
+        if(input$xlim_BNCOMP == T)
+            seq(from = BNCOMP_FX_PLOT_RANGE()[1], 
+                to = BNCOMP_FX_PLOT_RANGE()[2], 
+                by = 1)
+        else # à changer plus tard
+            seq(from = BNCOMP_FX_PLOT_RANGE()[1], 
+                to = BNCOMP_FX_PLOT_RANGE()[2], 
+                by = 1)
+    })
+    
     VaRBNCOMP <- reactive({format(VaR_BNCOMP(kappa = kBNCOMP(), 
-                                             ko = koBNCOMP(),
-                                             q     = qBNCOMP(),
                                              r     = rBNCOMP(),
-                                             shapeBNCOMP(), 
-                                             rateBNCOMP()
+                                             q     = qBNCOMP(),
+                                             ko = koBNCOMP(),
+                                             shape = shapeBNCOMP(), 
+                                             rate = rateBNCOMP(),
+                                             distr_severity = input$severityBNCOMP
     ), nsmall = 6)})
     
     varkBNCOMP <- reactive({VaR_BNCOMP(kappa = kBNCOMP(), 
-                                       ko = koBNCOMP(),
                                        r     = rBNCOMP(),
                                        q     = qBNCOMP(),
-                                       shapeBNCOMP(), 
-                                       rateBNCOMP()
+                                       shape = shapeBNCOMP(), 
+                                       rate = rateBNCOMP(),
+                                       ko = koBNCOMP(),
+                                       distr_severity = input$severityBNCOMP
                                        )})
     
-    TVaRBNCOMP <- reactive({format(TVaR_BNCOMP(kappa     = kBNCOMP(),
+    TVaRBNCOMP <- reactive({format(TVaR_BNCOMP(kappa = kBNCOMP(),
                                                r     = rBNCOMP(),
                                                q     = qBNCOMP(),
+                                               shape = shapeBNCOMP(), 
+                                               rate = rateBNCOMP(),
                                                vark  = varkBNCOMP(),
                                                ko    = koBNCOMP(),
-                                               shapeBNCOMP(), 
-                                               rateBNCOMP(),
                                                distr_severity = input$severityBNCOMP
                                                ), 
                                    nsmall = 6)
@@ -4092,16 +4144,11 @@ myserver <- function(input, output, session)
     #                                                      densityBNCOMP()
     # ))})
     
-    output$repartBNCOMP <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$", 
-                                                         xBNCOMP(),
-                                                         repartBNCOMP()
+    output$repartsurvieBNCOMP <- renderUI({withMathJax(sprintf("$$%s(%s) = %s$$",
+                                                               repartsurvieBNCOMP_LATEX(),
+                                                               xBNCOMP(),
+                                                               repartsurvieBNCOMP()
     ))})
-    
-    output$survieBNCOMP <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
-                                                        xBNCOMP(),
-                                                        survieBNCOMP()))
-    })
-
     
     output$VaRBNCOMP <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$", 
                                                      kBNCOMP(),
@@ -4113,6 +4160,61 @@ myserver <- function(input, output, session)
                                                       TVaRBNCOMP()
     ))})
     
+    output$QxBNCOMP <- renderPlotly({
+        ggplot(
+            data = data.frame(
+                k = BNCOMP_QX_PLOT_RANGE(),
+                quantile = sapply(BNCOMP_QX_PLOT_RANGE(), function(i)
+                    VaR_BNCOMP(
+                        kappa = i,
+                        shape = shapeBNCOMP(),
+                        rate = rateBNCOMP(),
+                        r = rBNCOMP(),
+                        q = qBNCOMP(),
+                        ko = koBNCOMP()
+                    ))
+                # ,col_fill = ifelse(BNCOMP_QX_PLOT_RANGE <= xBNCOMP, "Fx", "Sx")
+            ),
+            mapping = aes(x = k,
+                          y = quantile)
+        ) +
+            geom_line(stat = "identity"
+                     # ,aes(fill = col_fill),
+                     # alpha = 0.7,
+                     # width = 0.3
+            ) +
+            guides(fill = F) +
+            theme_classic()
+    })
+    
+    output$FxBNCOMP <- renderPlotly({
+        ggplot(
+            data = data.frame(
+                x = xlim_BNCOMP_SERVER(),
+                prob = sapply(xlim_BNCOMP_SERVER(), function(i)
+                    p_BNCOMP(
+                        x = i,
+                        shape = shapeBNCOMP(),
+                        rate = rateBNCOMP(),
+                        r = rBNCOMP(),
+                        q = qBNCOMP(),
+                        ko = koBNCOMP(),
+                        distr_severity = input$severityBNCOMP
+                    )),
+                col_fill = ifelse(xlim_BNCOMP_SERVER() <= xBNCOMP(), "Fx", "Sx")
+            ),
+            mapping = aes(x = x,
+                          y = prob)
+        ) +
+            geom_bar(
+                stat = "identity",
+                aes(fill = col_fill),
+                alpha = 0.7,
+                width = 0.3
+            ) +
+            guides(fill = F) +
+            theme_classic()
+    })
     
     
 #### Loi Poisson Composée Serveur ####
@@ -4122,6 +4224,7 @@ myserver <- function(input, output, session)
     lambdaPCOMP <- reactive({input$lambdaPCOMP})
     koPCOMP <- reactive({input$koPCOMP})
     kPCOMP <- reactive({input$kPCOMP})
+    severityPCOMP <- reactive({input$severityPCOMP})
     
     ratePCOMP <- reactive({
         if (input$distrchoiceGAMMA == T) {
@@ -4131,7 +4234,39 @@ myserver <- function(input, output, session)
         }
     })
     
+    xlim_PCOMP_SERVER <- reactive({
+        if(input$xlim_PCOMP == T)
+            seq(from = PCOMP_FX_PLOT_RANGE()[1], 
+                to = PCOMP_FX_PLOT_RANGE()[2], 
+                by = 1)
+        else # à changer plus tard
+            seq(from = PCOMP_FX_PLOT_RANGE()[1], 
+                to = PCOMP_FX_PLOT_RANGE()[2], 
+                by = 1)
+    })
+    
+    PCOMP_QX_PLOT_RANGE <- reactive({
+        seq(from = 0,
+            to = 1,
+            by = .01)
+    })
+    
     shapePCOMP <- reactive({input$shapePCOMP})
+    
+    # PCOMP_FX_PLOT_RANGE <- reactive(input$PCOMP_FX_PLOT_RANGE)
+    PCOMP_FX_PLOT_RANGE <- reactive({
+        c(0, ceiling(
+            VaR_PCOMP(
+                kappa = 0.9999,
+                lambda = lambdaPCOMP(),
+                shape = shapePCOMP(),
+                rate = ratePCOMP(),
+                ko = koPCOMP(),
+                distr_severity = severityPCOMP()
+            )
+        )
+        )
+    })
     
     output$ratePCOMPUI <- renderUI({
         if (input$severityPCOMP == "Gamma") {
@@ -4143,7 +4278,7 @@ myserver <- function(input, output, session)
     
     output$shapePCOMPUI <- renderUI({
         if (input$severityPCOMP == "Gamma") {
-            numericInput('shapePCOMP', label = '$$\\alpha$$', value = 2, min = 0)
+            numericInput('shapePCOMP', '$$\\alpha$$', value = 2, min = 0)
         } else {
             numericInput('shapePCOMP', '$$\\mu$$', value = 2, min = 0)
         }
@@ -4152,10 +4287,12 @@ myserver <- function(input, output, session)
     
     # Crée ce input avec UI pour le cacher dans le cas d'une lognormale
     output$koPCOMPUI <- renderUI({
-        if (input$severityBINCOMP == "Gamma") {
-            numericInput('koPCOMP', label = withMathJax('$$k_{0}$$'), value = 200, step = 100, min = 0, max = 1)
+        if (input$severityPCOMP == "Gamma") {
+            numericInput('koPCOMP', label = withMathJax('$$k_{0}$$'), value = 200, step = 10, min = 0)
         }
     })
+    
+    
     
     ## Ici on crée un gros observeEvent qui va modifier les paramètres de la PCOMP/exponentielle/khi-carrée selon les 2 radio buttons:
     ## x: selection de distribution
@@ -4233,36 +4370,57 @@ myserver <- function(input, output, session)
     
     # densityPCOMP <- reactive({format(dPCOMP(input$xPCOMP, shapePCOMP(), ratePCOMP()),scientific = F,  nsmall = 6)})
     
-    repartPCOMP <- reactive({format(p_PCOMP(x = xPCOMP(), 
-                                            lambdaPCOMP(),
-                                            shapePCOMP(), 
-                                            ratePCOMP(),
-                                            ko = koPCOMP(),
-                                            distr_severity = input$severityPCOMP), 
-                                    nsmall = 6, scientific = F)
+    repartsurviePCOMP <- reactive({
+        if(input$xlim_PCOMP == T)
+        {
+            format(p_PCOMP(x = xPCOMP(), 
+                           lambda = lambdaPCOMP(),
+                           shape = shapePCOMP(), 
+                           rate = ratePCOMP(),
+                           ko = koPCOMP(),
+                           distr_severity = input$severityPCOMP), 
+                   nsmall = 6, 
+                   scientific = F)
+        }
+        else
+        {
+            format(1 - p_PCOMP(x = xPCOMP(), 
+                               lambdaPCOMP(),
+                               shapePCOMP(), 
+                               ratePCOMP(),
+                               ko = koPCOMP(),
+                               distr_severity = input$severityPCOMP), 
+                   nsmall = 6, 
+                   scientific = F)
+        }
+        
     })
     
-    surviePCOMP <- reactive({format(1 - p_PCOMP(x = xPCOMP(), 
-                                            lambdaPCOMP(),
-                                            shapePCOMP(), 
-                                            ratePCOMP(),
-                                            ko = koPCOMP(),
-                                            distr_severity = input$severityPCOMP), 
-                                    nsmall = 6, scientific = F)
-        })
+    repartsurviePCOMP_LATEX <- reactive({
+        if(input$xlim_PCOMP == T)
+        {
+            "F_{X}"
+        }
+        else
+        {
+            "S_{X}"
+        }
+    })
     
     VaRPCOMP <- reactive({format(VaR_PCOMP(kappa = kPCOMP(), 
                                            lambdaPCOMP(),
                                            shapePCOMP(), 
                                            ratePCOMP(),
-                                           ko = koPCOMP()
+                                           ko = koPCOMP(),
+                                           distr_severity = input$severityPCOMP
     ), nsmall = 6)})
     
     varkPCOMP <- reactive({VaR_PCOMP(kappa = kPCOMP(), 
                                      lambdaPCOMP(),
                                      shapePCOMP(), 
                                      ratePCOMP(),
-                                     ko = koPCOMP()
+                                     ko = koPCOMP(),
+                                     distr_severity = input$severityPCOMP
     )})
     
     TVaRPCOMP <- reactive({format(TVaR_PCOMP(kappa = kPCOMP(),
@@ -4271,7 +4429,9 @@ myserver <- function(input, output, session)
                                              ratePCOMP(),
                                              vark  = varkPCOMP(),
                                              ko    = koPCOMP(),
-                                             distr_severity = input$severityPCOMP), nsmall = 6)
+                                             distr_severity = input$severityPCOMP
+                                             ), 
+                                  nsmall = 6)
     })
     
     meanPCOMP <- reactive({format(E_PCOMP(lambdaPCOMP(), 
@@ -4299,7 +4459,6 @@ myserver <- function(input, output, session)
             "Lognormale"
     })
     
-    
     output$distr_PCOMP <- renderText({
         if(input$severityPCOMP == "Gamma")
             "\\(X \\sim\\mathcal{PComp}(\\lambda ; F_B \\sim \\Gamma (\\alpha, \\beta))\\)"
@@ -4321,17 +4480,11 @@ myserver <- function(input, output, session)
     #                                                      densityPCOMP()
     # ))})
     
-    output$repartPCOMP <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$", 
-                                                         xPCOMP(),
-                                                         repartPCOMP()
+    output$repartsurviePCOMP <- renderUI({withMathJax(sprintf("$$%s(%s) = %s$$",
+                                                              repartsurviePCOMP_LATEX(),
+                                                              xPCOMP(),
+                                                              repartsurviePCOMP()
     ))})
-    
-    output$surviePCOMP <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
-                                                        xPCOMP(),
-                                                        surviePCOMP())
-       )
-      })
-
     
     output$VaRPCOMP <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$", 
                                                       kPCOMP(),
@@ -4341,9 +4494,63 @@ myserver <- function(input, output, session)
                                                        kPCOMP(),
                                                        TVaRPCOMP()
     ))})
-
-    #### Loi Binomiale Composée Serveur ####
     
+    
+    output$QxPCOMP <- renderPlotly({
+        ggplot(
+            data = data.frame(
+                k = PCOMP_QX_PLOT_RANGE(),
+                quantile = sapply(PCOMP_QX_PLOT_RANGE(), function(i)
+                    VaR_PCOMP(
+                        kappa = i,
+                        shape = shapePCOMP(),
+                        rate = ratePCOMP(),
+                        lambda = lambdaPCOMP(),
+                        ko = koPCOMP(),
+                        distr_severity = severityPCOMP()
+                    ))
+                # ,col_fill = ifelse(BNCOMP_QX_PLOT_RANGE <= xBNCOMP, "Fx", "Sx")
+            ),
+            mapping = aes(x = k,
+                          y = quantile)
+        ) +
+            geom_line(stat = "identity"
+                      # ,aes(fill = col_fill),
+                      # alpha = 0.7,
+                      # width = 0.3
+            ) +
+            guides(fill = F) +
+            theme_classic()
+    })
+    
+    output$FxPCOMP <- renderPlotly({
+        ggplot(
+            data = data.frame(
+                x = xlim_PCOMP_SERVER(),
+                prob = sapply(xlim_PCOMP_SERVER(), function(i)
+                    p_PCOMP(
+                        x = i,
+                        shape = shapePCOMP(),
+                        rate = ratePCOMP(),
+                        lambda = lambdaPCOMP(),
+                        ko = koPCOMP()
+                    )),
+                col_fill = ifelse(xlim_PCOMP_SERVER() <= xPCOMP(), "Fx", "Sx")
+            ),
+            mapping = aes(x = x,
+                          y = prob)
+        ) +
+            geom_bar(
+                stat = "identity",
+                aes(fill = col_fill),
+                alpha = 0.7,
+                width = 0.3
+            ) +
+            guides(fill = F) +
+            theme_classic()
+    })
+    
+#### Loi Binomiale Composée Serveur ####
     
     xBINCOMP <- reactive({input$xBINCOMP})
     nBINCOMP <- reactive({input$nBINCOMP})
@@ -4382,8 +4589,13 @@ myserver <- function(input, output, session)
     # Créer ce input avec UI pour le cacher dans le cas d'une lognormale
     output$koBINCOMPUI <- renderUI({
         if (input$severityBINCOMP == "Gamma") {
-            numericInput('koBINCOMP', label = withMathJax('$$k_{0}$$'), value = 300, step = 100, min = 0, max = 1)
+            numericInput('koBINCOMP', label = withMathJax('$$k_{0}$$'), value = 100, step = 10, min = 0)
         }
+    })
+    
+    # Veut que le maximum soit le paramètre de taille (n) qui est réactif et donc on doit outputer le input avec un uiOutpout
+    output$xBINCOMPUI <- renderUI({
+        numericInput('xBINCOMP', '$$x$$', value = 2, min = 0, max = nBINCOMP())
     })
     
     ## Ici on crée un gros observeEvent qui va modifier les paramètres de la BINCOMP/exponentielle/khi-carrée selon les 2 radio buttons:
@@ -4458,51 +4670,114 @@ myserver <- function(input, output, session)
         )
     })
     
-    
     # densityBINCOMP <- reactive({format(dBINCOMP(input$xBINCOMP, shapeBINCOMP(), rateBINCOMP()),scientific = F,  nsmall = 6)})
     
-    repartBINCOMP <- reactive({format(p_BINCOMP(x = xBINCOMP(), 
-                                              n = nBINCOMP(),
-                                              q = qBINCOMP(),
-                                              shapeBINCOMP(), 
-                                              rateBINCOMP(),
-                                              ko = koBINCOMP(),
-                                              distr_severity = input$severityBINCOMP), 
-                                     nsmall = 6, scientific = F)
+    repartsurvieBINCOMP <- reactive({
+        if(input$xlim_BINCOMP == T)
+        {
+            format(p_BINCOMP(x = xBINCOMP(), 
+                             n = nBINCOMP(),
+                             q = qBINCOMP(),
+                             shape = shapeBINCOMP(), 
+                             rate = rateBINCOMP(),
+                             ko = koBINCOMP(),
+                             distr_severity = input$severityBINCOMP), 
+                   nsmall = 6, scientific = F)
+        }
+        else
+        {
+            format(1 - p_BINCOMP(x = xBINCOMP(), 
+                                 n = nBINCOMP(),
+                                 q = qBINCOMP(),
+                                 shape = shapeBINCOMP(), 
+                                 rate = rateBINCOMP(),
+                                 ko = koBINCOMP(),
+                                 distr_severity = input$severityBINCOMP), 
+                   nsmall = 6, scientific = F)
+        }
+        
     })
     
-    survieBINCOMP <- reactive({format(1 - p_BINCOMP(x = xBINCOMP(), 
-                                                  n = nBINCOMP(),
-                                                  q = qBINCOMP(),
-                                                  shapeBINCOMP(), 
-                                                  rateBINCOMP(),
-                                                  ko = koBINCOMP(),
-                                                  distr_severity = input$severityBINCOMP), nsmall = 6, scientific = F)})
+    repartsurvieBINCOMP_LATEX <- reactive({
+        if(input$xlim_BINCOMP == T)
+        {
+            "F_{X}"
+        }
+        else
+        {
+            "S_{X}"
+        }
+    })
+    
+    # BINCOMP_FX_PLOT_RANGE <- reactive({
+    #     c(0, ceiling(
+    #         VaR_BINCOMP(
+    #             kappa = 0.9999,
+    #             shape = shapeBINCOMP(),
+    #             rate = rateBINCOMP(),
+    #             n = nBINCOMP(),
+    #             q = qBINCOMP(),
+    #             ko = koBINCOMP(),
+    #             distr_severity = severityBINCOMP()
+    #         )
+    #     )
+    #     )
+    # })
+    
+    # xlim_BINCOMP_SERVER <- reactive({
+    #     if(input$xlim_BINCOMP == T)
+    #         seq(from = BINCOMP_FX_PLOT_RANGE()[1],
+    #             to = BINCOMP_FX_PLOT_RANGE()[2],
+    #             by = 1)
+    #     else # à changer plus tard
+    #         seq(from = BINCOMP_FX_PLOT_RANGE()[1],
+    #             to = BINCOMP_FX_PLOT_RANGE()[2],
+    #             by = 1)
+    # })
+    
+    xlim_BINCOMP_SERVER <- reactive({
+        if(input$xlim_BINCOMP == T)
+            seq(from = 0,
+                to = nBINCOMP(),
+                by = 1)
+        else # à changer plus tard
+            seq(from = 0,
+                to = nBINCOMP(),
+                by = 1)
+    })
+    
+    BINCOMP_QX_PLOT_RANGE <- reactive({
+        seq(from = 0,
+            to = 1,
+            by = .01)
+    })
     
     VaRBINCOMP <- reactive({format(VaR_BINCOMP(kappa = kBINCOMP(), 
-                                             n     = nBINCOMP(),
-                                             q     = qBINCOMP(),
-                                             shapeBINCOMP(), 
-                                             rateBINCOMP(),
-                                             ko = koBINCOMP()
-    ), nsmall = 6)})
-    
-    varkBINCOMP <- reactive({VaR_BINCOMP(kappa = kBINCOMP(), 
-                                       n     = nBINCOMP(),
-                                       q     = qBINCOMP(),
-                                       rateBINCOMP(),
-                                       shapeBINCOMP(), 
-                                       ko = koBINCOMP()
-    )})
-    
-    TVaRBINCOMP <- reactive({format(TVaR_BINCOMP(kappa    = kBINCOMP(),
                                                n     = nBINCOMP(),
                                                q     = qBINCOMP(),
                                                shapeBINCOMP(), 
                                                rateBINCOMP(),
-                                               vark  = varkBINCOMP(),
-                                               ko    = koBINCOMP(),
+                                               ko = koBINCOMP(),
                                                distr_severity = input$severityBINCOMP
+    ), nsmall = 6)})
+    
+    varkBINCOMP <- reactive({VaR_BINCOMP(kappa = kBINCOMP(), 
+                                         n     = nBINCOMP(),
+                                         q     = qBINCOMP(),
+                                         rateBINCOMP(),
+                                         shapeBINCOMP(), 
+                                         ko = koBINCOMP(),
+                                         distr_severity = input$severityBINCOMP
+    )})
+    
+    TVaRBINCOMP <- reactive({format(TVaR_BINCOMP(kappa    = kBINCOMP(),
+                                                 n     = nBINCOMP(),
+                                                 q     = qBINCOMP(),
+                                                 shapeBINCOMP(), 
+                                                 rateBINCOMP(),
+                                                 vark  = varkBINCOMP(),
+                                                 ko    = koBINCOMP(),
+                                                 distr_severity = input$severityBINCOMP
     ), 
     nsmall = 6)
     })
@@ -4561,16 +4836,11 @@ myserver <- function(input, output, session)
     #                                                      densityBINCOMP()
     # ))})
     
-    output$repartBINCOMP <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$", 
-                                                         xBINCOMP(),
-                                                         repartBINCOMP()
+    output$repartsurvieBINCOMP <- renderUI({withMathJax(sprintf("$$%s(%s) = %s$$",
+                                                               repartsurvieBINCOMP_LATEX(),
+                                                               xBINCOMP(),
+                                                               repartsurvieBINCOMP()
     ))})
-    
-    output$survieBINCOMP <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
-                                                         xBINCOMP(),
-                                                         survieBINCOMP()))
-    })
-    
     
     output$VaRBINCOMP <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$", 
                                                       kBINCOMP(),
@@ -4581,5 +4851,62 @@ myserver <- function(input, output, session)
                                                        kBINCOMP(),
                                                        TVaRBINCOMP()
     ))})
+    
+    output$QxBINCOMP <- renderPlotly({
+        ggplot(
+            data = data.frame(
+                k = BINCOMP_QX_PLOT_RANGE(),
+                quantile = sapply(BINCOMP_QX_PLOT_RANGE(), function(i)
+                    VaR_BINCOMP(
+                        kappa = i,
+                        shape = shapeBINCOMP(),
+                        rate = rateBINCOMP(),
+                        n = nBINCOMP(),
+                        q = qBINCOMP(),
+                        ko = koBINCOMP(),
+                        distr_severity = severityBINCOMP()
+                    ))
+                # ,col_fill = ifelse(BNCOMP_QX_PLOT_RANGE <= xBNCOMP, "Fx", "Sx")
+            ),
+            mapping = aes(x = k,
+                          y = quantile)
+        ) +
+            geom_line(stat = "identity"
+                      # ,aes(fill = col_fill),
+                      # alpha = 0.7,
+                      # width = 0.3
+            ) +
+            guides(fill = F) +
+            theme_classic()
+    })
+    
+    output$FxBINCOMP <- renderPlotly({
+        ggplot(
+            data = data.frame(
+                x = xlim_BINCOMP_SERVER(),
+                prob = sapply(xlim_BINCOMP_SERVER(), function(i)
+                    p_BINCOMP(
+                        x = i,
+                        shape = shapeBINCOMP(),
+                        rate = rateBINCOMP(),
+                        n = nBINCOMP(),
+                        q = qBINCOMP(),
+                        ko = koBINCOMP(),
+                        distr_severity = input$severityBINCOMP
+                    )),
+                col_fill = ifelse(xlim_BINCOMP_SERVER() <= xBINCOMP(), "Fx", "Sx")
+            ),
+            mapping = aes(x = x,
+                          y = prob)
+        ) +
+            geom_bar(
+                stat = "identity",
+                aes(fill = col_fill),
+                alpha = 0.7,
+                width = 0.3
+            ) +
+            guides(fill = F) +
+            theme_classic()
+    })
     
 }

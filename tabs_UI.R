@@ -2040,7 +2040,8 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
                     width = NULL,
                     numericInput('rBNCOMP', label = withMathJax('$$r$$'), value = 5),
                     numericInput('qBNCOMP', label = withMathJax('$$q$$'), min = 0, max = 1, step = .1, value = .5),
-                    numericInput('koBNCOMP', label = withMathJax('$$k_{0}$$'), value = 300, step = 100, min = 0, max = 1),
+                    # numericInput('koBNCOMP', label = withMathJax('$$k_{0}$$'), value = 300, step = 100, min = 0, max = 1),
+                    uiOutput("koBNCOMPUI"),
                     uiOutput("shapeBNCOMPUI"),
                     uiOutput("rateBNCOMPUI"),
                     switchInput(
@@ -2075,18 +2076,27 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
                     status = "danger", # couleur de la boite
                     numericInput('xBNCOMP', '$$x$$', value = 10, min = 0),
                     # uiOutput("densityBNCOMP"),
-                    tabBox(
-                        width = NULL,
-                        tabPanel("Répartition",
-                                 uiOutput("repartBNCOMP")
-
-                        )
-                        ,tabPanel("Survie",
-                              uiOutput("survieBNCOMP")
-
-                        )
-
-                    )
+                    
+                    switchInput(
+                        inputId = "xlim_BNCOMP",
+                        onStatus = "danger",
+                        onLabel = "Répartition",
+                        offStatus = "info",
+                        offLabel = "Survie",
+                        value = T,
+                        labelWidth = "10px"
+                    ),
+                    
+                    uiOutput("repartsurvieBNCOMP"),
+                    p("Graphique"),
+                    radioGroupButtons(inputId = "plot_choice_BNCOMP",
+                                      choices = c(
+                                          # "Fonction de masse",
+                                                  "Fonction de répartition"),
+                                      selected = "Fonction de répartition",
+                                      justified = TRUE),
+                    plotlyOutput("FxBNCOMP")
+                    
                 )
                 ),
                 align = "center"
@@ -2104,7 +2114,8 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
                     status = "success", # grosseur du tezte
                     numericInput('kBNCOMP', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                     uiOutput("VaRBNCOMP"),
-                    uiOutput("TVaRBNCOMP")
+                    uiOutput("TVaRBNCOMP"),
+                    plotlyOutput("QxBNCOMP")
                 )
                 ),
                 align = "center"
@@ -2146,8 +2157,8 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
                     solidHeader = T,
                     width = NULL,
                     numericInput('lambdaPCOMP', label = withMathJax('$$\\lambda$$'), value = 5, min = 0),
-                    numericInput('koPCOMP', label = withMathJax('$$k_{0}$$'), value = 200, step = 100, min = 0, max = 1),
-                    # uiOutput("koPCOMPUI"),
+                    # numericInput('koPCOMP', label = withMathJax('$$k_{0}$$'), value = 200, step = 100, min = 0, max = 1),
+                    uiOutput("koPCOMPUI"),
                     uiOutput("shapePCOMPUI"),
                     uiOutput("ratePCOMPUI"),
                     switchInput(
@@ -2181,16 +2192,34 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
                     solidHeader = TRUE, # grosseur du tezte
                     status = "danger", # couleur de la boite
                     numericInput('xPCOMP', '$$x$$', value = 10, min = 0),
-                    tabBox(
-                        width = NULL,
-                        tabPanel("Répartition",
-                                 uiOutput("repartPCOMP")
-                        ),
-                        tabPanel("Survie",
-                                 uiOutput("surviePCOMP")
-                        )
-
-                    )
+                    
+                    switchInput(
+                        inputId = "xlim_PCOMP",
+                        onStatus = "danger",
+                        onLabel = "Répartition",
+                        offStatus = "info",
+                        offLabel = "Survie",
+                        value = T,
+                        labelWidth = "10px"
+                    ),
+                    uiOutput("repartsurviePCOMP"),
+                    p("Graphique"),
+                    # div(id = "DIV-FX_PLOT_RANGE-PCOMP", style="width: 100% ; height: 400px",
+                    #     sliderInput(inputId = "PCOMP_FX_PLOT_RANGE", 
+                    #                 label = "",
+                    #                 min = 0, 
+                    #                 max = 100, 
+                    #                 value = c(0, 30)
+                    #     # )
+                    # ),
+                    radioGroupButtons(inputId = "plot_choice_PCOMP",
+                                      choices = c(
+                                          # "Fonction de masse",
+                                                  "Fonction de répartition"),
+                                      selected = "Fonction de répartition",
+                                      justified = TRUE),
+                    plotlyOutput("FxPCOMP")
+                    
                 )
                 ),
                 align = "center"
@@ -2208,7 +2237,8 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
                     status = "success", # grosseur du tezte
                     numericInput('kPCOMP', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                     uiOutput("VaRPCOMP"),
-                    uiOutput("TVaRPCOMP")
+                    uiOutput("TVaRPCOMP"),
+                    plotlyOutput("QxPCOMP")
                 )
                 ),
                 align = "center"
@@ -2285,20 +2315,28 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
                     width = NULL,
                     solidHeader = TRUE, # grosseur du tezte
                     status = "danger", # couleur de la boite
-                    numericInput('xBINCOMP', '$$x$$', value = 10, min = 0),
+                    uiOutput("xBINCOMPUI"),
                     # uiOutput("densityBINCOMP"),
-                        tabBox(
-                            width = NULL,
-                            tabPanel("Répartition",
-                                     uiOutput("repartBINCOMP")
-                                     
-                            )
-                            ,tabPanel("Survie",
-                                      uiOutput("survieBINCOMP")
-                                      
-                            )
-                            
-                        )
+                    
+                    switchInput(
+                        inputId = "xlim_BINCOMP",
+                        onStatus = "danger",
+                        onLabel = "Répartition",
+                        offStatus = "info",
+                        offLabel = "Survie",
+                        value = T,
+                        labelWidth = "10px"
+                    ),
+                    uiOutput("repartsurvieBINCOMP"),
+                    p("Graphique"),
+                    radioGroupButtons(inputId = "plot_choice_BINCOMP",
+                                      choices = c(
+                                          # "Fonction de masse",
+                                          "Fonction de répartition"),
+                                      selected = "Fonction de répartition",
+                                      justified = TRUE),
+                    plotlyOutput("FxBINCOMP")
+                    
                     )
                 ),
                 align = "center"
@@ -2316,7 +2354,8 @@ tab_UNID_UI <- tabItem(tabName = "UniformeD",
                         status = "success", # grosseur du tezte
                         numericInput('kBINCOMP', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                         uiOutput("VaRBINCOMP"),
-                        uiOutput("TVaRBINCOMP")
+                        uiOutput("TVaRBINCOMP"),
+                        plotlyOutput("QxBINCOMP")
                     )
                 ),
                 align = "center"
