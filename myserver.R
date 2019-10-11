@@ -261,6 +261,246 @@ myserver <- function(input, output, session)
     output$descriptionEXCESS_MEAN <- renderText({"Ébauche d'outil pour observer la fonction d'excès-moyen pour plusieurs distributions. À travailler après que je comprends mieux les distributions Lognormale et Weibull."})
     
     
+#### Serveur outil de la fonction d'approximations ####
+    
+    nBIN_APPROX_TOOL <- reactive({input$nBIN_APPROX_TOOL})
+    pBIN_APPROX_TOOL <- reactive({input$pBIN_APPROX_TOOL})
+    lamPOI_APPROX_TOOL <- reactive({nBIN_APPROX_TOOL() * pBIN_APPROX_TOOL()})
+    N_HG_APPROX_TOOL <- reactive({input$N_HG_APPROX_TOOL})
+    petitN_HG_APPROX_TOOL <- reactive({input$petitN_HG_APPROX_TOOL})
+    m_HG_APPROX_TOOL <- reactive({input$m_HG_APPROX_TOOL})
+    
+    output$changing_pBIN_APPROX_TOOL <- renderUI({
+        numericInput('pBIN_APPROX_TOOL', '$$p$$', value = .2, min = 0, max = 1, step = .1)
+    })
+    
+    output$changing_nBIN_APPROX_TOOL <- renderUI({
+        numericInput('nBIN_APPROX_TOOL', withMathJax('$$n$$'), value = 100, min = 0, step = 1)
+    })
+    
+    output$changing_N_HG_APPROX_TOOL <- renderUI({
+        # cache par défaut et fait apparaitre plus tard
+        hidden(
+            numericInput('N_HG_APPROX_TOOL', '$$N$$', value = 100, min = 0, step = 1)
+        )
+    })
+    
+    output$changing_petitN_HG_APPROX_TOOL <- renderUI({
+        # cache par défaut et fait apparaitre plus tard
+        hidden(
+            numericInput('petitN_HG_APPROX_TOOL', 
+                     '$$n$$', 
+                     value = 25, 
+                     min = 0, 
+                     # max = (N_HG_APPROX_TOOL() - 1),
+                     step = 5)
+        )
+    })
+    
+    output$changing_m_HG_APPROX_TOOL <- renderUI({
+        # cache par défaut et fait apparaitre plus tard
+        hidden(
+            numericInput('m_HG_APPROX_TOOL', 
+                     '$$m$$', 
+                     value = 60, 
+                     min = 0, 
+                     # max = N_HG_APPROX_TOOL(),
+                     step = 5)
+        )
+    })
+    
+    output$distr_BIN_APPROX_TOOL <- renderUI({
+        if(input$approx_choice_APPROX_TOOL == "Hypergeometrique")
+        {
+            withMathJax(sprintf("$$\\mathcal{HyperGéo}(N = %s, n = %s, m = %s)$$",
+                                N_HG_APPROX_TOOL(),
+                                petitN_HG_APPROX_TOOL(),
+                                m_HG_APPROX_TOOL()
+            ))
+        }
+        else 
+        {
+            withMathJax(sprintf("$$X \\sim \\text{Bin}(n = %s, p = %s)$$", 
+                                nBIN_APPROX_TOOL(), 
+                                pBIN_APPROX_TOOL()
+                                )
+                        )
+        }
+    })
+    
+    output$distr_POI_APPROX_TOOL <- renderUI({
+        if(input$approx_choice_APPROX_TOOL == "Poisson")
+            {
+            withMathJax(sprintf("$$\\approx \\text{Poisson}(\\lambda = %s)$$", 
+                                nBIN_APPROX_TOOL() * pBIN_APPROX_TOOL()
+                                )
+                        )
+        }
+        else if(input$approx_choice_APPROX_TOOL == "Binomiale")
+        {
+            withMathJax(sprintf("$$\\rightsquigarrow \\mathcal{N}(\\mu = %s, \\sigma = %s)$$",
+                                nBIN_APPROX_TOOL() * pBIN_APPROX_TOOL(),
+                                nBIN_APPROX_TOOL() * pBIN_APPROX_TOOL() * (1 - pBIN_APPROX_TOOL())
+                                )
+                        )
+        }
+        else if(input$approx_choice_APPROX_TOOL == "Hypergeometrique")
+        {
+            withMathJax(sprintf("$$\\approx \\text{Bin}(n = %s, p = %s)$$",
+                                petitN_HG_APPROX_TOOL(),
+                                m_HG_APPROX_TOOL()/N_HG_APPROX_TOOL()
+                                )
+                        )
+        }
+    })
+    
+    output$distr_APPROX_TOOL <- renderUI({
+        if(input$approx_choice_APPROX_TOOL == "Poisson")
+            titlePanel(tags$a("Approximation de la loi de Poisson"
+                              # , href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Gamma", 
+                              # target = "_blank"
+                              )
+                       )
+        else if (input$approx_choice_APPROX_TOOL == "Binomiale")
+            titlePanel(tags$a("Approximation de la loi Normale"
+                              # , href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Gamma", 
+                              # target = "_blank"
+                              )
+                       )
+        else if (input$approx_choice_APPROX_TOOL == "Hypergeometrique")
+            titlePanel(tags$a("Approximation de la loi Binomiale"
+                              # , href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Gamma", 
+                              # target = "_blank"
+            )
+            )
+    })
+    
+    output$distr_name_APPROX_TOOL <- renderText({
+        if(input$approx_choice_APPROX_TOOL == "Poisson")
+            "\\( X \\sim \\text{Bin}(n, p) \\approx X \\sim\\text{Poiss}(\\lambda = np) \\)"
+        else if (input$approx_choice_APPROX_TOOL == "Binomiale")
+            "\\( X \\sim \\text{Bin}(n, p) \\approx \\mathcal{N}(\\mu = np, \\sigma = np(1 - p)) \\)"
+        else if (input$approx_choice_APPROX_TOOL == "Hypergeometrique")
+            "\\( X \\sim \\text{HyperGéo}(N, n, m) \\approx \\text{Bin}(n = n, p = \\frac{m}{N}) \\)"
+    })
+    
+    observeEvent({
+        input$approx_choice_APPROX_TOOL
+    },
+    {
+        x <- input$approx_choice_APPROX_TOOL
+
+        # rend le paramètre impossible à modifier pour l'utilisateur
+        if (x == "Hypergeometrique")
+        {
+            shinyjs::hide("pBIN_APPROX_TOOL")
+            shinyjs::hide("nBIN_APPROX_TOOL")
+            shinyjs::show("m_HG_APPROX_TOOL")
+            shinyjs::show("petitN_HG_APPROX_TOOL")
+            shinyjs::show("N_HG_APPROX_TOOL")
+        }
+        else
+        {
+            shinyjs::show("pBIN_APPROX_TOOL")
+            shinyjs::show("nBIN_APPROX_TOOL")
+            shinyjs::hide("m_HG_APPROX_TOOL")
+            shinyjs::hide("petitN_HG_APPROX_TOOL")
+            shinyjs::hide("N_HG_APPROX_TOOL")
+        }
+    })
+    
+    output$plot_APPROX_TOOL <- renderPlotly({
+        if(input$approx_choice_APPROX_TOOL == "Poisson")
+        {
+            ggplot(data = 
+                       data.frame(
+                           x = 0:nBIN_APPROX_TOOL(),
+                           prob_bin = dbinom(x = 0:nBIN_APPROX_TOOL(), size = nBIN_APPROX_TOOL(), prob = pBIN_APPROX_TOOL()),
+                           prob_poiss = dpois(x = 0:nBIN_APPROX_TOOL(), lambda = lamPOI_APPROX_TOOL())
+                       ),
+                   mapping = aes(x)
+            ) +
+                geom_bar(aes(y = prob_bin, fill = "Binomiale"),
+                         stat = "identity",
+                         alpha = 0.7,
+                         width = 0.3
+                ) +
+                geom_bar(aes(y = prob_poiss, fill = "Poisson"),
+                         stat = "identity",
+                         alpha = 0.7,
+                         width = 0.3
+                ) +
+                guides(fill = F) +
+                theme_classic() +
+                labs(y = "Pr(X = x)")
+        }
+        else if(input$approx_choice_APPROX_TOOL == "Binomiale")
+        {
+            ggplot(data = 
+                       data.frame(
+                           x = 0:nBIN_APPROX_TOOL(),
+                           prob_bin = dbinom(x = 0:nBIN_APPROX_TOOL(), size = nBIN_APPROX_TOOL(), prob = pBIN_APPROX_TOOL())
+                       ),
+                   mapping = aes(x)
+            ) +
+                geom_bar(aes(y = prob_bin, fill = "Binomiale"),
+                         stat = "identity",
+                         alpha = 0.7,
+                         width = 0.3
+                ) +
+                stat_function(fun = dnorm, 
+                              aes(fill = "Normale"),
+                              args = list(mean = nBIN_APPROX_TOOL() * pBIN_APPROX_TOOL(),
+                                          sd = sqrt(nBIN_APPROX_TOOL() * pBIN_APPROX_TOOL() * (1 - pBIN_APPROX_TOOL())))) +
+                guides(fill = F) +
+                theme_classic() +
+                labs(y = "Pr(X = x)")
+        }
+        else if(input$approx_choice_APPROX_TOOL == "Hypergeometrique")
+        {
+            range_FX_HG <- reactive({0:min(input$petitN_HG_APPROX_TOOL, input$m_HG_APPROX_TOOL)})
+            ggplot(
+                data.frame(
+                    x = range_FX_HG(),
+                    prob_bin = dbinom(x = range_FX_HG(), size = petitN_HG_APPROX_TOOL(), prob = m_HG_APPROX_TOOL()/N_HG_APPROX_TOOL()),
+                    prob_HG = dhyper(x = range_FX_HG(), m = m_HG_APPROX_TOOL(), n = N_HG_APPROX_TOOL() - m_HG_APPROX_TOOL(), k = petitN_HG_APPROX_TOOL())
+                ),
+                aes(x)
+            ) +
+                geom_bar(aes(y = prob_bin, fill = "Binomiale"),
+                         stat = "identity",
+                         alpha = 0.7,
+                         width = 0.3
+                ) +
+                geom_bar(aes(y = prob_HG, fill = "Hypergéométrique"),
+                         stat = "identity",
+                         alpha = 0.7,
+                         width = 0.3
+                ) +
+                guides(fill = F) +
+                theme_classic() +
+                labs(y = "Pr(X = x)")
+        }
+    })
+    
+    output$descriptionAPPROX_TOOL <- renderText({
+        if(input$approx_choice_APPROX_TOOL == "Poisson")
+        {
+            "On peut estimer la loi de Poisson par la loi binomiale lorsque n est très grand.
+            À noter qu'en faisant celà, nous avons l'avantage de passer d'une loi de 2 paramètres à une avec un seul paramètre."
+        }
+        else if (input$approx_choice_APPROX_TOOL == "Binomiale")
+        {
+            "La loi normale peut être approximée par une loi binomiale lorsque n est grand. Dans un tel cas, il est important de ne pas oublier la correction de continuité. De plus, lorsque n tends vers l'infini, la loi binomiale converge vers une normal standard."
+        }
+        else if (input$approx_choice_APPROX_TOOL == "Hypergeometrique")
+        {
+            "La loi binomiale peut être approximée par une loi hypergéométrique lorsque m et N sont très grand par rapport à la taille de l'échantillon n.
+            Ceci est puisque la probabilité de piger un objet demeure presque inchangé à ce point, que ce soit avec ou sans remise."
+        }
+    })
+    
+    
 #### Loi Normale Serveur ####
         
     muNORM <- reactive({input$muNORM})
@@ -400,6 +640,15 @@ myserver <- function(input, output, session)
                 fill = "red",
                 alpha = 0.7
             )
+    })
+    
+    output$QuantileNORM <- renderPlotly({
+        ggplot(data = data.frame(x = c(0,1)),
+               aes(x)) +
+            stat_function(fun = qnorm,
+                          args = list(mean = muNORM(),
+                                      sd = sqrt(sigma2NORM()))) +
+            theme_classic() 
     })
     
     output$FxNORM <- renderPlotly({
@@ -608,11 +857,11 @@ myserver <- function(input, output, session)
         
         output$loi_gamma <- renderUI({
             if(input$distrchoiceEXPOFAM == "Gamma")
-                titlePanel(tags$a("Loi Gamma", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Gamma"))
+                titlePanel(tags$a("Loi Gamma", target = "_blank", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Gamma"))
             else if (input$distrchoiceEXPOFAM == "Exponentielle")
-                titlePanel(tags$a("Loi Exponentielle", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Exponentielle"))
+                titlePanel(tags$a("Loi Exponentielle", target = "_blank", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Exponentielle"))
             else
-                titlePanel(tags$a("Loi du Khi-carré", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-du-Khi-Carr%C3%A9"))
+                titlePanel(tags$a("Loi du Khi-carré", target = "_blank", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-du-Khi-Carr%C3%A9"))
         })
         
         output$distr_gamma <- renderText({
@@ -926,6 +1175,15 @@ myserver <- function(input, output, session)
                 )
         })
         
+        output$QuantilePARETO <- renderPlotly({
+            ggplot(data = data.frame(x = c(0,1)),
+                   aes(x)) +
+                stat_function(fun = qpareto,
+                              args = list(shape = alphaPARETO(), 
+                                          scale = lambdaPARETO())) 
+            + theme_classic()
+        })
+        
         output$FxPARETO <- renderPlotly({
             ggplot(data = data.frame(x = c(0,
                                            3 * lambdaPARETO()
@@ -1031,19 +1289,6 @@ myserver <- function(input, output, session)
                                               lambdaBURR()), 
                                           nsmall = 6)})
         
-        # repartBURR <- reactive({format(pburr(q = xBURR(), 
-        #                                      alphaBURR(), 
-        #                                      tauBURR(),
-        #                                      lambdaBURR()), 
-        #                                  nsmall = 6)})
-        # 
-        # survieBURR <- reactive({format(pburr(q = xBURR(), 
-        #                                      alphaBURR(), 
-        #                                      tauBURR(),
-        #                                      lambdaBURR(),
-        #                                      lower.tail = F), 
-        #                                  nsmall = 6)})
-        
         VaRBURR <- reactive({format(VaR_burr(kappa = kBURR(),
                                              alphaBURR(),
                                              lambdaBURR(),
@@ -1124,16 +1369,6 @@ myserver <- function(input, output, session)
                                                                  xBURR(),
                                                                  repartsurvieBURR()
         ))})
-        
-        # output$repartBURR <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$",
-        #                                                      xBURR(),
-        #                                                      repartBURR()))
-        # })
-        # 
-        # output$survieBURR <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
-        #                                                      xBURR(),
-        #                                                      survieBURR()))
-        # })
         
         output$VaRBURR <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
                                                           kBURR(),
@@ -1219,61 +1454,14 @@ myserver <- function(input, output, session)
                 )
         })
         
-        
-        # output$FxBURR <- renderPlotly({
-        #     ggplot(data = data.frame(x = c(
-        #         0, 5 * tauBURR())
-        #     ),
-        #     aes(x)) +
-        #         stat_function(fun = dburr,
-        #                       args = list(alphaBURR(), 
-        #                                   tauBURR(),
-        #                                   lambdaBURR())) +
-        #         ylab("f(x)") +
-        #         theme_classic() +
-        #         stat_function(
-        #             fun = dburr,
-        #             args = list(alphaBURR(), 
-        #                         tauBURR(),
-        #                         lambdaBURR()),
-        #             xlim = c(0, xBURR()),
-        #             geom = "area",
-        #             fill = "red",
-        #             alpha = 0.7
-        #         )
-        # })
-        # 
-        # output$SxBURR <- renderPlotly({
-        #     ggplot(data = data.frame(x = c(
-        #         0, 5 * tauBURR())
-        #     ),
-        #     aes(x)) +
-        #         stat_function(fun = dburr,
-        #                       args = list(alphaBURR(), 
-        #                                   tauBURR(),
-        #                                   lambdaBURR())) +
-        #         ylab("f(x)") +
-        #         theme_classic() +
-        #         stat_function(
-        #             fun = dburr,
-        #             args = list(alphaBURR(), 
-        #                         tauBURR(),
-        #                         lambdaBURR()),
-        #             xlim = c(xBURR(), 5 * tauBURR()),
-        #             geom = "area",
-        #             fill = "red",
-        #             alpha = 0.7
-        #         )
-        # })
-        # 
-        # output$QxBURR <- renderPlotly({
-        #     ggplot(data = data.frame(x = c(0,1)),
-        #            aes(x)) +
-        #         stat_function(fun = qburr,
-        #                       args = list(alphaBURR(), 
-        #                                   tauBURR(),
-        #                                   lambdaBURR())) + theme_classic()
-        # })
+        output$QuantileBURR <- renderPlotly({
+            ggplot(data = data.frame(x = c(0,1)),
+                   aes(x)) +
+                stat_function(fun = qburr,
+                              args = list(alphaBURR(),
+                                          tauBURR(),
+                                          lambdaBURR())) + theme_classic()
+        })
         
         
 #### Loi Weibull Serveur ####
@@ -1434,17 +1622,6 @@ myserver <- function(input, output, session)
                                                                     repartsurvieWEIBULL()
         ))})
         
-        
-        # output$repartWEIBULL <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$",
-        #                                                    xWEIBULL(),
-        #                                                    repartWEIBULL()))
-        # })
-        # 
-        # output$survieWEIBULL <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
-        #                                                    xWEIBULL(),
-        #                                                    survieWEIBULL()))
-        # })
-        
         output$VaRWEIBULL <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
                                                         kWEIBULL(),
                                                         VaRWEIBULL()))
@@ -1498,6 +1675,14 @@ myserver <- function(input, output, session)
                 )
         })
         
+        output$QuantileWEIBULL <- renderPlotly({
+            ggplot(data = data.frame(x = c(0,1)),
+                   aes(x)) +
+                stat_function(fun = qweibull,
+                              args = list(shape = tauWEIBULL(),
+                                          scale = betaWEIBULL())) + theme_classic()
+        })
+        
         output$FxWEIBULL <- renderPlotly({
             ggplot(data = data.frame(x = c(0,
                                            2 * betaWEIBULL()
@@ -1533,21 +1718,21 @@ myserver <- function(input, output, session)
         dLNORM <- reactive({input$dLNORM})
         
         plot_choice_LNORM_QX_SERVER <- reactive({
-            if(input$plot_choice_LNORM_QX == "Densité")
+            if(input$plot_choice_LNORM_QX == "Fonction de densité")
                 dlnorm
-            else
+            else if(input$plot_choice_LNORM_QX == "Fonction de répartition")
                 plnorm
         })
         
         plot_choice_LNORM_SERVER <- reactive({
-            if(input$plot_choice_LNORM == "Densité")
+            if(input$plot_choice_LNORM == "Fonction de densité")
                 dlnorm
             else
                 plnorm
         })
         
         plot_color_LNORM_SERVER <- reactive({
-            if(xLNORM() == T)
+            if(input$xlim_LNORM == T)
                 "Dark Green"
             else
                 "Royal Blue"
@@ -1716,24 +1901,43 @@ myserver <- function(input, output, session)
         })
         
         output$QxLNORM <- renderPlotly({
-            ggplot(data = data.frame(x = c(0,
-                                          VaR_lnorm(kappa = 0.99, muLNORM(), sqrt(sigma2LNORM()))
-            )
-            ),
-            aes(x)) + 
-                stat_function(fun = plot_choice_LNORM_QX_SERVER(),
-                              args = list(meanlog = muLNORM(), sdlog = sqrt(sigma2LNORM()))) + 
-                ylab("f(x)") + 
-                theme_classic() +
-                stat_function(
-                    fun = plot_choice_LNORM_QX_SERVER(),
-                    args = list(meanlog = muLNORM(), sdlog = sqrt(sigma2LNORM())),
-                    xlim = c(VaRLNORM(), VaR_lnorm(kappa = 0.99, muLNORM(), sqrt(sigma2LNORM()))),
-                    geom = "area",
-                    fill = "red",
-                    alpha = 0.7
-                )
+            if(input$plot_choice_LNORM_QX == "Fonction quantile")
+            {
+                ggplot(data = data.frame(x = c(0,1)),
+                       aes(x)) +
+                    stat_function(fun = qlnorm,
+                                  args = list(mean = muLNORM(),
+                                              sd = sqrt(sigma2LNORM()))) + theme_classic()
+            }
+            else
+                {
+                    ggplot(data = data.frame(x = c(0,
+                                                   VaR_lnorm(kappa = 0.99, muLNORM(), sqrt(sigma2LNORM()))
+                    )
+                    ),
+                    aes(x)) + 
+                        stat_function(fun = plot_choice_LNORM_QX_SERVER(),
+                                      args = list(meanlog = muLNORM(), sdlog = sqrt(sigma2LNORM()))) + 
+                        ylab("f(x)") + 
+                        theme_classic() +
+                        stat_function(
+                            fun = plot_choice_LNORM_QX_SERVER(),
+                            args = list(meanlog = muLNORM(), sdlog = sqrt(sigma2LNORM())),
+                            xlim = c(VaRLNORM(), VaR_lnorm(kappa = 0.99, muLNORM(), sqrt(sigma2LNORM()))),
+                            geom = "area",
+                            fill = "red",
+                            alpha = 0.7
+                        )
+                }
         })
+        
+        # output$QuantileLNORM <- renderPlotly({
+        #     ggplot(data = data.frame(x = c(0,1)),
+        #            aes(x)) +
+        #         stat_function(fun = qlnorm,
+        #                       args = list(mean = muLNORM(),
+        #                                   sd = sqrt(sigma2LNORM()))) + theme_classic()
+        # })
         
         output$FxLNORM <- renderPlotly({
             ggplot(data = data.frame(x = c(0,
@@ -1808,39 +2012,28 @@ myserver <- function(input, output, session)
         })
         
         densityBETA <- reactive({format(dbeta(x = xBETA(), 
-                                                  alphaBETA(), 
-                                                  betaBETA()), 
+                                              shape1 = alphaBETA(), 
+                                              shape2 = betaBETA()), 
                                           nsmall = 6)})
         
         repartsurvieBETA <- reactive({
             if(input$xlim_BETA == T)
             {
                 format(pbeta(q = xBETA(), 
-                             alphaBETA(), 
-                             betaBETA()), 
+                             shape1 = alphaBETA(), 
+                             shape2 = betaBETA()), 
                        nsmall = 6)
             }
             else
             {
                 format(pbeta(q = xBETA(), 
-                             alphaBETA(), 
-                             betaBETA(),
+                             shape1 = alphaBETA(), 
+                             shape2 = betaBETA(),
                              lower.tail = F), 
                        nsmall = 6)
             }
             
         })
-        
-        # repartBETA <- reactive({format(pbeta(q = xBETA(), 
-        #                                          alphaBETA(), 
-        #                                          betaBETA()), 
-        #                                  nsmall = 6)})
-        # 
-        # survieBETA <- reactive({format(pbeta(q = xBETA(), 
-        #                                      alphaBETA(), 
-        #                                      betaBETA(),
-        #                                      lower.tail = F), 
-        #                                  nsmall = 6)})
         
         VaRBETA <- reactive({format(VaR_beta(k = kBETA(),
                                              alphaBETA(), 
@@ -1913,16 +2106,6 @@ myserver <- function(input, output, session)
                                                                  repartsurvieBETA()
         ))})
         
-        # output$repartBETA <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$",
-        #                                                      xBETA(),
-        #                                                      repartBETA()))
-        # })
-        # 
-        # output$survieBETA <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
-        #                                                      xBETA(),
-        #                                                      survieBETA()))
-        # })
-        
         output$VaRBETA <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
                                                           kBETA(),
                                                           VaRBETA()))
@@ -1993,53 +2176,14 @@ myserver <- function(input, output, session)
                 )
         })
         
-        
-        # output$FxBETA <- renderPlotly({
-        #     ggplot(data = data.frame(x = c(0,1)),
-        #     aes(x)) +
-        #         stat_function(fun = dbeta,
-        #                       args = list(alphaBETA(), 
-        #                                   betaBETA())) +
-        #         ylab("f(x)") +
-        #         theme_classic() +
-        #         stat_function(
-        #             fun = dbeta,
-        #             args = list(alphaBETA(), 
-        #                         betaBETA()),
-        #             xlim = c(0, xBETA()),
-        #             geom = "area",
-        #             fill = "red",
-        #             alpha = 0.7
-        #         )
-        # })
-        # 
-        # output$SxBETA <- renderPlotly({
-        #     ggplot(data = data.frame(x = c(0,1)),
-        #            aes(x)) +
-        #         stat_function(fun = dbeta,
-        #                       args = list(alphaBETA(), 
-        #                                   betaBETA())) +
-        #         ylab("f(x)") +
-        #         theme_classic() +
-        #         stat_function(
-        #             fun = dbeta,
-        #             args = list(alphaBETA(), 
-        #                         betaBETA()),
-        #             xlim = c(xBETA(),1),
-        #             geom = "area",
-        #             fill = "red",
-        #             alpha = 0.7
-        #         )
-        # })
-        # 
-        # 
-        # output$QxBETA <- renderPlotly({
-        #     ggplot(data = data.frame(x = c(0,1)),
-        #            aes(x)) +
-        #         stat_function(fun = qbeta,
-        #                       args = list(alphaBETA(), 
-        #                                   betaBETA())) + theme_classic()
-        # })
+        output$QuantileBETA <- renderPlotly({
+            ggplot(data = data.frame(x = c(0,1)),
+                   aes(x)) +
+                stat_function(fun = qbeta,
+                              args = list(alphaBETA(),
+                                          betaBETA())) + 
+                theme_classic()
+        })
         
         
         
@@ -2119,17 +2263,6 @@ myserver <- function(input, output, session)
                                                   betaERLANG()), 
                                         nsmall = 6)})
         
-        # repartERLANG <- reactive({format(perlang(x = xERLANG(),
-        #                                          nERLANG(),
-        #                                          betaERLANG()), 
-        #                                nsmall = 6)})
-        # 
-        # survieERLANG <- reactive({format(perlang(x = xERLANG(),
-        #                                          nERLANG(),
-        #                                          betaERLANG(),
-        #                                          lower.tail = F), 
-        #                                nsmall = 6)})
-        # 
         # TVaRERLANG <- reactive({format(TVaR_erlang(kappa = input$kERLANG,
         #                                        VaRERLANG_a(),
         #                                        nERLANG(),
@@ -2189,16 +2322,6 @@ myserver <- function(input, output, session)
                                                                    xERLANG(),
                                                                    repartsurvieERLANG()
         ))})
-        
-        # output$repartERLANG <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$",
-        #                                                      xERLANG(),
-        #                                                      repartERLANG()))
-        # })
-        # 
-        # output$survieERLANG <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
-        #                                                      xERLANG(),
-        #                                                      survieERLANG()))
-        # })
         
         # output$TVaRERLANG <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$",
         #                                                  kERLANG(),
@@ -2273,53 +2396,16 @@ myserver <- function(input, output, session)
                     alpha = 0.7
                 )
         })
-        
-        # output$FxERLANG <- renderPlotly({
-        #     ggplot(data = data.frame(x = c(0, 2 * nERLANG() * betaERLANG())),
-        #            aes(x)) +
-        #         stat_function(fun = derlang,
-        #                       args = list(nERLANG(),
-        #                                   betaERLANG())) +
-        #         ylab("f(x)") +
-        #         theme_classic() +
-        #         stat_function(
-        #             fun = derlang,
-        #             args = list(nERLANG(),
-        #                         betaERLANG()),                    
-        #             xlim = c(0, xERLANG()),
-        #             geom = "area",
-        #             fill = "red",
-        #             alpha = 0.7
-        #         )
-        # })
-        # 
-        # output$SxERLANG <- renderPlotly({
-        #     ggplot(data = data.frame(x = c(0, 2 * nERLANG() * betaERLANG())),
-        #            aes(x)) +
-        #         stat_function(fun = derlang,
-        #                       args = list(nERLANG(),
-        #                                   betaERLANG())) +
-        #         ylab("f(x)") +
-        #         theme_classic() +
-        #         stat_function(
-        #             fun = derlang,
-        #             args = list(nERLANG(),
-        #                         betaERLANG()),                    
-        #             xlim = c(xERLANG(), 2 * nERLANG() * betaERLANG()),
-        #             geom = "area",
-        #             fill = "red",
-        #             alpha = 0.7
-        #         )
-        # })        
-        # 
-        # output$QxERLANG <- renderPlotly({
-        #     ggplot(data = data.frame(x = c(0,1)),
-        #            aes(x)) +
-        #         stat_function(fun = qerlang,
-        #                       args = list(nERLANG(),
-        #                                   betaERLANG())) + theme_classic()
-        # })
-        # 
+
+        output$QuantileERLANG <- renderPlotly({
+            ggplot(data = data.frame(x = c(0,1)),
+                   aes(x)) +
+                stat_function(fun = qerlang,
+                              args = list(nERLANG(),
+                                          betaERLANG())) + 
+                theme_classic()
+        })
+
         
         
 #### Loi Log-logistique Serveur ####
@@ -2523,6 +2609,15 @@ myserver <- function(input, output, session)
                 )
         })
         
+        output$QuantileLOGLOGIS <- renderPlotly({
+            ggplot(data = data.frame(x = c(0,1)),
+                   aes(x)) +
+                stat_function(fun = qllogis,
+                              args = list(shape = lambdaLOGLOGIS(), 
+                                          rate = tauLOGLOGIS())) + 
+                theme_classic()
+        })
+        
         output$FxLOGLOGIS <- renderPlotly({
             ggplot(data = data.frame(x = c(0, VaR_llogis(kappa = 0.999, lam = lambdaLOGLOGIS(), tau = tauLOGLOGIS()))
             ),
@@ -2542,6 +2637,8 @@ myserver <- function(input, output, session)
                     alpha = 0.7
                 )
         })
+        
+        
         
 #### Loi inverse gaussienne Serveur ####
         
@@ -2622,19 +2719,6 @@ myserver <- function(input, output, session)
                                       nsmall = 6)
         })
         
-        # repartIG <- reactive({format(pIG(q = xIG(), 
-        #                                   mu = muIG(),
-        #                                   beta = betaIG()), 
-        #                              nsmall = 6)
-        # })
-        # 
-        # survieIG <- reactive({format(pIG(q = xIG(), 
-        #                                  mu = muIG(),
-        #                                  beta = betaIG(),
-        #                                  lower.tail = F), 
-        #                              nsmall = 6)
-        # })
-        
         VaRIG <- reactive({format(VaR_IG(kappa = kIG(),
                                          muIG(), 
                                          betaIG()),
@@ -2701,16 +2785,6 @@ myserver <- function(input, output, session)
                                                                repartsurvieIG()
         ))})
         
-        # output$repartIG <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$",
-        #                                                       xIG(),
-        #                                                       repartIG()))
-        # })
-        # 
-        # output$survieIG <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
-        #                                                       xIG(),
-        #                                                       survieIG()))
-        # })
-        
         output$VaRIG <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
                                                            kIG(),
                                                            VaRIG()))
@@ -2762,6 +2836,17 @@ myserver <- function(input, output, session)
                 )
         })
         
+        # output$QuantileIG <- renderPlotly({
+        #     ggplot(data = data.frame(x = c(0, 1)),
+        #            aes(x)) +
+        #         stat_function(
+        #             fun = VaR_IG,
+        #             args = list(mu = muIG(),
+        #                         beta = betaIG())
+        #         ) + 
+        #         theme_classic()
+        # })
+        
         output$FxIG <- renderPlotly({
             ggplot(data = data.frame(x = c(0, VaR_IG(kappa = 0.999, mu = muIG(), beta = betaIG()))
             ),
@@ -2781,53 +2866,6 @@ myserver <- function(input, output, session)
                     alpha = 0.7
                 )
         })
-        
-        # output$FxIG <- renderPlotly({
-        #     ggplot(data = data.frame(x = c(0, 1.5 * muIG() + 0.5 *betaIG())),
-        #            aes(x)) +
-        #         stat_function(fun = dIG,
-        #                       args = list(muIG(),
-        #                                   betaIG())) +
-        #         ylab("f(x)") +
-        #         theme_classic() +
-        #         stat_function(
-        #             fun = dIG,
-        #             args = list(muIG(),
-        #                         betaIG()),                    
-        #             xlim = c(0, xERLANG()),
-        #             geom = "area",
-        #             fill = "red",
-        #             alpha = 0.7
-        #         )
-        # })
-        # 
-        # output$SxIG <- renderPlotly({
-        #     ggplot(data = data.frame(x = c(0, 1.5 * muIG() + 0.5 *betaIG())),
-        #            aes(x)) +
-        #         stat_function(fun = dIG,
-        #                       args = list(muIG(),
-        #                                   betaIG())) +
-        #         ylab("f(x)") +
-        #         theme_classic() +
-        #         stat_function(
-        #             fun = dIG,
-        #             args = list(muIG(),
-        #                         betaIG()),                    
-        #             xlim = c(xERLANG(), 1.5 * muIG() + 0.5 *betaIG()),
-        #             geom = "area",
-        #             fill = "red",
-        #             alpha = 0.7
-        #         )
-        # })        
-    
-#            output$QxIG <- renderPlotly({
-#           ggplot(data = data.frame(x = c(0,1)),
- #                  aes(x)) +
-  #              stat_function(fun = q_IG,                  --- ajouter la fonction q_IG---
-   #                           args = list(muIG(),
-    #                                      betaIG())) + theme_classic()
-     #   })
-        
         
 #### Loi Uniforme Continue Serveur ####
         
@@ -2986,6 +3024,14 @@ myserver <- function(input, output, session)
                 )
         })
         
+        output$QuantileUNIC <- renderPlotly({
+            ggplot(data = data.frame(x = c(0,1)),
+                   aes(x)) +
+                stat_function(fun = qunif,
+                              args = list(min = aUNIC(), max = bUNIC())) + 
+                theme_classic()
+        })
+        
         output$FxUNIC <- renderPlotly({
             ggplot(data = data.frame(x = c(aUNIC(),
                                            bUNIC()
@@ -3005,54 +3051,7 @@ myserver <- function(input, output, session)
                     alpha = 0.7
                 )
         })
-        # 
-        # output$FxUNIC <- renderPlotly({
-        #     ggplot(data = data.frame(x = c(
-        #         aUNIC(), bUNIC())
-        #     ),
-        #     aes(x)) +
-        #         stat_function(fun = dunif,
-        #                       args = list(min = aUNIC(), max = bUNIC())) +
-        #         ylab("f(x)") +
-        #         theme_classic() +
-        #         stat_function(
-        #             fun = dunif,
-        #             args = list(min = aUNIC(), max = bUNIC()),
-        #             xlim = c(aUNIC(), xUNIC()),
-        #             geom = "area",
-        #             fill = "red",
-        #             alpha = 0.7
-        #         )
-        # })
-        # 
-        # output$SxUNIC <- renderPlotly({
-        #     ggplot(data = data.frame(x = c(
-        #         aUNIC(), bUNIC())
-        #     ),
-        #     aes(x)) +
-        #         stat_function(fun = dunif,
-        #                       args = list(min = aUNIC(), max = bUNIC())) +
-        #         ylab("f(x)") +
-        #         theme_classic() +
-        #         stat_function(
-        #             fun = dunif,
-        #             args = list(min = aUNIC(), max = bUNIC()),
-        #             xlim = c(xUNIC(), bUNIC()),
-        #             geom = "area",
-        #             fill = "red",
-        #             alpha = 0.7
-        #         )
-        # })        
-        # 
-        # output$QxUNIC <- renderPlotly({
-        #     ggplot(data = data.frame(x = c(0,1)),
-        #            aes(x)) +
-        #         stat_function(fun = qunif,
-        #                       args = list(min = aUNIC(), max = bUNIC())) + theme_classic()
-        # })
-        # 
-        # 
-        
+
         
 #### Loi Binomiale Serveur ####
         
@@ -3124,10 +3123,12 @@ myserver <- function(input, output, session)
         
         output$loi_BIN <- renderUI({
             if(input$distrchoiceBINFAM == "Bernoulli")
-                titlePanel(tags$a("Loi Bernoulli",
+                titlePanel(tags$a("Loi Bernoulli", 
+                                  target = "_blank",
                                   href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Bernoulli"))
             else
-                titlePanel(tags$a("Loi Binomiale",
+                titlePanel(tags$a("Loi Binomiale", 
+                                  target = "_blank",
                                   href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Binomiale"))
         })
         
@@ -3320,9 +3321,9 @@ myserver <- function(input, output, session)
 
     plot_choice_HG_SERVER <- reactive({
         if(input$plot_choice_HG == "Fonction de masse")
-            dhyper(x = 0:min(petitNHG(), mHG()), m = mHG(), n = grosNHG() - mHG(), k = petitNHG())
+            dhyper(x = range_FX_HG(), m = mHG(), n = grosNHG() - mHG(), k = petitNHG())
         else
-            phyper(q = 0:min(petitNHG(), mHG()), m = mHG(), n = grosNHG() - mHG(), k = petitNHG())
+            phyper(q = range_FX_HG(), m = mHG(), n = grosNHG() - mHG(), k = petitNHG())
     })
     
     output$changingpetitNHG <- renderUI({
@@ -3347,7 +3348,7 @@ myserver <- function(input, output, session)
         numericInput('xHG', '$$x$$',
                      min = 0, 
                      value = 0, 
-                     max = min(petitNHG(), mHG()),
+                     max = min(input$petitNHG, input$mHG),
                      step = 1)
     })
     
@@ -3440,12 +3441,20 @@ myserver <- function(input, output, session)
                                                            repartsurvieHG()
     ))})
     
+    range_FX_HG <- reactive({0:min(input$petitNHG, input$mHG)
+        # if(as.numeric(input$petitNHG) <= as.numeric(input$mHG))
+            # 0:petitNHG()
+        # else if(as.numeric(input$petitNHG) > as.numeric(input$mHG))
+            # 0:mHG()
+        
+    })
+    
     output$FxHG <- renderPlotly({
         ggplot(
             data.frame(
-                x = 0:min(petitNHG(), mHG()),
+                x = range_FX_HG(),
                 prob = plot_choice_HG_SERVER(),
-                col_fill = ifelse(0:min(petitNHG(), mHG()) <= xHG(), "Fx", "Sx")
+                col_fill = ifelse(range_FX_HG() <= xHG(), "Fx", "Sx")
             ),
             aes(x = x, y = prob)
         ) +
@@ -3699,9 +3708,9 @@ myserver <- function(input, output, session)
     
     output$loi_BN <- renderUI({
         if(input$distrchoiceBNFAM == "Géometrique")
-            titlePanel(tags$a("Loi Géometrique", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-G%C3%A9om%C3%A9trique"))
+            titlePanel(tags$a("Loi Géometrique", target = "_blank", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-G%C3%A9om%C3%A9trique"))
         else
-            titlePanel(tags$a("Loi Binomiale Négative", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Binomiale-Negative")) 
+            titlePanel(tags$a("Loi Binomiale Négative", target = "_blank", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Binomiale-Negative")) 
     })
     
     output$distr_BN <- renderText({

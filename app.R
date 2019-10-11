@@ -13,14 +13,14 @@
     library(Distributacalcul)
     # devtools::install_github("gabrielcrepeault/tvarPackage")
     library(tvarPackage)
-    library(reshape2)
+    # library(reshape2)
     library(copula)
     library(dplyr)
     
     # library(shinymaterial)
     # library(dashboardthemes)
 } 
-shinyWidgets::shinyWidgetsGallery()
+# shinyWidgets::shinyWidgetsGallery()
 source(file = "myUI.R", local = T)
 source(file = "myserver.R")
 # source(file = "functions.R")

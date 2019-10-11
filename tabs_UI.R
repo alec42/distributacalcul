@@ -280,12 +280,91 @@ tab_excess_mean <- tabItem(tabName = "excess_mean",
                            )
                            )
 
+tab_approx_tool <- tabItem(tabName = "approx_tool",
+                           
+                           fluidPage(
+                               tags$style("#distr_APPROX_TOOL {font-size:30px;}"),
+                               uiOutput("distr_APPROX_TOOL"),
+                               withMathJax(),
+                               textOutput("distr_name_APPROX_TOOL"),
+                               radioGroupButtons(
+                                   inputId = "approx_choice_APPROX_TOOL",
+                                   label = "",
+                                   choices = c("Poisson", 
+                                               "Binomiale",
+                                               "Hypergeometrique"),
+                                   status = "primary"
+                               ),
+                               align = "center"
+                           ),
+                           # fluidRow(
+                           #     titlePanel("Approximations de lois discrètes"),
+                           #     # withMathJax(),
+                           #     # helpText("\\(X \\sim\\mathcal{Normale} \\ (\\mu, \\sigma^2)\\)"),
+                           #     align = "center"
+                           # ),
+                           fluidRow(
+                               column(
+                                   width = 4,
+                                   boxPlus(
+                                       title = "Paramètres",
+                                       status = "primary",
+                                       solidHeader = T,
+                                       width = NULL,
+                                       closable = F,
+                                       uiOutput("changing_nBIN_APPROX_TOOL"),
+                                       uiOutput("changing_pBIN_APPROX_TOOL"),
+                                           uiOutput("changing_N_HG_APPROX_TOOL"),
+                                           uiOutput("changing_petitN_HG_APPROX_TOOL"),
+                                           uiOutput("changing_m_HG_APPROX_TOOL")
+                                   ),
+                                   boxPlus(
+                                       title = "Distributions",
+                                       status = "primary",
+                                       solidHeader = T,
+                                       width = NULL,
+                                       closable = F,
+                                       uiOutput("distr_BIN_APPROX_TOOL"),
+                                       # tags$head(tags$style("#distr_BIN_APPROX_TOOL{color: blue}")),
+                                       uiOutput("distr_POI_APPROX_TOOL")
+                                       # ,tags$head(tags$style("#distr_POI_APPROX_TOOL{color: red}"))
+                                   ),
+                                   align = "center"
+                               ),
+                               column(
+                                   width = 8,
+                                   boxPlus(
+                                       title = "Plot",
+                                       status = "primary",
+                                       solidHeader = T,
+                                       width = NULL,
+                                       closable = F,
+                                       plotlyOutput("plot_APPROX_TOOL")
+                                   )
+                               )
+                               
+                           )
+                           ,fluidRow(
+                               boxPlus(
+                                   title = "Description",
+                                   status = "primary",
+                                   solidHeader = T,
+                                   width = NULL,
+                                   closable = F,
+                                   collapsible = T,
+                                   collapsed = F,
+                                   textOutput("descriptionAPPROX_TOOL")
+                               )
+                           )
+)
+
+
 #### Loi Normale UI ----
 tab_NORM_UI <- tabItem(tabName = "Normale",
         fluidRow(
             useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
             # titlePanel("Loi Normale"),
-            titlePanel(tags$a("Loi Normale",href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Normal")),
+            titlePanel(tags$a("Loi Normale", target = "_blank", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Normal")),
             # withMathJax(),
             helpText("\\(X \\sim\\mathcal{Normale} \\ (\\mu, \\sigma^2)\\)"),
             align = "center"
@@ -375,7 +454,8 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
                                                       "Fonction de répartition"),
                                           selected = "Fonction de répartition",
                                           justified = TRUE),
-                        plotlyOutput("QxNORM")
+                        plotlyOutput("QxNORM"),
+                        plotlyOutput("QuantileNORM")
                     ),
                     align = "center"
                 )
@@ -388,7 +468,7 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
 tab_LNORM_UI <- tabItem(tabName = "Lognormale",
                        fluidRow(
                            useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
-                           titlePanel(tags$a("Loi Lognormale",href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Lognormale")),
+                           titlePanel(tags$a("Loi Lognormale", target = "_blank", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Lognormale")),
                            helpText("\\(X \\sim\\mathcal{Lognormale} \\ (\\mu, \\sigma^2)\\)"),
                            align = "center"
                        ),
@@ -449,9 +529,9 @@ tab_LNORM_UI <- tabItem(tabName = "Lognormale",
                                        uiOutput("repartsurvieLNORM"),
                                        p("Graphique"),
                                        radioGroupButtons(inputId = "plot_choice_LNORM", 
-                                                         choices = c("Densité", 
+                                                         choices = c("Fonction de densité", 
                                                                      "Fonction de répartition"),
-                                                         selected = "Densité",
+                                                         selected = "Fonction de densité",
                                                          justified = TRUE),
                                        plotlyOutput("FxLNORM")
                                    ),
@@ -483,12 +563,24 @@ tab_LNORM_UI <- tabItem(tabName = "Lognormale",
                                        numericInput('kLNORM', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                        uiOutput("VaRLNORM"),
                                        uiOutput("TVaRLNORM"),
-                                       radioGroupButtons(inputId = "plot_choice_LNORM_QX", 
-                                                         choices = c("Densité", 
-                                                                     "Fonction de répartition"),
-                                                         selected = "Fonction de répartition",
-                                                         justified = TRUE),
+                                       pickerInput(
+                                           inputId = "plot_choice_LNORM_QX", 
+                                           # label = "Style : primary", 
+                                           choices = c("Fonction de densité",
+                                                       "Fonction de répartition",
+                                                       "Fonction quantile"),
+                                           selected = "Fonction de répartition",
+                                           options = list(
+                                               style = "btn-success")
+                                       ),
+                                       # radioGroupButtons(inputId = "plot_choice_LNORM_QX", 
+                                       #                   choices = c("Fonction de densité",
+                                       #                               "Fonction de répartition",
+                                       #                               "Fonction quantile"),
+                                       #                   selected = "Fonction de répartition",
+                                       #                   justified = TRUE),
                                        plotlyOutput("QxLNORM")
+                                       # ,plotlyOutput("QuantileLNORM")
                                    ),
                                    align = "center"
                                )
@@ -608,6 +700,7 @@ tab_GAMMA_UI <- tabItem(
                                           selected = "Fonction de répartition",
                                           justified = TRUE),
                         plotlyOutput("QxGAMMA")
+                        # ,plotlyOutput("QuantileGAMMA")
                     ),
                     align = "center"
                 )
@@ -621,7 +714,7 @@ tab_GAMMA_UI <- tabItem(
 tab_PARETO_UI <- tabItem(tabName = "Pareto",
                        fluidPage(
                            useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
-                           titlePanel(tags$a("Loi Pareto", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Pareto")),
+                           titlePanel(tags$a("Loi Pareto", target = "_blank", href ="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Pareto")),
                            # withMathJax(),
                            helpText("\\(X \\sim\\mathcal{Pareto} \\ (\\alpha, \\lambda)\\)"),
                            align = "center"
@@ -715,7 +808,8 @@ tab_PARETO_UI <- tabItem(tabName = "Pareto",
                                                                      "Fonction de répartition"),
                                                          selected = "Fonction de répartition",
                                                          justified = TRUE),
-                                       plotlyOutput("QxPARETO")
+                                       plotlyOutput("QxPARETO"),
+                                       plotlyOutput("QuantilePARETO")
                                    ),
                                    align = "center"
                                )
@@ -727,7 +821,7 @@ tab_PARETO_UI <- tabItem(tabName = "Pareto",
 tab_BURR_UI <- tabItem(tabName = "Burr",
                          fluidPage(
                              useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
-                             titlePanel(tags$a("Loi Burr", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Burr")),
+                             titlePanel(tags$a("Loi Burr", target = "_blank", href ="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Burr")),
                              # withMathJax(),
                              helpText("\\(X \\sim\\mathcal{Burr} \\ (\\alpha, \\lambda, \\tau)\\)"),
                              align = "center"
@@ -822,7 +916,8 @@ tab_BURR_UI <- tabItem(tabName = "Burr",
                                                                        "Fonction de répartition"),
                                                            selected = "Fonction de répartition",
                                                            justified = TRUE),
-                                         plotlyOutput("QxBURR")
+                                         plotlyOutput("QxBURR"),
+                                         plotlyOutput("QuantileBURR")
                                      ),
                                      align = "center"
                                  )
@@ -834,7 +929,7 @@ tab_BURR_UI <- tabItem(tabName = "Burr",
 tab_WEIBULL_UI <- tabItem(tabName = "Weibull",
                          fluidPage(
                              useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
-                             titlePanel(tags$a("Loi Weibull", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Weibull")),
+                             titlePanel(tags$a("Loi Weibull", target = "_blank", href ="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Weibull")),
                              # withMathJax(),
                              helpText("\\(X \\sim\\mathcal{Weibull} \\ (\\tau, \\beta)\\)"),
                              align = "center"
@@ -928,7 +1023,8 @@ tab_WEIBULL_UI <- tabItem(tabName = "Weibull",
                                                                        "Fonction de répartition"),
                                                            selected = "Fonction de répartition",
                                                            justified = TRUE),
-                                         plotlyOutput("QxWEIBULL")
+                                         plotlyOutput("QxWEIBULL"),
+                                         plotlyOutput("QuantileWEIBULL")
                                      ),
                                      align = "center"
                                  )
@@ -940,7 +1036,7 @@ tab_WEIBULL_UI <- tabItem(tabName = "Weibull",
 tab_IG_UI <- tabItem(tabName = "IG",
                           fluidPage(
                               useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
-                              titlePanel(tags$a("Loi Inverse Gaussienne", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Inverse-Gaussienne")),
+                              titlePanel(tags$a("Loi Inverse Gaussienne", target = "_blank", href ="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Inverse-Gaussienne")),
                               # withMathJax(),
                               helpText("\\(X \\sim\\mathcal{IG} \\ (\\mu, \\beta)\\)"),
                               align = "center"
@@ -1037,6 +1133,7 @@ tab_IG_UI <- tabItem(tabName = "IG",
                                                             selected = "Fonction de répartition",
                                                             justified = TRUE),
                                           plotlyOutput("QxIG")
+                                          # ,plotlyOutput("QuantileIG")
                                       ),
                                       align = "center"
                                   )
@@ -1048,7 +1145,7 @@ tab_IG_UI <- tabItem(tabName = "IG",
 tab_UNIC_UI <- tabItem(tabName = "UniformeC",
                        fluidPage(
                            # titlePanel("Loi Uniforme"),
-                           titlePanel(tags$a("Loi Uniforme",href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Uniforme-Continue")),
+                           titlePanel(tags$a("Loi Uniforme", target = "_blank", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Uniforme-Continue")),
                            withMathJax(),
                            helpText("\\(X \\sim\\mathcal{U} \\ (a, b)\\)"),
                            align = "center"
@@ -1129,7 +1226,8 @@ tab_UNIC_UI <- tabItem(tabName = "UniformeC",
                                                                     "Fonction de répartition"),
                                                         selected = "Fonction de répartition",
                                                         justified = TRUE),
-                                      plotlyOutput("QxUNIC")
+                                      plotlyOutput("QxUNIC"),
+                                      plotlyOutput("QuantileUNIC")
                                       ),
 
                                   align = "center"
@@ -1141,7 +1239,7 @@ tab_UNIC_UI <- tabItem(tabName = "UniformeC",
 tab_BETA_UI <- tabItem(tabName = "Beta",
                         fluidRow(
                             useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
-                            titlePanel(tags$a("Loi Bêta", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Beta")),
+                            titlePanel(tags$a("Loi Bêta", target = "_blank", href ="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Beta")),
                             # withMathJax(),
                             helpText("\\(X \\sim\\mathcal{Beta} \\ (\\alpha, \\beta)\\)"),
                             align = "center"
@@ -1234,7 +1332,8 @@ tab_BETA_UI <- tabItem(tabName = "Beta",
                                                                       "Fonction de répartition"),
                                                           selected = "Fonction de répartition",
                                                           justified = TRUE),
-                                        plotlyOutput("QxBETA")
+                                        plotlyOutput("QxBETA"),
+                                        plotlyOutput("QuantileBETA")
                                         
                                     ),
                                     align = "center"
@@ -1247,7 +1346,7 @@ tab_BETA_UI <- tabItem(tabName = "Beta",
 tab_ERLANG_UI <- tabItem(tabName = "Erlang",
                          fluidPage(
                              useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
-                             titlePanel(tags$a("Loi Erlang", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Erlang")),
+                             titlePanel(tags$a("Loi Erlang", target = "_blank", href ="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Erlang")),
                              # withMathJax(),
                              helpText("\\(X \\sim\\mathcal{Erlang} \\ (n, \\beta)\\)"),
                              align = "center"
@@ -1329,8 +1428,8 @@ tab_ERLANG_UI <- tabItem(tabName = "Erlang",
                                )
                            },
 
-                           {
-                               ## Mesures de risque ERLANG  ----
+                           # {
+                               # Mesures de risque ERLANG  ----
                                # column(
                                #     width = 4,
                                #     boxPlus(
@@ -1339,20 +1438,21 @@ tab_ERLANG_UI <- tabItem(tabName = "Erlang",
                                #         solidHeader = TRUE,
                                #         closable = F,
                                #         status = "success",
-                               #         # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
-                               #         numericInput('kERLANG', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
-                               #         uiOutput("VaRERLANG"),
-                               #         uiOutput("TVaRERLANG"),
-                               #         radioGroupButtons(inputId = "plot_choice_ERLANG_QX",
-                               #                           choices = c("Densité",
-                               #                                       "Fonction de répartition"),
-                               #                           selected = "Fonction de répartition",
-                               #                           justified = TRUE),
-                               #         plotlyOutput("QxERLANG")
-                               #     ),
-                               #     align = "center"
+                                       # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
+                                       # numericInput('kERLANG', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
+                                       # uiOutput("VaRERLANG"),
+                                       # uiOutput("TVaRERLANG"),
+                                       # radioGroupButtons(inputId = "plot_choice_ERLANG_QX",
+                                       #                   choices = c("Densité",
+                                       #                               "Fonction de répartition"),
+                                       #                   selected = "Fonction de répartition",
+                                                         # justified = TRUE),
+                                       # plotlyOutput("QxERLANG"),
+                                       # plotlyOutput("QuantileERLANG")
+                                   # ),
+                                   # align = "center"
                                # )
-                           }
+                           # }
                        )
 )
 
@@ -1360,7 +1460,7 @@ tab_ERLANG_UI <- tabItem(tabName = "Erlang",
 tab_LOGLOGIS_UI <- tabItem(tabName = "LOGLOGIS",
                        fluidPage(
                            useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
-                           titlePanel(tags$a("Loi log-logistique", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Log-Logistique")),
+                           titlePanel(tags$a("Loi log-logistique", target = "_blank", href ="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Log-Logistique")),
                            # withMathJax(),
                            helpText("\\(X \\sim\\mathcal{LL} \\ (\\lambda, \\tau)\\)"),
                            align = "center"
@@ -1458,7 +1558,8 @@ tab_LOGLOGIS_UI <- tabItem(tabName = "LOGLOGIS",
                                                                      "Fonction de répartition"),
                                                          selected = "Fonction de répartition",
                                                          justified = TRUE),
-                                       plotlyOutput("QxLOGLOGIS")
+                                       plotlyOutput("QxLOGLOGIS"),
+                                       plotlyOutput("QuantileLOGLOGIS")
                                    ),
                                    align = "center"
                                )
@@ -1707,7 +1808,7 @@ tab_BN_UI <- tabItem(
 #### Loi Poisson UI ####
 tab_POI_UI <- tabItem(tabName = "Poisson",
                       fluidPage(
-                          titlePanel(tags$a("Loi de Poisson", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-de-Poisson")),
+                          titlePanel(tags$a("Loi de Poisson", target = "_blank", href ="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-de-Poisson")),
                           withMathJax(),
                           helpText("\\(X \\sim\\mathcal{Poisson} \\ (\\lambda)\\)"),
                           align = "center"
@@ -1791,7 +1892,7 @@ tab_POI_UI <- tabItem(tabName = "Poisson",
 #### Loi Hypergéométrique UI ####
 tab_HG_UI <- tabItem(tabName = "HG",
                       fluidPage(
-                          titlePanel(tags$a("Loi Hypergéométrique", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Hypergeometrique")),
+                          titlePanel(tags$a("Loi Hypergéométrique", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Hypergéométrique", target = "_blank")),
                           withMathJax(),
                           helpText("\\(X \\sim\\mathcal{HyperGéo} \\ (N, n, m)\\)"),
                           align = "center"
@@ -1856,7 +1957,7 @@ tab_HG_UI <- tabItem(tabName = "HG",
 #### Loi Logarithmique UI ####
 tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
                      fluidPage(
-                         titlePanel(tags$a("Loi Logarithmique", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Logarithmique")),
+                         titlePanel(tags$a("Loi Logarithmique", target = "_blank", href ="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Logarithmique")),
                          withMathJax(),
                          helpText("\\(X \\sim\\mathcal{Logarithmique} \\ (\\gamma)\\)"),
                          align = "center"
@@ -1939,7 +2040,7 @@ tab_LOGARITHMIQUE_UI <- tabItem(tabName = "Logarithmique",
 #### Loi Uniforme Discrète UI ####
 tab_UNID_UI <- tabItem(tabName = "UniformeD",
                       fluidPage(
-                          titlePanel(tags$a("Loi  Uniforme",href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Uniforme-Discr%C3%A8te")),
+                          titlePanel(tags$a("Loi  Uniforme", target = "_blank", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Uniforme-Discr%C3%A8te")),
                           withMathJax(),
                           helpText("\\(X \\sim\\mathcal{U} \\ (a, b)\\)"),
                           align = "center"
