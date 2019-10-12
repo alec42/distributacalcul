@@ -14,7 +14,7 @@ myUI <- shinyUI({
                 ),
                 href = "mailto:alec.van-rassel.1@ulaval.ca"
                 ))
-        ),             
+        ),
         
         # Paneau Latéral
         {
@@ -306,5 +306,6 @@ myUI <- shinyUI({
             )
         )
         }
+
     )
 })
