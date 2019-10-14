@@ -449,13 +449,24 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
                         numericInput('kNORM', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                         uiOutput("VaRNORM"),
                         uiOutput("TVaRNORM"),
-                        radioGroupButtons(inputId = "plot_choice_NORM_QX", 
-                                          choices = c("Densité", 
-                                                      "Fonction de répartition"),
-                                          selected = "Fonction de répartition",
-                                          justified = TRUE),
-                        plotlyOutput("QxNORM"),
-                        plotlyOutput("QuantileNORM")
+                        pickerInput(
+                            inputId = "plot_choice_NORM_QX", 
+                            # label = "Style : primary", 
+                            choices = c("Fonction de densité",
+                                        "Fonction de répartition",
+                                        "Fonction quantile"),
+                            selected = "Fonction de répartition",
+                            options = list(
+                                style = "btn-success")
+                        ),
+                        plotlyOutput("QxNORM")
+                        # radioGroupButtons(inputId = "plot_choice_NORM_QX", 
+                        #                   choices = c("Densité", 
+                        #                               "Fonction de répartition"),
+                        #                   selected = "Fonction de répartition",
+                        #                   justified = TRUE),
+                        # plotlyOutput("QxNORM"),
+                        # plotlyOutput("QuantileNORM")
                     ),
                     align = "center"
                 )
@@ -694,12 +705,24 @@ tab_GAMMA_UI <- tabItem(
                         numericInput('kGAMMA', '$$\\kappa$$', value = 0.95, step = 0.005, min = 0, max = 1),
                         uiOutput("VaRGAMMA"),
                         uiOutput("TVaRGAMMA"),
-                        radioGroupButtons(inputId = "plot_choice_GAMMA_QX", 
-                                          choices = c("Densité", 
-                                                      "Fonction de répartition"),
-                                          selected = "Fonction de répartition",
-                                          justified = TRUE),
+                        pickerInput(
+                            inputId = "plot_choice_GAMMA_QX", 
+                            # label = "Style : primary", 
+                            choices = c("Fonction de densité",
+                                        "Fonction de répartition"
+                                        # ,"Fonction quantile"
+                                        ),
+                            selected = "Fonction de répartition",
+                            options = list(
+                                style = "btn-success")
+                        ),
                         plotlyOutput("QxGAMMA")
+                        # radioGroupButtons(inputId = "plot_choice_GAMMA_QX", 
+                        #                   choices = c("Densité", 
+                        #                               "Fonction de répartition"),
+                        #                   selected = "Fonction de répartition",
+                        #                   justified = TRUE),
+                        # plotlyOutput("QxGAMMA")
                         # ,plotlyOutput("QuantileGAMMA")
                     ),
                     align = "center"
@@ -803,13 +826,24 @@ tab_PARETO_UI <- tabItem(tabName = "Pareto",
                                        numericInput('kPARETO', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                        uiOutput("VaRPARETO"),
                                        uiOutput("TVaRPARETO"),
-                                       radioGroupButtons(inputId = "plot_choice_PARETO_QX", 
-                                                         choices = c("Densité", 
-                                                                     "Fonction de répartition"),
-                                                         selected = "Fonction de répartition",
-                                                         justified = TRUE),
-                                       plotlyOutput("QxPARETO"),
-                                       plotlyOutput("QuantilePARETO")
+                                       pickerInput(
+                                           inputId = "plot_choice_PARETO_QX", 
+                                           # label = "Style : primary", 
+                                           choices = c("Fonction de densité",
+                                                       "Fonction de répartition",
+                                                       "Fonction quantile"),
+                                           selected = "Fonction de répartition",
+                                           options = list(
+                                               style = "btn-success")
+                                       ),
+                                       plotlyOutput("QxPARETO")
+                                       # radioGroupButtons(inputId = "plot_choice_PARETO_QX", 
+                                       #                   choices = c("Densité", 
+                                       #                               "Fonction de répartition"),
+                                       #                   selected = "Fonction de répartition",
+                                       #                   justified = TRUE),
+                                       # plotlyOutput("QxPARETO"),
+                                       # plotlyOutput("QuantilePARETO")
                                    ),
                                    align = "center"
                                )
@@ -911,13 +945,24 @@ tab_BURR_UI <- tabItem(tabName = "Burr",
                                          numericInput('kBURR', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                          uiOutput("VaRBURR"),
                                          uiOutput("TVaRBURR"),
-                                         radioGroupButtons(inputId = "plot_choice_BURR_QX", 
-                                                           choices = c("Densité", 
-                                                                       "Fonction de répartition"),
-                                                           selected = "Fonction de répartition",
-                                                           justified = TRUE),
-                                         plotlyOutput("QxBURR"),
-                                         plotlyOutput("QuantileBURR")
+                                         pickerInput(
+                                             inputId = "plot_choice_BURR_QX", 
+                                             # label = "Style : primary", 
+                                             choices = c("Fonction de densité",
+                                                         "Fonction de répartition",
+                                                         "Fonction quantile"),
+                                             selected = "Fonction de répartition",
+                                             options = list(
+                                                 style = "btn-success")
+                                         ),
+                                         plotlyOutput("QxBURR")
+                                         # radioGroupButtons(inputId = "plot_choice_BURR_QX", 
+                                         #                   choices = c("Densité", 
+                                         #                               "Fonction de répartition"),
+                                         #                   selected = "Fonction de répartition",
+                                         #                   justified = TRUE),
+                                         # plotlyOutput("QxBURR"),
+                                         # plotlyOutput("QuantileBURR")
                                      ),
                                      align = "center"
                                  )
@@ -1018,13 +1063,24 @@ tab_WEIBULL_UI <- tabItem(tabName = "Weibull",
                                          numericInput('kWEIBULL', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                          uiOutput("VaRWEIBULL"),
                                          uiOutput("TVaRWEIBULL"),
-                                         radioGroupButtons(inputId = "plot_choice_WEIBULL_QX", 
-                                                           choices = c("Densité", 
-                                                                       "Fonction de répartition"),
-                                                           selected = "Fonction de répartition",
-                                                           justified = TRUE),
-                                         plotlyOutput("QxWEIBULL"),
-                                         plotlyOutput("QuantileWEIBULL")
+                                         pickerInput(
+                                             inputId = "plot_choice_WEIBULL_QX", 
+                                             # label = "Style : primary", 
+                                             choices = c("Fonction de densité",
+                                                         "Fonction de répartition",
+                                                         "Fonction quantile"),
+                                             selected = "Fonction de répartition",
+                                             options = list(
+                                                 style = "btn-success")
+                                         ),
+                                         plotlyOutput("QxWEIBULL")
+                                         # radioGroupButtons(inputId = "plot_choice_WEIBULL_QX", 
+                                         #                   choices = c("Densité", 
+                                         #                               "Fonction de répartition"),
+                                         #                   selected = "Fonction de répartition",
+                                         #                   justified = TRUE),
+                                         # plotlyOutput("QxWEIBULL"),
+                                         # plotlyOutput("QuantileWEIBULL")
                                      ),
                                      align = "center"
                                  )
@@ -1127,12 +1183,24 @@ tab_IG_UI <- tabItem(tabName = "IG",
                                           uiOutput("VaRIG"),
                                           #,
                                           #uiOutput("TVaRIG") -- ne fonctionne pas, à revoir --
-                                          radioGroupButtons(inputId = "plot_choice_IG_QX", 
-                                                            choices = c("Densité", 
-                                                                        "Fonction de répartition"),
-                                                            selected = "Fonction de répartition",
-                                                            justified = TRUE),
+                                          pickerInput(
+                                              inputId = "plot_choice_IG_QX", 
+                                              # label = "Style : primary", 
+                                              choices = c("Fonction de densité",
+                                                          "Fonction de répartition"
+                                                          # ,"Fonction quantile"
+                                                          ),
+                                              selected = "Fonction de répartition",
+                                              options = list(
+                                                  style = "btn-success")
+                                          ),
                                           plotlyOutput("QxIG")
+                                          # radioGroupButtons(inputId = "plot_choice_IG_QX", 
+                                          #                   choices = c("Densité", 
+                                          #                               "Fonction de répartition"),
+                                          #                   selected = "Fonction de répartition",
+                                          #                   justified = TRUE),
+                                          # plotlyOutput("QxIG")
                                           # ,plotlyOutput("QuantileIG")
                                       ),
                                       align = "center"
@@ -1221,13 +1289,24 @@ tab_UNIC_UI <- tabItem(tabName = "UniformeC",
                                       numericInput('kUNIC', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                       uiOutput("VaRUNIC"),
                                       # ,uiOutput("TVaRUNIC")
-                                      radioGroupButtons(inputId = "plot_choice_UNIC_QX", 
-                                                        choices = c("Densité", 
-                                                                    "Fonction de répartition"),
-                                                        selected = "Fonction de répartition",
-                                                        justified = TRUE),
-                                      plotlyOutput("QxUNIC"),
-                                      plotlyOutput("QuantileUNIC")
+                                      pickerInput(
+                                          inputId = "plot_choice_UNIC_QX", 
+                                          # label = "Style : primary", 
+                                          choices = c("Fonction de densité",
+                                                      "Fonction de répartition",
+                                                      "Fonction quantile"),
+                                          selected = "Fonction de répartition",
+                                          options = list(
+                                              style = "btn-success")
+                                      ),
+                                      plotlyOutput("QxUNIC")
+                                      # radioGroupButtons(inputId = "plot_choice_UNIC_QX", 
+                                      #                   choices = c("Densité", 
+                                      #                               "Fonction de répartition"),
+                                      #                   selected = "Fonction de répartition",
+                                      #                   justified = TRUE),
+                                      # plotlyOutput("QxUNIC"),
+                                      # plotlyOutput("QuantileUNIC")
                                       ),
 
                                   align = "center"
@@ -1327,14 +1406,24 @@ tab_BETA_UI <- tabItem(tabName = "Beta",
                                         numericInput('kBETA', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                         uiOutput("VaRBETA"),
                                         uiOutput("TVaRBETA"),
-                                        radioGroupButtons(inputId = "plot_choice_BETA_QX", 
-                                                          choices = c("Densité", 
-                                                                      "Fonction de répartition"),
-                                                          selected = "Fonction de répartition",
-                                                          justified = TRUE),
-                                        plotlyOutput("QxBETA"),
-                                        plotlyOutput("QuantileBETA")
-                                        
+                                        pickerInput(
+                                            inputId = "plot_choice_BETA_QX", 
+                                            # label = "Style : primary", 
+                                            choices = c("Fonction de densité",
+                                                        "Fonction de répartition",
+                                                        "Fonction quantile"),
+                                            selected = "Fonction de répartition",
+                                            options = list(
+                                                style = "btn-success")
+                                        ),
+                                        plotlyOutput("QxBETA")
+                                        # radioGroupButtons(inputId = "plot_choice_BETA_QX", 
+                                        #                   choices = c("Densité", 
+                                        #                               "Fonction de répartition"),
+                                        #                   selected = "Fonction de répartition",
+                                        #                   justified = TRUE),
+                                        # plotlyOutput("QxBETA"),
+                                        # plotlyOutput("QuantileBETA")
                                     ),
                                     align = "center"
                                 )
@@ -1426,9 +1515,9 @@ tab_ERLANG_UI <- tabItem(tabName = "Erlang",
                                    ),
                                    align = "center"
                                )
-                           },
+                           }
 
-                           # {
+                           # ,{
                                # Mesures de risque ERLANG  ----
                                # column(
                                #     width = 4,
@@ -1553,13 +1642,24 @@ tab_LOGLOGIS_UI <- tabItem(tabName = "LOGLOGIS",
                                        numericInput('kLOGLOGIS', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
                                        uiOutput("VaRLOGLOGIS"),
                                        uiOutput("TVaRLOGLOGIS"),
-                                       radioGroupButtons(inputId = "plot_choice_LOGLOGIS_QX", 
-                                                         choices = c("Densité", 
-                                                                     "Fonction de répartition"),
-                                                         selected = "Fonction de répartition",
-                                                         justified = TRUE),
-                                       plotlyOutput("QxLOGLOGIS"),
-                                       plotlyOutput("QuantileLOGLOGIS")
+                                       pickerInput(
+                                           inputId = "plot_choice_LOGLOGIS_QX", 
+                                           # label = "Style : primary", 
+                                           choices = c("Fonction de densité",
+                                                       "Fonction de répartition",
+                                                       "Fonction quantile"),
+                                           selected = "Fonction de répartition",
+                                           options = list(
+                                               style = "btn-success")
+                                       ),
+                                       plotlyOutput("QxLOGLOGIS")
+                                       # radioGroupButtons(inputId = "plot_choice_LOGLOGIS_QX", 
+                                       #                   choices = c("Densité", 
+                                       #                               "Fonction de répartition"),
+                                       #                   selected = "Fonction de répartition",
+                                       #                   justified = TRUE),
+                                       # plotlyOutput("QxLOGLOGIS"),
+                                       # plotlyOutput("QuantileLOGLOGIS")
                                    ),
                                    align = "center"
                                )

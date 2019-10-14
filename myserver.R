@@ -1,6 +1,36 @@
 
 myserver <- function(input, output, session) 
 {
+    observeEvent({
+        input$notation_indicator
+    },
+    {
+        x <- input$notation_indicator
+        updateNumericInput(session, "betaGAMMA",
+                           label = {
+                               if (x == "ACT-1002")
+                               {
+                                   '$$\\lambda$$'
+                               }
+                               else if (x == "ACT-2001")
+                               {
+                                   '$$\\beta$$'
+                               }
+                           }
+        )
+    })
+    
+    VaR_Quantile_LATEX <- reactive({
+        if(input$notation_indicator == "ACT-2001")
+        {
+            "VaR_"
+        }
+        else if(input$notation_indicator == "ACT-1002")
+        {
+            "F^{-1}_X"
+        }
+    })
+    
 
 #### Serveur outil de tests statistiques ####
     valueESTIM_STATTOOL <- reactive({input$valueESTIM_STATTOOL})
@@ -522,9 +552,9 @@ myserver <- function(input, output, session)
     ExcesMoyNORM <- reactive({Mexcess_norm(d = input$dNORM, muNORM(), sqrt(sigma2NORM()))})
     
     plot_choice_NORM_QX_SERVER <- reactive({
-        if(input$plot_choice_NORM_QX == "Densité")
+        if(input$plot_choice_NORM_QX == "Fonction de densité")
             dnorm
-        else
+        else if(input$plot_choice_NORM_QX == "Fonction de répartition")
             pnorm
     })
     
@@ -592,10 +622,11 @@ myserver <- function(input, output, session)
                                                               repartsurvieNORM()
     ))})
     
-    output$VaRNORM <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
+    output$VaRNORM <- renderUI({withMathJax(sprintf("$$%s{%s} = %s$$",
+                                                    VaR_Quantile_LATEX(),
                                                     input$kNORM,
                                                     VaRNORM()))
-        })
+    })
     
     output$TVaRNORM <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$",
                                                      input$kNORM,
@@ -623,33 +654,46 @@ myserver <- function(input, output, session)
         })
     
     output$QxNORM <- renderPlotly({
-        ggplot(data = data.frame(x = c(muNORM() - 4 * sqrt(sigma2NORM()),
-                                       muNORM() + 4 * sqrt(sigma2NORM())
-                                       )
-                                 ),
-        aes(x)) + 
-            stat_function(fun = plot_choice_NORM_QX_SERVER(),
-                          args = list(muNORM(), sqrt(sigma2NORM()))) + 
-            ylab("f(x)") + 
-            theme_classic() +
-            stat_function(
-                fun = plot_choice_NORM_QX_SERVER(),
-                args = list(muNORM(), sqrt(sigma2NORM())),
-                xlim = c(VaRNORM(), muNORM() + 4 * sqrt(sigma2NORM())),
-                geom = "area",
-                fill = "red",
-                alpha = 0.7
-            )
+        if(input$plot_choice_NORM_QX == "Fonction quantile")
+        {
+            ggplot(data = data.frame(x = c(0,1)),
+                   aes(x)) +
+                stat_function(fun = qnorm,
+                              args = list(mean = muNORM(),
+                                          sd = sqrt(sigma2NORM()))) +
+                theme_classic()
+        }
+        else
+        {
+            ggplot(data = data.frame(x = c(muNORM() - 4 * sqrt(sigma2NORM()),
+                                           muNORM() + 4 * sqrt(sigma2NORM()))
+                                     ),
+                   aes(x)
+                   ) + 
+                stat_function(fun = plot_choice_NORM_QX_SERVER(),
+                              args = list(muNORM(), sqrt(sigma2NORM()))) + 
+                ylab("f(x)") + 
+                theme_classic() +
+                stat_function(
+                    fun = plot_choice_NORM_QX_SERVER(),
+                    args = list(muNORM(), sqrt(sigma2NORM())),
+                    xlim = c(VaRNORM(), muNORM() + 4 * sqrt(sigma2NORM())),
+                    geom = "area",
+                    fill = "red",
+                    alpha = 0.7
+                )
+        }
+        
     })
     
-    output$QuantileNORM <- renderPlotly({
-        ggplot(data = data.frame(x = c(0,1)),
-               aes(x)) +
-            stat_function(fun = qnorm,
-                          args = list(mean = muNORM(),
-                                      sd = sqrt(sigma2NORM()))) +
-            theme_classic() 
-    })
+    # output$QuantileNORM <- renderPlotly({
+    #     ggplot(data = data.frame(x = c(0,1)),
+    #            aes(x)) +
+    #         stat_function(fun = qnorm,
+    #                       args = list(mean = muNORM(),
+    #                                   sd = sqrt(sigma2NORM()))) +
+    #         theme_classic()
+    # })
     
     output$FxNORM <- renderPlotly({
         ggplot(data = data.frame(x = c(muNORM() - 4 * sqrt(sigma2NORM()),
@@ -681,9 +725,9 @@ myserver <- function(input, output, session)
     xGAMMA <- reactive({input$xGAMMA})
     
     plot_choice_GAMMA_QX_SERVER <- reactive({
-        if(input$plot_choice_GAMMA_QX == "Densité")
+        if(input$plot_choice_GAMMA_QX == "Fonction de densité")
             dgamma
-        else
+        else if(input$plot_choice_GAMMA_QX == "Fonction de répartition")
             pgamma
     })
     
@@ -778,6 +822,7 @@ myserver <- function(input, output, session)
             {
                 shinyjs::hide("betaGAMMA")
                 shinyjs::hide("distrchoiceGAMMA")
+                shinyjs::show("alphaGAMMA")
             }
             else
             {
@@ -893,10 +938,12 @@ myserver <- function(input, output, session)
                                                                   repartsurvieGAMMA()
         ))})
         
-        output$VaRGAMMA <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$", 
+        output$VaRGAMMA <- renderUI({withMathJax(sprintf("$$%s{%s} = %s$$",
+                                                         VaR_Quantile_LATEX(),
                                                          kGAMMA(),
                                                          VaRGAMMA()
         ))})
+        
         output$TVaRGAMMA <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$", 
                                                           kGAMMA(),
                                                           TVaRGAMMA()
@@ -922,23 +969,31 @@ myserver <- function(input, output, session)
         ))})
         
         output$QxGAMMA <- renderPlotly({
-            ggplot(data = data.frame(x = c(0, VaR_gamma(kappa = 0.999999, alphaGAMMA(), betaGAMMA()) 
-            )
-            ),
-            aes(x)) + 
-                stat_function(fun = plot_choice_GAMMA_QX_SERVER(),
-                              args = list(alphaGAMMA(), 
-                                          betaGAMMA())) + 
-                ylab("f(x)") + 
-                theme_classic() +
-                stat_function(
-                    fun = plot_choice_GAMMA_QX_SERVER(),
-                    args = list(alphaGAMMA(), betaGAMMA()),
-                    xlim = c(VaRGAMMA(), VaR_gamma(kappa = 0.999999, alphaGAMMA(), betaGAMMA())),
-                    geom = "area",
-                    fill = "red",
-                    alpha = 0.7
-                )
+                # if(input$plot_choice_NORM_QX == "Fonction quantile")
+                # {
+                #     
+                # }
+                # else
+                # {
+                    ggplot(data = data.frame(x = c(0, VaR_gamma(kappa = 0.999999, alphaGAMMA(), betaGAMMA()) 
+                    )
+                    ),
+                    aes(x)) + 
+                        stat_function(fun = plot_choice_GAMMA_QX_SERVER(),
+                                      args = list(alphaGAMMA(), 
+                                                  betaGAMMA())) + 
+                        ylab("f(x)") + 
+                        theme_classic() +
+                        stat_function(
+                            fun = plot_choice_GAMMA_QX_SERVER(),
+                            args = list(alphaGAMMA(), betaGAMMA()),
+                            xlim = c(VaRGAMMA(), VaR_gamma(kappa = 0.999999, alphaGAMMA(), betaGAMMA())),
+                            geom = "area",
+                            fill = "red",
+                            alpha = 0.7
+                        )
+                # }
+            
         })
         
         output$FxGAMMA <- renderPlotly({
@@ -1023,9 +1078,9 @@ myserver <- function(input, output, session)
         })
         
         plot_choice_PARETO_QX_SERVER <- reactive({
-            if(input$plot_choice_PARETO_QX == "Densité")
+            if(input$plot_choice_PARETO_QX == "Fonction de densité")
                 dpareto
-            else
+            else if(input$plot_choice_PARETO_QX == "Fonction de répartition")
                 ppareto
         })
         
@@ -1107,19 +1162,12 @@ myserver <- function(input, output, session)
                                                                    repartsurviePARETO()
         ))})
         
-        # output$repartPARETO <- renderUI({withMathJax(sprintf("$$F_{X}(%s) = %s$$",
-        #                                                    input$xPARETO,
-        #                                                    repartPARETO()))
-        # })
-        # 
-        # output$surviePARETO <- renderUI({withMathJax(sprintf("$$S_{X}(%s) = %s$$",
-        #                                                    input$xPARETO,
-        #                                                    surviePARETO()))
-        # })
-        
-        output$VaRPARETO <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
-                                                        input$kPARETO,
-                                                        VaRPARETO()))
+        output$VaRPARETO <- renderUI({withMathJax(sprintf("$$%s{%s} = %s$$",
+                                                          VaR_Quantile_LATEX(),
+                                                         input$kPARETO,
+                                                         VaRPARETO()
+                                                         )
+                                                  )
         })
         
         output$TVaRPARETO <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$",
@@ -1153,36 +1201,49 @@ myserver <- function(input, output, session)
         })
         
         output$QxPARETO <- renderPlotly({
-            ggplot(data = data.frame(x = c(0,
-                                           3 * lambdaPARETO()
-            )
-            ),
-            aes(x)) + 
-                stat_function(fun = plot_choice_PARETO_QX_SERVER(),
-                              args = list(alphaPARETO(),
-                                          lambdaPARETO())) +
-                ylab("f(x)") + 
-                theme_classic() +
-                stat_function(
-                    fun = plot_choice_PARETO_QX_SERVER(),
-                    args = list(alphaPARETO(),
-                                lambdaPARETO()),
-                    xlim = c(VaRPARETO(), 
-                             3 * lambdaPARETO()),
-                    geom = "area",
-                    fill = "red",
-                    alpha = 0.7
+            if(input$plot_choice_PARETO_QX == "Fonction quantile")
+            {
+                ggplot(data = data.frame(x = c(0,1)),
+                       aes(x)) +
+                    stat_function(fun = qpareto,
+                                  args = list(shape = alphaPARETO(), 
+                                              scale = lambdaPARETO())) + 
+                    theme_classic()
+            }
+            else
+            {
+                ggplot(data = data.frame(x = c(0,
+                                               3 * lambdaPARETO()
                 )
+                ),
+                aes(x)) + 
+                    stat_function(fun = plot_choice_PARETO_QX_SERVER(),
+                                  args = list(alphaPARETO(),
+                                              lambdaPARETO())) +
+                    ylab("f(x)") + 
+                    theme_classic() +
+                    stat_function(
+                        fun = plot_choice_PARETO_QX_SERVER(),
+                        args = list(alphaPARETO(),
+                                    lambdaPARETO()),
+                        xlim = c(VaRPARETO(), 
+                                 3 * lambdaPARETO()),
+                        geom = "area",
+                        fill = "red",
+                        alpha = 0.7
+                    )
+            }
+            
         })
         
-        output$QuantilePARETO <- renderPlotly({
-            ggplot(data = data.frame(x = c(0,1)),
-                   aes(x)) +
-                stat_function(fun = qpareto,
-                              args = list(shape = alphaPARETO(), 
-                                          scale = lambdaPARETO())) 
-            + theme_classic()
-        })
+        # output$QuantilePARETO <- renderPlotly({
+        #     ggplot(data = data.frame(x = c(0,1)),
+        #            aes(x)) +
+        #         stat_function(fun = qpareto,
+        #                       args = list(shape = alphaPARETO(), 
+        #                                   scale = lambdaPARETO())) + 
+        #         theme_classic()
+        # })
         
         output$FxPARETO <- renderPlotly({
             ggplot(data = data.frame(x = c(0,
@@ -1229,9 +1290,9 @@ myserver <- function(input, output, session)
         })
         
         plot_choice_BURR_QX_SERVER <- reactive({
-            if(input$plot_choice_BURR_QX == "Densité")
+            if(input$plot_choice_BURR_QX == "Fonction de densité")
                 dburr
-            else
+            else if(input$plot_choice_BURR_QX == "Fonction de répartition")
                 pburr
         })
         
@@ -1370,9 +1431,10 @@ myserver <- function(input, output, session)
                                                                  repartsurvieBURR()
         ))})
         
-        output$VaRBURR <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
-                                                          kBURR(),
-                                                          VaRBURR()))
+        output$VaRBURR <- renderUI({withMathJax(sprintf("$$%s{%s} = %s$$",
+                                                        VaR_Quantile_LATEX(),
+                                                        kBURR(),
+                                                        VaRBURR()))
         })
         
         output$TVaRBURR <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$",
@@ -1406,29 +1468,53 @@ myserver <- function(input, output, session)
         })
         
         output$QxBURR <- renderPlotly({
-            ggplot(data = data.frame(x = c(0,
-                                           5 * tauBURR()
-            )
-            ),
-            aes(x)) + 
-                stat_function(fun = plot_choice_BURR_QX_SERVER(),
-                              args = list(alphaBURR(), 
-                                          tauBURR(),
-                                          lambdaBURR())) +
-                ylab("f(x)") + 
-                theme_classic() +
-                stat_function(
-                    fun = plot_choice_BURR_QX_SERVER(),
-                    args = list(alphaBURR(), 
-                                tauBURR(),
-                                lambdaBURR()),
-                    xlim = c(VaRBURR(), 
-                             5 * tauBURR()),
-                    geom = "area",
-                    fill = "red",
-                    alpha = 0.7
+            if(input$plot_choice_BURR_QX == "Fonction quantile")
+            {
+                ggplot(data = data.frame(x = c(0,1)),
+                       aes(x)) +
+                    stat_function(fun = qburr,
+                                  args = list(alphaBURR(),
+                                              tauBURR(),
+                                              lambdaBURR())) + 
+                    theme_classic()
+            }
+            else
+            {
+                ggplot(data = data.frame(x = c(0,
+                                               5 * tauBURR()
                 )
+                ),
+                aes(x)) + 
+                    stat_function(fun = plot_choice_BURR_QX_SERVER(),
+                                  args = list(alphaBURR(), 
+                                              tauBURR(),
+                                              lambdaBURR())) +
+                    ylab("f(x)") + 
+                    theme_classic() +
+                    stat_function(
+                        fun = plot_choice_BURR_QX_SERVER(),
+                        args = list(alphaBURR(), 
+                                    tauBURR(),
+                                    lambdaBURR()),
+                        xlim = c(VaRBURR(), 
+                                 5 * tauBURR()),
+                        geom = "area",
+                        fill = "red",
+                        alpha = 0.7
+                    )
+            }
+            
         })
+        
+        # output$QuantileBURR <- renderPlotly({
+        #     ggplot(data = data.frame(x = c(0,1)),
+        #            aes(x)) +
+        #         stat_function(fun = qburr,
+        #                       args = list(alphaBURR(),
+        #                                   tauBURR(),
+        #                                   lambdaBURR())) + 
+        #         theme_classic()
+        # })
         
         output$FxBURR <- renderPlotly({
             ggplot(data = data.frame(x = c(0,
@@ -1454,16 +1540,6 @@ myserver <- function(input, output, session)
                 )
         })
         
-        output$QuantileBURR <- renderPlotly({
-            ggplot(data = data.frame(x = c(0,1)),
-                   aes(x)) +
-                stat_function(fun = qburr,
-                              args = list(alphaBURR(),
-                                          tauBURR(),
-                                          lambdaBURR())) + theme_classic()
-        })
-        
-        
 #### Loi Weibull Serveur ####
         
         betaWEIBULL <- reactive({input$betaWEIBULL})
@@ -1484,9 +1560,9 @@ myserver <- function(input, output, session)
         })
         
         plot_choice_WEIBULL_QX_SERVER <- reactive({
-            if(input$plot_choice_WEIBULL_QX == "Densité")
+            if(input$plot_choice_WEIBULL_QX == "Fonction de densité")
                 dweibull
-            else
+            else if(input$plot_choice_WEIBULL_QX == "Fonction de répartition")
                 pweibull
         })
         
@@ -1550,13 +1626,13 @@ myserver <- function(input, output, session)
                                                    lower.tail = F), 
                                           nsmall = 6)})
         
-        VaRWEIBULL <- reactive({format(VaR_weibull(kappa = kWEIBULL(),
+        VaRWEIBULL <- reactive({format(VaR_weibull(kWEIBULL(),
                                                    tauWEIBULL(), 
                                                    betaWEIBULL()),
                                        nsmall = 6)
         })
         
-        TVaRWEIBULL <- reactive({format(TVaR_weibull(kappa = kWEIBULL(),
+        TVaRWEIBULL <- reactive({format(TVaR_weibull(kWEIBULL(),
                                                      tauWEIBULL(), 
                                                      betaWEIBULL()), 
                                         nsmall = 6)
@@ -1622,7 +1698,8 @@ myserver <- function(input, output, session)
                                                                     repartsurvieWEIBULL()
         ))})
         
-        output$VaRWEIBULL <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
+        output$VaRWEIBULL <- renderUI({withMathJax(sprintf("$$%s{%s} = %s$$",
+                                                           VaR_Quantile_LATEX(),
                                                         kWEIBULL(),
                                                         VaRWEIBULL()))
         })
@@ -1653,35 +1730,48 @@ myserver <- function(input, output, session)
         })
         
         output$QxWEIBULL <- renderPlotly({
-            ggplot(data = data.frame(x = c(0,
-                                           max(2 * betaWEIBULL(), VaR_weibull(0.9999, tauWEIBULL(), betaWEIBULL()))
-            )
-            ),
-            aes(x)) + 
-                stat_function(fun = plot_choice_WEIBULL_QX_SERVER(),
-                              args = list(tauWEIBULL(),
-                                          betaWEIBULL())) +
-                ylab("f(x)") + 
-                theme_classic() +
-                stat_function(
-                    fun = plot_choice_WEIBULL_QX_SERVER(),
-                    args = list(tauWEIBULL(),
-                                betaWEIBULL()),
-                    xlim = c(VaRWEIBULL(), 
-                             max(2 * betaWEIBULL(), VaR_weibull(0.9999, tauWEIBULL(), betaWEIBULL()))),
-                    geom = "area",
-                    fill = "red",
-                    alpha = 0.7
+            if(input$plot_choice_WEIBULL_QX == "Fonction quantile")
+            {
+                ggplot(data = data.frame(x = c(0,1)),
+                       aes(x)) +
+                    stat_function(fun = qweibull,
+                                  args = list(shape = tauWEIBULL(),
+                                              scale = betaWEIBULL())) + 
+                    theme_classic()
+            }
+            else
+            {
+                ggplot(data = data.frame(x = c(0,
+                                               max(2 * betaWEIBULL(), VaR_weibull(0.9999, tauWEIBULL(), betaWEIBULL()))
                 )
+                ),
+                aes(x)) + 
+                    stat_function(fun = plot_choice_WEIBULL_QX_SERVER(),
+                                  args = list(tauWEIBULL(),
+                                              betaWEIBULL())) +
+                    ylab("f(x)") + 
+                    theme_classic() +
+                    stat_function(
+                        fun = plot_choice_WEIBULL_QX_SERVER(),
+                        args = list(tauWEIBULL(),
+                                    betaWEIBULL()),
+                        xlim = c(VaRWEIBULL(), 
+                                 max(2 * betaWEIBULL(), VaR_weibull(0.9999, tauWEIBULL(), betaWEIBULL()))),
+                        geom = "area",
+                        fill = "red",
+                        alpha = 0.7
+                    )
+            }
+            
         })
         
-        output$QuantileWEIBULL <- renderPlotly({
-            ggplot(data = data.frame(x = c(0,1)),
-                   aes(x)) +
-                stat_function(fun = qweibull,
-                              args = list(shape = tauWEIBULL(),
-                                          scale = betaWEIBULL())) + theme_classic()
-        })
+        # output$QuantileWEIBULL <- renderPlotly({
+        #     ggplot(data = data.frame(x = c(0,1)),
+        #            aes(x)) +
+        #         stat_function(fun = qweibull,
+        #                       args = list(shape = tauWEIBULL(),
+        #                                   scale = betaWEIBULL())) + theme_classic()
+        # })
         
         output$FxWEIBULL <- renderPlotly({
             ggplot(data = data.frame(x = c(0,
@@ -1829,7 +1919,8 @@ myserver <- function(input, output, session)
             })
         
         
-        varianceLNORM <- reactive({kthmoment_lnorm(k = 2, muLNORM(), sqrt(sigma2LNORM())) - 
+        varianceLNORM <- reactive({
+            kthmoment_lnorm(k = 2, muLNORM(), sqrt(sigma2LNORM())) - 
                 kthmoment_lnorm(k = 1, muLNORM(), sqrt(sigma2LNORM()))^2
         })
         
@@ -1870,7 +1961,8 @@ myserver <- function(input, output, session)
                                                            survieLNORM()))
         })
         
-        output$VaRLNORM <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
+        output$VaRLNORM <- renderUI({withMathJax(sprintf("$$%s{%s} = %s$$",
+                                                         VaR_Quantile_LATEX(),
                                                         input$kLNORM,
                                                         VaRLNORM()))
         })
@@ -1931,14 +2023,6 @@ myserver <- function(input, output, session)
                 }
         })
         
-        # output$QuantileLNORM <- renderPlotly({
-        #     ggplot(data = data.frame(x = c(0,1)),
-        #            aes(x)) +
-        #         stat_function(fun = qlnorm,
-        #                       args = list(mean = muLNORM(),
-        #                                   sd = sqrt(sigma2LNORM()))) + theme_classic()
-        # })
-        
         output$FxLNORM <- renderPlotly({
             ggplot(data = data.frame(x = c(0,
                                            VaR_lnorm(kappa = 0.99, muLNORM(), sqrt(sigma2LNORM()))
@@ -1979,9 +2063,9 @@ myserver <- function(input, output, session)
         })
         
         plot_choice_BETA_QX_SERVER <- reactive({
-            if(input$plot_choice_BETA_QX == "Densité")
+            if(input$plot_choice_BETA_QX == "Fonction de densité")
                 dbeta
-            else
+            else if(input$plot_choice_BETA_QX == "Fonction de répartition")
                 pbeta
         })
         
@@ -2106,9 +2190,10 @@ myserver <- function(input, output, session)
                                                                  repartsurvieBETA()
         ))})
         
-        output$VaRBETA <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
-                                                          kBETA(),
-                                                          VaRBETA()))
+        output$VaRBETA <- renderUI({withMathJax(sprintf("$$%s{%s} = %s$$",
+                                                        VaR_Quantile_LATEX(),
+                                                        kBETA(),
+                                                        VaRBETA()))
         })
         
         output$TVaRBETA <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$",
@@ -2137,23 +2222,35 @@ myserver <- function(input, output, session)
         })
         
         output$QxBETA <- renderPlotly({
-            ggplot(data = data.frame(x = c(0, 1)
-            ),
-            aes(x)) + 
-                stat_function(fun = plot_choice_BETA_QX_SERVER(),
-                              args = list(alphaBETA(), 
-                                          betaBETA())) +
-                ylab("f(x)") + 
-                theme_classic() +
-                stat_function(
-                    fun = plot_choice_BETA_QX_SERVER(),
-                    args = list(alphaBETA(), 
-                                betaBETA()),
-                    xlim = c(VaRBETA(), 1),
-                    geom = "area",
-                    fill = "red",
-                    alpha = 0.7
-                )
+            if(input$plot_choice_BETA_QX == "Fonction quantile")
+            {
+                ggplot(data = data.frame(x = c(0,1)),
+                       aes(x)) +
+                    stat_function(fun = qbeta,
+                                  args = list(alphaBETA(),
+                                              betaBETA())) + 
+                    theme_classic()
+            }
+            else
+            {
+                ggplot(data = data.frame(x = c(0, 1)
+                ),
+                aes(x)) + 
+                    stat_function(fun = plot_choice_BETA_QX_SERVER(),
+                                  args = list(alphaBETA(), 
+                                              betaBETA())) +
+                    ylab("f(x)") + 
+                    theme_classic() +
+                    stat_function(
+                        fun = plot_choice_BETA_QX_SERVER(),
+                        args = list(alphaBETA(), 
+                                    betaBETA()),
+                        xlim = c(VaRBETA(), 1),
+                        geom = "area",
+                        fill = "red",
+                        alpha = 0.7
+                    )
+            }
         })
         
         output$FxBETA <- renderPlotly({
@@ -2176,16 +2273,6 @@ myserver <- function(input, output, session)
                 )
         })
         
-        output$QuantileBETA <- renderPlotly({
-            ggplot(data = data.frame(x = c(0,1)),
-                   aes(x)) +
-                stat_function(fun = qbeta,
-                              args = list(alphaBETA(),
-                                          betaBETA())) + 
-                theme_classic()
-        })
-        
-        
         
 #### Loi Erlang Serveur ####
         
@@ -2207,9 +2294,9 @@ myserver <- function(input, output, session)
         # })
         
         # plot_choice_ERLANG_QX_SERVER <- reactive({
-        #     if(input$plot_choice_ERLANG_QX == "Densité")
+        #     if(input$plot_choice_ERLANG_QX == "Fonction de densité")
         #         derlang
-        #     else
+        #     else if(input$plot_choice_ERLANG_QX == "Fonction de répartition")
         #         perlang
         # })
         
@@ -2353,26 +2440,37 @@ myserver <- function(input, output, session)
                                                                 ExcesMoyERLANG()))
         })
         
-        # output$QxERLANG <- renderPlotly({
-        #     ggplot(data = data.frame(x = c(0, 2 * nERLANG() * betaERLANG())
-        #     ),
-        #     aes(x)) + 
-        #         stat_function(fun = plot_choice_ERLANG_QX_SERVER(),
-        #                       args = list(nERLANG(),
-        #                                   betaERLANG())) +
-        #         ylab("f(x)") + 
-        #         theme_classic() +
-        #         stat_function(
-        #             fun = plot_choice_ERLANG_QX_SERVER(),
-        #             args = list(nERLANG(),
-        #                         betaERLANG()),                    
-        #             xlim = c(varERLANG(), 
-        #                      2 * nERLANG() * betaERLANG()),
-        #             geom = "area",
-        #             fill = "red",
-        #             alpha = 0.7
-        #         )
-        # })
+        output$QxERLANG <- renderPlotly({
+            # if(input$plot_choice_ERLANG_QX == "Fonction quantile")
+            # {
+            ggplot(data = data.frame(x = c(0,1)),
+                   aes(x)) +
+                stat_function(fun = qerlang,
+                              args = list(nERLANG(),
+                                          betaERLANG())) + 
+                theme_classic()
+            # }
+            # else{
+            # ggplot(data = data.frame(x = c(0, 2 * nERLANG() * betaERLANG())
+            # ),
+            # aes(x)) +
+            #     stat_function(fun = plot_choice_ERLANG_QX_SERVER(),
+            #                   args = list(nERLANG(),
+            #                               betaERLANG())) +
+            #     ylab("f(x)") +
+            #     theme_classic() +
+            #     stat_function(
+            #         fun = plot_choice_ERLANG_QX_SERVER(),
+            #         args = list(nERLANG(),
+            #                     betaERLANG()),
+            #         xlim = c(varERLANG(),
+            #                  2 * nERLANG() * betaERLANG()),
+            #         geom = "area",
+            #         fill = "red",
+            #         alpha = 0.7
+            #     )
+            # }
+        })
         
         output$FxERLANG <- renderPlotly({
             ggplot(data = data.frame(x = c(0, 2 * nERLANG() * betaERLANG())
@@ -2396,15 +2494,15 @@ myserver <- function(input, output, session)
                     alpha = 0.7
                 )
         })
-
-        output$QuantileERLANG <- renderPlotly({
-            ggplot(data = data.frame(x = c(0,1)),
-                   aes(x)) +
-                stat_function(fun = qerlang,
-                              args = list(nERLANG(),
-                                          betaERLANG())) + 
-                theme_classic()
-        })
+# 
+#         output$QuantileERLANG <- renderPlotly({
+#             ggplot(data = data.frame(x = c(0,1)),
+#                    aes(x)) +
+#                 stat_function(fun = qerlang,
+#                               args = list(nERLANG(),
+#                                           betaERLANG())) + 
+#                 theme_classic()
+#         })
 
         
         
@@ -2428,9 +2526,9 @@ myserver <- function(input, output, session)
         })
         
         plot_choice_LOGLOGIS_QX_SERVER <- reactive({
-            if(input$plot_choice_LOGLOGIS_QX == "Densité")
+            if(input$plot_choice_LOGLOGIS_QX == "Fonction de densité")
                 dllogis
-            else
+            else if(input$plot_choice_LOGLOGIS_QX == "Fonction de répartition")
                 pllogis
         })
         
@@ -2553,9 +2651,10 @@ myserver <- function(input, output, session)
                                                                      repartsurvieLOGLOGIS()
         ))})
         
-        output$VaRLOGLOGIS <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
-                                                            kLOGLOGIS(),
-                                                            VaRLOGLOGIS()))
+        output$VaRLOGLOGIS <- renderUI({withMathJax(sprintf("$$%s{%s} = %s$$",
+                                                            VaR_Quantile_LATEX(),
+                                                        kLOGLOGIS(),
+                                                        VaRLOGLOGIS()))
         })
         
         output$TVaRLOGLOGIS <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$",
@@ -2589,35 +2688,48 @@ myserver <- function(input, output, session)
         })
         
         output$QxLOGLOGIS <- renderPlotly({
-            ggplot(data = data.frame(x = c(0, VaR_llogis(kappa = 0.999, lam = lambdaLOGLOGIS(), tau = tauLOGLOGIS()))
-            ),
-            aes(x)) + 
-                stat_function(fun = plot_choice_LOGLOGIS_QX_SERVER(),
-                              args = list(shape = tauLOGLOGIS(), 
-                                          scale = lambdaLOGLOGIS())) +
-                ylab("f(x)") + 
-                theme_classic() +
-                stat_function(
-                    fun = plot_choice_LOGLOGIS_QX_SERVER(),
-                    args = list(shape = tauLOGLOGIS(), 
-                                scale = lambdaLOGLOGIS()),
-                    xlim = c(VaRLOGLOGIS(), 
-                             VaR_llogis(kappa = 0.999, lam = lambdaLOGLOGIS(), tau = tauLOGLOGIS())),
-                    geom = "area",
-                    fill = "red",
-                    alpha = 0.7
-                )
+            if(input$plot_choice_LOGLOGIS_QX == "Fonction quantile")
+            {
+                ggplot(data = data.frame(x = c(0,1)),
+                       aes(x)) +
+                    stat_function(fun = qllogis,
+                                  args = list(shape = lambdaLOGLOGIS(), 
+                                              rate = tauLOGLOGIS())) + 
+                    theme_classic()
+            }
+            else
+            {
+                ggplot(data = data.frame(x = c(0, VaR_llogis(kappa = 0.999, lam = lambdaLOGLOGIS(), tau = tauLOGLOGIS()))
+                ),
+                aes(x)) + 
+                    stat_function(fun = plot_choice_LOGLOGIS_QX_SERVER(),
+                                  args = list(shape = tauLOGLOGIS(), 
+                                              scale = lambdaLOGLOGIS())) +
+                    ylab("f(x)") + 
+                    theme_classic() +
+                    stat_function(
+                        fun = plot_choice_LOGLOGIS_QX_SERVER(),
+                        args = list(shape = tauLOGLOGIS(), 
+                                    scale = lambdaLOGLOGIS()),
+                        xlim = c(VaRLOGLOGIS(), 
+                                 VaR_llogis(kappa = 0.999, lam = lambdaLOGLOGIS(), tau = tauLOGLOGIS())),
+                        geom = "area",
+                        fill = "red",
+                        alpha = 0.7
+                    )
+            }
+            
         })
         
-        output$QuantileLOGLOGIS <- renderPlotly({
-            ggplot(data = data.frame(x = c(0,1)),
-                   aes(x)) +
-                stat_function(fun = qllogis,
-                              args = list(shape = lambdaLOGLOGIS(), 
-                                          rate = tauLOGLOGIS())) + 
-                theme_classic()
-        })
-        
+        # output$QuantileLOGLOGIS <- renderPlotly({
+            # ggplot(data = data.frame(x = c(0,1)),
+            #        aes(x)) +
+            #     stat_function(fun = qllogis,
+            #                   args = list(shape = lambdaLOGLOGIS(), 
+            #                               rate = tauLOGLOGIS())) + 
+            #     theme_classic()
+        # })
+
         output$FxLOGLOGIS <- renderPlotly({
             ggplot(data = data.frame(x = c(0, VaR_llogis(kappa = 0.999, lam = lambdaLOGLOGIS(), tau = tauLOGLOGIS()))
             ),
@@ -2660,9 +2772,9 @@ myserver <- function(input, output, session)
         })
         
         plot_choice_IG_QX_SERVER <- reactive({
-            if(input$plot_choice_IG_QX == "Densité")
+            if(input$plot_choice_IG_QX == "Fonction de densité")
                 dIG
-            else
+            else if(input$plot_choice_IG_QX == "Fonction de répartition")
                 pIG
         })
         
@@ -2730,9 +2842,9 @@ myserver <- function(input, output, session)
                                     betaIG())
         })
         
-        TVaRIG <- reactive({format(TVaR_IG(vark = VaRIG_a(),
+        TVaRIG <- reactive({format(TVaR_IG(kappa = kIG(),
+                                           vark = VaRIG_a(),
                                            muIG(), 
-                                           kappa = kIG(),
                                            betaIG()), 
                                    nsmall = 6)
         })
@@ -2785,9 +2897,10 @@ myserver <- function(input, output, session)
                                                                repartsurvieIG()
         ))})
         
-        output$VaRIG <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
-                                                           kIG(),
-                                                           VaRIG()))
+        output$VaRIG <- renderUI({withMathJax(sprintf("$$%s{%s} = %s$$",
+                                                      VaR_Quantile_LATEX(),
+                                                      kIG(),
+                                                      VaRIG()))
         })
         
         output$TVaRIG <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$",
@@ -2816,35 +2929,50 @@ myserver <- function(input, output, session)
         # })
         
         output$QxIG <- renderPlotly({
-            ggplot(data = data.frame(x = c(0, VaR_IG(kappa = 0.999, mu = muIG(), beta = betaIG()))
-            ),
-            aes(x)) + 
-                stat_function(fun = plot_choice_IG_QX_SERVER(),
-                              args = list(muIG(),
-                                          betaIG())) +
-                ylab("f(x)") + 
-                theme_classic() +
-                stat_function(
-                    fun = plot_choice_IG_QX_SERVER(),
-                    args = list(muIG(),
-                                betaIG()),                    
-                    xlim = c(VaRIG(), 
-                             VaR_IG(kappa = 0.999, mu = muIG(), beta = betaIG())),
-                    geom = "area",
-                    fill = "red",
-                    alpha = 0.7
-                )
+            # if(input$plot_choice_IG_QX == "Fonction quantile")
+            # {
+                # ggplot(data = data.frame(x = c(0, 1)),
+                #        aes(x)) +
+                #     stat_function(
+                #         fun = VaR_IG,
+                #         args = list(mu = muIG(),
+                #                     beta = betaIG())
+                #     ) +
+                #     theme_classic()
+            # }
+            # else
+            # {
+                ggplot(data = data.frame(x = c(0, VaR_IG(kappa = 0.999, mu = muIG(), beta = betaIG()))
+                ),
+                aes(x)) + 
+                    stat_function(fun = plot_choice_IG_QX_SERVER(),
+                                  args = list(muIG(),
+                                              betaIG())) +
+                    ylab("f(x)") + 
+                    theme_classic() +
+                    stat_function(
+                        fun = plot_choice_IG_QX_SERVER(),
+                        args = list(muIG(),
+                                    betaIG()),                    
+                        xlim = c(VaRIG(), 
+                                 VaR_IG(kappa = 0.999, mu = muIG(), beta = betaIG())),
+                        geom = "area",
+                        fill = "red",
+                        alpha = 0.7
+                    )
+            # }
+            
         })
         
         # output$QuantileIG <- renderPlotly({
-        #     ggplot(data = data.frame(x = c(0, 1)),
-        #            aes(x)) +
-        #         stat_function(
-        #             fun = VaR_IG,
-        #             args = list(mu = muIG(),
-        #                         beta = betaIG())
-        #         ) + 
-        #         theme_classic()
+            # ggplot(data = data.frame(x = c(0, 1)),
+            #        aes(x)) +
+            #     stat_function(
+            #         fun = VaR_IG,
+            #         args = list(mu = muIG(),
+            #                     beta = betaIG())
+            #     ) +
+            #     theme_classic()
         # })
         
         output$FxIG <- renderPlotly({
@@ -2892,9 +3020,9 @@ myserver <- function(input, output, session)
         })
         
         plot_choice_UNIC_QX_SERVER <- reactive({
-            if(input$plot_choice_UNIC_QX == "Densité")
+            if(input$plot_choice_UNIC_QX == "Fonction de densité")
                 dunif
-            else
+            else if(input$plot_choice_UNIC_QX == "Fonction de répartition")
                 punif
         })
         
@@ -2978,10 +3106,16 @@ myserver <- function(input, output, session)
                                                                  repartsurvieUNIC()
         ))})
         
-        output$VaRUNIC <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
-                                                       kUNIC(),
-                                                       VaRUNIC()
-        ))})
+        output$VaRUNIC <- renderUI({withMathJax(sprintf("$$%s{%s} = %s$$",
+                                                      VaR_Quantile_LATEX(),
+                                                      kUNIC(),
+                                                      VaRUNIC()))
+        })
+        # 
+        # output$VaRUNIC <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
+        #                                                kUNIC(),
+        #                                                VaRUNIC()
+        # ))})
 
         # output$EspTronqUNIC <- renderUI({withMathJax(sprintf("$$E[X \\times 1_{\\{X \\leqslant %s\\}}] = %.4f$$", 
         #                                                     dUNIC(),
@@ -3004,33 +3138,45 @@ myserver <- function(input, output, session)
         # ))})
         
         output$QxUNIC <- renderPlotly({
-            ggplot(data = data.frame(x = c(aUNIC(),
-                                           bUNIC()
-            )
-            ),
-            aes(x)) + 
-                stat_function(fun = plot_choice_UNIC_QX_SERVER(),
-                              args = list(min = aUNIC(), max = bUNIC())) +
-                ylab("f(x)") + 
-                theme_classic() +
-                stat_function(
-                    fun = plot_choice_UNIC_QX_SERVER(),
-                    args = list(min = aUNIC(), max = bUNIC()),
-                    xlim = c(VaRUNIC(), 
-                             bUNIC()),
-                    geom = "area",
-                    fill = "red",
-                    alpha = 0.7
+            if(input$plot_choice_UNIC_QX == "Fonction quantile")
+            {
+                ggplot(data = data.frame(x = c(0,1)),
+                       aes(x)) +
+                    stat_function(fun = qunif,
+                                  args = list(min = aUNIC(), max = bUNIC())) + 
+                    theme_classic()
+            }
+            else
+            {
+                ggplot(data = data.frame(x = c(aUNIC(),
+                                               bUNIC()
                 )
+                ),
+                aes(x)) + 
+                    stat_function(fun = plot_choice_UNIC_QX_SERVER(),
+                                  args = list(min = aUNIC(), max = bUNIC())) +
+                    ylab("f(x)") + 
+                    theme_classic() +
+                    stat_function(
+                        fun = plot_choice_UNIC_QX_SERVER(),
+                        args = list(min = aUNIC(), max = bUNIC()),
+                        xlim = c(VaRUNIC(), 
+                                 bUNIC()),
+                        geom = "area",
+                        fill = "red",
+                        alpha = 0.7
+                    )
+            }
+            
         })
         
-        output$QuantileUNIC <- renderPlotly({
-            ggplot(data = data.frame(x = c(0,1)),
-                   aes(x)) +
-                stat_function(fun = qunif,
-                              args = list(min = aUNIC(), max = bUNIC())) + 
-                theme_classic()
-        })
+        # output$QuantileUNIC <- renderPlotly({
+        #     ggplot(data = data.frame(x = c(0,1)),
+        #            aes(x)) +
+        #         stat_function(fun = qunif,
+        #                       args = list(min = aUNIC(), max = bUNIC())) + 
+        #         theme_classic()
+        # })
         
         output$FxUNIC <- renderPlotly({
             ggplot(data = data.frame(x = c(aUNIC(),
@@ -3092,6 +3238,17 @@ myserver <- function(input, output, session)
                 "S_{X}"
             }
         })
+        
+        # VaR_Quantile_BIN_LATEX <- reactive({
+        #     if(input$notation_indicator == "ACT-2001")
+        #     {
+        #         "F^{-1}_X"
+        #     }
+        #     else if(input$notation_indicator == "ACT-1002")
+        #     {
+        #         "VaR_"
+        #     }
+        # })
         
         observeEvent(
             {
@@ -3176,10 +3333,12 @@ myserver <- function(input, output, session)
                                                                 repartsurvieBIN()
         ))})
         
-        output$VaRBIN <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
-                                                       input$kBIN,
-                                                       VaRBIN()
-        ))})
+        output$VaRBIN <- renderUI({withMathJax(sprintf("$$%s{%s} = %s$$",
+                                                       VaR_Quantile_LATEX(),
+                                                      input$kBIN,
+                                                      VaRBIN()))
+        })
+        
         output$TVaRBIN <- renderUI({withMathJax(sprintf("$$TVaR_{%s} = %s$$",
                                                         input$kBIN,
                                                         TVaRBIN()
@@ -3258,6 +3417,17 @@ myserver <- function(input, output, session)
         }
     })
     
+    # VaR_Quantile_POI_LATEX <- reactive({
+    #     if(input$notation_indicator == "ACT-2001")
+    #     {
+    #         "F^{-1}_X"
+    #     }
+    #     else if(input$notation_indicator == "ACT-1002")
+    #     {
+    #         "VaR_"
+    #     }
+    # })
+    
     VaRPOI <- reactive({format(qpois(kPOI(),
                                      lamPOI()),
                                nsmall = 6)
@@ -3282,11 +3452,11 @@ myserver <- function(input, output, session)
                                                             repartsurviePOI()
     ))})
     
-    output$VaRPOI <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
-                                                   kPOI(),
-                                                   VaRPOI()
-    ))})
-    
+    output$VaRPOI <- renderUI({withMathJax(sprintf("$$%s{%s} = %s$$",
+                                                   VaR_Quantile_LATEX(),
+                                                  kPOI(),
+                                                  VaRPOI()))
+    })
     
     output$FxPOI <- renderPlotly({
         ggplot(
@@ -3519,6 +3689,17 @@ myserver <- function(input, output, session)
         }
     })
     
+    # VaR_Quantile_LOGARITHMIQUE_LATEX <- reactive({
+    #     if(input$notation_indicator == "ACT-2001")
+    #     {
+    #         "F^{-1}_X"
+    #     }
+    #     else if(input$notation_indicator == "ACT-1002")
+    #     {
+    #         "VaR_"
+    #     }
+    # })
+    
     VaRLOGARITHMIQUE <- reactive({
         format(qlogarithmic(p = kLOGARITHMIQUE(),
                             prob = gammaLOGARITHMIQUE()
@@ -3555,10 +3736,12 @@ myserver <- function(input, output, session)
     #                                                             survieLOGARITHMIQUE()))
     # })
     # 
-    output$VaRLOGARITHMIQUE <- renderUI({withMathJax(sprintf("$$VaR_{%s} = %s$$",
-                                                             kLOGARITHMIQUE(),
-                                                             VaRLOGARITHMIQUE()
-    ))})
+    
+    output$VaRLOGARITHMIQUE <- renderUI({withMathJax(sprintf("$$%s{%s} = %s$$",
+                                                             VaR_Quantile_LATEX(),
+                                                  kLOGARITHMIQUE(),
+                                                  VaRLOGARITHMIQUE()))
+    })
     
 #### Loi Binomiale Négative Serveur ####
     

@@ -13,7 +13,17 @@ myUI <- shinyUI({
                     icon = icon("envelope", lib = "font-awesome")
                 ),
                 href = "mailto:alec.van-rassel.1@ulaval.ca"
-                ))
+                )),
+            tags$li(class = "dropdown",
+                    p("Notation"),
+                    align = "center",
+            radioGroupButtons(
+                inputId = "notation_indicator",
+                # label = "Notation",
+                choices = c("ACT-2001", 
+                            "ACT-1002")
+                # ,justified = TRUE
+            ))
         ),
         
         # Paneau Latéral
