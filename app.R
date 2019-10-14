@@ -13,17 +13,17 @@
     library(Distributacalcul)
     # devtools::install_github("gabrielcrepeault/tvarPackage")
     library(tvarPackage)
-    # library(reshape2)
+    # devtools::install_github("Appsilon/shiny.i18n")
+    library(shiny.i18n)
     library(copula)
     library(dplyr)
     
     # library(shinymaterial)
     # library(dashboardthemes)
 } 
-# shinyWidgets::shinyWidgetsGallery()
+# shinyWidgets::shinyWidgetsGallery()  
 source(file = "myUI.R", local = T)
 source(file = "myserver.R")
-# source(file = "functions.R")
 
 shinyApp(
     ui <- myUI,

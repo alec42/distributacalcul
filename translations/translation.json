@@ -1,0 +1,110 @@
+{
+    "languages": 
+    [
+        "fr",
+        "en" 
+    ],
+    "translation": 
+    [
+        {
+            "fr": "Lois de probabilité",
+            "en": "Probability Distributions" 
+        },
+        {
+            "fr": "Lois continues",
+            "en": "Continuous Distributions"
+        },
+        {
+            "fr": "Lois discrètes",
+            "en": "Discrete Distributions"
+        },
+        {
+            "fr": "Lois composées",
+            "en": "Compound Distributions"
+        },
+        {
+            "fr": "Binomiale",
+            "en": "Binomial"
+        },
+        {
+            "fr": "Binomiale négative",
+            "en": "Negative Binomial"
+        },
+        {
+            "fr": "Logarithmique",
+            "en": "Logarithmic"
+        },
+        {
+            "fr": "Hypergéométrique",
+            "en": "Hypergeometric"
+        },
+        {
+            "fr": "Poisson",
+            "en": "Poisson"
+        },
+        {
+            "fr": "Binomiale négative et géométrique",
+            "en": "Negative binomial and geometric"
+        },
+        {
+            "fr": "Binomiale et bernoulli",
+            "en": "Binomial and Bernoulli"
+        },
+        {
+            "fr": "Uniforme",
+            "en": "Uniform"
+        },
+        {
+            "fr": "Inverse Gaussienne",
+            "en": "Inverse Gaussian"
+        },
+        {
+            "fr": "Log-logistique",
+            "en": "Log-logistic"
+        },
+        {
+            "fr": "Erlang",
+            "en": "Erlang"
+        },
+        {
+            "fr": "Bêta",
+            "en": "Beta"
+        },
+        {
+            "fr": "Burr",
+            "en": "Burr"
+        },
+        {
+            "fr": "Pareto",
+            "en": "Pareto"
+        },
+        {
+            "fr": "Weibull",
+            "en": "Weibull"
+        },
+        {
+            "fr": "Gamma, exponentielle et khi-Carré",
+            "en": "Gamma, Exponential, & Chi-Squared"
+        },
+        {
+            "fr": "Lognormale",
+            "en": "Lognormal"
+        },
+        {
+            "fr": "Normale",
+            "en": "Normal"
+        },
+        {
+            "fr": "Binomiale négative composée",
+            "en": "Compound Negative Binomial"
+        },
+        {
+            "fr": "Binomiale composée",
+            "en": "Compound Binomial"
+        },
+        {
+            "fr": "Poisson composée",
+            "en": "Compound Poisson"
+        }
+    ]
+}

@@ -1,6 +1,8 @@
 
 myserver <- function(input, output, session) 
 {
+    source("translations/translation.R", local = T)
+    
     observeEvent({
         input$notation_indicator
     },

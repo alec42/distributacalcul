@@ -4,16 +4,11 @@ myUI <- shinyUI({
     dashboardPage(
         skin = "blue", 
         dashboardHeader(
-            title = "Lois de probabilité",
+            title = textOutput("main_title"),
             titleWidth = "275px",
-            tags$li(class = "dropdown",
-                a(actionButton(
-                    inputId = "email1",
-                    label = "Nous contacter",
-                    icon = icon("envelope", lib = "font-awesome")
-                ),
-                href = "mailto:alec.van-rassel.1@ulaval.ca"
-                )),
+            
+            # Permet de changer la notation selon le cours
+            # Présentemment, change la fonction de survie, la fonction quantile ainsi que le paramètre beta pour lambda de la loi Gamma
             tags$li(class = "dropdown",
                     p("Notation"),
                     align = "center",
@@ -22,8 +17,20 @@ myUI <- shinyUI({
                 # label = "Notation",
                 choices = c("ACT-2001", 
                             "ACT-1002")
-                # ,justified = TRUE
-            ))
+                # ,justified = TRUE     # prends trops d'espace, voir si il y a un meilleur sélecteur.
+            )),
+            tags$li(class = "dropdown",
+                    a(actionButton(
+                        inputId = "email1",
+                        label = "Nous contacter",
+                        icon = icon("envelope", lib = "font-awesome")
+                    ),
+                    href = "mailto:alec.van-rassel.1@ulaval.ca"
+                    )),
+            # Sélecteur de langage
+            tags$li(class = "dropdown",
+                    uiOutput("language_selector_UI")
+            )
         ),
         
         # Paneau Latéral
@@ -34,117 +41,137 @@ myUI <- shinyUI({
                 sidebarMenu(
                     id = "tabs",
                     menuItem(
-                        "Lois continues",
-                        icon = icon("chart-area"),
+                        textOutput("sidebar_title_cont"),
+                        # icon = icon("chart-area"),
                         menuSubItem(
-                            "Normale",
-                            tabName = "Normale",
-                            icon = icon("neos")
+                            textOutput("NORM_title"),
+                            icon = NULL,
+                            # icon = icon("neos"),
+                            tabName = "Normale"
                         ),
                         menuSubItem(
-                            "Lognormale",
-                            tabName = "Lognormale",
-                            icon = icon("ruler-combined")
+                            textOutput("LNORM_title"),
+                            icon = NULL,
+                            # icon = icon("ruler-combined"),
+                            tabName = "Lognormale"
                         ),
                         menuSubItem(
-                            "Gamma, Exponentielle, & Khi-Carré",
-                            icon = icon("google"),
+                            textOutput("expo_fam_title"),
+                            icon = NULL,
+                            # icon = icon("google"),
                             tabName = "gamma"
                         ),
                         menuSubItem(
-                            "Weibull",
-                            icon = icon("wikipedia-w"),
+                            textOutput("WEI_title"),
+                            icon = NULL,
+                            # icon = icon("wikipedia-w"),
                             tabName = "Weibull"
                         ),
                         menuSubItem(
-                            "Pareto",
-                            icon = icon("product-hunt"),
+                            textOutput("PARETO_title"),
+                            icon = NULL,
+                            # icon = icon("product-hunt"),
                             tabName = "Pareto"
                         ),
                         menuSubItem(
-                            "Burr",
-                            icon = icon("btc"),
+                            textOutput("BURR_title"),
+                            icon = NULL,
+                            # icon = icon("btc"),
                             tabName = "Burr"
                         ),
                         menuSubItem(
-                            "Loi Uniforme",
+                            textOutput("UNIC_title"),
+                            icon = NULL,
                             # icon = icon("fish"),
                             tabName = "UniformeC"
                         ),
                         menuSubItem(
-                            "Beta",
-                            icon = icon("behance"),
+                            textOutput("BETA_title"),
+                            icon = NULL,
+                            # icon = icon("behance"),
                             tabName = "Beta"
                         ),
                         menuSubItem(
-                            "Erlang",
-                            icon = icon("erlang"),
+                            textOutput("ERLANG_title"),
+                            icon = NULL,
+                            # icon = icon("erlang"),
                             tabName = "Erlang"
                         ),
                         menuSubItem(
-                            "Log-logistique",
-                            icon = icon("dolly"),
+                            textOutput("LOGLOGIS_title"),
+                            icon = NULL,
+                            # icon = icon("dolly"),
                             tabName = "LOGLOGIS"
                         ),
                         menuSubItem(
-                            "Loi Inverse Gaussienne",
-                            icon = icon("italic"),
+                            textOutput("IG_title"),
+                            icon = NULL,
+                            # icon = icon("italic"),
                             tabName = "IG"
                         )
                         
                     ),
                     
                     menuItem(
-                        "Lois discrètes",
-                        icon = icon("chart-bar"),
+                        textOutput("sidebar_title_disc"),
+                        # icon = icon("chart-bar"),
                         menuSubItem(
-                            "Loi Uniforme",
+                            textOutput("UNID_title"),
+                            icon = NULL,
                             # icon = icon("fish"),
                             tabName = "UniformeD"
                         ),
                         menuSubItem(
-                            "Loi Binomiale et Bernoulli",
-                            tabName = "Binomiale",
-                            icon = icon("bold")
+                            textOutput("BIN_title"),
+                            icon = NULL,
+                            # icon = icon("bold"),
+                            tabName = "Binomiale"
                         ),
                         menuSubItem(
-                            "Binomiale Négative et Géométrique",
-                            tabName = "Binneg",
-                            icon = icon("minus")
+                            textOutput("BN_title"),
+                            icon = NULL,
+                            # icon = icon("minus"),
+                            tabName = "Binneg"
                         ),
                         menuSubItem(
-                            "Loi Poisson",
-                            icon = icon("fish"),
+                            textOutput("POI_title"),
+                            icon = NULL,
+                            # icon = icon("fish"),
                             tabName = "Poisson"
                         ),
                         menuSubItem(
-                            "Loi Hypergéométrique",
-                            icon = icon("hire-a-helper"),
+                            textOutput("HG_title"),
+                            icon = NULL,
+                            # icon = icon("hire-a-helper"),
                             tabName = "HG"
                         ),
                         menuSubItem(
-                            "Loi Logarithmique",
-                            icon = icon("yahoo"),
+                            textOutput("LOGARITHMIQUE_title"),
+                            icon = NULL,
+                            # icon = icon("yahoo"),
                             tabName = "Logarithmique"
                         )
                     ),
                     menuItem(
-                        "Lois composées",
-                        icon = icon("chart-line"),
+                        textOutput("sidebar_title_comp"),
+                        # icon = icon("chart-line"),
                         menuSubItem(
-                            "Binomiale Négative",
+                            textOutput("BNCOMP_title"),
+                            icon = NULL,
+                            # icon = icon("neos"),
                             tabName = "BNCOMP"
-                            # ,icon = icon("neos")
                         ),
                         menuSubItem(
-                            "Binomiale",
+                            textOutput("BINCOMP_title"),
+                            icon = NULL,
+                            # icon = icon("neos"),
                             tabName = "BINCOMP"
-                            # ,icon = icon("neos")
                         ),
                         menuSubItem(
-                            "Poisson",
+                            textOutput("POICOMP_title"),
+                            icon = NULL,
+                            # icon = icon("neos"),
                             tabName = "PCOMP"
-                            #   , icon = icon("neos")
                         )
                     ),
                     menuItem(
