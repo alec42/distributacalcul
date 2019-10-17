@@ -171,11 +171,12 @@ tab_stat_tests <- tabItem(tabName = "stat_tests",
                                   uiOutput("seuil_H0_ESTIM_STATTOOL")
                               ),
                               boxPlus(
-                                  title = "Hypothèses",
+                                  title = "Statistique",
                                   status = "primary",
                                   solidHeader = T,
                                   width = NULL,
                                   closable = F
+                                  ,uiOutput("stat_obs_STATTOOL")
                               )
                               # ,align = "center"
                           ),
@@ -209,6 +210,26 @@ tab_stat_tests <- tabItem(tabName = "stat_tests",
                                       choices = c("UMP", "Test T", "Central limite", "Wald", "Sur une proportion", "Sur la variance", "Rapport de vraisemblance", "Khi-carré de Pearson")
                                   ),
                                   uiOutput("distr_ESTIM_STATTOOL")
+                              ),
+                              boxPlus(
+                                  title = "Variables",
+                                  withMathJax(),
+                                  status = "danger",
+                                  solidHeader = T,
+                                  width = NULL,
+                                  closable = F,
+                                  numericInput("n_STATTOOL",
+                                               label = "$$n$$",
+                                               value = 1,
+                                               min = 0),
+                                  numericInput("sigma_STATTOOL",
+                                               label = "$$\\sigma$$",
+                                               value = 1,
+                                               min = 0),
+                                  numericInput("x_bar_STATTOOL",
+                                               label = "$$\\bar{X}$$",
+                                               value = 1,
+                                               min = 0)
                               )
                           )
                       )
@@ -358,6 +379,52 @@ tab_approx_tool <- tabItem(tabName = "approx_tool",
                            )
 )
 
+tab_MGF_tool <- tabItem(tabName = "MGF_tool",
+                           
+                           fluidRow(
+                               titlePanel("Fonctions génératrices des moments"),
+                               # withMathJax(),
+                               # helpText("\\(X \\sim\\mathcal{Normale} \\ (\\mu, \\sigma^2)\\)"),
+                               align = "center"
+                           ),
+                           fluidRow(
+                               column(
+                                   width = 4,
+                                   boxPlus(
+                                       title = "Paramètres",
+                                       status = "primary",
+                                       solidHeader = T,
+                                       width = NULL,
+                                       closable = F,
+                                       uiOutput("server_shapeMGF_tool"),
+                                       uiOutput("server_rateMGF_tool"),
+                                       uiOutput("server_t_MGF_tool"),
+                                       p("Distribution"),
+                                       selectInput(inputId = "distr_select_MGF_tool",
+                                                   label = "",
+                                                   choices = c("Gamma",
+                                                               "Lognormale",
+                                                               "Bêta",
+                                                               "Pareto")
+                                       ),
+                                       align = "center"
+                                   )
+                               ),
+                               column(
+                                   width = 8,
+                                   boxPlus(
+                                       title = "Moments",
+                                       status = "warning",
+                                       solidHeader = T,
+                                       width = NULL,
+                                       closable = F,
+                                       uiOutput("MGF_tool_moments_static"),
+                                       uiOutput("MGF_tool_moments"),
+                                       uiOutput("MGF_tool_mean")
+                                   )
+                               )
+                           )
+)
 
 #### Loi Normale UI ----
 tab_NORM_UI <- tabItem(tabName = "Normale",

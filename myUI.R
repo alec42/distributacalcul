@@ -10,7 +10,7 @@ myUI <- shinyUI({
             # Permet de changer la notation selon le cours
             # Présentemment, change la fonction de survie, la fonction quantile ainsi que le paramètre beta pour lambda de la loi Gamma
             tags$li(class = "dropdown",
-                    p("Notation"),
+                    textOutput("Notation_transl"),
                     align = "center",
             radioGroupButtons(
                 inputId = "notation_indicator",
@@ -22,7 +22,7 @@ myUI <- shinyUI({
             tags$li(class = "dropdown",
                     a(actionButton(
                         inputId = "email1",
-                        label = "Nous contacter",
+                        label = textOutput("contact_transl"),
                         icon = icon("envelope", lib = "font-awesome")
                     ),
                     href = "mailto:alec.van-rassel.1@ulaval.ca"
@@ -175,27 +175,51 @@ myUI <- shinyUI({
                         )
                     ),
                     menuItem(
-                        "Outils",
-                        icon = icon("wrench"),
-                        menuSubItem("Excès-Moyen", tabName = "excess_mean"),
-                        menuSubItem("Approximations", tabName = "approx_tool")
-                        # ,menuSubItem("Test d'hypothèse T", href = "https://casertamarco.shinyapps.io/power/"),
-                        # menuSubItem("Tests statistiques", tabName = "stat_tests"),
-                        # menuSubItem("Copules", tabName = "copulas_tool")
+                        textOutput("sidebar_title_tools"),
+                        # icon = icon("wrench"),
+                        menuSubItem(
+                            textOutput("mexcess_transl"), 
+                            tabName = "excess_mean"
+                        ),
+                        menuSubItem(
+                            textOutput("Approximations_transl"), 
+                            tabName = "approx_tool"
+                        )
+                        # ,menuSubItem(
+                        #     "MGF_tool",
+                        #     tabName = "MGF_tool"
+                        # )
+                        # ,menuSubItem("Test d'hypothèse T", href = "https://casertamarco.shinyapps.io/power/")
+                        ,menuSubItem("Tests statistiques", tabName = "stat_tests")
+                        # ,menuSubItem("Copules", tabName = "copulas_tool")
                         
                     ),
                     menuItem(
-                        "À propos",
-                        icon = icon("info-circle"),
-                        menuSubItem("Description du projet", tabName = "description", selected = T),
+                        text = textOutput("about_transl"),
+                        icon = NULL,
+                        # icon = icon("info-circle"),
+                        menuSubItem(textOutput("proj_descr_transl"), 
+                                    tabName = "description", 
+                                    selected = T
+                        ),
                         menuSubItem(
-                            " Développeurs",
-                            icon = icon("user-tie"),
+                            textOutput("dev_transl"),
+                            icon = NULL,
+                            # icon = icon("user-tie"),
                             tabName = "about"
                         ),                      
-                        menuSubItem("Théorie et formules", icon = icon("wikipedia-w"), href = "https://gitlab.com/alec42/distributacalcul-wiki/wikis/Home"),
-                        menuSubItem(" GitHub", icon = icon("github"), href = "https://github.com/alec42/distributacalcul.git"),
-                        menuSubItem(" Site du projet", icon = icon("compass"), href = "https://alec42.github.io/distributacalcul/")
+                        menuSubItem(textOutput("wiki_link_transl"), 
+                                    # icon = icon("wikipedia-w"), 
+                                    href = "https://gitlab.com/alec42/distributacalcul-wiki/wikis/Home"
+                        ),
+                        menuSubItem(textOutput("git_link_transl"), 
+                                    # icon = icon("github"),
+                                    href = "https://github.com/alec42/distributacalcul.git"
+                        ),
+                        menuSubItem(textOutput("proj_site_transl"), 
+                                    # icon = icon("compass"), 
+                                    href = "https://alec42.github.io/distributacalcul/"
+                        )
                     )
                 )
             )
@@ -243,6 +267,7 @@ myUI <- shinyUI({
                 
                 tab_excess_mean,
                 tab_approx_tool,
+                tab_MGF_tool,
                 tab_stat_tests,
                 tab_copulas_tool,
             
@@ -250,7 +275,7 @@ myUI <- shinyUI({
                 
                 tabItem(
                     tabName = "about",
-                    h2("Nous contacter "),
+                    h2("Nous contacter"),
                     align = "center",
                     box(
                         title = "Alec James van Rassel",
@@ -271,66 +296,70 @@ myUI <- shinyUI({
                             title = "Marc-André Devost",
                             subtitle = "marc-andre.devost.1@ulaval.ca"
                         )
-                    ),
-                    box(
-                        title = "Remerciements",
-                        status = "info",
-                        collapsed = F,
-                        "Ce projet est crée grâce à l'enseignement des professeurs de l'école d'actuariat de l'Université Laval et les notes de ses cours. Particulièrement, aux professeurs des cours de probabilités Étienne Marceau et Hélène Cossette et des cours d'informatique Vincent Goulet.",
-                        br(),
-                        "Un gros merci à tous ceux qui nous ont donné des suggestions, commentaires, avis, etc. sans qui ce projet ne serait pas proche de ce qu'il l'est aujourd'hui.",
-                        br(),
-                        "Un gros merci à ceux ayant fourni des résumés de cours, des notes et des explications pour aider à faire le wiki. Particulièrement, un gros merci à Jean-Christophe Langlois.",
-                        align = "left"
                     )
+                    # ,box(
+                    #     title = "Remerciements",
+                    #     status = "info",
+                    #     collapsed = F,
+                    #     "Ce projet est crée grâce à l'enseignement des professeurs de l'école d'actuariat de l'Université Laval et les notes de ses cours. Particulièrement, aux professeurs des cours de probabilités Étienne Marceau et Hélène Cossette et des cours d'informatique Vincent Goulet.",
+                    #     br(),
+                    #     "Un gros merci à tous ceux qui nous ont donné des suggestions, commentaires, avis, etc. sans qui ce projet ne serait pas proche de ce qu'il l'est aujourd'hui.",
+                    #     br(),
+                    #     "Un gros merci à ceux ayant fourni des résumés de cours, des notes et des explications pour aider à faire le wiki. Particulièrement, un gros merci à Jean-Christophe Langlois.",
+                    #     align = "left"
+                    # )
                 ),
             tabItem(
                 tabName = "description",
                 h1("Distributacalcul"),
-                h3("À propos du projet"),
+                # h3("À propos du projet"),
+                textOutput("title_proj_about_transl"),
                 align = "center",
                 
                 accordion(
                     accordionItem(
                         id = 1,
-                        title = "But du projet",
+                        title = textOutput("goal_transl"),
+                        # title = textOutput("proj_goal_transl"),
                         color = "danger",
                         collapsible = F,
                         collapsed = F,
-                        "Ce projet a comme but de simplifier la vie des étudiants en actuariat à l'Université Laval et est conçu particulièrement pour les cours d'introduction à l'actuariat 2 et d'analyse probabiliste des risques actuariels.",
+                        textOutput("goal_line1_transl"),
                         br(),
-                        "Le site inclut une 'calculatrice' de plusieurs fonctions, mesures de risques, moments, etc. pour plusieurs distributions discrètes, continues et composées.",
+                        textOutput("goal_line2_transl"),
                         br(),
-                        "Également en développement est un onglet d'outils qui pour l'instant contient l'ébauche d'une graphique de fonctions d'excès-moyen pour plusieurs distributions.",
+                        textOutput("goal_line3_transl"),
                         br(),
-                        "Également, on peut accéder à un wiki qui contient davantage d'information sur les diverses distributions. Entre autres, il contient les formules pour les fonctions de densité, répartition, mesures de risques, etc.",
+                        textOutput("goal_line4_transl"),
                         align = "left"
                     ),
                     accordionItem(
                         id = 2,
-                        title = "État du projet",
+                        title = textOutput("status_transl"),
                         color = "warning",
                         collapsed = F,
-                        "Ce projet de calculatrice est encore en développement et le sera sûrement pour toujours. Si vous êtes intéressés à y contribuer, contacter-nous afin qu'on puisse collaborer!",
+                        textOutput("status_line1_transl"),
                         align = "left")
                     ,
                     accordionItem(
                         id = 3,
-                        title = "Liens",
+                        title = textOutput("links_transl"),
                         color = "warning",
                         collapsible = F,
                         collapsed = F,
-                        "Pour plus de détails sur le code du projet, voir le lien vers le GitHub.",
+                        textOutput("links_line1_transl"),
                         br(),
-                        "Pour plus d'information sur les packages utilisés pour le projet, voir cette page (À VENIR) du wiki",
+                        textOutput("links_line2_transl"),
                         br(),
-                        "Pour nous faire part de tout feed-back (erreurs, commentaires, suggestions, questions...) SVP nous contacter!",
+                        textOutput("links_line3_transl"),
                         align = "left"
                     )
                 )
                 ,fixedPanel(
-                    a(actionButton(inputId = "email1", label = "Nous contacter", 
-                                   icon = icon("envelope", lib = "font-awesome")),
+                    a(actionButton(inputId = "email1", 
+                                   label = "Nous contacter", 
+                                   icon = icon("envelope", 
+                                               lib = "font-awesome")),
                       href="mailto:alec.van-rassel.1@ulaval.ca"),
                     right = 40,
                     bottom = 40

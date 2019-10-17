@@ -49,7 +49,9 @@ myserver <- function(input, output, session)
     valueESTIM_STATTOOL <- reactive({input$valueESTIM_STATTOOL})
     testESTIM_STATTOOL <- reactive({input$testESTIM_STATTOOL}) 
     nsizeESTIM_STATTOOL <- reactive({input$nsizeESTIM_STATTOOL})
-    
+    sigma_STATTOOL <- reactive({input$sigma_STATTOOL})
+    x_bar_STATTOOL <- reactive({input$x_bar_STATTOOL})
+    n_STATTOOL <- reactive({input$n_STATTOOL})
     ## pour renderer le choix de borne avec KaTex
     updateSelectizeInput(
         session,
@@ -193,6 +195,100 @@ myserver <- function(input, output, session)
         }
     })
     
+    output$stat_obs_STATTOOL <- renderUI({
+        if(input$testESTIM_STATTOOL == "UMP")
+        {
+            sqrt(n_STATTOOL()) * ((x_bar_STATTOOL() - valueESTIM_STATTOOL())/sigma_STATTOOL())
+        }
+        else if(input$testESTIM_STATTOOL == "Test T")
+        {
+            sqrt(n_STATTOOL()) * ((x_bar_STATTOOL() - valueESTIM_STATTOOL())/sigma_STATTOOL())
+        }
+        else if(input$testESTIM_STATTOOL == "Central limite")
+        {
+            sqrt(n_STATTOOL()) * ((x_bar_STATTOOL() - valueESTIM_STATTOOL())/sigma_STATTOOL())
+        }
+        # else if(testESTIM_STATTOOL() == "Wald")
+        # {
+        #     
+        # }
+        else if(input$testESTIM_STATTOOL == "Sur une proportion")
+        {
+            sqrt(n_STATTOOL()) * ((x_bar_STATTOOL() - valueESTIM_STATTOOL())/(valueESTIM_STATTOOL() * (1 - valueESTIM_STATTOOL())))
+        }
+        else if(input$testESTIM_STATTOOL == "Sur la variance")
+        {
+            (n_STATTOOL() - 1) * (sigma_STATTOOL())/(valueESTIM_STATTOOL())
+        }
+        # else if(testESTIM_STATTOOL() == "Rapport de vraisemblance")
+        # {
+        #     
+        # }
+        # else if(testESTIM_STATTOOL() == "Khi-carré de Pearson")
+        # {
+        #     
+        # }
+    })
+    
+    # output$stat_obs_STATTOOL <- renderUI({
+        # stat_value()
+    # })
+    
+    observeEvent({
+        input$variancehypothesisESTIM_STATTOOL
+        input$testESTIM_STATTOOL
+    },
+    {
+        x <- input$variancehypothesisESTIM_STATTOOL
+        y <- input$testESTIM_STATTOOL
+        
+        updateNumericInput(session, "sigma_STATTOOL",
+                           label = 
+                           {
+                               if (x == "connu")
+                               {
+                                   '$$\\sigma$$'
+                               }
+                               else if (x == "inconnu")
+                               {
+                                   '$$s^2$$'
+                               }
+                           }
+        )
+        updateNumericInput(session, "x_bar_STATTOOL",
+                           label = 
+                               {
+                                   if(y == "Sur une proportion")
+                                   {
+                                       "$$p$$"
+                                   }
+                                   else
+                                   {
+                                       "$$\\bar{X}$$"
+                                   }
+                               }
+        )
+        
+        if(y == "Sur la variance")
+        {
+            shinyjs::hide("x_bar_STATTOOL")
+        }
+        else
+        {
+            shinyjs::show("x_bar_STATTOOL")
+        }
+        
+        if(y == "Sur une proportion")
+        {
+            shinyjs::hide("sigma_STATTOOL")
+        }
+        else
+        {
+            shinyjs::show("sigma_STATTOOL")
+        }
+    }
+    )
+    
 #### Serveur outil de copules ####
     
     output$caption <- renderText({
@@ -234,6 +330,172 @@ myserver <- function(input, output, session)
             )
             plot_ly(z =~densityMatrix) %>% add_surface() %>% layout(scene = list(zaxis=axz))
         }
+    })
+    
+#### Serveur outil FGM ####
+    
+    # expectedvalue_1_MGF_tool <- reactive({input$expectedvalue_1_MGF_tool})
+    # expectedvalue_2_MGF_tool <- reactive({input$expectedvalue_2_MGF_tool})
+    # expectedvalue_3_MGF_tool <- reactive({input$expectedvalue_3_MGF_tool})
+    shapeMGF_tool <- reactive({input$shapeMGF_tool})
+    rateMGF_tool <- reactive({input$rateMGF_tool})
+    t_MGF_tool <- reactive({input$t_MGF_tool})
+    distr_select_MGF_tool <- reactive({input$distr_select_MGF_tool})
+    
+    expectedvalue_1_MGF_tool <- reactive({kthmoment_MGF_function()[[1]]})
+    expectedvalue_2_MGF_tool <- reactive({kthmoment_MGF_function()[[2]]})
+    expectedvalue_3_MGF_tool <- reactive({kthmoment_MGF_function()[[3]]})
+    expectedvalue_4_MGF_tool <- reactive({kthmoment_MGF_function()[[4]]})
+    expectedvalue_5_MGF_tool <- reactive({kthmoment_MGF_function()[[5]]})
+    
+    output$MGF_tool_moments_static <- renderUI({
+        withMathJax(sprintf("$$
+\\begin{align*}
+M_X(t)  &= E[e^{tX}] \\\\
+        &= \\sum_{i} e^{tx_{i}} \\times \\text{Pr}(X = x_{i}) \\\\
+        &= 1 + t E[X] + \\frac{{t}^2 E[X^2] }{2!} + \\frac{{t}^3 E[X^3] }{3!} + \\frac{{t}^4 E[X^4] }{4!} + \\frac{{t}^5 E[X^5] }{5!} + \\dots
+\\end{align*}
+                            $$"
+        ))
+    })
+    
+    output$MGF_tool_moments <- renderUI({
+        withMathJax(sprintf("$$1 + %s %s + \\frac{{%s}^2 %s }{2!} + \\frac{{%s}^3 %s }{3!} + \\frac{{%s}^4 %s }{4!} + \\frac{{%s}^5 %s }{5!} + \\dots$$",
+                            t_MGF_tool(),
+                            expectedvalue_1_MGF_tool(),
+                            t_MGF_tool(),
+                            expectedvalue_2_MGF_tool(),
+                            t_MGF_tool(),
+                            expectedvalue_3_MGF_tool(),
+                            t_MGF_tool(),
+                            expectedvalue_4_MGF_tool(),
+                            t_MGF_tool(),
+                            expectedvalue_5_MGF_tool()
+                            ))
+    })
+    
+    output$MGF_tool_mean <- renderUI({
+        withMathJax(sprintf("$$1 + %s %s + \\frac{{%s}^2 %s }{2!} + \\frac{{%s}^3 %s }{3!} + \\frac{{%s}^4 %s }{4!} + \\frac{{%s}^5 %s }{5!} + \\dots$$",
+                            t_MGF_tool(),
+                            expectedvalue_1_MGF_tool(),
+                            t_MGF_tool(),
+                            expectedvalue_2_MGF_tool(),
+                            t_MGF_tool(),
+                            expectedvalue_3_MGF_tool(),
+                            t_MGF_tool(),
+                            expectedvalue_4_MGF_tool(),
+                            t_MGF_tool(),
+                            expectedvalue_5_MGF_tool()
+        ))
+        withMathJax(sprintf("$$
+\\begin{align*} 
+M'_X(0) &= \\frac{\\partial M_X(t)}{\\partial t} |_{t = 0} \\\\
+        &= 0 + (1) %s + \\frac{2 %s %s }{2!} + \\frac{3{%s}^2 %s }{3!} + \\frac{4{%s}^3 %s }{4!} + \\frac{5{%s}^4 %s }{5!} + \\dots |_{t = 0} \\\\
+        &= %s + %s %s + \\frac{{%s}^2 %s }{2!} + \\frac{{%s}^3 %s }{3!} + \\frac{{%s}^4 %s }{4!} + \\dots |_{t = 0} \\\\
+        &= E[X] \\\\
+        &= %s
+\\end{align*}
+                            $$",
+                            expectedvalue_1_MGF_tool(),
+                            t_MGF_tool(),
+                            expectedvalue_2_MGF_tool(),
+                            t_MGF_tool(),
+                            expectedvalue_3_MGF_tool(),
+                            t_MGF_tool(),
+                            expectedvalue_4_MGF_tool(),
+                            t_MGF_tool(),
+                            expectedvalue_5_MGF_tool(),
+                            expectedvalue_1_MGF_tool(),
+                            t_MGF_tool(),
+                            expectedvalue_2_MGF_tool(),
+                            t_MGF_tool(),
+                            expectedvalue_3_MGF_tool(),
+                            t_MGF_tool(),
+                            expectedvalue_4_MGF_tool(),
+                            t_MGF_tool(),
+                            expectedvalue_5_MGF_tool(),
+                            expectedvalue_1_MGF_tool()
+        ))
+    })
+    
+    output$server_shapeMGF_tool <- renderUI({
+        numericInput('shapeMGF_tool', withMathJax('$$\\alpha$$'), value = 2, min = 0)
+    })
+    output$server_rateMGF_tool <- renderUI({
+        numericInput('rateMGF_tool', '$$\\beta$$', value = 1, min = 0)
+    })
+    output$server_t_MGF_tool <- renderUI({
+        numericInput('t_MGF_tool', '$$t$$', value = 1, min = 0)
+    })
+    
+    kthmoment_MGF_function <- reactive({
+        if (distr_select_MGF_tool() == "Gamma")
+        {
+            sapply(1:5, function(i) kthmoment_gamma(k = i, shape = shapeMGF_tool(), rate = rateMGF_tool()))
+        }
+        else if (distr_select_MGF_tool() == "Bêta")
+        {
+            sapply(1:5, function(i) kthmoment_beta(k = i, a = shapeMGF_tool(), b = rateMGF_tool()))
+        }
+        else if (distr_select_MGF_tool() == "Lognormale")
+        {
+            sapply(1:5, function(i) kthmoment_lnorm(k = i, mu = shapeMGF_tool(), sig = sqrt(rateMGF_tool())))
+        }
+        else if (distr_select_MGF_tool() == "Pareto")
+        {
+            sapply(1:5, function(i) kthmoment_pareto(k = i, alpha = shapeMGF_tool(), lam = rateMGF_tool()))
+        }
+    })
+    
+    observeEvent({
+        input$distr_select_MGF_tool
+    },
+    {
+        x <- input$distr_select_MGF_tool
+        
+        updateNumericInput(session, "shapeMGF_tool",
+                           label = 
+                               {
+                               if (x == "Gamma")
+                               {
+                                   '$$\\alpha$$'
+                               }
+                               else if (x == "Bêta")
+                               {
+                                   '$$\\alpha$$'
+                               }
+                               else if (x == "Lognormale")
+                               {
+                                   '$$\\mu$$'
+                               }
+                               else if (x == "Pareto")
+                               {
+                                   '$$\\alpha$$'
+                               }
+                           }
+        )
+        
+        updateNumericInput(session, "rateMGF_tool",
+                           label = 
+                           {
+                               if (x == "Gamma")
+                               {
+                                   '$$\\beta$$'
+                               }
+                               else if (x == "Bêta")
+                               {
+                                   '$$\\beta$$'
+                               }
+                               else if (x == "Lognormale")
+                               {
+                                   '$$\\sigma^2$$'
+                               }
+                               else if (x == "Pareto")
+                               {
+                                   '$$\\lambda$$'
+                               }
+                           }
+        )
     })
     
 #### Serveur outil de la fonction d'excès-moyen ####

@@ -87,6 +87,14 @@
             "en": "Gamma, Exponential, & Chi-Squared"
         },
         {
+            "fr": "Exponentielle",
+            "en": "Exponential"
+        },
+        {
+            "fr": "Khi-Carré",
+            "en": "Chi-Squared"
+        },
+        {
             "fr": "Lognormale",
             "en": "Lognormal"
         },
@@ -105,6 +113,155 @@
         {
             "fr": "Poisson composée",
             "en": "Compound Poisson"
+        },
+        {
+        	"fr": "Outils",
+        	"en": "Tools"
+        },
+        {
+        	"fr": "Excès-moyen",
+        	"en": "Mean excess"
+        },
+        {
+        	"fr": "Approximations",
+        	"en": "Approximations"
+        },
+        {
+        	"fr": "À propos",
+        	"en": "About"
+        },
+        {
+        	"fr": "Description du projet",
+        	"en": "Project description"
+        },
+        {
+        	"fr": "Théorie et formules",
+        	"en": "Theory and formulas"
+        },
+        {
+        	"fr": "GitHub",
+        	"en": "GitHub"
+        },
+        {
+        	"fr": "Site du projet",
+        	"en": "Project site"
+        },
+        {
+        	"fr": "Notation",
+        	"en": "Notation"
+        },
+        {
+        	"fr": "Nous contacter",
+        	"en": "Contact us"
+        },
+        {
+        	"fr": "But du projet",
+        	"en": "Goal of the project"
+        },
+        {
+        	"fr": "État du projet",
+        	"en": "Status of the project"
+        },
+        {
+        	"fr": "Liens",
+        	"en": "Links"
+        },
+        {
+        	"fr": "À propos du projet",
+        	"en": "About the project"
+        },
+        {
+        	"fr": "Ce projet a comme but de simplifier la vie des étudiants en actuariat à l'Université Laval et est conçu particulièrement pour les cours d'introduction à l'actuariat 2 et d'analyse probabiliste des risques actuariels.",
+        	"en": "The goal of this project is to simplify the life of actuarial science students at Université Laval and is designed with particular attention to the ACT-2001 (Introduction to actuarial science 2) and ACT-1002 (Probablistic analysis of risks in actuarial science)."
+        },
+        {
+        	"fr": "Le site inclut une 'calculatrice' de plusieurs fonctions, mesures de risques, moments, etc. pour plusieurs distributions discrètes, continues et composées.",
+        	"en": "The site includes a 'calculator' as well as many functions, measures of risk, moments, etc. for several continuous, compound and discrete distributions."
+        },
+        {
+        	"fr": "De plus, plusieurs outils sont présentement en développement dont un outil pour visuellement observer quelques approximations de distributions de probabilité.",
+        	"en": "Furthermore, there are several tools currently in development including one to visually observe various approximations of probability distributions."
+        },
+        {
+        	"fr": "Également, on peut accéder à un wiki qui contient davantage d'information sur les formules et la théorie des lois de probabilité. Entre autres, il contient les formules pour les fonctions de densité, les mesures de risques, différents moments, etc.",
+        	"en": "Additionally, users may access a wiki containing further information about the thoery and formulas for the probability distributions. Amongst other things, it contains the formulas the density functions, measures of risks, various moments, etc."
+        },
+        {
+        	"fr": "Ce projet de calculatrice est encore en développement et le sera sûrement pour toujours. Si vous êtes intéressés à y contribuer, s'il vous plaît nous contacter!",
+        	"en": "This calculator project is still in development, and will almost certainly always be. If you are interested in contributing to it, please contact us!"
+        },
+        {
+        	"fr": "Pour plus de détails sur le code du projet, voir le lien vers le GitHub.",
+        	"en": "For further information about the code behind the project, see the link towards GitHub."
+        },
+        {
+        	"fr": "Pour plus d'information sur les packages utilisés pour le projet, voir cette page (À VENIR) du wiki.",
+        	"en": "For further information about the packages used see this (LINK TO BE ADDED) of the wiki."
+        },
+        {
+        	"fr": "Pour nous faire part de tout commentaires, suggestions, questions, etc. s'il vous plaît nous contacter!",
+        	"en": "To share any comments, suggestions, questions, etc. please contact us!"
+        },
+        {
+
+        	"fr": "Gamma",
+        	"en": "Gamma"
+        },
+        {
+        	"fr": "Paramètres",
+        	"en": "Parameters"
+        },
+        {
+        	"fr": "Fonctions",
+        	"en": "Functions"
+        },
+        {
+        	"fr": "Mesure de risques",
+        	"en": "Measures of risk"
+        },
+        {
+        	"fr": "Moments",
+        	"en": "Moments"
+        },
+        {
+        	"fr": "Fréquence",
+        	"en": "Rate"
+        },
+        {
+        	"fr": "Échelle",
+        	"en": "Scale"
+        },
+        {
+        	"fr": "Répartition",
+        	"en": "Cumulative density"
+        },
+        {
+        	"fr": "Fonction de répartition",
+        	"en": "Cumulative density function"
+        },
+        {
+        	"fr": "Fonction quantile",
+        	"en": "Quantile function"
+        },
+        {
+        	"fr": "Densité",
+        	"en": "Density"
+        },
+        {
+        	"fr": "Fonction de densité",
+        	"en": "Density function"
+        },
+        {
+        	"fr": "Survie",
+        	"en": "Survival"
+        },
+        {
+            "fr": "Développeurs",
+            "en": "Developers"
+        },
+        {
+        	"fr": "",
+        	"en": ""
         }
     ]
 }
