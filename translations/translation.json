@@ -260,6 +260,14 @@
             "en": "Developers"
         },
         {
+        	"fr": "Loi des grands nombres",
+        	"en": "Law of large numbers"
+        },
+        {
+        	"fr": "Fonctions génératrices des moments",
+        	"en": "Moment generating functions"
+        },
+        {
         	"fr": "",
         	"en": ""
         }

@@ -1,4 +1,5 @@
-source('tabs_UI.R')
+source('tabs/tabs_UI.R')
+source('tabs/LLN_tool.R')
 
 myUI <- shinyUI({
     dashboardPage(
@@ -178,19 +179,27 @@ myUI <- shinyUI({
                         textOutput("sidebar_title_tools"),
                         # icon = icon("wrench"),
                         menuSubItem(
-                            textOutput("mexcess_transl"), 
+                            textOutput("mexcess_transl"),  
+                            icon = NULL,
                             tabName = "excess_mean"
                         ),
                         menuSubItem(
-                            textOutput("Approximations_transl"), 
+                            textOutput("LLN_transl"), 
+                            icon = NULL,
+                            tabName = "LLN_tool"
+                        ),
+                        menuSubItem(
+                            textOutput("Approximations_transl"),  
+                            icon = NULL,
                             tabName = "approx_tool"
                         )
-                        # ,menuSubItem(
-                        #     "MGF_tool",
-                        #     tabName = "MGF_tool"
-                        # )
+                        ,menuSubItem(
+                            textOutput("MGF_tool_transl"),
+                            icon = NULL,
+                            tabName = "MGF_tool"
+                        )
                         # ,menuSubItem("Test d'hypothèse T", href = "https://casertamarco.shinyapps.io/power/")
-                        ,menuSubItem("Tests statistiques", tabName = "stat_tests")
+                        # ,menuSubItem("Tests statistiques", tabName = "stat_tests")
                         # ,menuSubItem("Copules", tabName = "copulas_tool")
                         
                     ),
@@ -267,6 +276,7 @@ myUI <- shinyUI({
                 
                 tab_excess_mean,
                 tab_approx_tool,
+                tab_LLN_tool,
                 tab_MGF_tool,
                 tab_stat_tests,
                 tab_copulas_tool,
