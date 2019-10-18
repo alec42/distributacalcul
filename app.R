@@ -20,10 +20,10 @@
     
     # library(shinymaterial)
     # library(dashboardthemes)
-} 
+}
 # shinyWidgets::shinyWidgetsGallery()  
 source(file = "myUI.R", local = T)
-source(file = "serveur/myserver.R", local = T)
+source(file = "serveur/myserver.R")
 
 shinyApp(
     ui <- myUI,

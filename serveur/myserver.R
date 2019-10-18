@@ -2,37 +2,8 @@
 myserver <- function(input, output, session) 
 {
     # source("serveur/LLN_tool_server.R", local = T)
-    #### Serveur outil LLN ####
-    
-    shapeLLN_tool <- reactive({input$shapeLLN_tool})
-    rateLLN_tool <- reactive({input$rateLLN_tool})
-    nb_simul_LLN_tool <- reactive({input$nb_simul_LLN_tool})
-    
-    output$server_shapeLLN_tool <- renderUI({
-        numericInput('shapeLLN_tool', withMathJax('$$\\alpha$$'), value = 2, min = 0)
-    })
-    output$server_rateLLN_tool <- renderUI({
-        numericInput('rateLLN_tool', '$$\\beta$$', value = 1, min = 0)
-    })
-    output$server_nb_simul_LLN_tool <- renderUI({
-        numericInput('nb_simul_LLN_tool', '$$n$$', value = 100, min = 0)
-    })
-    
-    distr_select_LLN_tool <- reactive({input$distr_select_LLN_tool})
-    
-    Wn_LLN_tool <- reactive({
-        cumsum(rgamma(n = nb_simul_LLN_tool(), shape = shapeLLN_tool(), rate = rateLLN_tool()))/(1:nb_simul_LLN_tool())
-    })
-    
-    plot_LLN_tool <- renderPlot({
-        ggplot(data = data.frame("abscisse" = 1:nb_simul_LLN_tool(),
-                                 "ordonnée" = Wn_LLN_tool()),
-               aes(x = abscisse,
-                   y = ordonnée)
-        ) +
-            geom_line() +
-            theme_classic()
-    })
+
+    source("serveur/LLN_tool_server.R", local = T)
     
     source("translations/translation.R", local = T)
     
