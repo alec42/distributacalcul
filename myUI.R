@@ -38,12 +38,20 @@ myUI <- shinyUI({
             width = largeur_barre_menu,
             # collapsed = F,
             sidebarMenu(
+            shinyjs::useShinyjs(),
                 id = "tabs",
                 menuItemOutput("sidebar_output_cont"),
                 menuItemOutput("sidebar_output_disc"),
                 menuItemOutput("sidebar_output_comp"),
                 menuItemOutput("sidebar_output_tools"),
                 menuItemOutput("sidebar_output_about")
+            ## Attempt to hide panel and show based on code
+            ## Not yet functional
+            # ,textInput(inputId = "accessToken", 
+            #                    # label = "Access Code",
+            #                    label = "",
+            #                    placeholder = "Access code hidden items"
+            #                    )
             )
         ), 
         # corps de la page

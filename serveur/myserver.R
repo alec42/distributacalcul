@@ -35,6 +35,7 @@ myserver <- function(input, output, session)
         {
             lapply(TVaRs, function(i) shinyjs::show(i))
         }
+        
         ## Cacher les lois composées
         if (x == "ACT-1002")
         {

@@ -41,9 +41,12 @@ output$notation_indicator_UI <- renderUI({
     )
 })
 
+## To default to description tab
 isolate({updateTabItems(session, "tabs", "description")})
 
-## The menubar is also outputed through a UI element to better render the text and format it.
+## The menubar is outputed through a UI element to better render the text and format it.
+## Each menubar item is split up into seperate UI elements to hide the compound laws for ACT-1002 students
+
 output$sidebar_output_cont <- renderMenu({
     menuItem(
         # textOutput("sidebar_title_cont"),
@@ -282,3 +285,24 @@ output$sidebar_output_about <- renderMenu({
     )
 })
 
+## Attempt to hide panel and show based on code
+## Not yet functional
+# observeEvent({
+#     input$accessToken
+# },
+# {
+#     x <- input$accessToken
+#     ## Cacher les lois composées
+#     if (x == "42")
+#     {
+#         
+#         shinyjs::show(selector = '[data-value="LLN_tool"]')
+#         # shinyjs::show(selector = "LLN_tool")
+#     }
+#     else
+#     {
+#         shinyjs::hide(selector = '[data-value="LLN_tool"]')
+#         # shinyjs::hide(selector = "LLN_tool")
+#     }
+# }
+# )
