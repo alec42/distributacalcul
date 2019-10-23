@@ -13,50 +13,27 @@ output$language_selector_UI <- renderUI({
     selectInput(inputId = 'selected_language',
                 # label = i18n()$t("Change language"),
                 label = "",
-                choices = translator$languages,
+                choices = c("Français" = "fr", 
+                            "English" = "en"),
                 selected = input$selected_language
     )
 })
 
 #### Page principale #### 
 output$main_title <- renderText({i18n()$t("Lois de probabilité")})
-output$sidebar_title_cont <- renderText({i18n()$t("Lois continues")})
-output$sidebar_title_disc <- renderText({i18n()$t("Lois discrètes")})
-output$sidebar_title_comp <- renderText({i18n()$t("Lois composées")})
-output$sidebar_title_tools <- renderText({i18n()$t("Outils")})
-output$NORM_title <- renderText({i18n()$t("Normale")})
-output$LNORM_title <- renderText({i18n()$t("Lognormale")})
-output$expo_fam_title <- renderText({i18n()$t("Gamma, exponentielle et khi-Carré")})
-output$WEI_title <- renderText({i18n()$t("Weibull")})
-output$PARETO_title <- renderText({i18n()$t("Pareto")})
-output$BURR_title <- renderText({i18n()$t("Burr")})
-output$UNIC_title <- renderText({i18n()$t("Uniforme")})
-output$BETA_title <- renderText({i18n()$t("Bêta")})
-output$ERLANG_title <- renderText({i18n()$t("Erlang")})
-output$LOGLOGIS_title <- renderText({i18n()$t("Log-logistique")})
-output$IG_title <- renderText({i18n()$t("Inverse Gaussienne")})
-output$UNID_title <- renderText({i18n()$t("Uniforme")})
-output$BIN_title <- renderText({i18n()$t("Binomiale et bernoulli")})
-output$BN_title <- renderText({i18n()$t("Binomiale négative et géométrique")})
-output$POI_title <- renderText({i18n()$t("Poisson")})
-output$HG_title <- renderText({i18n()$t("Hypergéométrique")})
-output$LOGARITHMIQUE_title <- renderText({i18n()$t("Logarithmique")})
-output$BNCOMP_title <- renderText({i18n()$t("Binomiale négative composée")})
-output$BINCOMP_title <- renderText({i18n()$t("Binomiale composée")})
-output$POICOMP_title <- renderText({i18n()$t("Poisson composée")})
-output$Notation_transl <- renderText({i18n()$t("Notation")})
-output$contact_transl <- renderText({i18n()$t("Nous contacter")})
-output$mexcess_transl <- renderText({i18n()$t("Excès-moyen")})
-output$Approximations_transl <- renderText({i18n()$t("Approximations")})
-output$about_transl <- renderText({i18n()$t("À propos")})
+
+
 output$proj_descr_transl <- renderText({i18n()$t("Description du projet")})
 output$dev_transl <- renderText({i18n()$t("Développeurs")})
 output$wiki_link_transl <- renderText({i18n()$t("Théorie et formules")})
 output$proj_site_transl <- renderText({i18n()$t("Site du projet")})
 output$git_link_transl <- renderText({i18n()$t("GitHub")})
-output$about_transl <- renderText({i18n()$t("about")})
-output$proj_about_transl <- renderText({i18n()$t("À propos du projet")})
+
+output$Notation_transl <- renderText({i18n()$t("Notation")})
+output$contact_transl <- renderText({i18n()$t("Nous contacter")})
+
 output$title_proj_about_transl <- renderText({i18n()$t("À propos du projet")})
+output$proj_about_transl <- renderText({i18n()$t("À propos du projet")})
 output$proj_goal_transl <- renderText({i18n()$t("But du projet")})
 output$goal_transl <- renderText({i18n()$t("But du projet")})
 output$goal_line1_transl <- renderText({i18n()$t("Ce projet a comme but de simplifier la vie des étudiants en actuariat à l'Université Laval et est conçu particulièrement pour les cours d'introduction à l'actuariat 2 et d'analyse probabiliste des risques actuariels.")})
@@ -69,7 +46,6 @@ output$links_line2_transl <- renderText({i18n()$t("Pour plus d'information sur l
 output$links_line3_transl <- renderText({i18n()$t("Pour nous faire part de tout commentaires, suggestions, questions, etc. s'il vous plaît nous contacter!")})
 output$links_transl <- renderText({i18n()$t("Liens")})
 output$status_transl <- renderText({i18n()$t("État du projet")})
-output$LLN_transl <- renderText({i18n()$t("Loi des grands nombres")})
 output$MGF_tool_transl <- renderText({i18n()$t("Fonctions génératrices des moments")})
 # output$ <- renderText({i18n()$t("")})
 # output$ <- renderText({i18n()$t("")})

@@ -24,7 +24,7 @@
 # shinyWidgets::shinyWidgetsGallery()  
 source(file = "myUI.R", local = T)
 source(file = "serveur/myserver.R")
-
+# shinydashboardPlusGallery()
 shinyApp(
     ui <- myUI,
     server <- myserver

@@ -4,7 +4,7 @@ myserver <- function(input, output, session)
     # source("serveur/LLN_tool_server.R", local = T)
 
     source("serveur/LLN_tool_server.R", local = T)
-    
+    source("serveur/sidebar.R", local = T)
     source("translations/translation.R", local = T)
     
     observeEvent({
@@ -24,6 +24,28 @@ myserver <- function(input, output, session)
                                }
                            }
         )
+        ## Cache les TVaR pour les étudiants en prob
+        # c("TVaRBN", "TVaRLOGARITHMIQUE", "TVaRERLANG", "TVaRIG", "TVaRUNIC") 
+        TVaRs <- c("TVaRNORM", "TVaRGAMMA", "TVaRPARETO", "TVaRLNORM", "TVaRBURR", "TVaRWEIBULL", "TVaRBETA", "TVaRLOGLOGIS", "TVaRBIN", "TVaRPOI")
+        if (x == "ACT-1002")
+        {
+            lapply(TVaRs, function(i) shinyjs::hide(i))
+        }
+        else if (x == "ACT-2001")
+        {
+            lapply(TVaRs, function(i) shinyjs::show(i))
+        }
+        ## Cacher les lois composées
+        if (x == "ACT-1002")
+        {
+            # shinyjs::hide(selector = '[data-value="sidebar_output_comp"]')
+            shinyjs::hide("sidebar_output_comp")
+        }
+        else if (x == "ACT-2001")
+        {
+            # shinyjs::show(selector = '[data-value="sidebar_output_comp"]')
+            shinyjs::show("sidebar_output_comp")
+        }
     })
     
     VaR_Quantile_LATEX <- reactive({
@@ -1846,15 +1868,15 @@ M'_X(0) &= \\frac{\\partial M_X(t)}{\\partial t} |_{t = 0} \\\\
             if(input$xlim_WEIBULL == T)
             {
                 format(pweibull(q = xWEIBULL(), 
-                                tauWEIBULL(),
-                                betaWEIBULL()), 
+                                shape = tauWEIBULL(),
+                                scale = 1 / betaWEIBULL()), 
                        nsmall = 6)
             }
             else
             {
                 format(pweibull(q = xWEIBULL(), 
-                                tauWEIBULL(),
-                                betaWEIBULL(),
+                                shape = tauWEIBULL(),
+                                scale = 1 / betaWEIBULL(),
                                 lower.tail = F), 
                        nsmall = 6)
             }
@@ -1862,64 +1884,64 @@ M'_X(0) &= \\frac{\\partial M_X(t)}{\\partial t} |_{t = 0} \\\\
         })
         
         densityWEIBULL <- reactive({format(dweibull(x = xWEIBULL(), 
-                                                    tauWEIBULL(),
-                                                    betaWEIBULL()), 
+                                                    shape = tauWEIBULL(),
+                                                    scale = 1 / betaWEIBULL()), 
                                            nsmall = 6)})
         
         repartWEIBULL <- reactive({format(pweibull(q = xWEIBULL(), 
-                                                   tauWEIBULL(),
-                                                   betaWEIBULL()), 
+                                                   shape = tauWEIBULL(),
+                                                   scale = 1 / betaWEIBULL()), 
                                           nsmall = 6)})
         
         survieWEIBULL <- reactive({format(pweibull(q = xWEIBULL(), 
-                                                   tauWEIBULL(),
-                                                   betaWEIBULL(),
+                                                   shape = tauWEIBULL(),
+                                                   scale = 1 / betaWEIBULL(),
                                                    lower.tail = F), 
                                           nsmall = 6)})
         
         VaRWEIBULL <- reactive({format(VaR_weibull(kWEIBULL(),
-                                                   tauWEIBULL(), 
-                                                   betaWEIBULL()),
+                                                   tau = tauWEIBULL(), 
+                                                   beta = betaWEIBULL()),
                                        nsmall = 6)
         })
         
         TVaRWEIBULL <- reactive({format(TVaR_weibull(kWEIBULL(),
-                                                     tauWEIBULL(), 
-                                                     betaWEIBULL()), 
+                                                     tau = tauWEIBULL(), 
+                                                     beta = betaWEIBULL()), 
                                         nsmall = 6)
         })
         
         EspTronqWEIBULL <- reactive({Etronq_weibull(d = dWEIBULL(),
-                                                    betaWEIBULL(),
-                                                    tauWEIBULL())
+                                                    tau = tauWEIBULL(),
+                                                    beta = betaWEIBULL())
         })
         
         StopLossWEIBULL <- reactive({SL_weibull(d = dWEIBULL(),
-                                                betaWEIBULL(),
-                                                tauWEIBULL())
+                                                beta = betaWEIBULL(),
+                                                tau = tauWEIBULL())
         })
         
         EspLimWEIBULL <- reactive({Elim_weibull(d = dWEIBULL(),
-                                                betaWEIBULL(),
-                                                tauWEIBULL())
+                                                tau = tauWEIBULL(),
+                                                beta = betaWEIBULL())
         })
         
         ExcesMoyWEIBULL <- reactive({Mexcess_weibull(d = dWEIBULL(),
-                                                     betaWEIBULL(),
-                                                     tauWEIBULL())
+                                                     tau = tauWEIBULL(),
+                                                     beta = betaWEIBULL())
         })
         
-        meanWEIBULL <- reactive({E_weibull(betaWEIBULL(),
-                                           tauWEIBULL())
+        meanWEIBULL <- reactive({E_weibull(tau = tauWEIBULL(),
+                                           beta = betaWEIBULL())
         })
         
         kthmomentWEIBULL <- reactive({kthmoment_weibull(k = dWEIBULL(),
-                                                        betaWEIBULL(),
-                                                        tauWEIBULL())
+                                                        tau = tauWEIBULL(),
+                                                        beta = betaWEIBULL())
         })
         
-        varianceWEIBULL <- reactive({V_weibull(betaWEIBULL(),
-                                               tauWEIBULL())
+        varianceWEIBULL <- reactive({V_weibull(tau = tauWEIBULL(),
+                                               beta = betaWEIBULL())
         })
         
         output$meanWEIBULL <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
@@ -1987,27 +2009,36 @@ M'_X(0) &= \\frac{\\partial M_X(t)}{\\partial t} |_{t = 0} \\\\
                        aes(x)) +
                     stat_function(fun = qweibull,
                                   args = list(shape = tauWEIBULL(),
-                                              scale = betaWEIBULL())) + 
+                                              scale = 1 / betaWEIBULL())) + 
                     theme_classic()
             }
             else
             {
                 ggplot(data = data.frame(x = c(0,
-                                               max(2 * betaWEIBULL(), VaR_weibull(0.9999, tauWEIBULL(), betaWEIBULL()))
+                                               max(2 * betaWEIBULL(), VaR_weibull(0.9999, 
+                                                                                  tau = tauWEIBULL(), 
+                                                                                  beta = betaWEIBULL()
+                                                                                  )
+                                                   )
                 )
                 ),
                 aes(x)) + 
                     stat_function(fun = plot_choice_WEIBULL_QX_SERVER(),
-                                  args = list(tauWEIBULL(),
-                                              betaWEIBULL())) +
+                                  args = list(shape = tauWEIBULL(),
+                                              scale = 1 / betaWEIBULL())) +
                     ylab("f(x)") + 
                     theme_classic() +
                     stat_function(
                         fun = plot_choice_WEIBULL_QX_SERVER(),
-                        args = list(tauWEIBULL(),
-                                    betaWEIBULL()),
+                        args = list(shape = tauWEIBULL(),
+                                    scale = 1 / betaWEIBULL()),
                         xlim = c(VaRWEIBULL(), 
-                                 max(2 * betaWEIBULL(), VaR_weibull(0.9999, tauWEIBULL(), betaWEIBULL()))),
+                                 max(2 * betaWEIBULL(), VaR_weibull(0.9999, 
+                                                                    tau = tauWEIBULL(), 
+                                                                    beta = betaWEIBULL()
+                                                                    )
+                                     )
+                                 ),
                         geom = "area",
                         fill = "red",
                         alpha = 0.7
@@ -2023,14 +2054,14 @@ M'_X(0) &= \\frac{\\partial M_X(t)}{\\partial t} |_{t = 0} \\\\
             ),
             aes(x)) + 
                 stat_function(fun = plot_choice_WEIBULL_SERVER(),
-                              args = list(tauWEIBULL(),
-                                          betaWEIBULL())) +
+                              args = list(shape = tauWEIBULL(),
+                                          scale = 1 / betaWEIBULL())) +
                 ylab("f(x)") + 
                 theme_classic() +
                 stat_function(
                     fun = plot_choice_WEIBULL_SERVER(),
-                    args = list(tauWEIBULL(),
-                                betaWEIBULL()),
+                    args = list(shape = tauWEIBULL(),
+                                scale = 1 / betaWEIBULL()),
                     xlim = xlim_WEIBULL_SERVER(),
                     geom = "area",
                     fill = plot_color_WEIBULL_SERVER(),

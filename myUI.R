@@ -1,241 +1,53 @@
 source('tabs/tabs_UI.R')
 source('tabs/LLN_tool.R')
 
+## Fichier CSS
+fichiers_CSS <- tags$head(
+    tags$link(rel = "stylesheet", type = "text/css", href = "www/principal.css")
+)
+largeur_barre_menu <- 300
+
 myUI <- shinyUI({
     dashboardPage(
         skin = "blue", 
-        dashboardHeader(
-            title = textOutput("main_title"),
-            titleWidth = "275px",
+        header = dashboardHeaderPlus(
             
-            # Permet de changer la notation selon le cours
-            # Présentemment, change la fonction de survie, la fonction quantile ainsi que le paramètre beta pour lambda de la loi Gamma
-            tags$li(class = "dropdown",
-                    textOutput("Notation_transl"),
-                    align = "center",
-            radioGroupButtons(
-                inputId = "notation_indicator",
-                # label = "Notation",
-                choices = c("ACT-2001", 
-                            "ACT-1002")
-                # ,justified = TRUE     # prends trops d'espace, voir si il y a un meilleur sélecteur.
-            )),
-            tags$li(class = "dropdown",
-                    a(actionButton(
-                        inputId = "email1",
-                        label = textOutput("contact_transl"),
-                        icon = icon("envelope", lib = "font-awesome")
-                    ),
-                    href = "mailto:alec.van-rassel.1@ulaval.ca"
-                    )),
-            # Sélecteur de langage
-            tags$li(class = "dropdown",
-                    uiOutput("language_selector_UI")
-            )
-        ),
-        
-        # Paneau Latéral
-        {
-            dashboardSidebar(width = "275px",
-                collapsed = F,
-                
-                sidebarMenu(
-                    id = "tabs",
-                    menuItem(
-                        textOutput("sidebar_title_cont"),
-                        # icon = icon("chart-area"),
-                        menuSubItem(
-                            textOutput("NORM_title"),
-                            icon = NULL,
-                            # icon = icon("neos"),
-                            tabName = "Normale"
-                        ),
-                        menuSubItem(
-                            textOutput("LNORM_title"),
-                            icon = NULL,
-                            # icon = icon("ruler-combined"),
-                            tabName = "Lognormale"
-                        ),
-                        menuSubItem(
-                            textOutput("expo_fam_title"),
-                            icon = NULL,
-                            # icon = icon("google"),
-                            tabName = "gamma"
-                        ),
-                        menuSubItem(
-                            textOutput("WEI_title"),
-                            icon = NULL,
-                            # icon = icon("wikipedia-w"),
-                            tabName = "Weibull"
-                        ),
-                        menuSubItem(
-                            textOutput("PARETO_title"),
-                            icon = NULL,
-                            # icon = icon("product-hunt"),
-                            tabName = "Pareto"
-                        ),
-                        menuSubItem(
-                            textOutput("BURR_title"),
-                            icon = NULL,
-                            # icon = icon("btc"),
-                            tabName = "Burr"
-                        ),
-                        menuSubItem(
-                            textOutput("UNIC_title"),
-                            icon = NULL,
-                            # icon = icon("fish"),
-                            tabName = "UniformeC"
-                        ),
-                        menuSubItem(
-                            textOutput("BETA_title"),
-                            icon = NULL,
-                            # icon = icon("behance"),
-                            tabName = "Beta"
-                        ),
-                        menuSubItem(
-                            textOutput("ERLANG_title"),
-                            icon = NULL,
-                            # icon = icon("erlang"),
-                            tabName = "Erlang"
-                        ),
-                        menuSubItem(
-                            textOutput("LOGLOGIS_title"),
-                            icon = NULL,
-                            # icon = icon("dolly"),
-                            tabName = "LOGLOGIS"
-                        ),
-                        menuSubItem(
-                            textOutput("IG_title"),
-                            icon = NULL,
-                            # icon = icon("italic"),
-                            tabName = "IG"
-                        )
-                        
-                    ),
-                    
-                    menuItem(
-                        textOutput("sidebar_title_disc"),
-                        # icon = icon("chart-bar"),
-                        menuSubItem(
-                            textOutput("UNID_title"),
-                            icon = NULL,
-                            # icon = icon("fish"),
-                            tabName = "UniformeD"
-                        ),
-                        menuSubItem(
-                            textOutput("BIN_title"),
-                            icon = NULL,
-                            # icon = icon("bold"),
-                            tabName = "Binomiale"
-                        ),
-                        menuSubItem(
-                            textOutput("BN_title"),
-                            icon = NULL,
-                            # icon = icon("minus"),
-                            tabName = "Binneg"
-                        ),
-                        menuSubItem(
-                            textOutput("POI_title"),
-                            icon = NULL,
-                            # icon = icon("fish"),
-                            tabName = "Poisson"
-                        ),
-                        menuSubItem(
-                            textOutput("HG_title"),
-                            icon = NULL,
-                            # icon = icon("hire-a-helper"),
-                            tabName = "HG"
-                        ),
-                        menuSubItem(
-                            textOutput("LOGARITHMIQUE_title"),
-                            icon = NULL,
-                            # icon = icon("yahoo"),
-                            tabName = "Logarithmique"
-                        )
-                    ),
-                    menuItem(
-                        textOutput("sidebar_title_comp"),
-                        # icon = icon("chart-line"),
-                        menuSubItem(
-                            textOutput("BNCOMP_title"),
-                            icon = NULL,
-                            # icon = icon("neos"),
-                            tabName = "BNCOMP"
-                        ),
-                        menuSubItem(
-                            textOutput("BINCOMP_title"),
-                            icon = NULL,
-                            # icon = icon("neos"),
-                            tabName = "BINCOMP"
-                        ),
-                        menuSubItem(
-                            textOutput("POICOMP_title"),
-                            icon = NULL,
-                            # icon = icon("neos"),
-                            tabName = "PCOMP"
-                        )
-                    ),
-                    menuItem(
-                        textOutput("sidebar_title_tools"),
-                        # icon = icon("wrench"),
-                        menuSubItem(
-                            textOutput("mexcess_transl"),  
-                            icon = NULL,
-                            tabName = "excess_mean"
-                        ),
-                        menuSubItem(
-                            textOutput("LLN_transl"), 
-                            icon = NULL,
-                            tabName = "LLN_tool"
-                        ),
-                        menuSubItem(
-                            textOutput("Approximations_transl"),  
-                            icon = NULL,
-                            tabName = "approx_tool"
-                        )
-                        ,menuSubItem(
-                            textOutput("MGF_tool_transl"),
-                            icon = NULL,
-                            tabName = "MGF_tool"
-                        )
-                        # ,menuSubItem("Test d'hypothèse T", href = "https://casertamarco.shinyapps.io/power/")
-                        # ,menuSubItem("Tests statistiques", tabName = "stat_tests")
-                        # ,menuSubItem("Copules", tabName = "copulas_tool")
-                        
-                    ),
-                    menuItem(
-                        text = textOutput("about_transl"),
-                        icon = NULL,
-                        # icon = icon("info-circle"),
-                        menuSubItem(textOutput("proj_descr_transl"), 
-                                    tabName = "description", 
-                                    selected = T
-                        ),
-                        menuSubItem(
-                            textOutput("dev_transl"),
-                            icon = NULL,
-                            # icon = icon("user-tie"),
-                            tabName = "about"
-                        ),                      
-                        menuSubItem(textOutput("wiki_link_transl"), 
-                                    # icon = icon("wikipedia-w"), 
-                                    href = "https://gitlab.com/alec42/distributacalcul-wiki/wikis/Home"
-                        ),
-                        menuSubItem(textOutput("git_link_transl"), 
-                                    # icon = icon("github"),
-                                    href = "https://github.com/alec42/distributacalcul.git"
-                        ),
-                        menuSubItem(textOutput("proj_site_transl"), 
-                                    # icon = icon("compass"), 
-                                    href = "https://alec42.github.io/distributacalcul/"
-                        )
-                    )
+            # fixed = T,
+            title = textOutput("main_title"),
+            titleWidth = largeur_barre_menu,
+            .list = list(
+                # Sélecteur de langage
+                tags$li(class = "dropdown",
+                        uiOutput("language_selector_UI")
+                ),
+                # Permet de changer la notation selon le cours
+                # Présentemment, change la fonction de survie, la fonction quantile ainsi que le paramètre beta pour lambda de la loi Gamma
+                tags$li(class = "dropdown",
+                        textOutput("Notation_transl"),
+                        align = "center",
+                        uiOutput("notation_indicator_UI")
+                ),
+                tags$li(class = "dropdown",
+                        uiOutput("email1_UI")
                 )
             )
-        }, 
-              
+        ),
+        # Paneau Latéral
+        
+        sidebar = dashboardSidebar(
+            width = largeur_barre_menu,
+            # collapsed = F,
+            sidebarMenu(
+                id = "tabs",
+                menuItemOutput("sidebar_output_cont"),
+                menuItemOutput("sidebar_output_disc"),
+                menuItemOutput("sidebar_output_comp"),
+                menuItemOutput("sidebar_output_tools"),
+                menuItemOutput("sidebar_output_about")
+            )
+        ), 
         # corps de la page
-        {dashboardBody(
+        body = dashboardBody(
             
             tags$head(
                 
@@ -244,6 +56,7 @@ myUI <- shinyUI({
                     "label{ display: table-cell; text-align: center; vertical-align: center; width: 50px; font-size: 13pt} .form-group { display: table-row;}"
                 )
             ), 
+            fichiers_CSS,
             
             tabItems(
                 ## Lois Continues
@@ -381,7 +194,7 @@ myUI <- shinyUI({
             
             )
         )
-        }
+        
 
     )
 })
