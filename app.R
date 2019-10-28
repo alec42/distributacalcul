@@ -29,6 +29,3 @@ shinyApp(
     ui <- myUI,
     server <- myserver
 )
-    
-
-    
