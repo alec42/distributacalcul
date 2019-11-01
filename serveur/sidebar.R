@@ -214,12 +214,12 @@ output$sidebar_output_tools <- renderMenu({
         # textOutput("sidebar_title_tools"),
         i18n()$t("Outils"),
         icon = icon("wrench"),
-        menuSubItem(
-            # textOutput("mexcess_transl"),
-            i18n()$t("Excès-moyen"),
-            icon = NULL,
-            tabName = "excess_mean"
-        ),
+        # menuSubItem(
+        #     # textOutput("mexcess_transl"),
+        #     i18n()$t("Excès-moyen"),
+        #     icon = NULL,
+        #     tabName = "excess_mean"
+        # ),
         menuSubItem(
             # textOutput("LLN_transl"),
             i18n()$t("Loi des grands nombres"),
@@ -232,12 +232,12 @@ output$sidebar_output_tools <- renderMenu({
             icon = NULL,
             tabName = "approx_tool"
         )
-        ,menuSubItem(
-            # textOutput("MGF_tool_transl"),
-            i18n()$t("Fonctions génératrices des moments"),
-            icon = NULL,
-            tabName = "MGF_tool"
-        )
+        # ,menuSubItem(
+        #     # textOutput("MGF_tool_transl"),
+        #     i18n()$t("Fonctions génératrices des moments"),
+        #     icon = NULL,
+        #     tabName = "MGF_tool"
+        # )
         # ,menuSubItem("Test d'hypothèse T", href = "https://casertamarco.shinyapps.io/power/")
         # ,menuSubItem("Tests statistiques", tabName = "stat_tests")
         # ,menuSubItem("Copules", tabName = "copulas_tool")

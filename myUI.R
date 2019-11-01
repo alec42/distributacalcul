@@ -61,7 +61,16 @@ myUI <- shinyUI({
                 
                 tags$style(
                     type = "text/css",
-                    "label{ display: table-cell; text-align: center; vertical-align: center; width: 50px; font-size: 13pt} .form-group { display: table-row;}"
+                    "label { 
+                        display: table-cell; 
+                        text-align: center; 
+                        vertical-align: center; 
+                        width: 50px; 
+                        font-size: 13pt
+                    } 
+                    .form-group { 
+                        display: table-row;
+                    }"
                 )
             ), 
             fichiers_CSS,
@@ -128,17 +137,6 @@ myUI <- shinyUI({
                             subtitle = "marc-andre.devost.1@ulaval.ca"
                         )
                     )
-                    # ,box(
-                    #     title = "Remerciements",
-                    #     status = "info",
-                    #     collapsed = F,
-                    #     "Ce projet est crée grâce à l'enseignement des professeurs de l'école d'actuariat de l'Université Laval et les notes de ses cours. Particulièrement, aux professeurs des cours de probabilités Étienne Marceau et Hélène Cossette et des cours d'informatique Vincent Goulet.",
-                    #     br(),
-                    #     "Un gros merci à tous ceux qui nous ont donné des suggestions, commentaires, avis, etc. sans qui ce projet ne serait pas proche de ce qu'il l'est aujourd'hui.",
-                    #     br(),
-                    #     "Un gros merci à ceux ayant fourni des résumés de cours, des notes et des explications pour aider à faire le wiki. Particulièrement, un gros merci à Jean-Christophe Langlois.",
-                    #     align = "left"
-                    # )
                 ),
             tabItem(
                 tabName = "description",
