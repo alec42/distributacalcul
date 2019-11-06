@@ -1902,48 +1902,49 @@ M'_X(0) &= \\frac{\\partial M_X(t)}{\\partial t} |_{t = 0} \\\\
                                           nsmall = 6)})
         
         VaRWEIBULL <- reactive({format(VaR_weibull(kWEIBULL(),
-                                                   tau = tauWEIBULL(), 
-                                                   beta = betaWEIBULL()),
+                                                   rate = betaWEIBULL(),
+                                                   shape = tauWEIBULL()),
                                        nsmall = 6)
         })
         
         TVaRWEIBULL <- reactive({format(TVaR_weibull(kWEIBULL(),
-                                                     tau = tauWEIBULL(), 
-                                                     beta = betaWEIBULL()), 
+                                                     rate = betaWEIBULL(),
+                                                     shape = tauWEIBULL()), 
                                         nsmall = 6)
         })
         
         EspTronqWEIBULL <- reactive({Etronq_weibull(d = dWEIBULL(),
-                                                    tau = tauWEIBULL(),
-                                                    beta = betaWEIBULL())
+                                                    rate = betaWEIBULL(),
+                                                    shape = tauWEIBULL())
         })
         
         StopLossWEIBULL <- reactive({SL_weibull(d = dWEIBULL(),
-                                                beta = betaWEIBULL(),
-                                                tau = tauWEIBULL())
+                                                rate = betaWEIBULL(),
+                                                shape = tauWEIBULL()
+                                                )
         })
         
         EspLimWEIBULL <- reactive({Elim_weibull(d = dWEIBULL(),
-                                                tau = tauWEIBULL(),
-                                                beta = betaWEIBULL())
+                                                rate = betaWEIBULL(),
+                                                shape = tauWEIBULL())
         })
         
         ExcesMoyWEIBULL <- reactive({Mexcess_weibull(d = dWEIBULL(),
-                                                     tau = tauWEIBULL(),
-                                                     beta = betaWEIBULL())
+                                                     rate = betaWEIBULL(),
+                                                     shape = tauWEIBULL())
         })
         
-        meanWEIBULL <- reactive({E_weibull(tau = tauWEIBULL(),
-                                           beta = betaWEIBULL())
+        meanWEIBULL <- reactive({E_weibull(rate = betaWEIBULL(),
+                                           shape = tauWEIBULL())
         })
         
         kthmomentWEIBULL <- reactive({kthmoment_weibull(k = dWEIBULL(),
-                                                        tau = tauWEIBULL(),
-                                                        beta = betaWEIBULL())
+                                                        rate = betaWEIBULL(),
+                                                        shape = tauWEIBULL())
         })
         
-        varianceWEIBULL <- reactive({V_weibull(tau = tauWEIBULL(),
-                                               beta = betaWEIBULL())
+        varianceWEIBULL <- reactive({V_weibull(rate = betaWEIBULL(),
+                                               shape = tauWEIBULL())
         })
         
         output$meanWEIBULL <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
@@ -2018,8 +2019,8 @@ M'_X(0) &= \\frac{\\partial M_X(t)}{\\partial t} |_{t = 0} \\\\
             {
                 ggplot(data = data.frame(x = c(0,
                                                max(2 * betaWEIBULL(), VaR_weibull(0.9999, 
-                                                                                  tau = tauWEIBULL(), 
-                                                                                  beta = betaWEIBULL()
+                                                                                  rate = betaWEIBULL(),
+                                                                                  shape = tauWEIBULL()
                                                                                   )
                                                    )
                 )
@@ -2036,8 +2037,8 @@ M'_X(0) &= \\frac{\\partial M_X(t)}{\\partial t} |_{t = 0} \\\\
                                     scale = 1 / betaWEIBULL()),
                         xlim = c(VaRWEIBULL(), 
                                  max(2 * betaWEIBULL(), VaR_weibull(0.9999, 
-                                                                    tau = tauWEIBULL(), 
-                                                                    beta = betaWEIBULL()
+                                                                    rate = betaWEIBULL(),
+                                                                    shape = tauWEIBULL()
                                                                     )
                                      )
                                  ),
