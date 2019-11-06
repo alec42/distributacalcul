@@ -24,6 +24,7 @@ myserver <- function(input, output, session)
                                }
                            }
         )
+        
         ## Cache les TVaR pour les étudiants en prob
         # c("TVaRBN", "TVaRLOGARITHMIQUE", "TVaRERLANG", "TVaRIG", "TVaRUNIC") 
         TVaRs <- c("TVaRNORM", "TVaRGAMMA", "TVaRPARETO", "TVaRLNORM", "TVaRBURR", "TVaRWEIBULL", "TVaRBETA", "TVaRLOGLOGIS", "TVaRBIN", "TVaRPOI")
@@ -2604,16 +2605,16 @@ M'_X(0) &= \\frac{\\partial M_X(t)}{\\partial t} |_{t = 0} \\\\
         repartsurvieERLANG <- reactive({
             if(input$xlim_ERLANG == T)
             {
-                format(perlang(x = xERLANG(), 
-                               n = nERLANG(), 
-                               b = betaERLANG()), 
+                format(perlang(q = xERLANG(), 
+                               shape = nERLANG(), 
+                               rate = betaERLANG()), 
                        nsmall = 6)
             }
             else
             {
-                format(perlang(x = xERLANG(), 
-                               n = nERLANG(), 
-                               b = betaERLANG(),
+                format(perlang(q = xERLANG(), 
+                               shape = nERLANG(), 
+                               rate = betaERLANG(),
                                lower.tail = F), 
                        nsmall = 6)
             }
@@ -2754,15 +2755,15 @@ M'_X(0) &= \\frac{\\partial M_X(t)}{\\partial t} |_{t = 0} \\\\
                 stat_function(
                     # fun = plot_choice_ERLANG_SERVER(),
                     fun = derlang,
-                              args = list(n = nERLANG(),
-                                          b = betaERLANG())) +
+                              args = list(shape = nERLANG(),
+                                          rate = betaERLANG())) +
                 ylab("f(x)") + 
                 theme_classic() +
                 stat_function(
                     # fun = plot_choice_ERLANG_SERVER(),
                     fun = derlang,
-                    args = list(n = nERLANG(),
-                                b = betaERLANG()),                    
+                    args = list(shape = nERLANG(),
+                                rate = betaERLANG()),                    
                     xlim = xlim_ERLANG_SERVER(),
                     geom = "area",
                     fill = plot_color_ERLANG_SERVER(),
