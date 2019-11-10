@@ -436,6 +436,11 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
             helpText("\\(X \\sim\\mathcal{Normale} \\ (\\mu, \\sigma^2)\\)"),
             align = "center"
         ),
+        # radioGroupContainer("NORM",
+        #     fluidRow(
+        #         column(4, lawParametersBoxUI("NORM", c("$$\\mu$$", "$$\\sigma^2$$"))),
+        #     )
+        # ),
         fluidRow(
             {
                 ### Paramètres Normale ----
@@ -466,6 +471,10 @@ tab_NORM_UI <- tabItem(tabName = "Normale",
                     align = "center"
                 )
             },
+            
+            # lawParametersBoxUI(law = "NORM", parameters = c("$$\\mu$$", "$$\\sigma^2$$")),
+            
+            
             
             {
                 ### Fonctions Normale ----

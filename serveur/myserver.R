@@ -835,24 +835,26 @@ M'_X(0) &= \\frac{\\partial M_X(t)}{\\partial t} |_{t = 0} \\\\
     
     
 #### Loi Normale Serveur ####
+    
+    callModule(lawParametersBox, id = "NORM")
         
-    muNORM <- reactive({input$muNORM})
-        
-    sigma2NORM <- reactive({input$sigmaNORM})
-        
+    # muNORM <- reactive({input$muNORM})
+    #     
+    # sigma2NORM <- reactive({input$sigmaNORM})
+
     densityNORM <- reactive({format(dnorm(input$xNORM, muNORM(), sqrt(sigma2NORM())), nsmall = 6)})
         
     VaRNORM <- reactive({format(VaR_norm(input$kNORM, muNORM(), sqrt(sigma2NORM())), nsmall = 6)})
         
     TVaRNORM <- reactive({format(TVaR_norm(input$kNORM, muNORM(), sqrt(sigma2NORM())), nsmall = 6)})
         
-    EspTronqNORM <- reactive({Etronq_norm(d = input$dNORM, muNORM(), sqrt(sigma2NORM()))})
-        
-    StopLossNORM <- reactive({SL_norm(d = input$dNORM, muNORM(), sqrt(sigma2NORM()))})
-        
-    EspLimNORM <- reactive({Elim_norm(d = input$dNORM, muNORM(), sqrt(sigma2NORM()))})
-    
-    ExcesMoyNORM <- reactive({Mexcess_norm(d = input$dNORM, muNORM(), sqrt(sigma2NORM()))})
+    # EspTronqNORM <- reactive({Etronq_norm(d = input$dNORM, muNORM(), sqrt(sigma2NORM()))})
+    #     
+    # StopLossNORM <- reactive({SL_norm(d = input$dNORM, muNORM(), sqrt(sigma2NORM()))})
+    #     
+    # EspLimNORM <- reactive({Elim_norm(d = input$dNORM, muNORM(), sqrt(sigma2NORM()))})
+    # 
+    # ExcesMoyNORM <- reactive({Mexcess_norm(d = input$dNORM, muNORM(), sqrt(sigma2NORM()))})
     
     plot_choice_NORM_QX_SERVER <- reactive({
         if(input$plot_choice_NORM_QX == "Fonction de densité")
@@ -906,13 +908,13 @@ M'_X(0) &= \\frac{\\partial M_X(t)}{\\partial t} |_{t = 0} \\\\
     })
     
     
-    output$meanNORM <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
-                                                     muNORM()))
-        })
-    
-    output$varNORM <- renderUI({withMathJax(sprintf("$$Var(X) = %s$$", 
-                                                    sigma2NORM()))
-        })
+    # output$meanNORM <- renderUI({withMathJax(sprintf("$$E(X) = %s$$", 
+    #                                                  muNORM()))
+    #     })
+    # 
+    # output$varNORM <- renderUI({withMathJax(sprintf("$$Var(X) = %s$$", 
+    #                                                 sigma2NORM()))
+    #     })
     
     output$densityNORM <- renderUI({withMathJax(sprintf("$$f_{X}(%s) = %s$$", 
                                                         input$xNORM,
@@ -936,25 +938,25 @@ M'_X(0) &= \\frac{\\partial M_X(t)}{\\partial t} |_{t = 0} \\\\
                                                      TVaRNORM()))
         })
     
-    output$EspTronqNORM <- renderUI({withMathJax(sprintf("$$E[X \\times 1_{\\{X \\leqslant %s\\}}] = %.4f$$",
-                                                         input$dNORM,
-                                                         EspTronqNORM()))
-        })
-    
-    output$StopLossNORM <- renderUI({withMathJax(sprintf("$$ \\pi_{%s}(X) = %.4f$$",
-                                                         input$dNORM,
-                                                         StopLossNORM()))
-        })
-    
-    output$EspLimNORM <- renderUI({withMathJax(sprintf("$$E[\\text{min}(X;{%s})] = %.4f$$",
-                                                       input$dNORM,
-                                                       EspLimNORM()))
-        })
-    
-    output$ExcesMoyNORM <- renderUI({withMathJax(sprintf("$$e_{%s}(X) = %.4f$$",
-                                                         input$dNORM,
-                                                         ExcesMoyNORM()))
-        })
+    # output$EspTronqNORM <- renderUI({withMathJax(sprintf("$$E[X \\times 1_{\\{X \\leqslant %s\\}}] = %.4f$$",
+    #                                                      input$dNORM,
+    #                                                      EspTronqNORM()))
+    #     })
+    # 
+    # output$StopLossNORM <- renderUI({withMathJax(sprintf("$$ \\pi_{%s}(X) = %.4f$$",
+    #                                                      input$dNORM,
+    #                                                      StopLossNORM()))
+    #     })
+    # 
+    # output$EspLimNORM <- renderUI({withMathJax(sprintf("$$E[\\text{min}(X;{%s})] = %.4f$$",
+    #                                                    input$dNORM,
+    #                                                    EspLimNORM()))
+    #     })
+    # 
+    # output$ExcesMoyNORM <- renderUI({withMathJax(sprintf("$$e_{%s}(X) = %.4f$$",
+    #                                                      input$dNORM,
+    #                                                      ExcesMoyNORM()))
+    #     })
     
     output$QxNORM <- renderPlotly({
         if(input$plot_choice_NORM_QX == "Fonction quantile")

@@ -17,14 +17,10 @@
     library(shiny.i18n)
     library(copula)
     library(dplyr)
-    
-    # library(shinymaterial)
-    # library(dashboardthemes)
 }
-# shinyWidgets::shinyWidgetsGallery()  
 source(file = "myUI.R", local = T)
 source(file = "serveur/myserver.R", local = T)
-# shinydashboardPlusGallery()
+
 shinyApp(
     ui <- myUI,
     server <- myserver

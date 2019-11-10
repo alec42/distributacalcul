@@ -1,5 +1,6 @@
 source('tabs/tabs_UI.R')
 source('tabs/LLN_tool.R')
+source('code/modules.R')
 
 ## Fichier CSS
 fichiers_CSS <- tags$head(
