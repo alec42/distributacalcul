@@ -80,8 +80,6 @@ tvark <- function(x, var)
 }
 
 
-#### BComp ####
-
 ### Gamma
 
 ## Sn

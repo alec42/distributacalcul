@@ -3,6 +3,7 @@ logs/
 build/
 bin/
 lib/
+Ressource/*
 msg_gen/
 srv_gen/
 msg/*Action.msg
@@ -91,3 +92,7 @@ Ressources/Annexe/Annexes_2019_Lois_Continues_Positives_v1.dvi
 Ressources/Annexe/Annexes_2019_Generateur_v1.tex
 Ressources/Annexe/Annexes_2019_FnsR_utiles.tex
 Ressources/Annexe/Annexes_2019_Algo_v1.tex
+Ressources/TVaR et VaR approximative Poisson et BinNeg.R
+Ressources/Lois composées.R
+Ressources/debut ln simul.R
+Ressources/Lois composées.R

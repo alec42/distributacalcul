@@ -1652,7 +1652,7 @@ M'_X(0) &= \\frac{\\partial M_X(t)}{\\partial t} |_{t = 0} \\\\
         
         
         TVaRBURR <- reactive({format(TVaR_burr(kappa = kBURR(),
-                                               vark = VaRBURR_a(),
+                                               # vark = VaRBURR_a(),
                                                alphaBURR(),
                                                lambdaBURR(),
                                                tauBURR()), 
