@@ -1,204 +1,289 @@
-# tab_NORM_UI <- tabItem(tabName = "Normale",
-#                        fluidRow(
-#                            useShinyjs(), # utilisé to gray out les paramètres de la gamma qu'on désire fixe
-#                            # titlePanel("Loi Normale"),
-#                            titlePanel(tags$a("Loi Normale", target = "_blank", href="https://gitlab.com/alec42/distributacalcul-wiki/wikis/Loi-Normal")),
-#                            # withMathJax(),
-#                            helpText("\\(X \\sim\\mathcal{Normale} \\ (\\mu, \\sigma^2)\\)"),
-#                            align = "center"
-#                        ),
-#                        fluidRow(
-#                            {
-#                                
-#                            },
-#                            
-#                            {
-#                                ### Fonctions Normale ----
-#                                column(
-#                                    width = 5,
-#                                    box(
-#                                        title = "Fonctions",
-#                                        width = NULL,
-#                                        solidHeader = TRUE,
-#                                        # tags$style(" * {font-size:20px;}"), # ligne qui augmente la grosseur du tezte
-#                                        status = "danger", # pour couleur de la boite, diff couleur pour statut
-#                                        # numericInput('xNORM', '$$x$$', value = 0),
-#                                        uiOutput("densityNORM"),
-#                                        
-#                                        # switchInput(
-#                                        #     inputId = "xlim_NORM",
-#                                        #     onStatus = "success",
-#                                        #     onLabel = "Répartition",
-#                                        #     offStatus = "info",
-#                                        #     offLabel = "Survie",
-#                                        #     value = T,
-#                                        #     labelWidth = "10px"
-#                                        # ),
-#                                        uiOutput("repartsurvieNORM"),
-#                                        p("Graphique"),
-#                                        # radioGroupButtons(inputId = "plot_choice_NORM", 
-#                                        #                   choices = c("Densité", 
-#                                        #                               "Fonction de répartition"),
-#                                        #                   selected = "Densité",
-#                                        #                   justified = TRUE),
-#                                        plotlyOutput("FxNORM")
-#                                    ),
-#                                    align = "center"
-#                                )
-#                            },
-#                            
-#                            {
-#                                ### Mesures de risque Normale  ----
-#                                column(
-#                                    width = 4,
-#                                    boxPlus(
-#                                        title = "Mesure de risques",
-#                                        width = NULL,
-#                                        solidHeader = TRUE,
-#                                        closable = F,
-#                                        status = "success",
-#                                        # tags$style(" * {font-size:20px }"), # ligne qui augmente la grosseur du texte
-#                                        # numericInput('kNORM', '$$\\kappa$$', value = 0.99, step = 0.005, min = 0, max = 1),
-#                                        uiOutput("VaRNORM"),
-#                                        uiOutput("TVaRNORM"),
-#                                        # pickerInput(
-#                                        #     inputId = "plot_choice_NORM_QX", 
-#                                        #     # label = "Style : primary", 
-#                                        #     choices = c("Fonction de densité",
-#                                        #                 "Fonction de répartition",
-#                                        #                 "Fonction quantile"),
-#                                        #     selected = "Fonction de répartition",
-#                                        #     options = list(
-#                                        #         style = "btn-success")
-#                                        # ),
-#                                        plotlyOutput("QxNORM")
-#                                        # radioGroupButtons(inputId = "plot_choice_NORM_QX", 
-#                                        #                   choices = c("Densité", 
-#                                        #                               "Fonction de répartition"),
-#                                        #                   selected = "Fonction de répartition",
-#                                        #                   justified = TRUE),
-#                                        # plotlyOutput("QxNORM"),
-#                                        # plotlyOutput("QuantileNORM")
-#                                    ),
-#                                    align = "center"
-#                                )
-#                            }
-#                        )
-# )
-### Paramètres Normale ----
-
-lawParametersBox <- function(input, output, session, parameters) {
+#' @export
+lawParametersBox <- function(input, output, session, law) {
+    
+    #### Définir distribution ####
+    # parameters_symbol_name <- list(
+    #     case_when(
+    #         law == "norm" ~ expr("mean"),
+    #         law == "lnorm" ~ expr("meanlog"),
+    #         law == "beta" ~ expr("shape1"),
+    #         TRUE ~ expr("shape")
+    #     ),
+    #     case_when(
+    #         law == "norm" ~ expr("sd"),
+    #         law == "lnorm" ~ expr("sdlog"),
+    #         law == "beta" ~ expr("shape2"),
+    #         TRUE ~ expr("rate")
+    #     )
+    # )
+    # parameters_distr <- list(
+    #     as.numeric(shape()), as.numeric(rate())
+    # )
+    # names(parameters_distr) <- parameters_symbol_name
+    
+    parameters_latex <- case_when(
+        law %in% c("norm", "lnorm") ~ c("$$\\mu$$", "$$\\sigma^2$$"),
+        law %in% c("gamma", "exp", "beta") ~ c("$$\\alpha$$", "$$\\beta$$"),
+        law == "unif" ~ c("$$a$$", "$$b$$"),
+        TRUE ~ c("shape", "rate")
+    )
+    
+    #### Créé paramètres ####
     shape <- reactive({
         input$shape
-    }) # muNORM
+    })
     rate <- reactive({
+        # case_when(
+            # law %in% c("norm", "lnorm") ~ sqrt(as.numeric(input$rate)),
+            # TRUE ~ input$rate 
+        # )
         input$rate
-    }) # sigma2NORM
+    })
     d <- reactive({
         input$d
-    }) # sigma2NORM
-    
-    ns <- serverns
-    
-    Etronq <- reactive({
-        Etronq_norm(d = d(), shape(), sqrt(rate()))
     })
-    SL <- reactive({
-        SL_norm(d = d(), shape(), sqrt(rate()))
+    kap <- reactive({
+        input$kap
     })
-    Elim <- reactive({
-        Elim_norm(d = d(), shape(), sqrt(rate()))
-    })
-    Mexcess <- reactive({
-        Mexcess_norm(d = d(), shape(), sqrt(rate()))
+    less.than.d <- reactive({
+        input$less.than.d
     })
     
+    ns <- session$ns
+    
+    
+    #### Render paramètres ####
     output$shape <- renderUI({
-        numericInput(session$ns("shape"), 
-                     withMathJax(parameters[1]), value = 0)# muNORM
+        numericInput(session$ns("shape"),
+                     withMathJax(parameters_latex[1]), value = 1)
     })
-    
     output$rate <- renderUI({
         numericInput(session$ns("rate"),
-                     withMathJax(parameters[2]), value = 1) # sigmaNORM
+                     withMathJax(parameters_latex[2]), value = 2)
     })
-    
+    output$less.than.d <- renderUI({
+        radioGroupButtons(
+            inputId = session$ns("less.than.d"), 
+            label = "", 
+            choiceNames = list(withMathJax("$$\\geq$$"), withMathJax("$$\\leq$$")), 
+            choiceValues = list(TRUE, FALSE)
+        )
+    })
     output$d <- renderUI({
         numericInput(session$ns("d"),
-                     withMathJax("$$d$$"),
+                     label = withMathJax("$$d$$"),
                      value = 0,
-                     width = "20px") # dNORM
+                     width = "20px"
+        )
+    })
+    output$kap <- renderUI({
+        numericInput(session$ns("kap"),
+                     label = withMathJax("$$\\kappa$$"),
+                     value = 0.99,
+                     min = 0, max = 1, step = 0.10,
+                     width = "20px"
+        )
+    })
+
+    #### Calcul mesures de risque ####
+    VaR <- reactive({
+            format(
+                rlang::exec(
+                    .fn = paste0("VaR_", law),
+                    kap = as.numeric(kap()),
+                    as.numeric(shape()), as.numeric(rate())
+                ),
+                nsmall = 6
+            )
+    })
+    TVaR <- reactive({
+        format(
+            rlang::exec(
+                .fn = paste0("TVaR_", law),
+                kap = as.numeric(kap()),
+                as.numeric(shape()), as.numeric(rate())
+            ),
+            nsmall = 6
+        )
     })
     
-    output$mean <- renderUI({
-        withMathJax(sprintf("$$\\text{E}[X] = %s$$", shape()))
+    #### Calcul moments ####
+    E <- reactive({
+        rlang::exec(
+            .fn = paste0("E_", law), 
+            as.numeric(shape()), as.numeric(rate())
+        )
+    })
+    V <- reactive({
+        rlang::exec(
+            .fn = paste0("V_", law), 
+            as.numeric(shape()), as.numeric(rate())
+        )
+    })
+    Etronq <- reactive({
+        rlang::exec(
+            .fn = paste0("Etronq_", law), 
+            d = as.numeric(d()), 
+            as.numeric(shape()), as.numeric(rate()), 
+            less.than.d = as.logical(less.than.d())
+        )
+    })
+    SL <- reactive({
+        rlang::exec(
+            .fn = paste0("SL_", law), 
+            d = as.numeric(d()), 
+            as.numeric(shape()), as.numeric(rate())
+        )
+    })
+    Elim <- reactive({
+        rlang::exec(
+            .fn = paste0("Elim_", law), 
+            d = as.numeric(d()), 
+            as.numeric(shape()), as.numeric(rate())
+        )
+    })
+    Mexcess <- reactive({
+        rlang::exec(
+            .fn = paste0("Mexcess_", law), 
+            d = as.numeric(d()), 
+            as.numeric(shape()), as.numeric(rate())
+        )
     })
     
-    output$variance <- renderUI({
-        withMathJax(sprintf("$$\\text{Var}(X) = %s$$", rate()))
+    #### Render moments ####
+    output$E <- renderUI({
+        withMathJax(sprintf("$$\\text{E}[X] = %s$$", 
+                            E()
+                            )
+                    )
     })
-    
+    output$V <- renderUI({
+        withMathJax(sprintf("$$\\text{Var}(X) = %s$$", 
+                            V()
+                            )
+                    )
+    })
     output$Etronq <- renderUI({
             withMathJax(
                 sprintf(
-                    "$$\\text{E}[X \\times 1_{\\{X \\leqslant %s\\}}] = %.4f$$",
+                    "$$\\text{E}[X \\times 1_{\\{X %s %s\\}}] = %.4f$$",
+                    ifelse(!is.null(less.than.d) & as.logical(less.than.d()) == TRUE, "\\geq", "\\leq"),
                     d(),
                     Etronq()
                 )
             )
         })
-    
     output$SL <- renderUI({
             withMathJax(sprintf("$$\\pi_{%s}(X) = %.4f$$",
                                 d(),
-                                SL()))
-        })
-    
-    output$Elim <- renderUI({withMathJax(sprintf("$$\text{E}[\\text{min}(X;{%s})] = %.4f$$",
-                                                 d(),
-                                                       Elim()))
+                                SL()
+                                )
+                        )
     })
-    
+    output$Elim <- renderUI({
+        withMathJax(sprintf("$$\\text{E}[\\min(X;%s)] = %.4f$$",
+                            d(),
+                            Elim()
+                            )
+                    )
+    })
     output$Mexcess <- renderUI({
             withMathJax(sprintf("$$e_{%s}(X) = %.4f$$",
                                 d(),
                                 Mexcess()))
         })
-}
-
-radioGroupContainer <- function(inputId, ...) {
-    class <- "form-group shiny-input-radiogroup shiny-input-container"
-    div(id = inputId, class = class, ...)
-}
-
-lawParametersBoxUI <- function(law, parameters) {
-    ns <- NS(law)
     
-    # tagList(
+    #### Render mesures de risque ####
+    output$VaR <- renderUI({
+        withMathJax(sprintf("$$VaR_{%s} = %s$$",
+                            # VaR_Quantile_LATEX(),
+                            kap(),
+                            VaR()
+                            )
+                    )
+    })
+    output$TVaR <- renderUI({
+        withMathJax(sprintf("$$TVaR_{%s} = %s$$",
+                            kap(),
+                            TVaR()
+                            )
+                    )
+    })
+    
+}
+
+# radioGroupContainer <- function(id, ...) {
+#     class <- "form-group shiny-input-radiogroup shiny-input-container"
+#     div(id = id, class = class, ...)
+# }
+#' @export
+lawParametersBoxUI <- function(id) {
+    ns <- NS(id)
+    fluidRow(
     column(
         width = 3,
+        
+        #### Paramètres ####
         boxPlus(
             title = "Paramètres",
             status = "primary",
-            solidHeader = T,
+            background = "blue",
+            solidHeader = TRUE,
             width = NULL,
-            closable = F,
-            uiOutput(ns("shape")),
-            uiOutput(ns("rate"))
+            closable = FALSE,
+            splitLayout(
+                uiOutput(ns("shape")),
+                uiOutput(ns("rate"))
+            )
         ),
+        tags$head(
+            tags$style(
+                type = "text/css", 
+                "label { 
+                    display: table-cell;
+                    text-align: center;
+                    vertical-align: middle;
+                }
+                .form-group {
+                    display: table-row;
+                }
+                "
+            )
+        ),
+        
+        #### Moments ####
         box(
             title = "Moments",
             width = NULL,
             solidHeader = TRUE,
             status = "warning",
-            uiOutput(ns("mean")), #meanNORM
-            uiOutput(ns("variance")), #varNORM
+            uiOutput(ns("E")),
+            uiOutput(ns("V")),
             uiOutput(ns("d")),
-            # radioButtons(ns('equality'), label = "", choices = c("$$\\geq$$", "$$\\leq$$"), inline = T),
-            uiOutput(ns("Etronq")), # EspTronqNORM
-            uiOutput(ns("Elim")),   # EspLimNORM
-            uiOutput(ns("SL")), # StopLossNORM
-            uiOutput(ns("Mexcess"))  # ExcesMoyNORM
-        # )
-    ))
+            splitLayout(
+                uiOutput(ns("less.than.d")),
+                uiOutput(ns("Etronq"))
+            ),
+            uiOutput(ns("Elim")),
+            uiOutput(ns("SL")), 
+            uiOutput(ns("Mexcess")) 
+        )
+    ),
+    
+    #### Mesures de risque ####
+    column(
+        width = 4,
+        boxPlus(
+            title = "Mesures de risque",
+            width = NULL,
+            solidHeader = TRUE,
+            closable = FALSE,
+            status = "success",
+            uiOutput(ns("kap")),
+            uiOutput(ns("VaR")),
+            uiOutput(ns("TVaR"))
+        ),
+        align = "center"
+    )
+    )
 }
